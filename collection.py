@@ -93,7 +93,7 @@ class Collection:
             item_time = arrow.get(item['date_published']).format('ddd, DD MMM, YYYY ZZZZ')
             item_info = f'''<item>
 <title>{item['title']}</title>
-<description>{item['content_html']}</description>
+<description><![CDATA[{item['content_html']}]]></description>
 <guid>{item['id']}</guid>
 <pubDate>{item_time}</pubDate>
 </item>
