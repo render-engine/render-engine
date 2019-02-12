@@ -24,7 +24,8 @@ class Collection:
         self.output_path = Path(f'{config.OUTPUT_PATH}/'+ kwargs.get('output_path', ''))
         page_glob = self.content_path.glob('*.md')
         pages = [self.content_type(base_file=p, output_path=self.output_path) for p in page_glob]
-        self.pages = sorted(pages, key=lambda page: page.date_published)
+        self.pages = sorted(pages, key=lambda page: page.date_published,
+                reverse=True)
         self.json_feed = self.generate_from_metadata()
         self.rss_feed = self.generate_rss_feed()
 
@@ -33,7 +34,6 @@ class Collection:
         "Collect data into fixed-length chunks or blocks"
         # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
         args = [iter(self.pages)] * 10
-        print(args)
         iterable = zip_longest(*args, fillvalue=None) 
         return iterable
         
