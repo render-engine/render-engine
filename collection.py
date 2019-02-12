@@ -90,8 +90,7 @@ class Collection:
         item_string = ''
 
         for item in items:
-            item_time = arrow.get(item['date_published'],
-                    rfc3339_format).format('ddd, DD MMM, YYYY ZZZZ')
+            item_time = arrow.get(item['date_published']).format('ddd, DD MMM, YYYY ZZZZ')
             item_info = f'''<item>
 <title>{item['title']}</title>
 <description>{item['content_html']}</description>
