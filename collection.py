@@ -90,7 +90,7 @@ class Collection:
         item_string = ''
 
         for item in items:
-            item_time = arrow.get(item['date_published']).format('ddd, DD MMM, YYYY ZZZ') + 'z'
+            item_time = arrow.get(item['date_published']).format('ddd, DD MMM, YYYY ZZZ')
             item_info = f'''<item>
 <title>{item['title']}</title>
 <description><![CDATA[{item['content_html']}]]></description>
