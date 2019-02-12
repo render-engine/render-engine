@@ -94,7 +94,7 @@ class Collection:
             item_info = f'''<item>
 <title>{item['title']}</title>
 <description><![CDATA[{item['content_html']}]]></description>
-<guid>{item['url']}</guid>
+<guid>{config.SITE_URL}/{item['url']}</guid>
 <pubDate>{item_time}</pubDate>
 </item>
 '''
