@@ -33,6 +33,7 @@ class Collection:
         "Collect data into fixed-length chunks or blocks"
         # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
         args = [iter(self.pages)] * 10
+        print(args)
         iterable = zip_longest(*args, fillvalue=None) 
         return iterable
         
