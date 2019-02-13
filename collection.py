@@ -7,11 +7,12 @@ from pathlib import Path
 import arrow
 
 
-rfc3339_format = 'YYYY-MM-DDTHH:MM:SSZZ'
+rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
+rfc822 = 'YYYY-MM-DD HH:MM:SS ZZ'
 
-def rfc3339(time):
+def feed_time(time, time_format):
     rfc_time = arrow.get(time,
-            config.TIME_FORMAT).format(rfc3339_format)
+            config.TIME_FORMAT).format(time_format)
     return rfc_time 
      
 class Collection:
@@ -77,7 +78,8 @@ class Collection:
 
         feed_items = []
 
-        filled_feed_data['items'] = [self.item_values(feed_item) for feed_item in self.pages]
+        filled_feed_data['items'] = [self.item_values(feed_item,
+            time_format=rfc3339) for feed_item in self.pages]
         return filled_feed_data
     
     def generate_rss_feed(self, **kwargs):
@@ -86,7 +88,7 @@ class Collection:
 <description>{feed_items['description']}</description>
 <link>{feed_items['home_page_url']}</link>
 '''
-        items = [self.item_values(feed_item) for feed_item in self.pages]
+        items = [self.item_values(feed_item, time_format=rfc822) for feed_item in self.pages]
         item_string = ''
 
         for item in items:
@@ -111,7 +113,7 @@ class Collection:
 </rss>
 '''
 
-    def item_values(self, item):
+    def item_values(self, item, time_format):
 
         items_values = {
            'id':item.id,
@@ -119,8 +121,10 @@ class Collection:
            'title': item.title,
            'content_html': item.markup, 
            'summary': item.summary,
-           'date_published': rfc3339(item.date_published),
-           'date_modified': rfc3339(item.date_modified),
+           'date_published': feed_time(item.date_published,
+               time_format=time_format),
+           'date_modified': feed_time(item.date_modified,
+               time_format=time_format),
            } 
 
         other_item_values = (
