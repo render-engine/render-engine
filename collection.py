@@ -8,7 +8,7 @@ import arrow
 
 
 rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
-rfc822 = 'ddd, DD-MM YYYY HH:MM:SS ZZ'
+rfc822 = 'ddd, MMM DD YYYY HH:MM:SS ZZ'
 
 def feed_time(time, time_format):
     rfc_time = arrow.get(time,
