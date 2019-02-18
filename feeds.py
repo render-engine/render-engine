@@ -34,7 +34,7 @@ def generate_from_metadata( items, path,config=config, **kwargs):
     for item in items:
         items_values = {
            'id':item.id,
-           'url': f'{path}/{item.id}',
+           'url': f'{home_page_url}/{item.id}',
            'title': item.title,
            'content_html': item.markup, 
            'summary': item.summary,
