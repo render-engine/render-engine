@@ -118,7 +118,7 @@ class Collection:
 
         items_values = {
            'id':item.id,
-           'url': f'{self.output_path}/{item.id}',
+           'url': f'{config.SITE_URL}/{item.id}',
            'title': item.title,
            'content_html': item.markup, 
            'summary': item.summary,
