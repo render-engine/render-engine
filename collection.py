@@ -26,7 +26,7 @@ class Collection:
         page_glob = self.content_path.glob('*.md')
         pages = [self.content_type(base_file=p, output_path=self.output_path) for p in page_glob]
         self.pages = sorted(pages, key=lambda page:
-                arrow.get(page._date_published, config.TIME_FORMAT),
+                arrow.get(page.date_published, config.TIME_FORMAT),
                 reverse=True)
         self.json_feed = self.generate_from_metadata()
         self.rss_feed = self.generate_rss_feed()
