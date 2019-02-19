@@ -88,6 +88,7 @@ class Collection:
         channel_info = f'''<title>{feed_items['title']}</title>
 <description>{feed_items['description']}</description>
 <link>{feed_items['home_page_url']}</link>
+<atom:link href="{config.SITE_URL}/{self.name}/{self.name}.rss" rel="self" type="application/rss+xml" />
 '''
         items = [self.item_values(feed_item, time_format=rfc822) for feed_item in self.pages]
         item_string = ''
