@@ -1,6 +1,6 @@
+from .environment import env
+from .writer import write_page
 from itertools import zip_longest
-from environment import env
-from writer import write_page
 import config
 
 def paginate(iterable, items_per_page, fillvalue=None):
