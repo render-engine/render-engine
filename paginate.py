@@ -1,5 +1,5 @@
 from itertools import zip_longest
-from environment import env
+from .environment import env
 from writer import write_page
 import config
 
