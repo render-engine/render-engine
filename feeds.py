@@ -1,3 +1,5 @@
+import json
+
 def feed_gen(collection):
     with open(f'{collection.output_path}/{collection.name}.json', 'w') as fp:
         json.dump(collection.json_feed, fp)
