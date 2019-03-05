@@ -55,7 +55,7 @@ class Collection:
         return d
 
 
-    def generate_from_metadata(self, config=config, **kwargs):
+    def generate_from_metadata(self, config=config, pages=self.pages, **kwargs):
         feed_data = {
                 'title': kwargs.get('title', config.SITE_TITLE),
                 'home_page_url': kwargs.get('home_page_url', config.SITE_URL),
@@ -80,17 +80,17 @@ class Collection:
         feed_items = []
 
         filled_feed_data['items'] = [self.item_values(feed_item,
-            time_format=rfc3339) for feed_item in self.pages]
+            time_format=rfc3339) for feed_item in pages]
         return filled_feed_data
     
-    def generate_rss_feed(self, **kwargs):
+    def generate_rss_feed(self, pages=self.pages, **kwargs):
         feed_items = self.generate_from_metadata()
         channel_info = f'''<title>{feed_items['title']}</title>
 <description>{feed_items['description']}</description>
 <link>{feed_items['home_page_url']}</link>
 <atom:link href="{config.SITE_URL}/{self.name}/{self.name}.rss" rel="self" type="application/rss+xml" />
 '''
-        items = [self.item_values(feed_item, time_format=rfc822) for feed_item in self.pages]
+        items = [self.item_values(feed_item, time_format=rfc822) for feed_item in pages]
         item_string = ''
 
         for item in items:
