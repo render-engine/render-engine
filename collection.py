@@ -55,7 +55,8 @@ class Collection:
         return d
 
 
-    def generate_from_metadata(self, config=config, pages=self.pages, **kwargs):
+    def generate_from_metadata(self, config=config, pages=None, **kwargs):
+        pages = pages or self.pages
         feed_data = {
                 'title': kwargs.get('title', config.SITE_TITLE),
                 'home_page_url': kwargs.get('home_page_url', config.SITE_URL),
@@ -83,7 +84,8 @@ class Collection:
             time_format=rfc3339) for feed_item in pages]
         return filled_feed_data
     
-    def generate_rss_feed(self, pages=self.pages, **kwargs):
+    def generate_rss_feed(self, pages=None, **kwargs):
+        pages = pages or self.pages
         feed_items = self.generate_from_metadata()
         channel_info = f'''<title>{feed_items['title']}</title>
 <description>{feed_items['description']}</description>
