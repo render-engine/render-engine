@@ -1,4 +1,4 @@
-import .config
+import config
 from .page import Page
 from .blog import BlogPost
 from .microblog import MicroBlogPost
