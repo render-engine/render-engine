@@ -1,6 +1,6 @@
 import re
-import config
 import arrow
+import .config as config
 from datetime import datetime
 from jinja2 import Markup
 from pathlib import Path
