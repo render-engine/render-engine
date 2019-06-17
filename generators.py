@@ -14,8 +14,9 @@ def remove_path(path):
     except:
         pass
 
-def gen_static(static_path: Path, overwrite: bool=True):
+def gen_static(static_path: str='static', overwrite: bool=True):
+    path = Path(f'{config.OUTPUT_PATH}/{static_path}')
     if overwrite:
-        shutil.rmtree(Path(
+        shutil.rmtree(static_path)
 
-    return shutil.copytree(static_path, Path(f'{config.OUTPUT_PATH}/static'))
+    return shutil.copytree(static_path, path)
