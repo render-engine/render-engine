@@ -22,12 +22,32 @@ config = config['DEFAULT']
 
 class Collection:
     def __init__(self, **kwargs):
+        """
+        Create a Collection of Similar Page Objects
+        -----------
+        - name is used to create a slug object
+        - content_type the type of pages that you are bundling (Currently all
+          collections have to be of the same type)
+
+        TODO: Figure out how to collect items of different types (Perhaps for
+        courses)
+
+        - extension tells collection what types of documents to look at,
+          usually (HTML or Markdown files)
+        TODO: Add ignore param that looks are all files that don't contain the
+        ignored type - (e.g. Collection(ignored=".tmp"))
+        """
         self.name = kwargs.get('name')
         self.content_type = kwargs.get('content_type', Page)
         self.extension = kwargs.get('extension', '.md')
-        base_content_path = config['CONTENT_PATH']
+
+        if self.extension[0] != '.':
+            self.extension = f'.{self.extension}'
+
+
 
         # Content Path is were all the content is stored before being processed
+        base_content_path = config['CONTENT_PATH']
         content_path = base_content_path + '/' + kwargs.get('content_path', '')
         self.content_path = Path(content_path)
 
@@ -35,11 +55,22 @@ class Collection:
         output_path = config['OUTPUT_PATH']+ '/' + kwargs.get('output_path', '')
         self.output_path = Path(output_path)
 
-        page_glob = self.content_path.glob('*.md')
-        pages = [self.content_type(base_file=p, output_path=self.output_path) for p in page_glob]
-        self.pages = sorted(pages, key=lambda page:
-                arrow.get(page.date_published, config.TIME_FORMAT),
-                reverse=True)
+        page_glob = self.content_path.glob(f'*{self.extension}')
+
+        pages = [self.content_type(
+                    base_file=base_file,
+                    output_path=self.output_path,
+                    ) for base_file in page_glob ]
+
+        self.pages = sorted(
+                pages,
+                key=lambda page: arrow.get(
+                       page.date_published,
+                       config['TIME_FORMAT'],
+                       ),
+                reverse=True,
+                )
+
         self.json_feed = self.generate_from_metadata()
         self.rss_feed = self.generate_rss_feed()
 
@@ -48,7 +79,7 @@ class Collection:
         "Collect data into fixed-length chunks or blocks"
         # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
         args = [iter(self.pages)] * 10
-        iterable = zip_longest(*args, fillvalue=None) 
+        iterable = zip_longest(*args, fillvalue=None)
         return iterable
         
     @property
