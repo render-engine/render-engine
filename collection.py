@@ -1,28 +1,40 @@
-import config
-import json
 from collections import defaultdict
 from itertools import zip_longest
-from pages import Page 
+from pages import Page
 from pathlib import Path
+from base_config import config
+import json
 import arrow
 
-
 rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
-rfc822 = 'ddd, DD MMM YYYY HH:MM:SS Z'
+rfc2822 = 'ddd, DD MMM YYYY HH:MM:SS Z'
+
 
 def feed_time(time, time_format):
-    rfc_time = arrow.get(time,
-            config.TIME_FORMAT).format(time_format)
-    return rfc_time 
-     
+    rfc_time = arrow.get(
+            time,
+            user_time_format,
+            ).format(time_format)
+    return rfc_time
+
+# The Current Setup has all the configurations in config['DEFAULT']
+config = config['DEFAULT']
+
 class Collection:
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
-        self.content_type = kwargs.get('content_type')
+        self.content_type = kwargs.get('content_type', Page)
         self.extension = kwargs.get('extension', '.md')
-        content_path = kwargs.get('content_path', '')
-        self.content_path = Path(f'{config.CONTENT_PATH}/{content_path}')
-        self.output_path = Path(f'{config.OUTPUT_PATH}/'+ kwargs.get('output_path', ''))
+        base_content_path = config['CONTENT_PATH']
+
+        # Content Path is were all the content is stored before being processed
+        content_path = base_content_path + '/' + kwargs.get('content_path', '')
+        self.content_path = Path(content_path)
+
+        # Output Path is where the output content is stored
+        output_path = config['OUTPUT_PATH']+ '/' + kwargs.get('output_path', '')
+        self.output_path = Path(output_path)
+
         page_glob = self.content_path.glob('*.md')
         pages = [self.content_type(base_file=p, output_path=self.output_path) for p in page_glob]
         self.pages = sorted(pages, key=lambda page:
