@@ -1,5 +1,5 @@
 from pathlib import Path
-from base_config import config
+from .base_config import config
 import shutil
 
 # Currently all of the Configuration Information is saved to Default
