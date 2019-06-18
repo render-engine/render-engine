@@ -1,34 +1,32 @@
-from collection import Collection
-from pathlib import Path
+from generators import gen_static
 from base_config import config
 
-
-config = config['DEFAULT']
-
 class Engine:
-    def __init__(self,
-            collections: list=[],
-            ):
+    """This is the engine that is builds your static site.
+    Use `Engine.run()` to output the files to the designated output path."""
 
-        # use configparser to load the base config file
-        # overwrite it with the file at `config_path`
-        # config files can have any extension but probably shouldn't
-        self.collections = collections
+    # Currently all of the Configuration Information is saved to Default
+    config = config['DEFAULT']
 
+    def __init__(self, *, conent_path, output_path):
+        self.conent_path = content_path
+        self.output_path = output_path
 
-    def run(overwrite=True):
-        for collection in self.collections:
-            collection.output_path.mkdir(parents=True, exist_ok=True)
+    def build(self, collections):
+        static_pages = gen_static(
+            static_path=STATIC_PATH,
+            overwrite=overwrite,
+            )
 
-            for page in collection.pages:
-                output_path = f'{collection.output_path}/{page.id}.html'
-                write_page(output_path, page.html)
+        for collection in collections:
+            collection.output_path.mkdir(
+            parents=True,
+            exist_ok=True,
+            )
 
-        gen_static(
-                static_path=config['STATIC_PATH'],
-                overwrite=overwrite
-                )
+    def run(self, overwrite=True):
+        for page in self.collections:
+            write_page(
+            f'{collection.output_path}/{page.id}.html',
+        page.html)
 
-
-if __name__ == '__main__':
-    engine = Engine()
