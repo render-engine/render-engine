@@ -9,10 +9,25 @@ url = "https://files.pythonhosted.org"
 verify_ssl = false
 
 [dev-packages]
+pytest = "*"
+v = {editable = true,version = "*"}
+pytest-mock = "*"
 
 [packages]
-configparser = "*"
 arrow = "*"
+certifi = "*"
+click = "*"
+itsdangerous = "==1.1.0"
+jinja2 = "*"
+markdown = "*"
+markupsafe = "*"
+pipenv = "*"
+python-dateutil = "*"
+six = "*"
+virtualenv = "*"
+virtualenv-clone = "*"
+werkzeug = "*"
+pathlib = "*"
+pillow = "*"
 
 [requires]
-python_version = "3.7"

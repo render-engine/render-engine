@@ -1,7 +1,7 @@
 from jinja2 import Markup
 from string import punctuation
 from markdown import markdown
-from pages.page import Page
+from page import Page
 
 
 class BlogPost(Page):
