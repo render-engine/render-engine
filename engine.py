@@ -12,8 +12,26 @@ class Engine:
         self.conent_path = content_path
         self.output_path = output_path
         
-    def build(self):
-        pass
+    def build(self, collections):
+        static_pages = gen_static(
+            static_path=STATIC_PATH,
+            overwrite=overwrite,
+            )
+            
+        page_collections = pages, blog
+
+        for collection in page_collections:
+            collection.output_path.mkdir(
+            parents=True, 
+            exist_ok=True,
+            )
+        
         
     def run(self, overwrite=True):
-    return gen_static(static_path=STATIC_PATH, overwrite=overwrite)
+        for page in collection.pages:
+            write_page(
+            f'{collection.output_path}/{page.id}.html', 
+        page.html)
+
+    
+    return 
