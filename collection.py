@@ -2,7 +2,7 @@ from collections import defaultdict
 from itertools import zip_longest
 from .page import Page
 from pathlib import Path
-from base_config import config
+from .base_config import config
 import json
 import arrow
 
