@@ -30,15 +30,12 @@ class Engine:
 
     def build(self, content_type, *, template, route):
         def inner(func):
-            r = func
-            content = content_type(template=template).html
+            kwargs = func() or {}
+            content = content_type(template=template, **kwargs).html
             self.routes[f'{route}.html'] = content
+            return func
 
-            return r
         return inner
-
-
-        self.pages.append(new_page)
 
     def collection(self, paginate=True, feed=True, feed_template=None):
         def inner(func):
