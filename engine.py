@@ -39,8 +39,9 @@ class Engine:
             content_type,
             *,
             template,
-            route=None,
+            route='',
             base_file=None,
+            output_path='',
             **kwargs,
             ):
         """Used to Create the HTML that will be added to Routes. Usually not
@@ -54,7 +55,7 @@ class Engine:
 
         route = route if route else (content.id)
 
-        self.routes[f'{route}.html'] = content.html
+        self.routes[f'{output_path}/{route}'] = content.html
         return content
 
     def build(self, content_type, *, template, route, base_file=None):
@@ -78,7 +79,7 @@ class Engine:
             *,
             template,
             content_path,
-            output_path=output_path,
+            output_path='',
             paginate=True,
             feed=True,
             feed_template=None,
@@ -89,7 +90,9 @@ class Engine:
         content_type and storing in routes to be created on run"""
         content_path = Path(content_path)
 
-        for path in content_path.glob(f'*{extension}'):
+        collection_items = content_path.glob(f'*{extension}')
+
+        for path in collection_items:
             self.add_route(
                     content_type,
                     output_path=output_path,
@@ -107,9 +110,23 @@ class Engine:
         TODO: Add Skips to ByPass Certain Steps
         """
 
+        static_output = f"{self.output_path}/{self.static_path}"
+
+        # If overwrite AND THE FILE EXISTS, then remove the entire folder
+        if all((overwrite, Path(self.output_path).exists())):
+            shutil.rmtree(self.output_path)
+            Path(self.output_path).mkdir() # Creates the new folder
+
+        # Instead of trying to analyze the static folder. Just delete the
+        # contents
+        try:
+            shutil.rmtree(static_output)
+        except:
+            pass
+
         shutil.copytree(
             self.static_path,
-            f"{config['OUTPUT_PATH']}/{config['STATIC_PATH']}",
+            static_output,
             )
 
         for path, content in self.routes.items():
@@ -124,6 +141,8 @@ class Engine:
                     if f.read() == content:
                         continue
 
+                    else:
+                        filename.unlink()
+
             with filename.open('w') as f:
                 f.write(content)
-
