@@ -33,7 +33,6 @@ class Engine:
         self.content_path = Path(content_path)
         self.output_path = Path(output_path)
         self.static_path = Path(static_path)
-        self.collections = []
         self.routes = dict()
 
         # Remove output directory if it exists
