@@ -52,7 +52,7 @@ class Engine:
                 **kwargs,
                 )
 
-        route = route if route else (content.id + '.html')
+        route = route if route else (content.id)
 
         self.routes[f'{route}.html'] = content.html
         return content
