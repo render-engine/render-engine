@@ -4,6 +4,9 @@ import shutil
 
 # Currently all of the Configuration Information is saved to Default
 config = config['DEFAULT']
+content_path='content'
+output_path='output'
+static_path='static'
 
 def paginate(iterable, items_per_page, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
@@ -23,30 +26,16 @@ def write_paginated_pages(name, pagination, template, path, **kwargs):
 class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
-    def __init__(
-            self,
-            *,
-            content_path='content',
-            output_path='output',
-            static_path='static',
-            ):
-        self.content_path = Path(content_path)
-        self.output_path = Path(output_path)
-        self.static_path = Path(static_path)
-        self.routes = dict()
-
-        # Remove output directory if it exists
-        try:
-            shutil.rmtree(self.output_path)
-
-        except:
-            pass
+    content_path = Path(content_path)
+    output_path = Path(output_path)
+    static_path = Path(static_path)
+    routes = dict()
 
     def add_route(self,
             content_type,
             *,
-            route,
             template,
+            route=None,
             base_file=None,
             **kwargs,
             ):
@@ -57,9 +46,11 @@ class Engine:
                 template=template,
                 base_file=base_file,
                 **kwargs,
-                ).html
+                )
 
-        self.routes[f'{route}.html'] = content
+        route = route if route else (content.id + '.html')
+
+        self.routes[f'{route}.html'] = content.html
         return content
 
     def build(self, content_type, *, template, route, base_file=None):
@@ -79,22 +70,25 @@ class Engine:
 
     def add_collection(
             self,
+            content_type,
             *,
-            content_path,
             template,
-            output_path,
+            content_path,
+            output_path=output_path,
             paginate=True,
             feed=True,
             feed_template=None,
-            extenstion='.md',
+            extension='.md',
+            **kwargs,
             ):
         """Iterate through the provided content path building the desired
         content_type and storing in routes to be created on run"""
+        content_path = Path(content_path)
 
         for path in content_path.glob(f'*{extension}'):
             self.add_route(
                     content_type,
-                    route=route,
+                    output_path=output_path,
                     template=template,
                     base_file=path,
                     **kwargs,
@@ -113,12 +107,6 @@ class Engine:
             self.static_path,
             f"{config['OUTPUT_PATH']}/{config['STATIC_PATH']}",
             )
-
-            for page in collection.pages:
-                route = f'{collection.output_path}/{page.id}.html'
-                content = page.html
-                self.routes[route] = content
-
 
         for path, content in self.routes.items():
             filename = Path(path).resolve()
