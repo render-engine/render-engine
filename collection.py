@@ -21,7 +21,7 @@ def feed_time(time, time_format, user_time_format=config['TIME_FORMAT']):
 
 
 class Collection:
-    def __init__(self, **kwargs):
+    def __init__(self, paginate: bool=False, **kwargs):
         """
         Create a Collection of Similar Page Objects
         -----------

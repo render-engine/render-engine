@@ -7,7 +7,7 @@ def paginate(iterable, items_per_page, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * items_per_page
-    iterable = zip_longest(*args, fillvalue=fillvalue) 
+    iterable = zip_longest(*args, fillvalue=fillvalue)
     return iterable
 
 def write_paginated_pages(name, pagination, template, path, **kwargs):
