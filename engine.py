@@ -131,7 +131,7 @@ class Engine:
             )
 
         for path, content in self.routes.items():
-            filename = Path(f'{self.output_path}/{path}').resolve()
+            filename = Path(f'{self.output_path}/{path}.html').resolve()
             base_dir = filename.parent.mkdir(
                     parents=True,
                     exist_ok=True,
