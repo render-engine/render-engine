@@ -50,6 +50,7 @@ class Engine:
         content = content_type(
                 template=template,
                 base_file=base_file,
+                output_path=output_path,
                 **kwargs,
                 )
 
