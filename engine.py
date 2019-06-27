@@ -41,7 +41,6 @@ class Engine:
             template,
             route='',
             base_file=None,
-            output_path='',
             **kwargs,
             ):
         """Used to Create the HTML that will be added to Routes. Usually not
@@ -50,13 +49,13 @@ class Engine:
         content = content_type(
                 template=template,
                 base_file=base_file,
-                output_path=output_path,
                 **kwargs,
                 )
 
-        route = route if route else (content.id)
+        if content.id:
+            route += f'/{content.id}'
 
-        self.routes[f'{output_path}/{route}'] = content.html
+        self.routes[f'{route}'] = content.html
         return content
 
     def build(self, content_type, *, template, route, base_file=None):
@@ -96,8 +95,8 @@ class Engine:
         for path in collection_items:
             self.add_route(
                     content_type,
-                    output_path=output_path,
                     template=template,
+                    route = output_path,
                     base_file=path,
                     **kwargs,
                     )

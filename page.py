@@ -58,7 +58,8 @@ class Page():
 
     @property
     def id(self):
-        return self._id or self._slug or self.base_file.stem
+        base_file_stem = self.base_file.stem if self.base_file else None
+        return self._id or self._slug or base_file_stem or ''
 
     def get_date_published(self):
         """Returns the value of _date_published or _date, or created_datetime from
