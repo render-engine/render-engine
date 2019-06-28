@@ -40,7 +40,7 @@ class Engine:
             *,
             template,
             route='',
-            routes=[],
+            new_routes=[],
             base_file=None,
             **kwargs,
             ):
@@ -56,8 +56,8 @@ class Engine:
         if content.id:
             route += f'/{content.id}'
 
-        routes.append(route)
-        for r in routes:
+        new_routes.append(route)
+        for r in new_routes:
             self.routes[f'{r}'] = content.html
         return content
 
