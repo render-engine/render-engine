@@ -17,22 +17,21 @@ def paginate(iterable, items_per_page, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * items_per_page
-    iterable = zip_longest(*args, fillvalue=fillvalue)
+    iterable = list(zip_longest(*args, fillvalue=fillvalue))
     return iterable
 
 
 def write_paginated_pages(name, pagination, *, route, **kwargs):
-    paginated_pages = []
     for block in enumerate(pagination):
+        block_route = f'{route}/{name}_{block[0]}'
         r = add_route(
                     Page,
                     template='archive.html',
-                    route=route,
-                    post_list=[b for b in block[1] if b],
+                    route=block_route,
+    paginated_pages = []
+                    post_list=[b for b in filter(lambda x:x, block[1]],
                     **kwargs,
                     ),
-        return {f'{name}_{block[0]}': r}
-        write_page(f'{path}/{name}_{block[0]}.html', render)
 
 def add_route(
             content_type: Type[Page],
@@ -92,7 +91,7 @@ class Engine:
             content_path: PathString,
             routes: Iterable[PathString]=['./'],
             extension: str='.md',
-            archive: bool=True,
+            archive: bool=False,
             name: str='',
             **kwargs,
             ):
@@ -109,7 +108,7 @@ class Engine:
             if archive:
                 pages = paginate(collection_files, 10)
                 self.routes_items.update(
-                        write_pagingated_pages(name, pages, route=route),
+                        write_paginated_pages(name, pages, route=route),
                         )
 
             for collection_item in collection_files:
@@ -132,7 +131,6 @@ class Engine:
 
         TODO: Add Skips to ByPass Certain Steps
         """
-        print(self.routes_items)
         static_output = f"{self.output_path}/{self.static_path}"
 
         # If overwrite AND THE FILE EXISTS, then remove the entire folder
