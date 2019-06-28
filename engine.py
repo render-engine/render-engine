@@ -33,14 +33,14 @@ class Engine:
     content_path = Path(content_path)
     output_path = Path(output_path)
     static_path = Path(static_path)
-    routes = dict()
+    routes_index = dict()
 
     def add_route(self,
             content_type,
             *,
             template,
             route='',
-            new_routes=[],
+            routes=[],
             base_file=None,
             **kwargs,
             ):
@@ -56,12 +56,12 @@ class Engine:
         if content.id:
             route += f'/{content.id}'
 
-        new_routes.append(route)
-        for r in new_routes:
-            self.routes[f'{r}'] = content.html
-        return content
+        if route:
+            routes.append(route)
 
-    def build(self, content_type, *, template, route, base_file=None):
+        return (self.route_index[f'{r}'] = content.html for r in routes)
+
+    def build(self, content_type, *, template, route='', routes=[], base_file=None):
         """Used to get **kwargs for `add_route`"""
 
         def inner(func):
@@ -69,6 +69,7 @@ class Engine:
             self.add_route(
                     content_type,
                     route=route,
+                    routes=routes,
                     template=template,
                     **kwargs
                     )
@@ -82,27 +83,30 @@ class Engine:
             *,
             template,
             content_path,
-            output_path='',
+            route='',
+            routes=[],
             paginate=True,
             feed=True,
             feed_template=None,
             extension='.md',
             **kwargs,
             ):
+
         """Iterate through the provided content path building the desired
         content_type and storing in routes to be created on run"""
         content_path = Path(content_path)
 
         collection_items = content_path.glob(f'*{extension}')
 
-        for path in collection_items:
-            self.add_route(
+        if route:
+            routes.append(route)
+
+        return (sef.add_route(
                     content_type,
                     template=template,
-                    route = output_path,
+                    route = x+y,
                     base_file=path,
-                    **kwargs,
-                    )
+                    **kwargs) for x in routes for y in collection_items)
 
     def run(self, overwrite=True):
         """Builds the Site Objects
@@ -132,7 +136,7 @@ class Engine:
             static_output,
             )
 
-        for path, content in self.routes.items():
+        for path, content in self.routes_index.items():
             filename = Path(f'{self.output_path}/{path}.html').resolve()
             base_dir = filename.parent.mkdir(
                     parents=True,
