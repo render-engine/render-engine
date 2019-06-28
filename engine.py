@@ -20,14 +20,17 @@ def paginate(iterable, items_per_page, fillvalue=None):
     return iterable
 
 
-def write_paginated_pages(name, pagination, template, path, **kwargs):
-    temp =  env.get_template(template)
+def write_paginated_pages(name, pagination, *, route, **kwargs):
+    paginated_pages = []
     for block in enumerate(pagination):
-        render = temp.render(
-                post_list=[b for b in block[1] if b],
-                config=config,
-                **kwargs,
-                )
+        r = add_route(
+                    Page,
+                    template='archive.html',
+                    route=route,
+                    post_list=[b for b in block[1] if b],
+                    **kwargs,
+                    ),
+        return {f'{name}_{block[0]}': r}
         write_page(f'{path}/{name}_{block[0]}.html', render)
 
 def add_route(
@@ -41,7 +44,11 @@ def add_route(
         """Used to Create the HTML that will be added to Routes. Usually not
         called on it's own."""
 
-        content = content_type(template=template, base_file=base_file, **kwargs)
+        content = content_type(
+                template=template,
+                base_file=base_file,
+                **kwargs,
+                )
 
         if content.id:
             route.joinpath(content.id)
@@ -84,6 +91,8 @@ class Engine:
             content_path: PathString,
             routes: Iterable[PathString]=['./'],
             extension: str='.md',
+            archive: bool=True,
+            name: str='',
             **kwargs,
             ):
         """Iterate through the provided content path building the desired
@@ -96,6 +105,12 @@ class Engine:
             routes = routes.split(',')
 
         for route in routes:
+            if archive:
+                pages = paginate(collection_files, 10)
+                self.routes_items.update(
+                        write_pagingated_pages(name, pages, route=route),
+                        )
+
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
                 route_item = add_route(
