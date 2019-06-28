@@ -82,7 +82,7 @@ class Engine:
             *,
             template: PathString,
             content_path: PathString,
-            routes: Iterable[PathString]=[],
+            routes: Iterable[PathString]=['./'],
             extension: str='.md',
             **kwargs,
             ):
