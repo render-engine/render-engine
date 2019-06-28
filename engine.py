@@ -58,8 +58,9 @@ class Engine:
 
         if route:
             routes.append(route)
-
-        return (self.route_index[f'{r}'] = content.html for r in routes)
+        
+        for routes:
+            self.route_index[f'{r}'] = content.html
 
     def build(self, content_type, *, template, route='', routes=[], base_file=None):
         """Used to get **kwargs for `add_route`"""
