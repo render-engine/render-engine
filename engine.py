@@ -89,14 +89,13 @@ class Engine:
         """Iterate through the provided content path building the desired
         content_type and storing in routes to be created on run"""
         content_path = Path(content_path)
-        collection_files = content_path.glob(f'*{extension}')
+        collection_files = list(content_path.glob(f'*{extension}'))
         route_items = []
 
         if isinstance(routes, str):
             routes = routes.split(',')
 
         for route in routes:
-
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
                 route_item = add_route(
@@ -117,7 +116,7 @@ class Engine:
 
         TODO: Add Skips to ByPass Certain Steps
         """
-
+        print(self.routes_items)
         static_output = f"{self.output_path}/{self.static_path}"
 
         # If overwrite AND THE FILE EXISTS, then remove the entire folder
