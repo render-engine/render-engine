@@ -1,5 +1,7 @@
-from pathlib import Path
 from .base_config import config
+from pathlib import Path
+from .page import Page
+from typing import Type, Optional, Union, TypeVar, Iterable
 import shutil
 
 # Currently all of the Configuration Information is saved to Default
@@ -7,6 +9,8 @@ config = config['DEFAULT']
 content_path='content'
 output_path='output'
 static_path='static'
+
+PathString = Union[str, Type[Path]]
 
 def paginate(iterable, items_per_page, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
@@ -26,6 +30,23 @@ def write_paginated_pages(name, pagination, template, path, **kwargs):
                 )
         write_page(f'{path}/{name}_{block[0]}.html', render)
 
+def add_route(
+            content_type: Type[Page],
+            *,
+            template: str,
+            route: str='',
+            base_file: Optional[str]=None,
+            **kwargs,
+            ):
+        """Used to Create the HTML that will be added to Routes. Usually not
+        called on it's own."""
+
+        content = content_type(template=template, base_file=base_file, **kwargs)
+
+        if content.id:
+            route.joinpath(content.id)
+
+        return {route: content}
 
 class Engine:
     """This is the engine that is builds your static site.
@@ -33,81 +54,60 @@ class Engine:
     content_path = Path(content_path)
     output_path = Path(output_path)
     static_path = Path(static_path)
-    routes_index = dict()
+    routes_items = dict()
 
-    def add_route(self,
-            content_type,
-            *,
-            template,
-            route='',
-            routes=[],
-            base_file=None,
-            **kwargs,
-            ):
-        """Used to Create the HTML that will be added to Routes. Usually not
-        called on it's own."""
-
-        content = content_type(
-                template=template,
-                base_file=base_file,
-                **kwargs,
-                )
-
-        if content.id:
-            route += f'/{content.id}'
-
-        if route:
-            routes.append(route)
-        
-        for routes:
-            self.route_index[f'{r}'] = content.html
-
-    def build(self, content_type, *, template, route='', routes=[], base_file=None):
+    def build(self, content_type, *, template, routes, base_file=None):
         """Used to get **kwargs for `add_route`"""
-
-        def inner(func):
+        def inner(func, routes=routes):
             kwargs = func() or {}
-            self.add_route(
+
+            if isinstance(routes, str):
+                routes = routes.split(',')
+
+            for route in routes:
+                self.routes_items.update(add_route(
                     content_type,
                     route=route,
-                    routes=routes,
                     template=template,
-                    **kwargs
-                    )
+                    **kwargs,
+                    ))
+
             return func
 
         return inner
 
     def add_collection(
             self,
-            content_type,
+            content_type: Type[Page],
             *,
-            template,
-            content_path,
-            route='',
-            routes=[],
-            paginate=True,
-            feed=True,
-            feed_template=None,
-            extension='.md',
+            template: PathString,
+            content_path: PathString,
+            routes: Iterable[PathString]=[],
+            extension: str='.md',
             **kwargs,
             ):
-
         """Iterate through the provided content path building the desired
         content_type and storing in routes to be created on run"""
         content_path = Path(content_path)
+        collection_files = content_path.glob(f'*{extension}')
+        route_items = []
 
-        collection_items = content_path.glob(f'*{extension}')
+        if isinstance(routes, str):
+            routes = routes.split(',')
 
-        if route:
-            routes.append(route)
+        for route in routes:
 
-        return (sef.add_route(
-                    content_type,
-                    template=template,
-                    route = x+y,
-                    base_file=path,
-                    **kwargs) for x in routes for y in collection_items)
+            for collection_item in collection_files:
+                r = Path(route).joinpath(collection_item.stem)
+                route_item = add_route(
+                        content_type,
+                        template=template,
+                        route=r,
+                        base_file=collection_item,
+                        **kwargs,
+                        )
+
+                self.routes_items.update(route_item)
 
     def run(self, overwrite=True):
         """Builds the Site Objects
@@ -137,7 +137,7 @@ class Engine:
             static_output,
             )
 
-        for path, content in self.routes_index.items():
+        for path, content in self.routes_items.items():
             filename = Path(f'{self.output_path}/{path}.html').resolve()
             base_dir = filename.parent.mkdir(
                     parents=True,
@@ -153,4 +153,4 @@ class Engine:
                         filename.unlink()
 
             with filename.open('w') as f:
-                f.write(content)
+                f.write(content.html)
