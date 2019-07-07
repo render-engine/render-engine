@@ -28,8 +28,8 @@ def write_paginated_pages(name, pagination, *, route, **kwargs):
                     Page,
                     template='archive.html',
                     route=block_route,
-    paginated_pages = []
-                    post_list=[b for b in filter(lambda x:x, block[1]],
+                    paginated_pages = [],
+                    post_list=[b for b in filter(lambda x:x, block[1])],
                     **kwargs,
                     ),
 

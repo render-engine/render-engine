@@ -5,7 +5,7 @@ from datetime import datetime
 from jinja2 import Markup
 from pathlib import Path
 from markdown import markdown
-from environment import env
+from .environment import env
 
 def get_ct_time(md_file):
     return arrow.get(md_file.stat().st_ctime, tzinfo=config.REGION).format(config.TIME_FORMAT)
