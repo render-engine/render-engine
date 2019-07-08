@@ -107,9 +107,13 @@ class Engine:
         for route in routes:
             if archive:
                 pages = paginate(collection_files, 10)
-                self.routes_items.update(
-                        write_paginated_pages(name, pages, route=route),
-                        )
+                print(pages)
+                # self.routes_items.update(
+                #        write_paginated_pages(
+                #            name,
+                #            list(filter(lambda x:x, pages)),
+                #            route=route),
+                #        )
 
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
