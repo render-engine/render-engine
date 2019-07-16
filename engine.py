@@ -18,18 +18,18 @@ def paginate(iterable, items_per_page, fillvalue=None):
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * items_per_page
     iterable = list(zip_longest(*args, fillvalue=fillvalue))
-    return iterable
+    return filter(lambda x: x, iterable)
 
 
-def write_paginated_pages(name, pagination, *, route, **kwargs):
+def write_paginated_pages(name, pagination, *, route, content_type=Page, **kwargs):
     for block in enumerate(pagination):
         block_route = f'{route}/{name}_{block[0]}'
+        kwargs['post_list'] = [b for b in filter(lambda x:x, block[1])]
+
         r = add_route(
-                    Page,
+                    content_type,
                     template='archive.html',
                     route=block_route,
-                    paginated_pages = [],
-                    post_list=[b for b in filter(lambda x:x, block[1])],
                     **kwargs,
                     ),
 
@@ -106,14 +106,15 @@ class Engine:
 
         for route in routes:
             if archive:
-                pages = paginate(collection_files, 10)
-                print(pages)
-                # self.routes_items.update(
-                #        write_paginated_pages(
-                #            name,
-                #            list(filter(lambda x:x, pages)),
-                #            route=route),
-                #        )
+                pages = list(paginate(collection_files, 10))
+                route_item = add_route(
+                        Page,
+                        template='archive.html',
+                        route=name,
+                        **kwargs,
+                        )
+                print(route_item)
+                self.routes_items.update(route_item)
 
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
