@@ -1,4 +1,5 @@
 from .base_config import config
+from dataclasses import dataclass
 from itertools import zip_longest
 from pathlib import Path
 from .page import Page
@@ -13,30 +14,36 @@ static_path='static'
 
 PathString = Union[str, Type[Path]]
 
-def paginate(iterable, items_per_page, fillvalue=None):
+def paginate(iterable: any,
+        items_per_page: int,
+        *,
+        fillvalue=None,
+        ):
     "Collect data into fixed-length chunks or blocks"
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * items_per_page
-    iterable = list(zip_longest(*args, fillvalue=fillvalue))
-    return iterable
+    return zip_longest(*args, fillvalue=fillvalue)
 
 
-def write_paginated_pages(name, pagination, *, route, **kwargs):
+def write_paginated_pages(name, pagination, *, route, template='blog.html'):
+    p_routes = []
     for block in enumerate(pagination):
-        block_route = f'{route}/{name}_{block[0]}'
+        block_route = f'{route}/{name}_{block[0]}' # blog_0, blog_1, etc
         r = add_route(
                     Page,
                     template='archive.html',
                     route=block_route,
-                    paginated_pages = [],
-                    post_list=[b for b in filter(lambda x:x, block[1])],
-                    **kwargs,
-                    ),
+                    post_list=[x.content for x in list(filter(lambda x:x, block[1]))],
+                    )
+        p_routes.append(r)
+
+        return p_routes
+
 
 def add_route(
             content_type: Type[Page],
             *,
-            template: str,
+            template: str='page.html',
             route: str='',
             base_file: Optional[str]=None,
             **kwargs,
@@ -53,7 +60,12 @@ def add_route(
         if content.id:
             route.joinpath(content.id)
 
-        return {route: content}
+        return Route(content_path=route, content=content)
+
+@dataclass
+class Route:
+    content_path: Path
+    content: Page
 
 class Engine:
     """This is the engine that is builds your static site.
@@ -61,7 +73,7 @@ class Engine:
     content_path = Path(content_path)
     output_path = Path(output_path)
     static_path = Path(static_path)
-    routes_items = dict()
+    routes_items = []
 
     def build(self, content_type, *, template, routes, base_file=None):
         """Used to get **kwargs for `add_route`"""
@@ -72,12 +84,14 @@ class Engine:
                 routes = routes.split(',')
 
             for route in routes:
-                self.routes_items.update(add_route(
+
+                r = add_route(
                     content_type,
                     route=route,
                     template=template,
                     **kwargs,
-                    ))
+                    )
+                self.routes_items.append(r)
 
             return func
 
@@ -89,7 +103,7 @@ class Engine:
             *,
             template: PathString,
             content_path: PathString,
-            routes: Iterable[PathString]=['./'],
+            routes: Iterable[PathString]=[Path('./')],
             extension: str='.md',
             archive: bool=False,
             name: str='',
@@ -98,34 +112,35 @@ class Engine:
         """Iterate through the provided content path building the desired
         content_type and storing in routes to be created on run"""
         content_path = Path(content_path)
-        collection_files = list(content_path.glob(f'*{extension}'))
-        route_items = []
+        collection_files = content_path.glob(f'*{extension}')
 
-        if isinstance(routes, str):
-            routes = routes.split(',')
+        routes = map(lambda route: Path(route), routes)
 
+        collection_routes = []
         for route in routes:
-            if archive:
-                pages = paginate(collection_files, 10)
-                print(pages)
-                # self.routes_items.update(
-                #        write_paginated_pages(
-                #            name,
-                #            list(filter(lambda x:x, pages)),
-                #            route=route),
-                #        )
-
+            # collect first
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
-                route_item = add_route(
-                        content_type,
-                        template=template,
-                        route=r,
-                        base_file=collection_item,
-                        **kwargs,
-                        )
+                file_route=add_route(
+                            content_type,
+                            template=template,
+                            route=r,
+                            base_file=collection_item,
+                            ),
+                collection_routes.extend(file_route)
+            print(collection_routes)
 
-                self.routes_items.update(route_item)
+            if archive:
+                pages = paginate(collection_routes, 10)
+                self.routes_items.extend(
+                    write_paginated_pages(
+                        name,
+                        pages,
+                        route=route,
+                        ),
+                     )
+
+        self.routes_items += collection_routes
 
     def run(self, overwrite=True):
         """Builds the Site Objects
@@ -154,8 +169,9 @@ class Engine:
             static_output,
             )
 
-        for path, content in self.routes_items.items():
-            filename = Path(f'{self.output_path}/{path}.html').resolve()
+        print(self.routes_items)
+        for route in self.routes_items:
+            filename = Path(f'{self.output_path}/{route.content_path}.html').resolve()
             base_dir = filename.parent.mkdir(
                     parents=True,
                     exist_ok=True,
@@ -163,11 +179,11 @@ class Engine:
 
             if filename.exists():
                 with filename.open() as f:
-                    if f.read() == content:
+                    if f.read() == route.content:
                         continue
 
                     else:
                         filename.unlink()
 
             with filename.open('w') as f:
-                f.write(content.html)
+                f.write(route.content.html)
