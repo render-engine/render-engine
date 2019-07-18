@@ -116,19 +116,20 @@ class Engine:
         content_path = Path(content_path)
         collection_files = content_path.glob(f'*{extension}')
 
-        routes = map(lambda route: Path(route), routes)
 
         collection_routes = []
-        for route in routes:
-            for collection_item in collection_files:
+        for collection_item in collection_files:
+            for route in routes:
                 r = Path(route).joinpath(collection_item.stem)
+                print(r)
                 file_route=add_route(
                             content_type,
                             template=template,
                             route=r,
                             base_file=collection_item,
                             ),
-                collection_routes.extend(file_route)
+                collection_routes += file_route
+
 
             if archive:
                 pages = paginate(collection_routes, 10)
@@ -169,7 +170,6 @@ class Engine:
             static_output,
             )
 
-        print(self.routes_items)
         for route in self.routes_items:
             filename = Path(f'{self.output_path}/{route.content_path}.html').resolve()
             base_dir = filename.parent.mkdir(
