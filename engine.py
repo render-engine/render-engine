@@ -22,6 +22,7 @@ def paginate(iterable: any,
     "Collect data into fixed-length chunks or blocks"
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * items_per_page
+<<<<<<< HEAD
     return zip_longest(*args, fillvalue=fillvalue)
 
 
@@ -29,16 +30,32 @@ def write_paginated_pages(name, pagination, *, route, template='blog.html'):
     p_routes = []
     for block in enumerate(pagination):
         block_route = f'{route}/{name}_{block[0]}' # blog_0, blog_1, etc
+=======
+    iterable = list(zip_longest(*args, fillvalue=fillvalue))
+    return filter(lambda x: x, iterable)
+
+
+def write_paginated_pages(name, pagination, *, route, content_type=Page, **kwargs):
+    for block in enumerate(pagination):
+        block_route = f'{route}/{name}_{block[0]}'
+        kwargs['post_list'] = [b for b in filter(lambda x:x, block[1])]
+
+>>>>>>> 5f4770cec11f8f39695acb2393c2ffb3acb98781
         r = add_route(
-                    Page,
+                    content_type,
                     template='archive.html',
                     route=block_route,
+<<<<<<< HEAD
                     post_list=[x.content for x in list(filter(lambda x:x, block[1]))],
                     )
         p_routes.append(r)
 
         return p_routes
 
+=======
+                    **kwargs,
+                    ),
+>>>>>>> 5f4770cec11f8f39695acb2393c2ffb3acb98781
 
 def add_route(
             content_type: Type[Page],
@@ -118,7 +135,6 @@ class Engine:
 
         collection_routes = []
         for route in routes:
-            # collect first
             for collection_item in collection_files:
                 r = Path(route).joinpath(collection_item.stem)
                 file_route=add_route(
@@ -128,7 +144,6 @@ class Engine:
                             base_file=collection_item,
                             ),
                 collection_routes.extend(file_route)
-            print(collection_routes)
 
             if archive:
                 pages = paginate(collection_routes, 10)

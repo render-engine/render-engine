@@ -5,10 +5,11 @@ from .page import Page
 
 
 class BlogPost(Page):
-    def __init__(self, base_file, template='blog.html'):
+    def __init__(self, base_file, template='blog.html', **kwargs):
         super().__init__(
                 base_file=base_file,
                 template=template,
+                **kwargs,
                 )
         self.tags = self.get_tags()
 
