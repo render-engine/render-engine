@@ -2,17 +2,14 @@ from collections import defaultdict
 from itertools import zip_longest
 from .page import Page
 from pathlib import Path
-from .base_config import config
 import json
 import arrow
 
 rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
 rfc2822 = 'ddd, DD MMM YYYY HH:MM:SS Z'
+default_time_format = 'MMMM DD, YYYY HH:mm'
 
-# The Current Setup has all the configurations in config['DEFAULT']
-config = config['DEFAULT']
-
-def feed_time(time, time_format, user_time_format=config['TIME_FORMAT']):
+def feed_time(time, time_format, user_time_format=default_time_format):
     rfc_time = arrow.get(
             time,
             user_time_format,
@@ -63,13 +60,13 @@ class Collection:
         self.pages = sorted(
                 pages,
                 key=lambda page: arrow.get(
-                       page.date_published,
-                       config['TIME_FORMAT'],
-                       ),
+                    page.date_published,
+                    default_time_format,
+                    ),
                 reverse=True,
                 )
 
-        self.json_feed = self.generate_from_metadata()
+        self.json_feed = self.generate_feed_metadata()
         self.rss_feed = self.generate_rss_feed()
 
     @property
@@ -96,30 +93,42 @@ class Collection:
         return d
 
 
-    def generate_from_metadata(self, config=config, pages=None, **kwargs):
+    def generate_feed_metadata(self, pages=None, **config):
+        """Gets/Sets Data for dictionary feed metadata"""
         pages = pages or self.pages
+        title = config.get('title', 'Untitled Site')
+        home_page_url = config.get('home_page_url', 'https://example.com')
+        feed_url = config.get('feed_url', 'https://example.com/feed.json')
+        version = config.get('version', 'https://jsonfeed.org.version/1')
+        icon = config.get('icon','')
+        description = config.get('description', '')
+        user_comment = config.get('user_comment')
+        next_url = config.get('next_url', ) # needs pagination
+        favicon = config.get('favicon')
+        author = config.get('author',{
+                        'name': 'Jane Doe',
+                        'avatar': '',
+                        'url': '',
+                        })
+        expired = config.get('expired')
+        hubs = config.get('hubs')
+
         feed_data = {
-                'title': kwargs.get('title', config['SITE_TITLE']),
-                'home_page_url': kwargs.get('home_page_url',
-                    config['SITE_URL']),
-                'feed_url': kwargs.get('feed_url'),
-                'version': kwargs.get('version', 'https://jsonfeed.org.version/1'),
-                'icon': kwargs.get('icon', config['ICON']),
-                'description': kwargs.get('description',
-                config['SITE_SUBTITLE']),
-                'user_comment': kwargs.get('user_comment'),
-                'next_url': kwargs.get('next_url', ), # needs pagination
-                'favicon': kwargs.get('favicon', config['FAVICON']),
-                'author': kwargs.get('author',{
-                        'name': config['AUTHOR'],
-                        'avatar': config['AUTHOR_IMAGE'],
-                        'url': config['AUTHOR_URL'],
-                        }),
-                'expired': kwargs.get('expired'),
-                'hubs': kwargs.get('hubs'),
+                'title': title,
+                'home_page_url': home_page_url,
+                'feed_url': feed_url,
+                'version': version,
+                'icon': icon,
+                'description': description,
+                'user_comment': user_comment,
+                'next_url': next_url,
+                'favicon': favicon,
+                'author': author,
+                'expired': expired,
+                'hubs': hubs,
                 }
 
-        filled_feed_data = {x:y for x,y in feed_data.items() if y}
+        filled_feed_data = {x:y for x,y in feed_data.items()}
 
         feed_items = []
 
@@ -127,13 +136,18 @@ class Collection:
             time_format=rfc3339) for feed_item in pages]
         return filled_feed_data
 
-    def generate_rss_feed(self, pages=None, **kwargs):
+    def generate_rss_feed(self, pages=None, **config):
+        """Applies feed Metadata into a RSS file.
+        TODO: Move data to jinja2 Template
+        """
+
+        SITE_URL = config.get('SITE_URL')
         pages = pages or self.pages
-        feed_items = self.generate_from_metadata()
+        feed_items = self.generate_feed_metadata()
         channel_info = f'''<title>{feed_items['title']}</title>
 <description>{feed_items['description']}</description>
 <link>{feed_items['home_page_url']}</link>
-<atom:link href="{config['SITE_URL']}/{self.name}/{self.name}.rss" rel="self" type="application/rss+xml" />
+<atom:link href="{SITE_URL}/{self.name}/{self.name}.rss" rel="self" type="application/rss+xml" />
 '''
         items = [self.item_values(feed_item, time_format=rfc2822) for feed_item in pages]
         item_string = ''
@@ -143,11 +157,10 @@ class Collection:
             item_info = f'''<item>
 <title>{item['title']}</title>
 <description><![CDATA[{item['content_html']}]]></description>
-<guid>{config['SITE_URL']}/{item['url']}</guid>
+<guid>{SITE_URL}/{item['url']}</guid>
 <pubDate>{item_time}</pubDate>
 </item>
 '''
-
             item_string += item_info
 
         return f'''<?xml version="1.0"?>
@@ -160,11 +173,11 @@ class Collection:
 </rss>
 '''
 
-    def item_values(self, item, time_format):
-
+    def item_values(self, item, time_format, **config):
+        SITE_URL = config.get('SITE_URL', '')
         items_values = {
            'id':item.id,
-           'url': f"{config['SITE_URL']}/{self.name}/{item.id}",
+           'url': f"{SITE_URL}/{self.name}/{item.id}",
            'title': item.title,
            'content_html': item.markup,
            'summary': item.summary,
@@ -175,8 +188,8 @@ class Collection:
            }
 
         other_item_values = (
-                ('image', config['DEFAULT_POST_IMAGE']),
-                ('banner_image', config['DEFAULT_POST_BANNER']),
+                ('image', config.get('DEFAULT_POST_IMAGE', '')),
+                ('banner_image', config.get('DEFAULT_POST_BANNER')),
                 ('author', None),
                 ('external_url', None),
             )

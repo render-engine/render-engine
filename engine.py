@@ -1,4 +1,3 @@
-from .base_config import config
 from dataclasses import dataclass
 from itertools import zip_longest
 from pathlib import Path
@@ -9,7 +8,6 @@ import json
 import shutil
 
 # Currently all of the Configuration Information is saved to Default
-config = config['DEFAULT']
 content_path='content'
 output_path='output'
 static_path='static'
@@ -70,6 +68,10 @@ class Engine:
     output_path = Path(output_path)
     static_path = Path(static_path)
     routes_items = []
+
+    def __init__(self, config='', **kwargs):
+        if config:
+            {self.config[x]:y for x,y in kwargs.items}
 
     def build(self, content_type, *, template, routes, base_file=None):
         """Used to get **kwargs for `add_route`"""
@@ -142,7 +144,7 @@ class Engine:
                      )
 
                 rss_feed = collection.generate_rss_feed()
-                json_feed = json.dumps(collection.generate_from_metadata(), indent=2)
+                json_feed = json.dumps(collection.generate_feed_metadata(), indent=2)
                 feeds = [
                         Route(f'{name}.rss', rss_feed, True),
                         Route(f'{name}.json', json_feed, True),
