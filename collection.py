@@ -126,7 +126,7 @@ class Collection:
         filled_feed_data['items'] = [self.item_values(feed_item,
             time_format=rfc3339) for feed_item in pages]
         return filled_feed_data
-    
+
     def generate_rss_feed(self, pages=None, **kwargs):
         pages = pages or self.pages
         feed_items = self.generate_from_metadata()

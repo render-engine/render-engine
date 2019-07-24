@@ -5,6 +5,7 @@ from pathlib import Path
 from .page import Page
 from .collection import Collection
 from typing import Type, Optional, Union, TypeVar, Iterable
+import json
 import shutil
 
 # Currently all of the Configuration Information is saved to Default
@@ -59,7 +60,8 @@ def add_route(
 @dataclass
 class Route:
     content_path: Path
-    content: Page
+    content: any=Page
+    raw_content: bool=False
 
 class Engine:
     """This is the engine that is builds your static site.
@@ -118,7 +120,6 @@ class Engine:
         collection_routes = []
 
         for collection_item in collection.pages:
-            print(collection_item)
             for route in routes:
                 r = Path(route).joinpath(collection_item.id)
                 file_route=add_route(
@@ -139,6 +140,15 @@ class Engine:
                         route=route,
                         ),
                      )
+
+                rss_feed = collection.generate_rss_feed()
+                json_feed = json.dumps(collection.generate_from_metadata(), indent=2)
+                feeds = [
+                        Route(f'{name}.rss', rss_feed, True),
+                        Route(f'{name}.json', json_feed, True),
+                        ]
+
+                self.routes_items += feeds
 
         self.routes_items += collection_routes
 
@@ -170,7 +180,11 @@ class Engine:
             )
 
         for route in self.routes_items:
-            filename = Path(f'{self.output_path}/{route.content_path}.html').resolve()
+            if route.raw_content:
+                filename = Path(f'{self.output_path}/{route.content_path}').resolve()
+            else:
+                filename = Path(f'{self.output_path}/{route.content_path}.html').resolve()
+
             base_dir = filename.parent.mkdir(
                     parents=True,
                     exist_ok=True,
@@ -185,4 +199,8 @@ class Engine:
                         filename.unlink()
 
             with filename.open('w') as f:
-                f.write(route.content.html)
+                if route.raw_content:
+                    f.write(route.content)
+
+                else:
+                    f.write(route.content.html)
