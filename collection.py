@@ -1,73 +1,69 @@
+from typing import Type, Union, Sequence
 from collections import defaultdict
 from itertools import zip_longest
 from .page import Page
 from pathlib import Path
 import json
-import arrow
+import maya
+
 
 rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
 rfc2822 = 'ddd, DD MMM YYYY HH:MM:SS Z'
 default_time_format = 'MMMM DD, YYYY HH:mm'
 
-def feed_time(time, time_format, user_time_format=default_time_format):
-    rfc_time = arrow.get(
-            time,
-            user_time_format,
-            ).format(time_format)
-    return rfc_time
-
+PathString = Union[str, Type[Path]]
 
 class Collection:
-    def __init__(self, paginate: bool=False, **kwargs):
+    """Create a Collection of Similar Page Objects"""
+    def __init__(
+            self,
+            *,
+            paginate: bool,
+            name: str,
+            content_type: Type[Page],
+            content_path: PathString,
+            output_path: Union[PathString, Sequence[PathString]],
+            extension: str,
+            pages: Sequence[PathString]=None,
+            **kwargs,
+            ):
         """
-        Create a Collection of Similar Page Objects
-        -----------
+        ___________
         - name is used to create a slug object
         - content_type the type of pages that you are bundling (Currently all
           collections have to be of the same type)
-
-        TODO: Figure out how to collect items of different types (Perhaps for
-        courses)
-
         - extension tells collection what types of documents to look at,
           usually (HTML or Markdown files)
         TODO: Add ignore param that looks are all files that don't contain the
         ignored type - (e.g. Collection(ignored=".tmp"))
         """
-        self.name = kwargs.get('name')
-        self.content_type = kwargs.get('content_type', Page)
-        self.extension = kwargs.get('extension', '.md')
-
-        if self.extension[0] != '.':
-            self.extension = f'.{self.extension}'
-
-
-
-        # Content Path is were all the content is stored before being processed
-        self.content_path = kwargs.get('content_path')
-
-        # Output Path is where the output content is stored
-        output_path = kwargs.get('output_path', '')
+        self.name = name
+        self.content_type = content_type
+        self.extension = extension
+        self.content_path = content_path
         self.output_path = Path(output_path)
 
-        page_glob = self.content_path.glob(f'*{self.extension}')
+        if not pages:
+            page_glob = self.content_path.glob(f'*{self.extension}')
 
-        pages = [self.content_type(
-                    base_file=base_file,
-                    output_path=self.output_path,
-                    ) for base_file in page_glob ]
+            pages = [self.content_type(
+                        output_path=self.output_path,
+                        content_path=content_path
+                        ) for content_path in page_glob ]
 
-        self.pages = sorted(
-                pages,
-                key=lambda page: arrow.get(
-                    page.date_published,
-                    default_time_format,
-                    ),
-                reverse=True,
-                )
+            pages = sorted(
+                    pages,
+                    key=lambda page:maya.when(page.date_modified),
+                    reverse=True,
+                    )
+        else:
+            self.pages = pages
 
         self.json_feed = self.generate_feed_metadata()
         self.rss_feed = self.generate_rss_feed()
+
+    def __iter__(self):
+        return self.pages
 
     @property
     def paginate(self):
@@ -87,6 +83,7 @@ class Collection:
     @property
     def tags(self):
         d = defaultdict(list)
+
         for p in self.pages:
             for tag in p.tags:
                 d[tag].append(p)

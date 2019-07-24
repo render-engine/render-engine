@@ -1,17 +1,14 @@
-from environment import env
-from writer import write_page
-from itertools import zip_longest
-import config
-
-def paginate(iterable, items_per_page, fillvalue=None):
-    "Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
-    args = [iter(iterable)] * items_per_page
-    iterable = zip_longest(*args, fillvalue=fillvalue)
-    return iterable
-
-def write_paginated_pages(name, pagination, template, path, **kwargs):
-    temp =  env.get_template(template)
+def write_paginated_pages(name, pagination, *, route, content_type, **kwargs):
+    p_routes = []
     for block in enumerate(pagination):
-        render = temp.render(post_list=[b for b in block[1] if b], config=config, **kwargs)
-        write_page(f'{path}/{name}_{block[0]}.html', render)
+        block_route = f'{route}/{name}_{block[0]}'
+        kwargs['post_list'] = [b for b in filter(lambda x:x, block[1])]
+
+        page = content_type(
+                    template=kwargs.get('template', 'archive.html'),
+                    route=block_route,
+                    post_list=[x for x in list(filter(lambda x:x, block[1]))],
+                    )
+        p_routes.append(r)
+
+    return p_routes

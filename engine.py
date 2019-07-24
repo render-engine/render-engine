@@ -1,79 +1,44 @@
+from .blog import BlogPost
+from .collection import Collection
+from .page import Page
+from .paginate import write_paginated_pages
+
 from dataclasses import dataclass
 from itertools import zip_longest
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
-from .page import Page
-from .collection import Collection
 from typing import Type, Optional, Union, TypeVar, Iterable
+
 import json
 import shutil
+import yaml
 
 # Currently all of the Configuration Information is saved to Default
-content_path='content'
-output_path='output'
-static_path='static'
 
 PathString = Union[str, Type[Path]]
-
-
-def write_paginated_pages(name, pagination, *, route, content_type=Page, **kwargs):
-    p_routes = []
-    for block in enumerate(pagination):
-        block_route = f'{route}/{name}_{block[0]}'
-        kwargs['post_list'] = [b for b in filter(lambda x:x, block[1])]
-
-        r = add_route(
-                    content_type,
-                    template='archive.html',
-                    route=block_route,
-                    post_list=[x for x in list(filter(lambda x:x, block[1]))],
-                    )
-        p_routes.append(r)
-
-        return p_routes
-
-
-def add_route(
-            content_type: Type[Page],
-            *,
-            template: str='page.html',
-            route: str='',
-            base_file: Optional[str]=None,
-            **kwargs,
-            ):
-        """Used to Create the HTML that will be added to Routes. Usually not
-        called on it's own."""
-
-        content = content_type(
-                template=template,
-                base_file=base_file,
-                **kwargs,
-                )
-
-        if content.id:
-            route.joinpath(content.id)
-
-        return Route(content_path=route, content=content)
-
-
-@dataclass
-class Route:
-    content_path: Path
-    content: any=Page
-    raw_content: bool=False
 
 class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
-    content_path = Path(content_path)
-    output_path = Path(output_path)
-    static_path = Path(static_path)
-    routes_items = []
-
-    def __init__(self, config='', **kwargs):
+    def __init__(self, config=None, **kwargs):
         if config:
-            {self.config[x]:y for x,y in kwargs.items}
+            self.config = yaml.safe_load(Path(config).read_text())
+            print(self.config)
+        self.config.update(kwargs.copy())
+        self.env = Environment(
+            loader=FileSystemLoader(''),
+            autoescape=select_autoescape(['html', 'xml']),
+            )
+        self.env.globals = self.config
 
-    def build(self, content_type, *, template, routes, base_file=None):
+        # These fields are called a lot. So we pull them from config. Also,
+        # make it a path
+        self.base_content_path = Path(self.config.get('content_path', ''))
+        self.base_output_path = Path(self.config.get('output_path', ''))
+        self.base_static_path = Path(self.config.get('static_path', ''))
+        self.routes_items = []
+
+    def build(self, content_type, *, template, routes, content_path=None):
         """Used to get **kwargs for `add_route`"""
         def inner(func, routes=routes):
             kwargs = func() or {}
@@ -82,77 +47,77 @@ class Engine:
                 routes = routes.split(',')
 
             for route in routes:
-
-                r = add_route(
-                    content_type,
-                    route=route,
-                    template=template,
-                    **kwargs,
-                    )
-                self.routes_items.append(r)
+                content_path=self.base_content_path.joinpath(Path(content_path))
+                output_path = self.base_output_path.joinpath(Path(route))
+                self.routes_items.append(
+                        content_type(
+                            config=self.config,
+                            content_path=content_path,
+                            output_path=output_path,
+                            **kwargs,
+                            )
+                        )
 
             return func
 
         return inner
 
-    def Collection(
+    def build_collection(
             self,
-            content_type: Type[Page],
+            content_type,
             *,
-            template: PathString,
-            content_path: PathString,
-            routes: Iterable[PathString]=[Path('./')],
-            extension: str='.md',
-            archive: bool=False,
-            name: str='',
+            template,
+            routes,
+            content_path=('./'),
+            feeds=False,
+            paginate=False,
+            extension='.md',
+            name=None,
             **kwargs,
             ):
-        """Iterate through the provided content path building the desired
-        content_type and storing in routes to be created on run"""
-        content_path = Path(content_path)
-        collection_files = content_path.glob(f'*{extension}')
+        """creates a collection of objects"""
+        for route in routes:
+            collection = Collection(
+                    name=name,
+                    content_type=content_type,
+                    content_path=self.base_content_path.joinpath(content_path),
+                    output_path=self.base_output_path.joinpath(route),
+                    paginate=paginate,
+                    extension=extension,
+                    config=self.config,
+                    **kwargs,
+                    )
 
+            for collection_item in collection:
+                self.routes_items.append(r)
 
-        collection = Collection(
-                name=name,
-                content_type=content_type,
-                content_path=content_path,
-                )
-
-        collection_routes = []
-
-        for collection_item in collection.pages:
-            for route in routes:
-                r = Path(route).joinpath(collection_item.id)
-                file_route=add_route(
-                        content_type,
-                        template=template,
-                        route=r,
-                        base_file=collection_item.base_file,
-                        ),
-
-                collection_routes += file_route
-
-            if archive:
-                pages = collection.paginate
-                self.routes_items.extend(
-                    write_paginated_pages(
+            if paginate:
+                paginated_pages = write_paginated_pages(
                         name,
-                        pages,
+                        collection.paginate,
                         route=route,
-                        ),
-                     )
+                        )
 
-                rss_feed = collection.generate_rss_feed()
-                json_feed = json.dumps(collection.generate_feed_metadata(), indent=2)
-                feeds = [
-                        Route(f'{name}.rss', rss_feed, True),
-                        Route(f'{name}.json', json_feed, True),
-                        ]
+                self.routes_items.extend(paginated_pages)
 
-                self.routes_items += feeds
+            if feeds:
+                rss_feed = Page(
+                        template=None,
+                        output_path=f'{name}.rss',
+                        content=collection.generate_rss_feed(),
+                        )
 
-        self.routes_items += collection_routes
+                self.routes_items.append(rss_feed)
+
+                json_feed = Page(
+                    template=None,
+                    content=json.dumps(
+                        collection.generate_feed_metadata(),
+                        indent=2),
+                    output_path=f'{name}.json',
+                    )
+
+                self.routes_items.append(json_feed)
 
     def run(self, overwrite=True):
         """Builds the Site Objects
@@ -176,16 +141,21 @@ class Engine:
         except:
             pass
 
-        shutil.copytree(
-            self.static_path,
-            static_output,
-            )
+        shutil.copytree(self.static_path, static_output)
 
         for route in self.routes_items:
+            template_path = self.template_path.joinpath(route.template)
+            template = env.get(template_path, route)
+
+            # Get filename from route
             if route.raw_content:
-                filename = Path(f'{self.output_path}/{route.content_path}').resolve()
+                filename = Path(f'{self.output_path}/{route.content_path}')
+                content = route.content.content
             else:
-                filename = Path(f'{self.output_path}/{route.content_path}.html').resolve()
+                filename = Path(f'{self.output_path}/{route.content_path}.html')
+                content = Markdown(route.content.content)
+
+            filename = filename.resolve()
 
             base_dir = filename.parent.mkdir(
                     parents=True,
@@ -193,16 +163,16 @@ class Engine:
                     )
 
             if filename.exists():
-                with filename.open() as f:
-                    if f.read() == route.content:
-                        continue
-
-                    else:
-                        filename.unlink()
-
-            with filename.open('w') as f:
-                if route.raw_content:
-                    f.write(route.content)
+                if filename.read_text == route.content:
+                    continue
 
                 else:
-                    f.write(route.content.html)
+                    filename.unlink()
+
+            if route.raw_content:
+                content = route.content
+
+            else:
+                content = route.content.html
+
+            filename.write_text == content
