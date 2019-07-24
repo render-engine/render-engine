@@ -122,6 +122,7 @@ class Engine:
         collection = Collection(
                 name=name,
                 content_type=content_type,
+                content_path=content_path,
                 )
 
         collection_routes = []
@@ -130,13 +131,13 @@ class Engine:
             for route in routes:
                 r = Path(route).joinpath(collection_item.id)
                 file_route=add_route(
-                            content_type,
-                            template=template,
-                            route=r,
-                            base_file=collection_item.base_file,
-                            ),
-                collection_routes += file_route
+                        content_type,
+                        template=template,
+                        route=r,
+                        base_file=collection_item.base_file,
+                        ),
 
+                collection_routes += file_route
 
             if archive:
                 pages = collection.paginate

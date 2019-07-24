@@ -47,9 +47,7 @@ class Collection:
 
 
         # Content Path is were all the content is stored before being processed
-        base_content_path = config['CONTENT_PATH']
-        content_path = base_content_path + '/' + kwargs.get('content_path', '')
-        self.content_path = Path(content_path)
+        self.content_path = kwargs.get('content_path')
 
         # Output Path is where the output content is stored
         output_path = kwargs.get('output_path', '')
