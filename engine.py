@@ -15,16 +15,6 @@ static_path='static'
 
 PathString = Union[str, Type[Path]]
 
-def paginate(iterable: any,
-        items_per_page: int,
-        *,
-        fillvalue=None,
-        ):
-    "Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
-    args = [iter(iterable)] * items_per_page
-    return zip_longest(*args, fillvalue=fillvalue)
-
 
 def write_paginated_pages(name, pagination, *, route, content_type=Page, **kwargs):
     p_routes = []
@@ -36,7 +26,7 @@ def write_paginated_pages(name, pagination, *, route, content_type=Page, **kwarg
                     content_type,
                     template='archive.html',
                     route=block_route,
-                    post_list=[x.content for x in list(filter(lambda x:x, block[1]))],
+                    post_list=[x for x in list(filter(lambda x:x, block[1]))],
                     )
         p_routes.append(r)
 
@@ -128,6 +118,7 @@ class Engine:
         collection_routes = []
 
         for collection_item in collection.pages:
+            print(collection_item)
             for route in routes:
                 r = Path(route).joinpath(collection_item.id)
                 file_route=add_route(
