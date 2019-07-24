@@ -81,12 +81,12 @@ class Collection:
         args = [iter(self.pages)] * 10
         iterable = zip_longest(*args, fillvalue=None)
         return iterable
-        
+
     @property
     def categories(self):
         d = defaultdict(list)
         for p in self.pages:
-            d[p._category].append(p) 
+            d[p._category].append(p)
         return d
 
     @property

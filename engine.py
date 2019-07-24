@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from itertools import zip_longest
 from pathlib import Path
 from .page import Page
+from .collection import Collection
 from typing import Type, Optional, Union, TypeVar, Iterable
 import shutil
 
@@ -64,6 +65,7 @@ def add_route(
 
         return Route(content_path=route, content=content)
 
+
 @dataclass
 class Route:
     content_path: Path
@@ -99,7 +101,7 @@ class Engine:
 
         return inner
 
-    def add_collection(
+    def Collection(
             self,
             content_type: Type[Page],
             *,
@@ -117,22 +119,27 @@ class Engine:
         collection_files = content_path.glob(f'*{extension}')
 
 
+        collection = Collection(
+                name=name,
+                content_type=content_type,
+                )
+
         collection_routes = []
-        for collection_item in collection_files:
+
+        for collection_item in collection.pages:
             for route in routes:
-                r = Path(route).joinpath(collection_item.stem)
-                print(r)
+                r = Path(route).joinpath(collection_item.id)
                 file_route=add_route(
                             content_type,
                             template=template,
                             route=r,
-                            base_file=collection_item,
+                            base_file=collection_item.base_file,
                             ),
                 collection_routes += file_route
 
 
             if archive:
-                pages = paginate(collection_routes, 10)
+                pages = collection.paginate
                 self.routes_items.extend(
                     write_paginated_pages(
                         name,
