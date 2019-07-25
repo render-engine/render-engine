@@ -1,10 +1,10 @@
 import shlex
 import subprocess
 
-def git_log_date(filepath, post, branch: str="origin/master", message: str=""):
+def git_log_date(filepath, branch: str="origin/master", message: str=""):
     """
     The Git log Command Ran as a Subprocess to Pull date information from history.
-    git log -b [branch] --format="[string] %ad" -- [filepath] | [head/tail] -1
+    git log -b [branch] --date=rfc -- [filepath] | [head/tail] -1
     ------
     - filepath (Path or str) - the filepath of the document
     - post (str: Either 'head' or 'tail') tells to get either the first (Creation) or the Last(Modification)
@@ -19,10 +19,6 @@ def git_log_date(filepath, post, branch: str="origin/master", message: str=""):
     else:
         branch = ''
 
-    if post in ('head', 'tail'):
-        command = f'git log {branch} --format="{message} %ad" -- {filepath}'
-        output = subprocess.check_output(shlex.split(command))
-        return output.decode().strip().split('\n')
-
-    else:
-        raise CommandError('post must be "head" or "tail"')
+    command = f'git log {branch} --format="%ad" -- {filepath}'
+    output = subprocess.check_output(shlex.split(command))
+    return output.decode().strip().split('\n')

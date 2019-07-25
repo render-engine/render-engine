@@ -7,10 +7,6 @@ import json
 import maya
 
 
-rfc3339 = 'YYYY-MM-DDTHH:MM:SSZZ'
-rfc2822 = 'ddd, DD MMM YYYY HH:MM:SS Z'
-default_time_format = 'MMMM DD, YYYY HH:mm'
-
 PathString = Union[str, Type[Path]]
 
 class Collection:
@@ -23,6 +19,7 @@ class Collection:
             content_type: Type[Page],
             content_path: PathString,
             output_path: Union[PathString, Sequence[PathString]],
+            url_root,
             extension: str,
             pages: Sequence[PathString]=None,
             **kwargs,
@@ -63,7 +60,7 @@ class Collection:
         self.rss_feed = self.generate_rss_feed()
 
     def __iter__(self):
-        return self.pages
+        return iter(self.pages)
 
     @property
     def paginate(self):
@@ -129,8 +126,7 @@ class Collection:
 
         feed_items = []
 
-        filled_feed_data['items'] = [self.item_values(feed_item,
-            time_format=rfc3339) for feed_item in pages]
+        filled_feed_data['items'] = [self.item_values(feed_item) for feed_item in pages]
         return filled_feed_data
 
     def generate_rss_feed(self, pages=None, **config):
@@ -146,7 +142,7 @@ class Collection:
 <link>{feed_items['home_page_url']}</link>
 <atom:link href="{SITE_URL}/{self.name}/{self.name}.rss" rel="self" type="application/rss+xml" />
 '''
-        items = [self.item_values(feed_item, time_format=rfc2822) for feed_item in pages]
+        items = [self.item_values(feed_item) for feed_item in pages]
         item_string = ''
 
         for item in items:
@@ -170,16 +166,18 @@ class Collection:
 </rss>
 '''
 
-    def item_values(self, item, time_format, **config):
+    def item_values(self, item):
+        date_published = item.date_published.rfc3339() if item.date_published else ''
+        date_modified = item.date_modified.rfc3339() if item.date_modified else ''
         SITE_URL = config.get('SITE_URL', '')
         items_values = {
            'id':item.id,
-           'url': f"{SITE_URL}/{self.name}/{item.id}",
+           'url': f"{self.url_root}/{self.name}/{item.id}",
            'title': item.title,
            'content_html': item.markup,
            'summary': item.summary,
-           'date_published': item.date_published.to_rfc3339(),
-           'date_modified': item.date_modified.to_rfc3339(),
+           'date_published': date_published,
+           'date_modified': date_modified,
            }
 
         other_item_values = (

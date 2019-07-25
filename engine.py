@@ -89,7 +89,7 @@ class Engine:
                     )
 
             for collection_item in collection:
-                self.routes_items.append(r)
+                self.routes_items.append(collection_item)
 
             if paginate:
                 paginated_pages = write_paginated_pages(
