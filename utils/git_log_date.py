@@ -20,8 +20,9 @@ def git_log_date(filepath, post, branch: str="origin/master", message: str=""):
         branch = ''
 
     if post in ('head', 'tail'):
-        command = f'git log {branch} --format="{message} %ad" -- {filepath} | {post} -1'
-        return subprocess.run(shlex.split(command))
+        command = f'git log {branch} --format="{message} %ad" -- {filepath}'
+        output = subprocess.check_output(shlex.split(command))
+        return output.decode().strip().split('\n')
 
     else:
         raise CommandError('post must be "head" or "tail"')
