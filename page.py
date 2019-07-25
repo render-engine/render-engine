@@ -1,17 +1,17 @@
-import re
-import maya
 from datetime import datetime
 from jinja2 import Markup
 from pathlib import Path
 from markdown import markdown
 from .environment import env
+from .utils import git_log_date
+import re
+import maya
 
-def get_ct_time(md_file, TIME_FORMAT):
-    return maya.when(md_file.stat().st_ctime, tzinfo=config.REGION).format(TIME_FORMAT)
+def get_ct_time(md_file):
+    return maya.when(git_log_date(md_file, 'head'))
 
-def get_md_time(md_file, TIME_FORMAT):
-    return maya.when(md_file.stat().st_mtime,
-            tzinfo=config.REGION).format(TIME_FORMAT)
+def get_md_time(md_file):
+    return maya.when(git_log_date(md_file, 'tail'))
 
 def load_from_file(base_file):
     matcher = r'^\w+:'
@@ -39,8 +39,8 @@ class Page():
             *,
             output_path,
             base_file=None,
-            content=None,
-            content_format='md',
+            content='',
+            content_format='markdown',
             **kwargs,
             ):
         # self.id looks for us
@@ -70,6 +70,7 @@ class Page():
         self.title = getattr(self, '_title', '')
         self.date_published = self.get_date_published()
         self.date_modified = self.get_date_modified()
+        self.markup = markdown(self.content)
 
     @property
     def id(self):
@@ -103,7 +104,10 @@ DATE IS KNOWN TO CAUSE ISSUES WITH FILES THAT WERE COPIED OR
 TRANSFERRED WITHOUT THEIR METADADTA BEING TRANSFERRED AS WELL"""
 
         if self.base_file:
+            print(self.base_file)
+
             if self._date_modified:
+                print(self._date_modified)
                 date = maya.when(self._date_modified)
 
             elif self._updated:

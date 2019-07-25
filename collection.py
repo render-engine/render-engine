@@ -51,9 +51,9 @@ class Collection:
                         content_path=content_path
                         ) for content_path in page_glob ]
 
-            pages = sorted(
+            self.pages = sorted(
                     pages,
-                    key=lambda page:maya.when(page.date_modified),
+                    key=lambda page:page.date_modified or page.title,
                     reverse=True,
                     )
         else:
@@ -178,10 +178,8 @@ class Collection:
            'title': item.title,
            'content_html': item.markup,
            'summary': item.summary,
-           'date_published': feed_time(item.date_published,
-               time_format=time_format),
-           'date_modified': feed_time(item.date_modified,
-               time_format=time_format),
+           'date_published': item.date_published.to_rfc3339(),
+           'date_modified': item.date_modified.to_rfc3339(),
            }
 
         other_item_values = (
