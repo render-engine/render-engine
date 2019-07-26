@@ -1,7 +1,5 @@
-from .blog import BlogPost
 from .collection import Collection
 from .page import Page
-from .paginate import write_paginated_pages
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -20,40 +18,45 @@ PathString = Union[str, Type[Path]]
 class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
-    def __init__(self, config=None, **kwargs):
+    def __init__(self, template_path='./templates', config={}, **kwargs):
         if config:
-            self.config = yaml.safe_load(Path(config).read_text())
-            print(self.config)
-        self.config.update(kwargs.copy())
+            config = yaml.safe_load(Path(config).read_text())
+        config.update(kwargs.copy())
+        self.config = config
+
+        # Create a new environment and set the global variables to the config
+        # items
         self.env = Environment(
-            loader=FileSystemLoader(''),
+            loader=FileSystemLoader(template_path),
             autoescape=select_autoescape(['html', 'xml']),
             )
-        self.env.globals = self.config
+        self.env.globals = config
 
         # These fields are called a lot. So we pull them from config. Also,
         # make it a path
-        self.base_content_path = Path(self.config.get('content_path', ''))
-        self.base_output_path = Path(self.config.get('output_path', ''))
-        self.base_static_path = Path(self.config.get('static_path', ''))
+        self.base_content_path = Path(self.config.get('content_path', 'content'))
+        self.base_output_path = Path(self.config.get('output_path', 'output'))
+        self.base_static_path = Path(self.config.get('static_path', 'static'))
+        self.base_url = self.config['SITE_URL']
         self.routes_items = []
 
-    def build(self, content_type, *, template, routes, content_path=None):
+    def build(self, *, template, routes, content_path=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
-        def inner(func, routes=routes):
+        def inner(func, content_path=content_path, routes=routes):
             kwargs = func() or {}
 
             if isinstance(routes, str):
                 routes = routes.split(',')
 
             for route in routes:
-                content_path=self.base_content_path.joinpath(Path(content_path))
-                output_path = self.base_output_path.joinpath(Path(route))
+                if content_path:
+                    content_path=joinpath(Path(content_path))
+
                 self.routes_items.append(
                         content_type(
-                            config=self.config,
                             content_path=content_path,
-                            output_path=output_path,
+                            url_root=self.config['SITE_URL'],
+                            route=route,
                             **kwargs,
                             )
                         )
@@ -64,32 +67,32 @@ class Engine:
 
     def build_collection(
             self,
-            content_type,
             *,
             template,
             routes,
-            content_path=('./'),
+            content_path,
             feeds=False,
             paginate=False,
             extension='.md',
             name=None,
+            content_type=Page,
             **kwargs,
             ):
         """creates a collection of objects"""
         for route in routes:
             collection = Collection(
                     name=name,
-                    content_type=content_type,
-                    content_path=self.base_content_path.joinpath(content_path),
-                    output_path=self.base_output_path.joinpath(route),
+                    content_path=content_path,
+                    route=route,
                     paginate=paginate,
                     extension=extension,
-                    config=self.config,
+                    url_root=self.config['SITE_URL'],
+                    template=template,
                     **kwargs,
                     )
 
-            for collection_item in collection:
-                self.routes_items.append(collection_item)
+            self.routes_items.extend(iter(collection))
+            print(self.routes_items)
 
             if paginate:
                 paginated_pages = write_paginated_pages(
@@ -103,18 +106,17 @@ class Engine:
             if feeds:
                 rss_feed = Page(
                         template=None,
-                        output_path=f'{name}.rss',
-                        content=collection.generate_rss_feed(),
+                        route=f'{name}.rss',
+                        content=collection.to_rss(),
                         )
 
                 self.routes_items.append(rss_feed)
 
                 json_feed = Page(
                     template=None,
-                    content=json.dumps(
-                        collection.generate_feed_metadata(),
-                        indent=2),
-                    output_path=f'{name}.json',
+                    content=collection.to_json(),
+                    route=f'{name}',
+                    url_suffix='.json',
                     )
 
                 self.routes_items.append(json_feed)
@@ -127,12 +129,12 @@ class Engine:
 
         TODO: Add Skips to ByPass Certain Steps
         """
-        static_output = f"{self.output_path}/{self.static_path}"
+        static_output = f"{self.base_output_path}/{self.base_static_path}"
 
         # If overwrite AND THE FILE EXISTS, then remove the entire folder
-        if all((overwrite, Path(self.output_path).exists())):
-            shutil.rmtree(self.output_path)
-            Path(self.output_path).mkdir() # Creates the new folder
+        if all((overwrite, Path(self.base_output_path).exists())):
+            shutil.rmtree(self.base_output_path)
+            Path(self.base_output_path).mkdir() # Creates the new folder
 
         # Instead of trying to analyze the static folder. Just delete the
         # contents
@@ -141,22 +143,13 @@ class Engine:
         except:
             pass
 
-        shutil.copytree(self.static_path, static_output)
+        shutil.copytree(self.base_static_path, static_output)
 
         for route in self.routes_items:
-            template_path = self.template_path.joinpath(route.template)
-            template = env.get(template_path, route)
-
             # Get filename from route
-            if route.raw_content:
-                filename = Path(f'{self.output_path}/{route.content_path}')
-                content = route.content.content
-            else:
-                filename = Path(f'{self.output_path}/{route.content_path}.html')
-                content = Markdown(route.content.content)
-
-            filename = filename.resolve()
-
+            filename = Path(self.base_output_path).joinpath(route.route) \
+                    .resolve()
+            print(filename)
             base_dir = filename.parent.mkdir(
                     parents=True,
                     exist_ok=True,
@@ -169,10 +162,11 @@ class Engine:
                 else:
                     filename.unlink()
 
-            if route.raw_content:
-                content = route.content
+            if route.template:
+                template = self.env.get_template(route.template)
+                content = template.render(**route.__dict__())
 
             else:
-                content = route.content.html
+                content = route.content
 
-            filename.write_text == content
+            filename.write_text(content)

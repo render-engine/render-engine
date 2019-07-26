@@ -16,12 +16,15 @@ class Collection:
             *,
             paginate: bool,
             name: str,
-            content_type: Type[Page],
             content_path: PathString,
-            output_path: Union[PathString, Sequence[PathString]],
-            extension: str,
+            route: Union[PathString, Sequence[PathString]],
+            url_root: str,
+            url_suffix: str='.html',
+            extension: str='.md',
+            template: str='page.html',
             pages: Sequence[PathString]=None,
-            **attrs,
+            content_type=Page,
+            **kwargs,
             ):
         """
         ___________
@@ -34,31 +37,40 @@ class Collection:
         ignored type - (e.g. Collection(ignored=".tmp"))
         """
         self.name = name
-        self.content_type = content_type
         self.extension = extension
-        self.content_path = content_path
-        self.output_path = Path(output_path)
+        self.content_path = Path(content_path)
+        self.route = Path(route)
+
+        # Build the URL so that it can be used as reference
+        if 'url' in kwargs:
+            self.url = url
+
+        else:
+            url_stem = str(route)
+            url_suffix = url_suffix
+            print(url_stem)
+            self.url = f'{url_root}/{url_stem}{url_suffix}'
+
+        # make properties for all attrs
+        for key, attr in kwargs.items():
+            setattr(self, key, attr)
 
         if not pages:
-            page_glob = self.content_path.glob(f'*{self.extension}')
-
-            pages = [self.content_type(
-                        output_path=self.output_path,
-                        content_path=content_path
+            print(self.content_path)
+            page_glob = list(self.content_path.glob(f'*{self.extension}'))
+            pages = [content_type(
+                        route=content_path.joinpath(route),
+                        content_path=content_path,
+                        template=template,
                         ) for content_path in page_glob ]
-
             self.pages = sorted(
                     pages,
                     key=lambda page:page.date_modified or page.title,
                     reverse=True,
                     )
-        else:
-            self.pages = pages
-
-        self.json_feed = self.to_json()
-        self.rss_feed = self.to_rss()
 
     def __iter__(self):
+        print(self.pages)
         return iter(self.pages)
 
     @property
@@ -76,30 +88,71 @@ class Collection:
             d[p._category].append(p)
         return d
 
-    @property
-    def tags(self):
-        d = defaultdict(list)
-
-        for p in self.pages:
-            for tag in p.tags:
-                d[tag].append(p)
-        return d
-
-
-    def to_json(self, pages=None, **config):
+    def to_json(self, pages=None, next_url=None):
         """Gets/Sets Data for dictionary feed metadata"""
-        pages = pages or self.pages
-        title = config.get('title', 'Untitled Site')
-        home_page_url = config.get('home_page_url', 'https://example.com')
-        feed_url = config.get('feed_url', 'https://example.com/feed.json')
-        version = config.get('version', 'https://jsonfeed.org.version/1')
-        icon = config.get('icon','')
-        description = config.get('description', '')
+        title = self.FEED_TITLE
+        description = self.description
+        home_page_url = self.SITE_URL
+        feed_url = f'{self.absolute_url}{self.name}.json'
+        version = 'https://jsonfeed.org.version/1'
+        icon = config.get('FEED_ICON','')
         user_comment = config.get('user_comment')
-        next_url = config.get('next_url', ) # needs pagination
-        favicon = config.get('favicon')
-        author = config.get('author',{
-                        'name': 'Jane Doe',
-                        'avatar': '',
-                        'url': '',
-                        })
+        next_url = next_url # needs pagination
+        favicon = config.get('SITE_FAVICON')
+        author = config.get('AUTHOR')
+        expired = getattr('self', 'expired')
+        hubs = config.get('JSON_FEED_HUB')
+
+        feed_data = {
+                'title': title,
+                'home_page_url': home_page_url,
+                'feed_url': feed_url,
+                'version': version,
+                'icon': icon,
+                'description': description,
+                'user_comment': user_comment,
+                'next_url': next_url,
+                'favicon': favicon,
+                'author': author,
+                'expired': expired,
+                'hubs': hubs,
+                'items': [],
+                }
+
+        if not pages:
+            for page in collections:
+                feed_data['items'].append(page.to_json())
+
+        return json.dumps(feed_data)
+
+
+    def to_rss(self, env, pages=None, html=True, full_text=True):
+        """Applies feed Metadata into a RSS file.
+        TODO: Move data to jinja2 Template
+        """
+        channel = json.loads(self.to_json())
+        channel['items'] = list(
+                map(
+                    lambda item:_to_rss_item(
+                        item, html=html,
+                        full_text=full_text,
+                        ),
+                    ),
+                )
+        template = env.get_template('templates/rss/blog.rss')
+        template.render(channel)
+
+    @staticmethod
+    def _to_rss_item(item, html=True, full_text=True):
+        if date_published in item:
+            item['pubDate'] = maya.parse(item['date_published']).rfc2822()
+
+        if full_text:
+            if html:
+                item['description'] = item['content_html']
+            else:
+                item['description'] = item['content_text']
+        else:
+            item['description'] = item['summary']
+
+        return item

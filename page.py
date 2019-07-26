@@ -6,50 +6,66 @@ import maya
 import re
 import shlex
 import subprocess
-
+import urllib.parse
 
 class Page():
     def __init__(
             self,
             *,
-            output_path,
+            route,
             content_path=None,
             content='',
             content_format='markdown',
             template="page.html",
-            **attrs,
+            url_root="", # often used to make links
+            url_suffix=".html",
+            **kwargs,
             ):
 
-        self.content_path = Path(content_path)
+        self.content = content
+
+        if isinstance(route, str):
+            self.route = route.lstrip('/') + url_suffix
+
+        else:
+            self.route = route
+
+
         if content_path:
+            self.content_path = Path(content_path)
             _ = self._load_from_file(content_path)
-            attrs.update(_['attrs'])
+            kwargs.update(_['attrs'])
             self.content = _['content']
+            self.date_published = self._check_for_date_attr(
+                    'date_published',
+                    kwargs,
+                    optional_location = self.content_path,
+                    log_index = -1,
+                    )
+            self.date_modified = self._check_for_date_attr(
+                    'date_modified',
+                    kwargs,
+                    optional_location = self.content_path,
+                    log_index = 0,
+                    )
 
         self.template = template
-        self.markup = markdown(self.content)
-        self.date_published = self._check_for_date_attr(
-                'date_published',
-                attrs,
-                optional_location = self.content_path,
-                log_index = -1,
-                )
 
-        self.date_modified = self._check_for_date_attr(
-                'date_modified',
-                attrs,
-                optional_location = self.content_path,
-                log_index = 0,
-                )
 
-        self.id = self._check_for_attr(
-                attrs,
-                optional_keys=['id', 'slug'],
-                fallback=self.content_path.stem,
-                )
+        if content:
+            self.markup = Markup(markdown(self.content))
+
+
+        # Build the URL so that it can be used as reference
+        if 'url' in kwargs:
+            self.url = kwargs['url']
+
+        else:
+            url = f'{url_root}{route}'
+            self.url = urllib.parse.urlsplit(url).geturl()
 
         # make properties for all attrs
-        for key, attr in attrs.items():
+        for key, attr in kwargs.items():
             setattr(self, key, attr)
 
     @staticmethod
@@ -123,21 +139,25 @@ class Page():
             return maya.when(key_setter)
 
     def __dict__(self):
+        date_published = getattr(self, 'date_published', None)
+        date_modified = getattr(self, 'date_published', None)
         base_feed_items = {
-            id: self.absolute_url,
-            url: id,
-            external_url: getattr('self', 'external_url', None),
-            title: getattr('self', 'title', None),
-            content_html: Markup(self.markup),
-            content_text: self.content,
-            summary: getattr('self', 'summary', self.content[:40]),
-            image: getattr('self', 'featured_image', None),
-            banner_image: getattr('self', 'banner_image', image),
-            date_published: self.date_published.rfc3339() if date_published else None,
-            date_modified: self.date_modified.rfc3339() if date_modified else None,
-            author: getattr('self', 'author'),
-            tags: getattr('self', 'tags', []),
-            attachments: getattr('self', 'attachments'),
+            'id': self.url,
+            'url': id,
+            'external_url': getattr(self, 'external_url', None),
+            'title': getattr(self, 'title', None),
+            'content_html': getattr(self, 'markup', None),
+            'content_text': self.content,
+            'summary': getattr(self, 'summary', self.content[:40]),
+            'image': getattr(self, 'featured_image', None),
+            'banner_image': getattr(self, 'banner_image', None),
+            'date_published': self.date_published.rfc3339() if date_published
+                else None,
+            'date_modified': self.date_modified.rfc3339() if date_modified
+                else None,
+            'author': getattr(self, 'author', None),
+            'tags': getattr(self, 'tags', []),
+            'attachments': getattr(self, 'attachments', None),
             }
         return dict(filter(lambda item: item[1], base_feed_items.items()))
 
