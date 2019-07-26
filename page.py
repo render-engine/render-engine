@@ -2,7 +2,6 @@ from datetime import datetime
 from jinja2 import Markup
 from pathlib import Path
 from markdown import markdown
-from .environment import env
 import maya
 import re
 import shlex
@@ -129,7 +128,7 @@ class Page():
             url: id,
             external_url: getattr('self', 'external_url', None),
             title: getattr('self', 'title', None),
-            content_html: self.markup,
+            content_html: Markup(self.markup),
             content_text: self.content,
             summary: getattr('self', 'summary', self.content[:40]),
             image: getattr('self', 'featured_image', None),
@@ -143,7 +142,6 @@ class Page():
         return dict(filter(lambda item: item[1], base_feed_items.items()))
 
     def to_rss(self, env, html=True, full_text=True):
-        template = get_template('rss_item.xml')
         items = self.__dict__
 
         if date_published in items:
@@ -157,4 +155,4 @@ class Page():
         else:
             items['description'] = items['summary']
 
-        return template.render(items)
+        return items
