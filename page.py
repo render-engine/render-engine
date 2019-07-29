@@ -15,7 +15,7 @@ class Page():
             route,
             content_path=None,
             content='',
-            content_format='markdown',
+            content_format='.md',
             template="page.html",
             url_root="", # often used to make links
             url_suffix=".html",
@@ -23,13 +23,7 @@ class Page():
             ):
 
         self.content = content
-
-        if isinstance(route, str):
-            self.route = route.lstrip('/') + url_suffix
-
-        else:
-            self.route = route
-
+        self.route = str(route).lstrip('/').rstrip(content_format) + url_suffix
 
         if content_path:
             self.content_path = Path(content_path)
@@ -52,7 +46,7 @@ class Page():
         self.template = template
 
 
-        if content:
+        if self.content:
             self.markup = Markup(markdown(self.content))
 
 
@@ -138,7 +132,7 @@ class Page():
         if key_setter:
             return maya.when(key_setter)
 
-    def __dict__(self):
+    def to_json(self):
         date_published = getattr(self, 'date_published', None)
         date_modified = getattr(self, 'date_published', None)
         base_feed_items = {
@@ -161,18 +155,14 @@ class Page():
             }
         return dict(filter(lambda item: item[1], base_feed_items.items()))
 
-    def to_rss(self, env, html=True, full_text=True):
-        items = self.__dict__
-
-        if date_published in items:
-            items['pubDate'] = maya.parse(items['date_published']).rfc2822()
+    def to_rss(self, html=True, full_text=True):
+        if getattr(self, 'date_published', ''):
+            self.pubDate = maya.parse(self.date_published).rfc2822()
 
         if full_text:
             if html:
-                items['description'] = items['content_html']
+                self.description = self.markup
             else:
-                items['description'] = items['content_text']
+                self.description = self.content
         else:
-            items['description'] = items['summary']
-
-        return items
+            self.description = self.summary

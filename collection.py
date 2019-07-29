@@ -48,7 +48,6 @@ class Collection:
         else:
             url_stem = str(route)
             url_suffix = url_suffix
-            print(url_stem)
             self.url = f'{url_root}/{url_stem}{url_suffix}'
 
         # make properties for all attrs
@@ -56,10 +55,9 @@ class Collection:
             setattr(self, key, attr)
 
         if not pages:
-            print(self.content_path)
             page_glob = list(self.content_path.glob(f'*{self.extension}'))
             pages = [content_type(
-                        route=content_path.joinpath(route),
+                        route=Path(route).joinpath(Path(content_path.name)),
                         content_path=content_path,
                         template=template,
                         ) for content_path in page_glob ]
@@ -70,7 +68,6 @@ class Collection:
                     )
 
     def __iter__(self):
-        print(self.pages)
         return iter(self.pages)
 
     @property
@@ -88,20 +85,20 @@ class Collection:
             d[p._category].append(p)
         return d
 
-    def to_json(self, pages=None, next_url=None):
+    def to_json(self, engine, pages=None, next_url=None):
         """Gets/Sets Data for dictionary feed metadata"""
-        title = self.FEED_TITLE
-        description = self.description
-        home_page_url = self.SITE_URL
-        feed_url = f'{self.absolute_url}{self.name}.json'
+        title = engine.FEED_TITLE
+        description = engine.FEED_DESCRIPTION
+        home_page_url = engine.SITE_URL
+        feed_url = f'{self.route}{self.name}.json'
         version = 'https://jsonfeed.org.version/1'
-        icon = config.get('FEED_ICON','')
-        user_comment = config.get('user_comment')
+        icon = getattr(engine, 'FEED_ICON','')
+        user_comment = getattr(engine, 'user_comment', '')
         next_url = next_url # needs pagination
-        favicon = config.get('SITE_FAVICON')
-        author = config.get('AUTHOR')
-        expired = getattr('self', 'expired')
-        hubs = config.get('JSON_FEED_HUB')
+        favicon = getattr(engine, 'SITE_FAVICON', '')
+        author = getattr(engine, 'AUTHOR', '')
+        expired = getattr('self', 'expired', '')
+        hubs = getattr(engine, 'JSON_FEED_HUB', '')
 
         feed_data = {
                 'title': title,
@@ -119,40 +116,27 @@ class Collection:
                 'items': [],
                 }
 
-        if not pages:
-            for page in collections:
-                feed_data['items'].append(page.to_json())
-
+        # if not pages:
+#            pages = list(map(lambda x:x.to_json(), self.pages))
+#
+#        feed_data['items'].extend(pages)
+#        print(feed_data)
         return json.dumps(feed_data)
 
 
-    def to_rss(self, env, pages=None, html=True, full_text=True):
+    def to_rss(self, engine, pages=None, html=True, full_text=True):
         """Applies feed Metadata into a RSS file.
         TODO: Move data to jinja2 Template
         """
-        channel = json.loads(self.to_json())
+        channel = json.loads(self.to_json(engine=engine))
         channel['items'] = list(
                 map(
-                    lambda item:_to_rss_item(
-                        item, html=html,
+                    lambda item: item.to_rss(
+                        html=html,
                         full_text=full_text,
                         ),
-                    ),
-                )
-        template = env.get_template('templates/rss/blog.rss')
-        template.render(channel)
+                        self.pages),
+                        )
+        template = engine.env.get_template('feeds/rss/blog.rss')
+        template.render(channel=channel)
 
-    @staticmethod
-    def _to_rss_item(item, html=True, full_text=True):
-        if date_published in item:
-            item['pubDate'] = maya.parse(item['date_published']).rfc2822()
-
-        if full_text:
-            if html:
-                item['description'] = item['content_html']
-            else:
-                item['description'] = item['content_text']
-        else:
-            item['description'] = item['summary']
-
-        return item
