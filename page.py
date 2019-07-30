@@ -55,7 +55,7 @@ class Page():
             self.url = kwargs['url']
 
         else:
-            url = f'{url_root}{route}'
+            url = f'{url_root}{self.route}'
             self.url = urllib.parse.urlsplit(url).geturl()
 
         # make properties for all attrs
