@@ -17,7 +17,7 @@ class Page():
             content='',
             content_format='.md',
             template="page.html",
-            url_root="", # often used to make links
+            url_root="/", # often used to make links
             url_suffix=".html",
             **kwargs,
             ):
@@ -55,7 +55,7 @@ class Page():
             self.url = kwargs['url']
 
         else:
-            url = self.route
+            url = f'{url_root}{self.route}'
             self.url = urllib.parse.urlsplit(url).geturl()
 
         # make properties for all attrs
