@@ -107,7 +107,7 @@ class Engine:
 
             if feeds:
                 rss_feed = Page(
-                        template=None,
+                        template='feeds/rss/blog.rss',
                         route=f'{name}.rss',
                         content=collection.to_rss(engine=self),
                         )
