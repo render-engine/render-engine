@@ -1,5 +1,6 @@
 from .collection import Collection
 from .page import Page
+from .paginate import write_paginated_pages
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -43,7 +44,7 @@ class Engine:
         self.routes_items = []
         self.env.globals = self.__dict__
 
-    def build(self, *, template, routes, content_path=None, content_type=Page):
+    def build(self, *, routes, content_path=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
         def inner(func, content_path=content_path, routes=routes):
             kwargs = func() or {}
@@ -59,6 +60,7 @@ class Engine:
                         content_type(
                             content_path=content_path,
                             url_root=self.SITE_URL,
+                            template=template,
                             route=route,
                             **kwargs,
                             )
@@ -100,6 +102,7 @@ class Engine:
                 paginated_pages = write_paginated_pages(
                         name,
                         collection.paginate,
+                        content_type=Page,
                         route=route,
                         )
 
@@ -108,7 +111,8 @@ class Engine:
             if feeds:
                 rss_feed = Page(
                         template='feeds/rss/blog.rss',
-                        route=f'{name}.rss',
+                        route=name,
+                        url_suffix='.rss',
                         content=collection.to_rss(engine=self),
                         )
 
@@ -117,7 +121,7 @@ class Engine:
                 json_feed = Page(
                     template=None,
                     content=collection.to_json(engine=self),
-                    route=f'{name}',
+                    route=name,
                     url_suffix='.json',
                     )
 

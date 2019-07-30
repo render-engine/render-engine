@@ -9,6 +9,6 @@ def write_paginated_pages(name, pagination, *, route, content_type, **kwargs):
                     route=block_route,
                     post_list=[x for x in list(filter(lambda x:x, block[1]))],
                     )
-        p_routes.append(r)
+        p_routes.append(page)
 
     return p_routes
