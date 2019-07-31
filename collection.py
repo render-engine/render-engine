@@ -65,7 +65,8 @@ class Collection:
                         ) for content_path in page_glob ]
             self.pages = sorted(
                     pages,
-                    key=lambda page:page.date_modified or page.title,
+                    key=lambda page:page.date_modified or
+                        page.date_published or page.title,
                     reverse=True,
                     )
 

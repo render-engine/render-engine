@@ -1,7 +1,7 @@
 from datetime import datetime
-from jinja2 import Markup
 from pathlib import Path
-from markdown import markdown
+from markdown2 import markdown
+from jinja2 import Markup
 import maya
 import re
 import shlex
@@ -30,18 +30,28 @@ class Page():
             _ = self._load_from_file(content_path)
             kwargs.update(_['attrs'])
             self.content = _['content']
-            self.date_published = self._check_for_date_attr(
+            
+            # Check for Date Published and convert to RFC2822
+            date_published = self._check_for_date_attr(
                     'date_published',
                     kwargs,
                     optional_location = self.content_path,
                     log_index = -1,
                     )
-            self.date_modified = self._check_for_date_attr(
+            if date_published:
+                self.date_published = maya.parse(date_published).iso8601()
+
+            date_modified = self._check_for_date_attr(
                     'date_modified',
                     kwargs,
                     optional_location = self.content_path,
                     log_index = 0,
                     )
+            if date_modified:
+                self.date_modified = maya.parse(date_modified).iso8601()
+
+            else:
+                self.date_modified = self.date_published or None
 
         self.template = template
 
@@ -130,11 +140,11 @@ class Page():
             key_setter = self._git_log_date(optional_location)[log_index]
 
         if key_setter:
-            return maya.when(key_setter)
+            return maya.when(key_setter).rfc2822()
 
     def to_json(self):
         date_published = getattr(self, 'date_published', None)
-        date_modified = getattr(self, 'date_published', None)
+        date_modified = getattr(self, 'date_modified', date_published)
         base_feed_items = {
             'id': self.url,
             'url': id,
