@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Type, Optional, Union, TypeVar, Iterable
 
 import json
+import maya
 import shutil
 import yaml
 
@@ -109,11 +110,20 @@ class Engine:
                 self.routes_items.extend(paginated_pages)
 
             if feeds:
+                build_date = maya.now()
                 rss_feed = Page(
                         template='feeds/rss/blog.rss',
                         route=name,
+                        url_root=self.SITE_URL,
                         url_suffix='.rss',
                         content=collection.to_rss(engine=self),
+                        name=self.FEED_TITLE,
+                        description=self.FEED_DESCRIPTION,
+                        build_date=build_date.rfc2822(),
+                    copyright=f'Copyright ©️  {build_date.year} {self.COPYRIGHT}',
+                    generator='https://github.com/kjaymiller/render-engine',
+                    language='en-US',
+                        items=iter(collection),
                         )
 
                 self.routes_items.append(rss_feed)

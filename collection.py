@@ -40,6 +40,7 @@ class Collection:
         self.extension = extension
         self.content_path = Path(content_path)
         self.route = Path(route)
+        self.url_root = url_root
 
         # Build the URL so that it can be used as reference
         if 'url' in kwargs:
@@ -59,6 +60,7 @@ class Collection:
             pages = [content_type(
                         route=Path(route).joinpath(Path(content_path.name)),
                         content_path=content_path,
+                        url_root=self.url_root,
                         template=template,
                         ) for content_path in page_glob ]
             self.pages = sorted(
