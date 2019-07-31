@@ -1,5 +1,5 @@
 import pytest
-from page import Page
+from render_engine import Page
 
 @pytest.fixture()
 def base_page():
