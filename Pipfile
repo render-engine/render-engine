@@ -27,5 +27,7 @@ six = "*"
 virtualenv = "*"
 virtualenv-clone = "*"
 werkzeug = "*"
+pyyaml = "*"
+twine = "*"
 
 [requires]
