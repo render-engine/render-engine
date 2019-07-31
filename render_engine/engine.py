@@ -1,6 +1,6 @@
-from collection import Collection
-from page import Page
-from paginate import write_paginated_pages
+from render_engine.collection import Collection
+from render_engine.page import Page
+from render_engine.paginate import write_paginated_pages
 
 from dataclasses import dataclass
 from itertools import zip_longest
