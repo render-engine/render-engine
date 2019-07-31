@@ -15,19 +15,8 @@ pytest-mock = "*"
 
 [packages]
 maya = "*"
-certifi = "*"
-click = "*"
-itsdangerous = "==1.1.0"
 jinja2 = "*"
-markdown2 = "*"
-markupsafe = "*"
-pipenv = "*"
-python-dateutil = "*"
-six = "*"
-virtualenv = "*"
-virtualenv-clone = "*"
-werkzeug = "*"
-pyyaml = "*"
 twine = "*"
+pyyaml = "*"
 
 [requires]
