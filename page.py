@@ -21,7 +21,12 @@ class Page():
             url_suffix=".html",
             **kwargs,
             ):
-
+        """
+        initializing a new Page
+        --------
+        Required:
+        route [string or pathlib.Path]: the relative url for the Page,
+        """
         self.content = content
         self.route = str(route).lstrip('/').rstrip(content_format) + url_suffix
 
