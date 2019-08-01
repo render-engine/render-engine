@@ -30,7 +30,7 @@ class Engine:
             **kwargs,
             ):
         if config_path:
-            config.update = yaml.safe_load(Path(config_path).read_text())
+            config.update(yaml.safe_load(config_path))
 
         config.update(kwargs)
 
