@@ -2,24 +2,6 @@ from render_engine import Page
 import pytest
 import re
 
-@pytest.fixture()
-def base_page():
-    """Tests can a simple Page be created given no Parameters"""
-    content = """title: Base Page
-subtitle: This is a test object
-
-# Test Header
-Test Paragraph"""
-    slug = 'test'
-    url_suffix = '.html'
-    url_root = 'https://example.com/'
-    return Page(
-            slug=slug,
-            url_root=url_root,
-            url_suffix=url_suffix,
-            content=content,
-            custom_val='custom',
-            )
 
 def test_page_kwargs_become_properties(base_page):
     """Custom Parameters can be passed in as Properties"""

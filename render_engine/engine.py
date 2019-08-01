@@ -23,6 +23,7 @@ class Engine:
     def __init__(
             self,
             *,
+            site_url='./',
             template_path='./templates',
             config={},
             config_path=None,
@@ -48,9 +49,10 @@ class Engine:
         self.base_content_path = config.get('content_path', 'content')
         self.base_output_path = config.get('output_path', 'output/')
         self.base_static_path = config.get('static_path', 'static')
+        self.site_url = site_url
         self.routes = []
 
-    def route(*, routes=[], content_path=None, template=None, content_type=Page):
+    def route(self, *routes, content_path=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
         def inner(func, routes=routes, content_path=content_path):
             kwargs = func() or {}
@@ -59,7 +61,7 @@ class Engine:
                 self.routes.append(
                         content_type(
                             content_path=content_path,
-                            url_root=self.SITE_URL,
+                            url_root=self.site_url,
                             template=template,
                             slug=route.lstrip('/'),
                             **kwargs,
