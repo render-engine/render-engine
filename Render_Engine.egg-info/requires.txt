@@ -1,0 +1,11 @@
+maya
+markdown
+jinja2
+pyyaml
+
+[dev]
+pipenv
+check-manifest
+
+[test]
+pytest
