@@ -15,13 +15,16 @@ You can expand on these areas to customize your engine to your liking.
   
 **Examples:**
 
-- Create **Custom Page Objects** for _Blog Posts _or _Podcast Episodes_
+- Create **Custom Page Objects** for _Blog Posts_ or _Podcast Episodes_
+- Create all types of Page Objects, not just 'html' pages
 - Create _Sub-Collections_ from pages with a common attributes
 - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
 - Dynamically create content at runtime to include into your static sites
 
 ## As simple/complex as required
 
-- Render Engine uses Jinja2 to bring the power of templates to your page.
+- Render Engine uses [Jinja2] to bring the power of templates to your page.
 - Content can be markdown/html/or RAW DATA to give you the content you need.
 - Static Content because some things (will) never change.
+
+[Jinja2]: https://jinja.palletsprojects.com/en/latest
