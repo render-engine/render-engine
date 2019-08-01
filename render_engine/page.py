@@ -70,22 +70,21 @@ class Page():
         if getattr(self, 'content', None):
             self.markup = Markup(markdown(self.content))
 
-        if not slug:
-            slug = getattr(self, 'slug', None) \
-                or getattr(self, 'name', None) \
+        if slug:
+            slug = slug.lstrip('/')
+        else:
+            slug = getattr(self, 'name', None) \
                 or getattr(self, 'id', None) \
-                or getattr(self, 'content_path')
+                or getattr(self, 'content_path', '/')
+        self.slug = Path(slug)
 
 
-        self.slug = Path(slug).stem + url_suffix
+        self.relative_url = f'{self.slug.parent}{self.slug.with_suffix(url_suffix)}'
 
         # Build the URL so that it can be used as reference
-        if 'url' in kwargs:
-            self.url = kwargs['url']
-
-        else:
-            url = '/'.join((Path(url_root).stem, self.slug))
-            self.url = urllib.parse.urlsplit(url).geturl()
+        if not getattr(self, 'absolute_url', None):
+            _ = '/'.join((url_root, Path(self.relative_url).name))
+            self.absolute_url = urllib.parse.urlsplit(_).geturl()
 
 
     @staticmethod
@@ -126,7 +125,7 @@ class Page():
 
         return {
             'attrs': attrs,
-            'content': ''.join(md_content).strip('\n'),
+            'content': '\n'.join(md_content).strip('\n'),
             }
 
     def _load_from_file(self, content_path):
