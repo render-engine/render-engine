@@ -41,7 +41,10 @@ def test_engine_config_path_added_to_env(mocker):
     and further the environment globals"""
 
     custom_val={'CUSTOM_KEY': 'CUSTOM_VALUE'}
-    mocker.patch('yaml.safe_load', lambda x: custom_val)
+    mocker.patch(
+            'yaml.safe_load',
+            'str'.read_text = custom_val,
+            )
 
     env = Engine(config_path="config.yaml").env.globals
     assert env['CUSTOM_KEY'] == 'CUSTOM_VALUE'

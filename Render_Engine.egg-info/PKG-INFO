@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: render-engine
-Version: 2019.8.1.dev1
+Version: 2019.8.1.dev3
 Summary: Static Page Generation with Flask-like simplicity and flair ✨
 Home-page: https://github.com/kjaymiller/render_engine
 Author: Jay Miller
