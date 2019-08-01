@@ -20,9 +20,16 @@ PathString = Union[str, Type[Path]]
 class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
-    def __init__(self, *, template_path='./templates', config={}, **kwargs):
-        if config:
-            config = yaml.safe_load(Path(config).read_text())
+    def __init__(
+            self,
+            *,
+            template_path='./templates',
+            config={},
+            config_path=None,
+            **kwargs,
+            ):
+        if config_path:
+            config.update = yaml.safe_load(Path(config_path).read_text())
 
         config.update(kwargs)
 
