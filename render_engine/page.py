@@ -70,22 +70,20 @@ class Page():
         if getattr(self, 'content', None):
             self.markup = Markup(markdown(self.content))
 
-        if slug:
-            slug = slug.lstrip('/')
-        else:
+        # Set Slug of Page
+        if not slug:
             slug = getattr(self, 'name', None) \
                 or getattr(self, 'id', None) \
                 or getattr(self, 'content_path', '/')
-        self.slug = Path(slug)
-
-
-        self.relative_url = f'{self.slug.parent}{self.slug.with_suffix(url_suffix)}'
+        self.slug = slug
 
         # Build the URL so that it can be used as reference
-        if not getattr(self, 'absolute_url', None):
-            _ = '/'.join((url_root, Path(self.relative_url).name))
-            self.absolute_url = urllib.parse.urlsplit(_).geturl()
+        # url root should have a trailing slash
+        self.url_root = url_root if url_root[-1] == '/' else f'{url_root}/'
 
+        if not getattr(self, 'absolute_url', None):
+            self.absolute_url = self.url_root + str(Path(self.slug) \
+                    .with_suffix(url_suffix))
 
     @staticmethod
     def _git_log_date(filepath, branch: str="origin/master", message: str=""):

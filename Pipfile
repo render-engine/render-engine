@@ -19,5 +19,6 @@ jinja2 = "*"
 twine = "*"
 pyyaml = "*"
 markdown = "*"
+wheel = "*"
 
 [requires]

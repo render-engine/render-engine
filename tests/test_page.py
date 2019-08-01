@@ -10,7 +10,7 @@ subtitle: This is a test object
 
 # Test Header
 Test Paragraph"""
-    slug = '/test'
+    slug = 'test'
     url_suffix = '.html'
     url_root = 'https://example.com/'
     return Page(
@@ -44,7 +44,6 @@ def test_page_slug_variants(page):
 
 def test_page_url_relative_and_absolute(base_page):
     """page object has a relative and absolute url"""
-    assert base_page.relative_url == './test.html'
     assert base_page.absolute_url == 'https://example.com/test.html'
 
 def test_page_content_separated_from_attrs(base_page):
