@@ -1,5 +1,6 @@
-import pytest
 from render_engine import Engine
+import pytest
+import yaml
 
 @pytest.fixture()
 def base_engine(site_url):
@@ -35,3 +36,12 @@ def test_engine_route_adds_route_items(base_engine):
 
     assert base_engine.routes[0].absolute_url == './about.html'
 
+def test_engine_config_path_added_to_env(mocker):
+    """When a config_path is provided parse the yaml file and add it to configs
+    and further the environment globals"""
+
+    custom_val={'CUSTOM_KEY': 'CUSTOM_VALUE'}
+    mocker.patch('yaml.safe_load', lambda x: custom_val)
+
+    env = Engine(config_path="config.yaml").env.globals
+    assert env['CUSTOM_KEY'] == 'CUSTOM_VALUE'

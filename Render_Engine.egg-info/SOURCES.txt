@@ -13,3 +13,8 @@ render_engine/engine.py
 render_engine/links.py
 render_engine/page.py
 render_engine/paginate.py
+render_engine.egg-info/PKG-INFO
+render_engine.egg-info/SOURCES.txt
+render_engine.egg-info/dependency_links.txt
+render_engine.egg-info/requires.txt
+render_engine.egg-info/top_level.txt
