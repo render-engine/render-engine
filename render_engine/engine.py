@@ -20,14 +20,12 @@ PathString = Union[str, Type[Path]]
 class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
-    def __init__(self, template_path='./templates', config={}, **kwargs):
+    def __init__(self, *, template_path='./templates', config={}, **kwargs):
         if config:
             config = yaml.safe_load(Path(config).read_text())
 
         config.update(kwargs)
 
-        for key, attr in config.items():
-            setattr(self, key, attr)
 
         # Create a new environment and set the global variables to the config
         # items
@@ -36,33 +34,27 @@ class Engine:
             autoescape=select_autoescape(['html', 'xml']),
             )
 
+        self.env.globals.update({key: attr for key, attr in config.items()})
+
         # These fields are called a lot. So we pull them from config. Also,
         # make it a path
         self.base_content_path = config.get('content_path', 'content')
         self.base_output_path = config.get('output_path', 'output/')
         self.base_static_path = config.get('static_path', 'static')
-        self.base_url = config['SITE_URL']
-        self.routes_items = []
-        self.env.globals = self.__dict__
+        self.routes = []
 
-    def build(self, *, routes, content_path=None, template=None, content_type=Page):
+    def route(*, routes=[], content_path=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
-        def inner(func, content_path=content_path, routes=routes):
+        def inner(func, routes=routes, content_path=content_path):
             kwargs = func() or {}
 
-            if isinstance(routes, str):
-                routes = routes.split(',')
-
             for route in routes:
-                if content_path:
-                    content_path=joinpath(Path(content_path))
-
-                self.routes_items.append(
+                self.routes.append(
                         content_type(
                             content_path=content_path,
                             url_root=self.SITE_URL,
                             template=template,
-                            route=route,
+                            slug=route.lstrip('/'),
                             **kwargs,
                             )
                         )
@@ -97,7 +89,7 @@ class Engine:
                     **kwargs,
                     )
 
-            self.routes_items.extend(iter(collection))
+            self.routes.extend(iter(collection))
 
             if paginate:
                 paginated_pages = write_paginated_pages(
@@ -107,7 +99,7 @@ class Engine:
                         route=route,
                         )
 
-                self.routes_items.extend(paginated_pages)
+                self.routes.extend(paginated_pages)
 
             if feeds:
                 build_date = maya.now()
@@ -126,7 +118,7 @@ class Engine:
                         items=iter(collection),
                         )
 
-                self.routes_items.append(rss_feed)
+                self.routes.append(rss_feed)
 
                 json_feed = Page(
                     template=None,
@@ -135,7 +127,7 @@ class Engine:
                     url_suffix='.json',
                     )
 
-                self.routes_items.append(json_feed)
+                self.routes.append(json_feed)
 
     def run(self, overwrite=True):
         """Builds the Site Objects
@@ -161,7 +153,7 @@ class Engine:
 
         shutil.copytree(self.base_static_path, static_output)
 
-        for route in self.routes_items:
+        for route in self.routes:
             # Get filename from route
             filename = Path(self.base_output_path +
                     str(route.route).split(self.base_content_path)[-1])
