@@ -4,7 +4,7 @@ import yaml
 
 @pytest.fixture()
 def base_engine(site_url):
-    return Engine()
+    return Engine(site_url=site_url)
 
 def test_engine_has_internal_env():
     """This ensures that each Engine instance has its own environment.
@@ -34,7 +34,7 @@ def test_engine_route_adds_route_items(base_engine):
     def about():
         pass
 
-    assert base_engine.routes[0].absolute_url == './about.html'
+    assert base_engine.routes[0].absolute_url == 'https://example.com/about.html'
 
 def test_engine_config_path_added_to_env(mocker):
     """When a config_path is provided parse the yaml file and add it to configs
@@ -45,3 +45,12 @@ def test_engine_config_path_added_to_env(mocker):
 
     env = Engine(config_path="config.yaml").env.globals
     assert env['CUSTOM_KEY'] == 'CUSTOM_VALUE'
+
+def test_engine_build_collection(base_engine, base_page):
+    """Setup a Collection using the build_collection decorator"""
+
+    @base_engine.build_collection(routes=['/'], pages=(base_page, base_page, base_page))
+    def base_page_build():
+        pass
+
+

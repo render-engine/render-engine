@@ -16,7 +16,7 @@ class Collection:
             *,
             paginate: bool,
             name: str,
-            content_path: PathString,
+            content_path: PathString='',
             route: Union[PathString, Sequence[PathString]],
             url_root: str,
             url_suffix: str='.html',
@@ -38,7 +38,8 @@ class Collection:
         """
         self.name = name
         self.extension = extension
-        self.content_path = Path(content_path)
+        if content_path:
+            self.content_path = content_path
         self.route = Path(route)
         self.url_root = url_root
 
@@ -63,12 +64,12 @@ class Collection:
                         url_root=self.url_root,
                         template=template,
                         ) for content_path in page_glob ]
-            self.pages = sorted(
-                    pages,
-                    key=lambda page:page.date_modified or
-                        page.date_published or page.title,
-                    reverse=True,
-                    )
+        self.pages = sorted(
+                pages,
+                key=lambda page:page.date_modified or
+                    page.date_published or page.title,
+                reverse=True,
+                )
 
     def __iter__(self):
         return iter(self.pages)

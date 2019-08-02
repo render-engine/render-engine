@@ -12,6 +12,7 @@ verify_ssl = false
 pytest = "*"
 v = {editable = true,version = "*"}
 pytest-mock = "*"
+twine = "*"
 
 [packages]
 maya = "*"
