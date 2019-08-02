@@ -40,11 +40,8 @@ def test_engine_config_path_added_to_env(mocker):
     """When a config_path is provided parse the yaml file and add it to configs
     and further the environment globals"""
 
-    custom_val={'CUSTOM_KEY': 'CUSTOM_VALUE'}
-    mocker.patch(
-            'yaml.safe_load',
-            'str'.read_text = custom_val,
-            )
+    custom_val='CUSTOM_KEY: CUSTOM_VALUE'
+    mocker.patch('pathlib.Path.read_text', return_value=custom_val)
 
     env = Engine(config_path="config.yaml").env.globals
     assert env['CUSTOM_KEY'] == 'CUSTOM_VALUE'
