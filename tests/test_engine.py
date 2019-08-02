@@ -46,11 +46,8 @@ def test_engine_config_path_added_to_env(mocker):
     env = Engine(config_path="config.yaml").env.globals
     assert env['CUSTOM_KEY'] == 'CUSTOM_VALUE'
 
-def test_engine_build_collection(base_engine, base_page):
+def test_engine_build_collection(mocker, base_engine, base_collection):
     """Setup a Collection using the build_collection decorator"""
-
-    @base_engine.build_collection(routes=['/'], pages=(base_page, base_page, base_page))
-    def base_page_build():
-        pass
-
-
+    assert len(base_engine.routes) == 0
+    base_engine.build_collection(routes=['/'], pages=(base_collection.pages))
+    assert len(base_engine.routes) == 3

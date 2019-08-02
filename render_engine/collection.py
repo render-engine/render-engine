@@ -14,11 +14,11 @@ class Collection:
     def __init__(
             self,
             *,
-            paginate: bool,
+            paginate: bool=False,
             name: str,
             content_path: PathString='',
-            route: Union[PathString, Sequence[PathString]],
-            url_root: str,
+            route: Union[PathString, Sequence[PathString]]='./',
+            url_root: str='./',
             url_suffix: str='.html',
             extension: str='.md',
             template: str='page.html',
@@ -57,7 +57,7 @@ class Collection:
             setattr(self, key, attr)
 
         if not pages:
-            page_glob = list(self.content_path.glob(f'*{self.extension}'))
+            page_glob = list(Path(self.content_path).glob(f'*{self.extension}'))
             pages = [content_type(
                         route=Path(route).joinpath(Path(content_path.name)),
                         content_path=content_path,
@@ -66,13 +66,29 @@ class Collection:
                         ) for content_path in page_glob ]
         self.pages = sorted(
                 pages,
-                key=lambda page:page.date_modified or
-                    page.date_published or page.title,
+                key=self.sorter,
                 reverse=True,
                 )
 
     def __iter__(self):
         return iter(self.pages)
+
+    @staticmethod
+    def sorter(page):
+        if getattr(page, 'date_published', None):
+            return page.date_published
+
+        if getattr(page, 'date_modified', None):
+            return page.date_modified
+
+        if getattr(page, 'title', None):
+            return page.title
+
+        if getattr(page, 'name', None):
+            return page.name
+
+        if getattr(page, 'slug', None):
+            return page.slug
 
     @property
     def paginate(self):

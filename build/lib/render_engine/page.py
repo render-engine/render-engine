@@ -17,7 +17,7 @@ class Page():
             content='',
             content_format='.md',
             template="page.html",
-            url_root="/", # often used to make links
+            url_root="./", # often used to make links
             url_suffix=".html",
             **kwargs,
             ):

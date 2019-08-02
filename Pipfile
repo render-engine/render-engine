@@ -8,11 +8,17 @@ name = "pythonhosted"
 url = "https://files.pythonhosted.org"
 verify_ssl = false
 
+[[source]]
+name = "pypi - test"
+url = "https://test.pypi.org/simple"
+verify_ssl = false
+
 [dev-packages]
 pytest = "*"
 v = {editable = true,version = "*"}
 pytest-mock = "*"
 twine = "*"
+render-engine = "*"
 
 [packages]
 maya = "*"
@@ -23,3 +29,6 @@ markdown = "*"
 wheel = "*"
 
 [requires]
+
+[pipenv]
+allow_prereleases = true

@@ -75,9 +75,10 @@ class Engine:
     def build_collection(
             self,
             *,
-            template,
             routes,
-            content_path,
+            pages=None,
+            template='page.html',
+            content_path=None,
             feeds=False,
             paginate=False,
             extension='.md',
@@ -90,10 +91,11 @@ class Engine:
             collection = Collection(
                     name=name,
                     content_path=content_path,
+                    pages=pages,
                     route=route,
                     paginate=paginate,
                     extension=extension,
-                    url_root=self.SITE_URL,
+                    url_root=self.site_url,
                     template=template,
                     **kwargs,
                     )

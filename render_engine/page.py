@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 from markdown import markdown
 from jinja2 import Markup
@@ -6,7 +5,7 @@ import maya
 import re
 import shlex
 import subprocess
-import urllib.parse
+
 
 class Page():
     def __init__(
@@ -16,8 +15,8 @@ class Page():
             content_path=None,
             content='',
             content_format='.md',
-            template="page.html",
-            url_root="/", # often used to make links
+            template=None,
+            url_root="./", # often used to make links
             url_suffix=".html",
             **kwargs,
             ):
@@ -82,7 +81,7 @@ class Page():
         self.url_root = url_root if url_root[-1] == '/' else f'{url_root}/'
 
         if not getattr(self, 'absolute_url', None):
-            self.absolute_url = self.url_root + str(Path(self.slug) \
+            self.url = self.url_root + str(Path(self.slug) \
                     .with_suffix(url_suffix))
 
     @staticmethod
