@@ -41,7 +41,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2019.8.2dev3',  # Required
+    version='2019.8.6dev0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -203,6 +203,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
+        'Documentation': 'https://render-engine.readthedocs.io/en/latest',
         'Bug Reports': 'https://github.com/kjaymiller/render_engine/issues',
         'Funding': 'https://paypal.me/kjaymiller',
         'Say Thanks!': 'http://saythanks.io/to/kjaymiller',

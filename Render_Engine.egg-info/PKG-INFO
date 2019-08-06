@@ -1,11 +1,12 @@
 Metadata-Version: 2.1
 Name: render-engine
-Version: 2019.8.2.dev3
+Version: 2019.8.6.dev0
 Summary: Static Page Generation with Flask-like simplicity and flair ✨
 Home-page: https://github.com/kjaymiller/render_engine
 Author: Jay Miller
 Author-email: jay@productivityintech.com
 License: UNKNOWN
+Project-URL: Documentation, https://render-engine.readthedocs.io/en/latest
 Project-URL: Bug Reports, https://github.com/kjaymiller/render_engine/issues
 Project-URL: Funding, https://paypal.me/kjaymiller
 Project-URL: Say Thanks!, http://saythanks.io/to/kjaymiller
@@ -13,25 +14,28 @@ Project-URL: Source, https://github.com/kjaymiller/render_engine/
 Description: ## What is RenderEngine
         
         The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.   
-          
-        Render Engine was built out of frustration with existing tools. Monoliths like _Django_ were too vast. Dynamic Services like _Flask_ required overhead of a server where in many cases were not necessary. Extensions to Flask that provided a static component added  even more unnecessary complexity. Other static-site generators like _Pelican_ and _Pyramid_ were built without modern architectures and design practices in mind.  
-          
         
-        ## Render Engine gives you a simplistic 3 layer architecture. 
+        Render Engine was built out of frustration with existing tools. Larger frameworks like _Django_ were too vast. Dynamic Services like _Flask_ required overhead of a server where in many cases were not necessary. Extensions to Flask that provided a static component added  even more unnecessary complexity. Other static-site generators like _Pelican_ were built without modern architectures and design practices in mind.  
         
-        **Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
-        **Collection** - A group of webpages with some connection  
-        **Engine - **A manager that provides top layer configuration and consistency  
-          
-        You can expand on these areas to customize your engine to your liking.  
-          
-        **Examples:**
+        
+        ## The _3 layer_ architecture. 
+        
+        * **Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
+        * **Collection** - A group of webpages with some connection
+        * **Engine** - A manager that provides top layer configuration and consistency
+        
+        You can expand on these areas to customize your engine to your liking.
+        
+        
+        **Things you can do in with Render Engine:**
         
         - Create **Custom Page Objects** for _Blog Posts_ or _Podcast Episodes_
         - Create all types of Page Objects, not just 'html' pages
         - Create _Sub-Collections_ from pages with a common attributes
         - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
         - Dynamically create content at runtime to include into your static sites
+        
+        Check out our [Quickstart](docs/QUICKSTART.md) to get started...
         
         ## As simple/complex as required
         
