@@ -2,14 +2,14 @@
 
 The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.   
   
-Render Engine was built out of frustration with existing tools. Monoliths like _Django_ were too vast. Dynamic Services like _Flask_ required overhead of a server where in many cases were not necessary. Extensions to Flask that provided a static component added  even more unnecessary complexity. Other static-site generators like _Pelican_ and _Pyramid_ were built without modern architectures and design practices in mind.  
+Render Engine was built out of frustration with existing tools. Larger frameworks like _Django_ were too vast. Dynamic Services like _Flask_ required overhead of a server where in many cases were not necessary. Extensions to Flask that provided a static component added  even more unnecessary complexity. Other static-site generators like _Pelican_ were built without modern architectures and design practices in mind.  
   
 
-## Render Engine gives you a simplistic 3 layer architecture. 
+## Render Engine gives you a simplistic _3 layer_ architecture. 
 
 **Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
 **Collection** - A group of webpages with some connection  
-**Engine - **A manager that provides top layer configuration and consistency  
+**Engine** - A manager that provides top layer configuration and consistency  
   
 You can expand on these areas to customize your engine to your liking.  
   
