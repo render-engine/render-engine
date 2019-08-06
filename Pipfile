@@ -19,6 +19,7 @@ v = {editable = true,version = "*"}
 pytest-mock = "*"
 twine = "*"
 render-engine = "*"
+mkdocs = "*"
 
 [packages]
 maya = "*"
