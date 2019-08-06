@@ -22,7 +22,7 @@ You can expand on these areas to customize your engine to your liking.
 - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
 - Dynamically create content at runtime to include into your static sites
 
-Check out our [Quickstart](docs/QUICKSTART) to get started...
+Check out our [Quickstart](docs/QUICKSTART.md) to get started...
 
 ## As simple/complex as required
 
