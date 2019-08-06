@@ -7,9 +7,9 @@ Render Engine was built out of frustration with existing tools. Larger framework
 
 ## The _3 layer_ architecture. 
 
-**Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
-**Collection** - A group of webpages with some connection
-**Engine** - A manager that provides top layer configuration and consistency
+* **Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
+* **Collection** - A group of webpages with some connection
+* **Engine** - A manager that provides top layer configuration and consistency
 
 You can expand on these areas to customize your engine to your liking.
 
@@ -22,7 +22,7 @@ You can expand on these areas to customize your engine to your liking.
 - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
 - Dynamically create content at runtime to include into your static sites
 
-Check out our [Quickstart][QUICKSTART] to get started...
+Check out our [Quickstart](QUICKSTART) to get started...
 
 ## As simple/complex as required
 
