@@ -74,8 +74,8 @@ class Engine:
 
     def build_collection(
             self,
+            **routes,
             *,
-            routes,
             pages=None,
             template='page.html',
             content_path=None,

@@ -159,15 +159,16 @@ class Engine:
         # contents
         try:
             shutil.rmtree(static_output)
+            shutil.copytree(self.base_static_path, static_output)
+
         except:
             pass
 
-        shutil.copytree(self.base_static_path, static_output)
 
         for route in self.routes:
             # Get filename from route
             filename = Path(self.base_output_path +
-                    str(route.route).split(self.base_content_path)[-1])
+                    str(route.url).split(self.base_content_path)[-1])
             base_dir = Path(filename).parent.mkdir(
                     parents=True,
                     exist_ok=True,
