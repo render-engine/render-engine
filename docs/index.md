@@ -1,4 +1,4 @@
-## What is RenderEngine
+## What is Render Engine
 
 The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.   
 
