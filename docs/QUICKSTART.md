@@ -13,7 +13,7 @@ You can all the basic componenents of Render Engine rather easily. This isn't th
 ```
 from render_engine.page import Page
 
-engine.routes.appeng(Page(
+engine.routes.append(Page(
         slug='/index', # Use the slug, not the filename
         content="""<html>
         <body><h1>This is a Sample Page</h1></body>
