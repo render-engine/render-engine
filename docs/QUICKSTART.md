@@ -1,6 +1,6 @@
 ## Import Render Engine into your run file
 
-`render_engine import Engine`
+`from render_engine import Engine`
 
 ## Define your Engine
 `engine = Engine()`
