@@ -26,10 +26,14 @@ class Engine:
     def __init__(
             self,
             *,
-            site_url='./',
+            site_url=None,
             template_path='./templates',
             config={},
             config_path=None,
+            content_path='content',
+            static_path='static',
+            output_path='output',
+            routes=[],
             **kwargs,
             ):
 
@@ -38,27 +42,37 @@ class Engine:
             logging.info(f'{config_path} detected checking for engine variables')
             config.update(load_config(config_path, 'Engine'))
             logging.debug(f'config={config}')
-        config.update(kwargs)
-        logging.debug(config)
 
+        if 'Environment' not in config:
+            config['Environment'] = {}
+
+        config['Environment'].update(kwargs)
 
 
         # Create a new environment and set the global variables to the config
-        # items
+        # items called in environment variables
         self.env = Environment(
             loader=FileSystemLoader(template_path),
             autoescape=select_autoescape(['html', 'xml']),
             )
 
-        self.env.globals.update({key: attr for key, attr in config.items()})
+        if 'Environment' in config:
+            logging.info(f'Environment section detected')
+            logging.debug(config['Environment'])
+            self.env.globals.update(config['Environment'])
 
         # These fields are called a lot. So we pull them from config. Also,
         # make it a path
-        self.base_content_path = config.get('content_path', 'content')
-        self.base_output_path = config.get('output_path', 'output/')
-        self.base_static_path = config.get('static_path', 'static')
-        self.site_url = site_url
-        self.routes = []
+        self.base_content_path = config.get('content_path', content_path)
+        self.base_static_path = config.get('static_path', static_path)
+        self.base_output_path= config.get('output_path', output_path)
+        self.site_url = config.get('site_url', site_url)
+        self.routes = routes
+        logging.debug(f'base_content_path - {self.base_content_path}')
+        logging.debug(f'base_output_path - {self.base_output_path}')
+        logging.debug(f'base_static_path - {self.base_static_path}')
+        logging.debug(f'site_url - {self.site_url}')
+        logging.debug(f'routes - {self.routes}')
 
     def route(self, *routes, content_path=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
@@ -69,7 +83,7 @@ class Engine:
                 self.routes.append(
                         content_type(
                             content_path=content_path,
-                            url_root=self.site_url,
+                            url_root=self.site_url if self.site_url else './',
                             template=template,
                             slug=route.lstrip('/'),
                             **kwargs,

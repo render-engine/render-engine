@@ -21,6 +21,6 @@ def load_config(config_path, section):
         config = yaml.safe_load(config_path.read_text())
 
         if section in config:
-            return config['Section']
+            return config[section]
         else:
             return config
