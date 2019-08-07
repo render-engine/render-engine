@@ -1,6 +1,7 @@
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.paginate import write_paginated_pages
+from render_engine.config_loader import load_config
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -8,12 +9,14 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
 from typing import Type, Optional, Union, TypeVar, Iterable
 
+import logging
 import json
 import maya
 import shutil
 import yaml
 
 # Currently all of the Configuration Information is saved to Default
+logging.basicConfig(level=logging.DEBUG)
 
 PathString = Union[str, Type[Path]]
 
@@ -29,10 +32,15 @@ class Engine:
             config_path=None,
             **kwargs,
             ):
-        if config_path:
-            config.update(yaml.safe_load(Path(config_path).read_text()))
 
+        # Check for configurations in config_path or kwargs
+        if config_path:
+            logging.info(f'{config_path} detected checking for engine variables')
+            config.update(load_config(config_path, 'Engine'))
+            logging.debug(f'config={config}')
         config.update(kwargs)
+        logging.debug(config)
+
 
 
         # Create a new environment and set the global variables to the config
@@ -74,8 +82,7 @@ class Engine:
 
     def build_collection(
             self,
-            **routes,
-            *,
+            *routes,
             pages=None,
             template='page.html',
             content_path=None,
@@ -90,7 +97,8 @@ class Engine:
         for route in routes:
             collection = Collection(
                     name=name,
-                    content_path=content_path,
+                    content_path=Path(self.base_content_path) \
+                            .joinpath(content_path if content_path else './'),
                     pages=pages,
                     route=route,
                     paginate=paginate,
