@@ -7,7 +7,7 @@ Render Engine was built out of frustration with existing tools. Larger framework
 
 ## The _3 layer_ architecture. 
 
-* **Page** - A single webpage item built from content, a template, raw data, or a combination of those things.  
+* **[Page](./page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.  
 * **Collection** - A group of webpages with some connection
 * **Engine** - A manager that provides top layer configuration and consistency
 
