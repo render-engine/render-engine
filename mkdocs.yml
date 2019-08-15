@@ -2,4 +2,6 @@ site_name: Render Engine
 nav:
   - Home: index.md
   - Quickstart: QUICKSTART.md
+  - Components:
+    - Page : page.md
 theme: readthedocs
