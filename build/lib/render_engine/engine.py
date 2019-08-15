@@ -1,6 +1,8 @@
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.paginate import write_paginated_pages
+from render_engine.config_loader import load_config
+from render_engine.path_preparer import directory_path
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -8,12 +10,14 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
 from typing import Type, Optional, Union, TypeVar, Iterable
 
+import logging
 import json
 import maya
 import shutil
 import yaml
 
 # Currently all of the Configuration Information is saved to Default
+logging.basicConfig(level=logging.DEBUG)
 
 PathString = Union[str, Type[Path]]
 
@@ -23,34 +27,57 @@ class Engine:
     def __init__(
             self,
             *,
-            site_url='./',
+            site_url=None,
             template_path='./templates',
             config={},
             config_path=None,
+            content_path='content',
+            static_path='static',
+            output_path='output',
+            routes=[],
             **kwargs,
             ):
-        if config_path:
-            config.update(yaml.safe_load(Path(config_path).read_text()))
 
-        config.update(kwargs)
+        # Check for configurations in config_path or kwargs
+        if config_path:
+            logging.info(f'{config_path} detected checking for engine variables')
+            config.update(load_config(config_path, 'Engine'))
+            logging.debug(f'config={config}')
+
+        if 'Environment' not in config:
+            config['Environment'] = {}
+
+        config['Environment'].update(kwargs)
 
 
         # Create a new environment and set the global variables to the config
-        # items
+        # items called in environment variables
         self.env = Environment(
             loader=FileSystemLoader(template_path),
             autoescape=select_autoescape(['html', 'xml']),
             )
 
-        self.env.globals.update({key: attr for key, attr in config.items()})
+        if 'Environment' in config:
+            logging.info(f'Environment section detected')
+            logging.debug(config['Environment'])
+            self.env.globals.update(config['Environment'])
 
         # These fields are called a lot. So we pull them from config. Also,
         # make it a path
-        self.base_content_path = config.get('content_path', 'content')
-        self.base_output_path = config.get('output_path', 'output/')
-        self.base_static_path = config.get('static_path', 'static')
-        self.site_url = site_url
-        self.routes = []
+        self.base_content_path = directory_path(
+                config.get('content_path', content_path))
+        self.base_static_path = directory_path(
+                config.get('static_path', static_path))
+        self.base_output_path= directory_path(
+                config.get('output_path', output_path))
+
+        self.site_url = config.get('site_url', site_url)
+        self.routes = routes
+        logging.debug(f'base_content_path - {self.base_content_path}')
+        logging.debug(f'base_output_path - {self.base_output_path}')
+        logging.debug(f'base_static_path - {self.base_static_path}')
+        logging.debug(f'site_url - {self.site_url}')
+        logging.debug(f'routes - {self.routes}')
 
     def route(self, *routes, content_path=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
@@ -61,7 +88,7 @@ class Engine:
                 self.routes.append(
                         content_type(
                             content_path=content_path,
-                            url_root=self.site_url,
+                            url_root=self.site_url if self.site_url else './',
                             template=template,
                             slug=route.lstrip('/'),
                             **kwargs,
@@ -74,8 +101,7 @@ class Engine:
 
     def build_collection(
             self,
-            **routes,
-            *,
+            *routes,
             pages=None,
             template='page.html',
             content_path=None,
@@ -90,7 +116,8 @@ class Engine:
         for route in routes:
             collection = Collection(
                     name=name,
-                    content_path=content_path,
+                    content_path=Path(self.base_content_path) \
+                            .joinpath(content_path if content_path else './'),
                     pages=pages,
                     route=route,
                     paginate=paginate,
@@ -117,7 +144,7 @@ class Engine:
                 rss_feed = Page(
                         template='feeds/rss/blog.rss',
                         route=name,
-                        url_root=self.SITE_URL,
+                        url_root=self.site_url,
                         url_suffix='.rss',
                         content=collection.to_rss(engine=self),
                         name=self.FEED_TITLE,

@@ -9,10 +9,12 @@ Render_Engine.egg-info/top_level.txt
 render_engine/__init__.py
 render_engine/category_feeds.py
 render_engine/collection.py
+render_engine/config_loader.py
 render_engine/engine.py
 render_engine/links.py
 render_engine/page.py
 render_engine/paginate.py
+render_engine/path_preparer.py
 render_engine/quickstart.py
 render_engine.egg-info/PKG-INFO
 render_engine.egg-info/SOURCES.txt

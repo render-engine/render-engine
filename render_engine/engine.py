@@ -2,6 +2,7 @@ from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.paginate import write_paginated_pages
 from render_engine.config_loader import load_config
+from render_engine.path_preparer import directory_path
 
 from dataclasses import dataclass
 from itertools import zip_longest
@@ -63,9 +64,13 @@ class Engine:
 
         # These fields are called a lot. So we pull them from config. Also,
         # make it a path
-        self.base_content_path = config.get('content_path', content_path)
-        self.base_static_path = config.get('static_path', static_path)
-        self.base_output_path= config.get('output_path', output_path)
+        self.base_content_path = directory_path(
+                config.get('content_path', content_path))
+        self.base_static_path = directory_path(
+                config.get('static_path', static_path))
+        self.base_output_path= directory_path(
+                config.get('output_path', output_path))
+
         self.site_url = config.get('site_url', site_url)
         self.routes = routes
         logging.debug(f'base_content_path - {self.base_content_path}')
@@ -139,7 +144,7 @@ class Engine:
                 rss_feed = Page(
                         template='feeds/rss/blog.rss',
                         route=name,
-                        url_root=self.SITE_URL,
+                        url_root=self.site_url,
                         url_suffix='.rss',
                         content=collection.to_rss(engine=self),
                         name=self.FEED_TITLE,

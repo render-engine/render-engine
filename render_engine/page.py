@@ -27,16 +27,19 @@ class Page():
         slug [string or pathlib.Path]: the relative url for the Page,
         """
 
+        # Set Content from content and/or content_path
+        self.content = ''
+
         if content:
             _ = self._load_content(content)
             kwargs.update(_['attrs'])
-            self.content = _['content']
+            self.content += _['content']
 
         if content_path:
             self.content_path = Path(content_path)
             _ = self._load_from_file(content_path)
             kwargs.update(_['attrs'])
-            self.content = _['content']
+            self.content += _['content']
 
             # Check for Date Published and convert to RFC2822
             date_published = self._check_for_date_attr(
