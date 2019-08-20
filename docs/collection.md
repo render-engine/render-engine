@@ -9,7 +9,7 @@ The root path of all items in the collection.
 A path you can use to load a set of Pages (loaded using [content_from_file])
 
 ## Collection.pages
-		The building blocks of collections. This is an iterable of [Page] objects.
+The building blocks of collections. This is an iterable of [Page] objects.
 
 ## Additional Collection Attrs
 Collection Attrs are similar to page attrs except they are passed to ALL PAGES IN THE COLLECTION
