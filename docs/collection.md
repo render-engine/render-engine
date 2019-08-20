@@ -6,7 +6,7 @@ A collection object is a group of pages that share a root path and other attribu
 The root path of all items in the collection.
 
 ## Collection.content_from_path
-A path you can use to load a set of Pages (loaded using [content_from_file])
+A path you can use to load a set of Pages (loaded using `[Page.content_from_file](page.md)`
 
 ## Collection.pages
 The building blocks of collections. This is an iterable of [Page] objects.
@@ -22,5 +22,3 @@ Additional attrs can be _anything_ but common attrs include:
 * Link
 * Intro
 * Content Footer
-
-
