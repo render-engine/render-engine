@@ -1,4 +1,4 @@
-# Page Object
+# Page Objects
 
 The Page Object is the basic building block for all objects. Essentially your site is built from one or many Page objects.
 
