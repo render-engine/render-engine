@@ -2,6 +2,8 @@
 --trusted-host pypi.org
 --extra-index-url https://files.pythonhosted.org
 --trusted-host files.pythonhosted.org
+--extra-index-url https://test.pypi.org/simple
+--trusted-host test.pypi.org
 bleach==3.1.0
 certifi==2019.6.16
 chardet==3.0.4
@@ -31,3 +33,4 @@ twine==1.13.0
 tzlocal==2.0.0
 urllib3==1.25.3
 webencodings==0.5.1
+wheel==0.33.4
