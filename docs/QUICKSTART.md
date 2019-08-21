@@ -45,8 +45,6 @@ Use `@engine.build()` and create a function to hold any variables you want to pa
 
 That will look for `index.html` in the engines `template_path` directory (_./templates_ by default)
 
-
-
 ## Create Collections
 You can build a collection and add the pages to the engine using the `engine.build_collection` method.
 
@@ -67,9 +65,10 @@ engine.build_collection(
 
 Where is it pulling content _from_? 
 
-It's whatever you have 'content_path' set in your engine. By default it's `./content`. This will create a [[Collection]] for each markdown or html file (by default) files and create a page for each one.
+It's whatever you have 'content_path' set in your engine. By default it's `./content`. This will create a [[Collection]] for each _markdown_ (.md, .markdown) or _.html_ (by default) files and create a page for each one.
 
 ## Generating the files
-This is what makes the magic happen!
+This is what makes the magic happen! 💫
 
 To generate the file, call `engine.run()` at the end!
+This will create html pages for all of the content that we built and store them in the output_path (`./output` by default)
