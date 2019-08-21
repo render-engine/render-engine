@@ -5,110 +5,56 @@ import maya
 import re
 import shlex
 import subprocess
+import logging
+
 
 
 class Page():
+    """Base component used to make web pages"""
     def __init__(
             self,
             *,
             slug=None,
-            content_path=None,
             content='',
-            content_format='.md',
+            content_path=None,
             template=None,
-            url_root="./", # often used to make links
-            url_suffix=".html",
+            extension='.html',
             **kwargs,
             ):
         """
-        initializing a new Page
+        initialize a new Page object
         --------
-        Required:
-        slug [string or pathlib.Path]: the relative url for the Page,
+        - slug [string or pathlib.Path] (Required): the relative url for the Page.
+        - content [string] (Optional): the raw content to be processed into html. Must have this or 'content_path'
+        - content_path [string or pathlib.Path] (Optional): The path to the content file. Must have this or 'content'.
+        - template [string or pathlib.Path] (Optional): The template file that will be used to generate an html file.
+        - extension [string] (Optional, Default: html): used to tell what extension the markup file should have. Often used to make web-compatible non-html text files.
         """
 
         # Set Content from content and/or content_path
-        self.content = ''
+        self.content_path = content_path if content_path else None
+        if self.content_path:
+            _ = Path(self.content_path)
+        else:
+            _ = _load_content(content)
 
-        if content:
-            _ = self._load_content(content)
-            kwargs.update(_['attrs'])
-            self.content += _['content']
-
-        if content_path:
-            self.content_path = Path(content_path)
-            _ = self._load_from_file(content_path)
-            kwargs.update(_['attrs'])
-            self.content += _['content']
-
-            # Check for Date Published and convert to RFC2822
-            date_published = self._check_for_date_attr(
-                    'date_published',
-                    kwargs,
-                    optional_location = self.content_path,
-                    log_index = -1,
-                    )
-            if date_published:
-                self.date_published = maya.parse(date_published).iso8601()
-
-            date_modified = self._check_for_date_attr(
-                    'date_modified',
-                    kwargs,
-                    optional_location = self.content_path,
-                    log_index = 0,
-                    )
-            if date_modified:
-                self.date_modified = maya.parse(date_modified).iso8601()
-
-            else:
-                self.date_modified = self.date_published or None
-
+        kwargs.update(_['attrs'])
+        self.content += _.get('content', None)
         self.template = template
 
         # make properties for all attrs
         for key, attr in kwargs.items():
             setattr(self, key, attr)
 
-        if getattr(self, 'content', None):
+        if self.content:
             self.markup = Markup(markdown(self.content))
 
-        # Set Slug of Page
+        # Set Slug of Page to slug or name or id or content_path name
         if not slug:
             slug = getattr(self, 'name', None) \
                 or getattr(self, 'id', None) \
-                or getattr(self, 'content_path', '/')
+                or Path(getattr(self, 'content_path', '/')).stem()
         self.slug = slug
-
-        # Build the URL so that it can be used as reference
-        # url root should have a trailing slash
-        self.url_root = url_root if url_root[-1] == '/' else f'{url_root}/'
-
-        if not getattr(self, 'absolute_url', None):
-            self.url = self.url_root + str(Path(self.slug) \
-                    .with_suffix(url_suffix))
-
-    @staticmethod
-    def _git_log_date(filepath, branch: str="origin/master", message: str=""):
-        """
-        The Git log Command Ran as a Subprocess to Pull date information from history.
-        git log -b [branch] --date=rfc -- [filepath] | [head/tail] -1
-        ------
-        - filepath (Path or str) - the filepath of the document
-        - post (str: Either 'head' or 'tail') tells to get either the first (Creation) or the Last(Modification)
-        - branch (str: default='origin/master') filters results to only include the specified branch. Remove '-b' if None
-        - message (str: message before the preformated date
-
-        The results of this command can be given to maya or datetime.strptime as the format is Mon, Jan 01, 2019 19:00 -0800
-        """
-
-        if branch:
-            branch = f'-b {branch}'
-        else:
-            branch = ''
-
-        command = f'git log {branch} --format="%ad" -- {filepath}'
-        output = subprocess.check_output(shlex.split(command))
-        return output.decode().strip().split('\n')
 
     @staticmethod
     def _load_content(content):
@@ -127,70 +73,3 @@ class Page():
             'attrs': attrs,
             'content': '\n'.join(md_content).strip('\n'),
             }
-
-    def _load_from_file(self, content_path):
-        return self._load_content(content_path.read_text())
-
-
-    @staticmethod
-    def _check_for_attr(attrs, optional_keys, fallback=None):
-        """Check the attrs for the desired keys.
-        If none, use fallback"""
-
-        for key in optional_keys:
-            if key in attrs:
-                return key
-
-        return fallback
-
-    def _check_for_date_attr(
-            self,
-            key,
-            attrs,
-            log_index,
-            optional_location=None,
-            ):
-        """first it checks in attrs, then it checks the optional location"""
-        if key in attrs:
-            key_setter = attrs[key]
-
-        elif optional_location:
-            key_setter = self._git_log_date(optional_location)[log_index]
-
-        if key_setter:
-            return maya.when(key_setter).rfc2822()
-
-    def to_json(self):
-        date_published = getattr(self, 'date_published', None)
-        date_modified = getattr(self, 'date_modified', date_published)
-        base_feed_items = {
-            'id': self.url,
-            'url': id,
-            'external_url': getattr(self, 'external_url', None),
-            'title': getattr(self, 'title', None),
-            'content_html': getattr(self, 'markup', None),
-            'content_text': self.content,
-            'summary': getattr(self, 'summary', self.content[:40]),
-            'image': getattr(self, 'featured_image', None),
-            'banner_image': getattr(self, 'banner_image', None),
-            'date_published': self.date_published.rfc3339() if date_published
-                else None,
-            'date_modified': self.date_modified.rfc3339() if date_modified
-                else None,
-            'author': getattr(self, 'author', None),
-            'tags': getattr(self, 'tags', []),
-            'attachments': getattr(self, 'attachments', None),
-            }
-        return dict(filter(lambda item: item[1], base_feed_items.items()))
-
-    def to_rss(self, html=True, full_text=True):
-        if getattr(self, 'date_published', ''):
-            self.pubDate = maya.parse(self.date_published).rfc2822()
-
-        if full_text:
-            if html:
-                self.description = self.markup
-            else:
-                self.description = self.content
-        else:
-            self.description = self.summary
