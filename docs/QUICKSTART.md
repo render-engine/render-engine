@@ -1,68 +1,39 @@
-## Import Render Engine into your run file
+# QUICKSTART #
+## Installing Render Engine ##
+
+> **Note:** This Product is Not Officially Released. These are the instructions for installing from the test repository
+
+Render Engine is currently hosted in the [_Test Python Package Index_](https://test.pypi.org/project/render-engine/)
+
+### Using pip
+`pip install -i https://test.pypi.org/simple/ render-engine`
+
+### Using [pipenv](https://pipenv.readthedocs.io/en/latest/) ###
+In your `Pipfile` add the following.
+```
+[[[[source]]]]
+name = "pypi - test"
+url = "https://test.pypi.org/simple"
+
+[pipenv]
+allow_prereleases = true
+```
+
+The [[[[source]]]] adds the _Test PyPI_ to the lists of repositories to check for packages. Then you can install the package using  `pipenv install`.  
+
+
+## 1. Create a new python file. 
+`touch run.py`
+
+## 2. Import the Engine object into your file
 
 `from render_engine import Engine`
 
-## Define your Engine
+\* notice that calling Render Engine is done using _underscores_
+## 3. Create  your Engine Object
 `engine = Engine()`
 You can have more than one engine. This is great if you are building multiple sites or subdomains.
 
-## Adding Pages to the Engine (The Hard Way)
-### Build a basic page with no Template
-You can all the basic componenents of Render Engine rather easily. This isn't the preferred method of created pages but will "technically work"
-
-```
-from render_engine.page import Page
-
-engine.routes.append(Page(
-        slug='/index', # Use the slug, not the filename
-        content="""<html>
-        <body><h1>This is a Sample Page</h1></body>
-        </html>"""
-        ))
-```
-
-You can also build a page from a template using (Jinja2 no need to import it) 
-This is still a  harder way of doing adding a page to the engine. 
-
-```
-engine.routes.append(Page(
-        slug='/index_template_hard',
-        template='index.html', # resolves to <DEFAULT TEMPLATE PATH>/index.html',
-        TEMPLATE_VARIABLE='This is <strike>Render Engine</strike>', #Template Var
-        ))
-```
-
-## Adding Pages (The Easy Way)
-What if your Template Variables are more complicated than just a static value? What if you have multiple variables to add.
-
-There is an easy and consistent way to add content to the engine.
-
-You can use the `@route` decorator.
-
-```
-@engine.route('/index_template_easy', template='index.html')
-def get_template_var():
-    addition = 2 + 2
-    another_thing = 'Hello!'
-    return {
-            'TEMPATE_VARIABLE': addition,
-            'ANOTHER_VARIABLE': another_thing,
-            }
-```
-
-One thing the _Easy Way_ allows for is multiple routes.
-
-If you've got nothing to pass just pass or return an empty dictionary
-
-```
-@engine.route(
-        '/multiple_routes/',
-        '/pages/multiple_routes',
-        template='index.html',
-        )
-def multiple_routes():
-    pass # or return {}
-```
 
 ## Collections
 What about creating a blog or series of pages based on content?
