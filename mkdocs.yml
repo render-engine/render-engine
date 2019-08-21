@@ -4,4 +4,7 @@ nav:
   - Quickstart: QUICKSTART.md
   - Components:
     - Page : page.md
+    - Collection: collection.md
+    - Engine: engine.md
+
 theme: readthedocs

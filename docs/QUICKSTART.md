@@ -21,8 +21,8 @@ allow_prereleases = true
 
 The [[[[source]]]] adds the _Test PyPI_ to the lists of repositories to check for packages. Then you can install the package using  `pipenv install`.  
 
-
 ## 1. Create a new python file. 
+
 `touch run.py`
 
 ## 2. Import the Engine object into your file
@@ -30,17 +30,25 @@ The [[[[source]]]] adds the _Test PyPI_ to the lists of repositories to check fo
 `from render_engine import Engine`
 
 \* notice that calling Render Engine is done using _underscores_
+
 ## 3. Create  your Engine Object
 `engine = Engine()`
 You can have more than one engine. This is great if you are building multiple sites or subdomains.
 
+## 4. Create an Index Page ##
 
-## Collections
-What about creating a blog or series of pages based on content?
+Use `@engine.build()` and create a function to hold any variables you want to pass into the page. Pass the template `index.html` to the page.
 
-We call those **collections**.
+```
+@engine.build(template='index.html')
+``` 
 
-I'm not showing you the hard way.. Nope won't do it. Here is how you can build a collection and add the pages to the engine.
+That will look for `index.html` in the engines `template_path` directory (_./templates_ by default)
+
+
+
+## Create Collections
+You can build a collection and add the pages to the engine using the `engine.build_collection` method.
 
 ```
 engine.build_collection(
@@ -57,14 +65,9 @@ engine.build_collection(
             }
 ```
 
-Where is it pulling content from? It's whatever the 'content_path' is set in your engine. By default it's `./content`. This will create a collection of all of the markdown or html (by default) files and create a page for each one.
+Where is it pulling content _from_? 
 
-If you have variables that you want to set for each one do just like you did with the `@engine.route` decorator for collection level vars, use the local `collection` and for page-based objects, use the the `page` variable.
-    
-## Custom Collections
-Collections can also have mulitple routes.
-if you have a collection of Pages, you can define a custom collection of
-different type objects with the pages kwargs.
+It's whatever you have 'content_path' set in your engine. By default it's `./content`. This will create a [[Collection]] for each markdown or html file (by default) files and create a page for each one.
 
 ## Generating the files
 This is what makes the magic happen!
