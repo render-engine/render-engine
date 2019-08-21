@@ -8,7 +8,6 @@ import subprocess
 import logging
 
 
-
 class Page():
     """Base component used to make web pages"""
     def __init__(
@@ -33,13 +32,14 @@ class Page():
 
         # Set Content from content and/or content_path
         self.content_path = content_path if content_path else None
+
         if self.content_path:
-            _ = Path(self.content_path)
-        else:
-            _ = _load_content(content)
+            content = Path(self.content_path).read_text()
+
+        _ = load_content(content)
 
         kwargs.update(_['attrs'])
-        self.content += _.get('content', None)
+        self.content = _.get('content', None)
         self.template = template
 
         # make properties for all attrs
@@ -56,12 +56,12 @@ class Page():
                 or Path(getattr(self, 'content_path', '/')).stem()
         self.slug = slug
 
-    @staticmethod
-    def _load_content(content):
-        matcher = r'^\w+:'
-        md_content = content.splitlines()
-        attrs = {}
+def load_content(content):
+    matcher = r'^\w+:'
+    md_content = content.splitlines()
+    attrs = {}
 
+    if md_content:
         while re.match(matcher, md_content[0]):
             line = md_content.pop(0)
             line_data = line.split(': ', 1)
@@ -69,7 +69,7 @@ class Page():
             value = line_data[-1].rstrip()
             attrs[key] = value
 
-        return {
-            'attrs': attrs,
-            'content': '\n'.join(md_content).strip('\n'),
-            }
+    return {
+        'attrs': attrs,
+        'content': '\n'.join(md_content).strip('\n'),
+        }

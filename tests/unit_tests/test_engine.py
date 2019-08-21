@@ -33,7 +33,7 @@ def test_engine_route_adds_route_items(base_engine):
     def about():
         pass
 
-    assert base_engine.routes[0].url == 'https://example.com/about.html'
+    assert base_engine.routes[0].slug == 'about'
 
 def test_engine_config_path_added_to_env(mocker):
     """When a config_path is provided parse the yaml file and add it to configs

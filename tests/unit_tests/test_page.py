@@ -24,10 +24,6 @@ def test_page_slug_variants(page):
     """
     assert page.slug == 'test'
 
-def test_page_url(base_page):
-    """page object has a relative and url"""
-    assert base_page.url== 'https://example.com/test.html'
-
 def test_page_content_separated_from_attrs(base_page):
     """When given markdown for content convert it to html and return it as markup"""
     assert """# Test Header

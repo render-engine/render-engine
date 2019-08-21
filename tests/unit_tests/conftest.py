@@ -18,8 +18,6 @@ Test Paragraph"""
     url_suffix = '.html'
     return Page(
             slug=slug,
-            url_root=site_url,
-            url_suffix=url_suffix,
             content=content,
             custom_val='custom',
             )
