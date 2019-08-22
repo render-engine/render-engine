@@ -3,4 +3,4 @@ python:
   - "3.6"
   - "3.7"
 
-script: pytest tests/unit-tests/
+script: py.test tests/unit-tests/
