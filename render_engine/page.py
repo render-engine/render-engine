@@ -6,6 +6,10 @@ import re
 import shlex
 import subprocess
 import logging
+from typing import (
+        Optional,
+        Union,
+        )
 
 
 class Page():
@@ -13,23 +17,28 @@ class Page():
     def __init__(
             self,
             *,
-            slug=None,
-            content='',
-            content_path=None,
-            template=None,
-            extension='.html',
+            slug,
+            content: Optional[str]='',
+            content_path: Optional[Union[str, Path]]=None,
+            template: Optional[Union[str, Path]]=None,
+            raw: bool=False,
             **kwargs,
             ):
         """
-        initialize a new Page object
+        initializes a new Page object
         --------
-        - slug [string or pathlib.Path] (Required): the relative url for the Page.
-        - content [string] (Optional): the raw content to be processed into html. Must have this or 'content_path'
-        - content_path [string or pathlib.Path] (Optional): The path to the content file. Must have this or 'content'.
-        - template [string or pathlib.Path] (Optional): The template file that will be used to generate an html file.
-        - extension [string] (Optional, Default: html): used to tell what extension the markup file should have. Often used to make web-compatible non-html text files.
+        raw: tells the Page to return content as string or bytes
+        template = the template filepath that the engine will use to build the page
+        content = the data that will be used to create a page object
+        content_path = filepath to get content and attributes. Attributes added
+        to kwargs
+        html = rendered html (not marked up)
+        **kwargs = accepts any kwargs and saves them as properties to be used
+        in templates.
         """
+        self.slug = slug
 
+        """
         # Set Content from content and/or content_path
         self.content_path = content_path if content_path else None
 
@@ -48,13 +57,7 @@ class Page():
 
         if self.content:
             self.markup = Markup(markdown(self.content))
-
-        # Set Slug of Page to slug or name or id or content_path name
-        if not slug:
-            slug = getattr(self, 'name', None) \
-                or getattr(self, 'id', None) \
-                or Path(getattr(self, 'content_path', '/')).stem()
-        self.slug = slug
+        """
 
 def load_content(content):
     matcher = r'^\w+:'
