@@ -13,11 +13,12 @@ from typing import Type, Optional, Union, TypeVar, Iterable
 import logging
 import json
 import maya
+import os
 import shutil
 import yaml
 
 # Currently all of the Configuration Information is saved to Default
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.WARNING))
 
 PathString = Union[str, Type[Path]]
 
@@ -34,7 +35,8 @@ class Engine:
             content_path='content',
             static_path='static',
             output_path='output',
-            routes=[],
+            pages=[],
+            collections=[],
             **kwargs,
             ):
 
@@ -72,23 +74,25 @@ class Engine:
                 config.get('output_path', output_path))
 
         self.site_url = config.get('site_url', site_url)
-        self.routes = routes
+        self.pages = pages
+        self.collections = collections
         logging.debug(f'base_content_path - {self.base_content_path}')
         logging.debug(f'base_output_path - {self.base_output_path}')
         logging.debug(f'base_static_path - {self.base_static_path}')
         logging.debug(f'site_url - {self.site_url}')
-        logging.debug(f'routes - {self.routes}')
+        logging.debug(f'pages - {self.pages}')
+        logging.debug(f'collections - {self.collections}')
 
-    def route(self, *routes, content_path=None, template=None, content_type=Page):
+    def route(self, *routes, content_path=None, content=None, template=None, content_type=Page):
         """Used to get **kwargs for `add_route`"""
-        def inner(func, routes=routes, content_path=content_path):
+        def inner(func, routes=routes, content_path=content_path,):
             kwargs = func() or {}
 
             for route in routes:
                 self.routes.append(
                         content_type(
                             content_path=content_path,
-                            url_root=self.site_url if self.site_url else './',
+                            content=content,
                             template=template,
                             slug=route.lstrip('/'),
                             **kwargs,
@@ -99,73 +103,34 @@ class Engine:
 
         return inner
 
-    def build_collection(
+    def collection(
             self,
             *routes,
             pages=None,
             template='page.html',
             content_path=None,
-            feeds=False,
-            paginate=False,
-            extension='.md',
             name=None,
             content_type=Page,
             **kwargs,
             ):
         """creates a collection of objects"""
-        for route in routes:
-            collection = Collection(
-                    name=name,
-                    content_path=Path(self.base_content_path) \
-                            .joinpath(content_path if content_path else './'),
-                    pages=pages,
-                    route=route,
-                    paginate=paginate,
-                    extension=extension,
-                    url_root=self.site_url,
-                    template=template,
-                    **kwargs,
-                    )
+        def inner(func, routes=routes, content_path=content_path,):
+            kwargs = func() or {}
 
-            self.routes.extend(iter(collection))
-
-            if paginate:
-                paginated_pages = write_paginated_pages(
-                        name,
-                        collection.paginate,
-                        content_type=Page,
+            for route in routes:
+                collection = Collection(
+                        name=name,
+                        content_path=Path(self.base_content_path) \
+                                .joinpath(content_path \
+                                if content_path else './'),
+                        pages=pages,
                         route=route,
+                        extension=extension,
+                        template=template,
+                        **kwargs,
                         )
 
-                self.routes.extend(paginated_pages)
-
-            if feeds:
-                build_date = maya.now()
-                rss_feed = Page(
-                        template='feeds/rss/blog.rss',
-                        route=name,
-                        url_root=self.site_url,
-                        url_suffix='.rss',
-                        content=collection.to_rss(engine=self),
-                        name=self.FEED_TITLE,
-                        description=self.FEED_DESCRIPTION,
-                        build_date=build_date.rfc2822(),
-                    copyright=f'Copyright ©️  {build_date.year} {self.COPYRIGHT}',
-                    generator='https://github.com/kjaymiller/render-engine',
-                    language='en-US',
-                        items=iter(collection),
-                        )
-
-                self.routes.append(rss_feed)
-
-                json_feed = Page(
-                    template=None,
-                    content=collection.to_json(engine=self),
-                    route=name,
-                    url_suffix='.json',
-                    )
-
-                self.routes.append(json_feed)
+                self.routes.extend(iter(collection))
 
     def run(self, overwrite=True):
         """Builds the Site Objects

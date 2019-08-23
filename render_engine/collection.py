@@ -18,7 +18,6 @@ class Collection:
             name: str,
             content_path: PathString='',
             route: Union[PathString, Sequence[PathString]]='./',
-            url_root: str='./',
             url_suffix: str='.html',
             extension: str='.md',
             template: str='page.html',
@@ -41,29 +40,18 @@ class Collection:
         if content_path:
             self.content_path = content_path
         self.route = Path(route)
-        self.url_root = url_root
-
-        # Build the URL so that it can be used as reference
-        if 'url' in kwargs:
-            self.url = url
-
-        else:
-            url_stem = str(route)
-            url_suffix = url_suffix
-            self.url = f'{url_root}/{url_stem}{url_suffix}'
 
         # make properties for all attrs
         for key, attr in kwargs.items():
             setattr(self, key, attr)
 
         if not pages:
-            page_glob = list(Path(self.content_path).glob(f'*{self.extension}'))
+            page_glob = Path(self.content_path).glob(f'*{self.extension}')
             pages = [content_type(
                         route=Path(route).joinpath(Path(content_path.name)),
                         content_path=content_path,
-                        url_root=self.url_root,
                         template=template,
-                        ) for content_path in page_glob ]
+                        ) for content_path in page_glob]
         self.pages = sorted(
                 pages,
                 key=self.sorter,

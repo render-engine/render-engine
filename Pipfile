@@ -20,6 +20,7 @@ pytest-mock = "*"
 twine = "*"
 render-engine = "*"
 mkdocs = "*"
+pytest-cov = "*"
 
 [packages]
 maya = "*"

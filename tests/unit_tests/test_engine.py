@@ -52,9 +52,11 @@ def test_engine_config_path_added_to_env(mocker):
 
 def test_engine_build_collection(mocker, base_engine, base_collection):
     """Setup a Collection using the build_collection decorator"""
-    assert len(base_engine.routes) == 0
-    base_engine.build_collection('/collection', pages=(base_collection.pages))
-    assert len(base_engine.routes) == 3
+    assert len(base_engine.pages) == 0
+    @base_engine.collection('/collection', pages=(base_collection.pages))
+    def sample_collection():
+        pass
+    assert len(base_engine.pages) == 3
 
 def test_engine_has_default_base_content_path():
     """If no base content path is presented a default content path of 'content'
