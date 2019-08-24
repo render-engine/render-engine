@@ -18,7 +18,7 @@ class Page():
             self,
             *,
             slug,
-            content: Optional[str]='',
+            content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
             template: Optional[Union[str, Path]]=None,
             raw: bool=False,
@@ -38,6 +38,7 @@ class Page():
         """
         self.slug = slug
         self.raw = raw
+        self.content = content
 
         """
         # Set Content from content and/or content_path

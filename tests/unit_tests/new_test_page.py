@@ -26,3 +26,9 @@ def test_Page_raw_False_by_default(base_page):
     """Unless specified page objecst are false"""
     assert Page(slug='has_raw', raw=True).raw == True
     assert base_page.raw == False
+
+@pytest.mark.parametrize('page, page_content',
+            [(Page(slug='no_content'), None),
+            (Page(slug='content_exists', content='foo'), 'foo')])
+def test_Page_content_None_by_default(base_page, page, page_content):
+    assert page.content == page_content
