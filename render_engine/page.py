@@ -37,6 +37,7 @@ class Page():
         in templates.
         """
         self.slug = slug
+        self.raw = raw
 
         """
         # Set Content from content and/or content_path
