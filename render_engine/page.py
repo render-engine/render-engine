@@ -21,7 +21,7 @@ class Page():
             content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
             template: Optional[Union[str, Path]]=None,
-            raw: bool=False,
+            extension: str=".html",
             **kwargs,
             ):
         """
@@ -37,7 +37,7 @@ class Page():
         in templates.
         """
         self.slug = slug
-        self.raw = raw
+        self.extension = extension
         self.content = content
 
         """

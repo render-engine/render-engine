@@ -22,10 +22,9 @@ def test_Page_slug_is_string():
         Page(slug=12345)
 
 
-def test_Page_raw_False_by_default(base_page):
+def test_Page_extension_html_by_default(base_page):
     """Unless specified page objecst are false"""
-    assert Page(slug='has_raw', raw=True).raw == True
-    assert base_page.raw == False
+    assert base_page.extension == '.html'
 
 @pytest.mark.parametrize('page, page_content',
             [(Page(slug='no_content'), None),
