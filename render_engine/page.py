@@ -27,7 +27,7 @@ class Page():
         """
         initializes a new Page object
         --------
-        raw: tells the Page to return content as string or bytes
+        extension = tells the Engine what extension to use when creating the page
         template = the template filepath that the engine will use to build the page
         content = the data that will be used to create a page object
         content_path = filepath to get content and attributes. Attributes added
