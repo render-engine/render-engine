@@ -38,28 +38,28 @@ class Page():
         """
         self.slug = slug
         self.extension = extension
-        self.content = content
 
-        """
         # Set Content from content and/or content_path
-        self.content_path = content_path if content_path else None
-
-        if self.content_path:
+        if content_path:
             content = Path(self.content_path).read_text()
 
-        _ = load_content(content)
+        if content:
+            _ = load_content(content)
+            kwargs.update(_['attrs'])
+            content = _.get('content', None)
 
-        kwargs.update(_['attrs'])
-        self.content = _.get('content', None)
+        self.content = content
+
+        if self.content:
+            self.html = markdown(self.content)
+
         self.template = template
+        self.template_vars = {}
 
         # make properties for all attrs
         for key, attr in kwargs.items():
-            setattr(self, key, attr)
+             self.template_vars[key]=attr
 
-        if self.content:
-            self.markup = Markup(markdown(self.content))
-        """
 
 def load_content(content):
     matcher = r'^\w+:'
