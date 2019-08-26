@@ -15,7 +15,7 @@ def test_Page_slug(base_page):
     assert base_page.slug == 'base_page'
 
 
-@pytest.mark.skip()
+@pytest.mark.skip(reason="HOLD TILL POST v1 Milestone")
 def test_Page_slug_is_string():
     """Page slugs must be strings otherwise raise Value Error"""
     with pytest.raises(TypeError):
@@ -30,5 +30,5 @@ def test_Page_raw_False_by_default(base_page):
 @pytest.mark.parametrize('page, page_content',
             [(Page(slug='no_content'), None),
             (Page(slug='content_exists', content='foo'), 'foo')])
-def test_Page_content_None_by_default(base_page, page, page_content):
+def test_Page_content_None_by_default(page, page_content):
     assert page.content == page_content
