@@ -20,9 +20,9 @@ class Page():
             slug,
             content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
-            template: Optional[Union[str, Path]]=None,
             extension: str=".html",
-            **kwargs,
+            template: Optional[Union[str, Path]]=None,
+            template_vars: Optional[dict]={},
             ):
         """
         initializes a new Page object
@@ -33,7 +33,7 @@ class Page():
         content_path = filepath to get content and attributes. Attributes added
         to kwargs
         html = rendered html (not marked up)
-        **kwargs = accepts any kwargs and saves them as properties to be used
+        template_var s= accepts any kwargs and saves them as properties to be used
         in templates.
         """
         self.slug = slug
@@ -41,11 +41,11 @@ class Page():
 
         # Set Content from content and/or content_path
         if content_path:
-            content = Path(self.content_path).read_text()
+            content = Path(content_path).read_text()
 
         if content:
             _ = load_content(content)
-            kwargs.update(_['attrs'])
+            template_vars.update(_['attrs'])
             content = _.get('content', None)
 
         self.content = content
@@ -54,12 +54,7 @@ class Page():
             self.html = markdown(self.content)
 
         self.template = template
-        self.template_vars = {}
-
-        # make properties for all attrs
-        for key, attr in kwargs.items():
-             self.template_vars[key]=attr
-
+        self.template_vars = template_vars
 
 def load_content(content):
     matcher = r'^\w+:'

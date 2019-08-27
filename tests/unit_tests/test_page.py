@@ -42,7 +42,7 @@ def test_page_kwargs_become_properties(base_page):
 def test_page_content_separated_from_attrs(base_page):
     """When given markdown for content convert it to html and return it as markup"""
     assert """# Test Header
-Test Paragraph""" in base_page.content
+This is a test""" in base_page.content
     assert """title: Base Page""" not in base_page.content
 
 
