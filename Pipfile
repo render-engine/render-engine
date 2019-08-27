@@ -14,14 +14,11 @@ url = "https://test.pypi.org/simple"
 pytest = "*"
 v = {editable = true,version = "*"}
 pytest-mock = "*"
-twine = "*"
-mkdocs = "*"
 pytest-cov = "*"
+mkdocs = "*"
 
 [packages]
-maya = "*"
 jinja2 = "*"
-twine = "*"
 pyyaml = "*"
 markdown = "*"
 wheel = "*"
