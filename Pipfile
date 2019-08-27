@@ -1,17 +1,14 @@
 [[source]]
 name = "pypi"
 url = "https://pypi.org/simple"
-verify_ssl = false
 
 [[source]]
 name = "pythonhosted"
 url = "https://files.pythonhosted.org"
-verify_ssl = false
 
 [[source]]
 name = "pypi - test"
 url = "https://test.pypi.org/simple"
-verify_ssl = false
 
 [dev-packages]
 pytest = "*"
@@ -20,6 +17,7 @@ pytest-mock = "*"
 twine = "*"
 mkdocs = "*"
 pytest-cov = "*"
+render_engine = {path = ".", editable = true}
 
 [packages]
 maya = "*"
