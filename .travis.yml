@@ -3,5 +3,8 @@ python:
   - "3.6"
   - "3.7"
 
+install:
+  make
+
 script:
-  - python -m pytest
+  - make test
