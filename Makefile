@@ -1,6 +1,4 @@
-init:
-  - pip install pipenv
-  - pipenv install --dev
+init: pip install pipenv
+	pipenv install --dev
 
-test:
-   - pipenv run python -m pytest
+test: pipenv run python -m pytest
