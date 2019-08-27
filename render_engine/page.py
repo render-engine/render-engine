@@ -1,10 +1,11 @@
 from pathlib import Path
 from markdown import markdown
-import logging
 from typing import (
         Optional,
         Union,
         )
+import re
+import logging
 
 
 class Page():
