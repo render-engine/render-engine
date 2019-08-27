@@ -17,7 +17,6 @@ pytest-mock = "*"
 twine = "*"
 mkdocs = "*"
 pytest-cov = "*"
-render_engine = {path = ".", editable = true}
 
 [packages]
 maya = "*"

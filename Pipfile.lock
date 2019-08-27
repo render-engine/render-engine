@@ -1,25 +1,22 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7caccc9c536231a269b6ff83a1bc0d661b8d2f62d899d77c4e38c86611eb638d"
+            "sha256": "bd435b154691fb0faf69e0524910016d33b5059593eeb4440b700cd48c915408"
         },
         "pipfile-spec": 6,
         "requires": {},
         "sources": [
             {
                 "name": "pypi",
-                "url": "https://pypi.org/simple",
-                "verify_ssl": false
+                "url": "https://pypi.org/simple"
             },
             {
                 "name": "pythonhosted",
-                "url": "https://files.pythonhosted.org",
-                "verify_ssl": false
+                "url": "https://files.pythonhosted.org"
             },
             {
                 "name": "pypi - test",
-                "url": "https://test.pypi.org/simple",
-                "verify_ssl": false
+                "url": "https://test.pypi.org/simple"
             }
         ]
     },
@@ -217,14 +214,6 @@
                 "sha256:fe765b809a1f7ce642c2edeee351e7ebd84391640031ba4b60af8d91a9045890"
             ],
             "version": "==2019.8.19"
-        },
-        "render-engine": {
-            "hashes": [
-                "sha256:4826c82554181819dbb8e119ce27e8e47ca0e191de7cf17aff6a91ac1dba8fc2",
-                "sha256:b6364a2c9ad04051ed60bef892ec94099d0544c65fa40cc9ae4ec7dba1c1792b"
-            ],
-            "index": "pypi",
-            "version": "==2019.8.11.dev0"
         },
         "requests": {
             "hashes": [
