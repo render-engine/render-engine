@@ -3,7 +3,7 @@ python:
   - "3.6"
   - "3.7"
 
-install:
-  - pip install -r requirements-dev.txt
+install: "make"
 
-script: cd /home/travis/build/kjaymiller/render_engine && pytest
+script:
+  - make test
