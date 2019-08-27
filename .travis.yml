@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r requirements-dev.txt
 
-script: pytest
+script: cd /home/travis/build/kjaymiller/render_engine && pytest
