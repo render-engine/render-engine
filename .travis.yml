@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r requirements-dev.txt
 
-script: 'python -m pytest ./tests/unit-tests/test_page.py'
+script: pytest
