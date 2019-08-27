@@ -34,18 +34,19 @@ def test_can_create_Page_with_only_slug():
     assert Page(slug='foo')
 
 
-def test_page_kwargs_become_properties(base_page):
+def test_page_kwargs_become_properties(page_with_content_path):
     """Custom Parameters can be passed in as Properties"""
-    assert base_page.template_vars['custom'] == 'Testing 1,2,3'
+    assert page_with_content_path.template_vars['custom'] == 'Testing 1,2,3'
 
 
-def test_page_content_separated_from_attrs(base_page):
+def test_page_content_separated_from_attrs(page_with_content_path):
     """When given markdown for content convert it to html and return it as markup"""
+    p = page_with_content_path
     assert """# Test Header
-This is a test""" in base_page.content
-    assert """title: Base Page""" not in base_page.content
+Test Paragraph""" in p.content
+    assert """title: Test Title""" not in p.content
 
 
-def test_page_content_converts_to_html(base_page):
+def test_page_content_converts_to_html(page_with_content_path):
     """When given markdown for content convert it to html and return it as markup"""
-    assert '<h1>Test Header</h1>' in base_page.html
+    assert '<h1>Test Header</h1>' in page_with_content_path.html
