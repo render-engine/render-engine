@@ -16,7 +16,6 @@ class Page():
     """Base component used to make web pages
         content = the data that will be used to create a page object
         extension = tells the Engine what extension to use when creating the page
-        html = rendered html (not marked up). Is None if content is none
         slug = the name of the document. Used as the filename of the output path
         template = the template filepath that the engine will use to build the
         page
@@ -57,6 +56,7 @@ class Page():
 
     @property
     def html(self):
+        """html = rendered html (not marked up). Is None if content is none"""
         if self.content:
             return markdown(self.content)
 
