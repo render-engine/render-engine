@@ -13,11 +13,19 @@ from typing import (
 
 
 class Page():
-    """Base component used to make web pages"""
+    """Base component used to make web pages
+        content = the data that will be used to create a page object
+        extension = tells the Engine what extension to use when creating the page
+        html = rendered html (not marked up). Is None if content is none
+        slug = the name of the document. Used as the filename of the output path
+        template = the template filepath that the engine will use to build the
+        page
+        template_vars= accepts a dictionary and saves items as properties to be
+        """
     def __init__(
             self,
             *,
-            slug,
+            slug: str,
             content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
             extension: str=".html",
@@ -27,14 +35,9 @@ class Page():
         """
         initializes a new Page object
         --------
-        extension = tells the Engine what extension to use when creating the page
-        template = the template filepath that the engine will use to build the page
-        content = the data that will be used to create a page object
         content_path = filepath to get content and attributes. Attributes added
-        to kwargs
-        html = rendered html (not marked up)
-        template_var s= accepts any kwargs and saves them as properties to be used
-        in templates.
+        to template_vars. Will overwrite content
+        used in template rendering.
         """
         self.slug = slug
         self.extension = extension
@@ -49,12 +52,17 @@ class Page():
             content = _.get('content', None)
 
         self.content = content
-
-        if self.content:
-            self.html = markdown(self.content)
-
         self.template = template
         self.template_vars = template_vars
+
+    @property
+    def html(self):
+        if self.content:
+            return markdown(self.content)
+
+        else:
+            return None
+
 
 def load_content(content):
     matcher = r'^\w+:'
