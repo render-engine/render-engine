@@ -1,4 +1,5 @@
 import pytest
+import pytest-mock
 from render_engine import Page
 
 @pytest.fixture()
