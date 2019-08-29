@@ -1,36 +1,8 @@
 -i https://pypi.org/simple
---trusted-host pypi.org
 --extra-index-url https://files.pythonhosted.org
---trusted-host files.pythonhosted.org
 --extra-index-url https://test.pypi.org/simple
---trusted-host test.pypi.org
-bleach==3.1.0
-certifi==2019.6.16
-chardet==3.0.4
-dateparser==0.7.1
-docutils==0.15.2
-humanize==0.5.1
-idna==2.8
 jinja2==2.10.1
 markdown==3.1.1
 markupsafe==1.1.1
-maya==0.6.1
-pendulum==2.0.5
-pkginfo==1.5.0.1
-pygments==2.4.2
-python-dateutil==2.8.0
-pytz==2019.2
-pytzdata==2019.2
 pyyaml==5.1.2
-readme-renderer==24.0
-regex==2019.6.8
-requests-toolbelt==0.9.1
-requests==2.22.0
-six==1.12.0
-snaptime==0.2.4
-tqdm==4.32.2
-twine==1.13.0
-tzlocal==2.0.0
-urllib3==1.25.3
-webencodings==0.5.1
-wheel==0.33.4
+wheel==0.33.6

@@ -12,7 +12,6 @@ from typing import Type, Optional, Union, TypeVar, Iterable
 
 import logging
 import json
-import maya
 import os
 import shutil
 import yaml

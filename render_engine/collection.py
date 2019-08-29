@@ -9,7 +9,6 @@ from itertools import zip_longest
 from render_engine.page import Page
 from pathlib import Path
 import json
-import maya
 
 
 PathString = Union[str, Type[Path]]
