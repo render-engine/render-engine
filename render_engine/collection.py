@@ -1,4 +1,9 @@
-from typing import Type, Union, Sequence
+from typing import (
+    Optional,
+    Type,
+    Union,
+    Sequence,
+    )
 from collections import defaultdict
 from itertools import zip_longest
 from render_engine.page import Page
@@ -45,9 +50,9 @@ class Collection:
             exclude: Optional[Sequence]=None,
             template: Optional[PathString]=None,
             index_template: Optional[PathString]=None,
-            no_index: bool=False,
-            content_path = Optional[PathString]=None,
-            default_content_type: Type[Page],
+            index_page: bool=True,
+            content_path: Optional[PathString]=None,
+            default_content_type: Type[Page]=Page,
             template_vars: dict={},
             index_template_vars: dict={},
             pages: Sequence=[],
@@ -56,10 +61,12 @@ class Collection:
         """initialize a collection object"""
 
         self.template = template
+        self.template_vars = template_vars
 
-        if no_index:
+        if index_page:
             self.index_template = template
             self.index_template_vars = index_template_vars
+
 
         self.pages = pages
 

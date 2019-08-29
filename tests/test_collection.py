@@ -5,10 +5,6 @@ import pytest
 def base_collection():
     return Collection()
 
-def test_collection(base_collection):
-    assert not base_collection.template_vars
-    assert not base_collection.index_template_vars
+def test_collection_(base_collection):
     assert not base_collection.template
-    assert not base_collection.index_template
-    assert not base_collection.no_index
-
+    assert not base_collection.template_vars
