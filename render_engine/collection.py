@@ -78,3 +78,8 @@ class Collection:
             for extension in include:
                 Path(content_path).glob(f'{glob_start}{x}')
 
+    def __iter__(self):
+        return self.pages
+
+    def __len__(self):
+        return len(self.pages)
