@@ -28,7 +28,7 @@ class Engine:
             output_path:PathString=Path('output'),
             static_path:PathString=Path('static'),
             strict: bool=False,
-            env_variables: dict:{},
+            env_variables: dict={},
             templates_dir: PathString=Path('templates'),
             ):
 
