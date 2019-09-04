@@ -2,7 +2,7 @@ from render_engine.collection import Collection
 from itertools import zip_longest
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
-from typing import Type, Optional, Union, TypeVar
+from typing import Type, Optional, Union, TypeVar, Sequence
 
 import logging
 import os
@@ -23,7 +23,7 @@ class Engine:
             static_path:PathString=Path('static'),
             strict: bool=False,
             env_variables: dict={},
-            templates_dir: str='templates',
+            templates_dir: Union[str, Sequence]='templates', #Jinja2.FileSystemLoader takes str or iterable not Path
             ):
 
         self.output_path = Path(output_path)
@@ -45,3 +45,6 @@ class Engine:
                loader=FileSystemLoader(templates_dir),
                autoescape=select_autoescape(['html', 'xml', 'rss']),
                )
+
+        if env_variables:
+            self.Environment.globals = env_variables
