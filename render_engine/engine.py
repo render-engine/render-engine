@@ -1,4 +1,4 @@
-from render_engine.collection import Collection
+from render_engine.collection import Collection, Page
 from itertools import zip_longest
 from jinja2 import Environment, FileSystemLoader, select_autoescape, Markup
 from pathlib import Path
@@ -49,19 +49,17 @@ class Engine:
         if env_variables:
             self.Environment.globals = env_variables
 
-    def markup(self, content_type):
+    def Markup(self, page_object):
         """Takes a Page-based Content-Type and returns templated or raw Markup"""
-        filename = content_type.slug
-
-        if getattr(content_type, 'template', None):
-            template = self.Environment.get_template(content_type.template)
-            content_type.template_vars['content'] = content_type.html
-            return template.render(**content_type.template_vars)
+        if getattr(page_object, 'template', None):
+            template = self.Environment.get_template(page_object.template)
+            page_object.template_vars['content'] = page_object.html
+            return template.render(**page_object.template_vars)
 
         else:
-            return  Markup(content_type.html)
+            return  Markup(page_object.html)
 
-    def page(self, markup, content_type=Page, **kwargs):
-        page = content_type(**kwargs)
-        path = Path(f'{self.output_path}/{content_type.slug}.html')
-        return path.write_text(self.markup(page)):
+    def page(self, page_object=Page, **kwargs):
+        page = page_object(**kwargs)
+        path = Path(f'{self.output_path}/{page_object.slug}.html')
+        return path.write_text(self.Markup(page))
