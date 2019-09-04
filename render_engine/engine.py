@@ -1,10 +1,4 @@
 from render_engine.collection import Collection
-from render_engine.page import Page
-from render_engine.paginate import write_paginated_pages
-from render_engine.config_loader import load_config
-from render_engine.path_preparer import directory_path
-
-from dataclasses import dataclass
 from itertools import zip_longest
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pathlib import Path
@@ -32,13 +26,12 @@ class Engine:
             templates_dir: PathString=Path('templates'),
             ):
 
-
         self.output_path = Path(output_path)
-        if not self.output_path.is_dir():
 
-            if strict:
+        if strict:
                 shutil.rmtree(self.output_path)
 
+        if not self.output_path.is_dir():
             self.output_path.mkdir(exist_ok=True)
 
         self.static_path = Path(static_path)
