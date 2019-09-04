@@ -23,21 +23,25 @@ class Engine:
             static_path:PathString=Path('static'),
             strict: bool=False,
             env_variables: dict={},
-            templates_dir: PathString=Path('templates'),
+            templates_dir: str='templates',
             ):
 
         self.output_path = Path(output_path)
 
-        if strict:
+        if strict and output_path.is_dir():
                 shutil.rmtree(self.output_path)
 
-        if not self.output_path.is_dir():
-            self.output_path.mkdir(exist_ok=True)
-
+        self.output_path.mkdir(exist_ok=True)
         self.static_path = Path(static_path)
+
         if self.static_path.is_dir():
             output_static_path = self.output_path.joinpath(self.static_path)
 
             if output_static_path.exists():
                 shutil.rmtree(output_static_path)
                 shutil.copytree(src=static_path, dst=output_static_path)
+
+        self.Environment = Environment(
+               loader=FileSystemLoader(templates_dir),
+               autoescape=select_autoescape(['html', 'xml', 'rss']),
+               )
