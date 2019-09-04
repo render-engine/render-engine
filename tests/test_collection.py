@@ -5,11 +5,6 @@ import pytest
 def base_collection():
     return Collection()
 
-def test_collection_defaults(base_collection):
-    assert not base_collection.template
-    assert not base_collection.template_vars
-    assert base_collection.collection_path == Path('content')
-
 @pytest.mark.parametrize('collection, template_var', [
     (Collection(template='foo_path.html'), {}),
     (Collection(), None)],
