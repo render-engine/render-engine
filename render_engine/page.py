@@ -65,7 +65,7 @@ def load_content(content):
     md_content = content.splitlines()
     attrs = {}
 
-    if md_content:
+    if len(md_content) > 1:
         while re.match(matcher, md_content[0]):
             line = md_content.pop(0)
             line_data = line.split(': ', 1)

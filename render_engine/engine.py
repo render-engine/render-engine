@@ -10,7 +10,7 @@ import shutil
 import yaml
 
 # Currently all of the Configuration Information is saved to Default
-logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.WARNING))
+logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.INFO))
 
 PathString = Union[str, Type[Path]]
 
@@ -50,16 +50,36 @@ class Engine:
             self.Environment.globals = env_variables
 
     def Markup(self, page_object):
-        """Takes a Page-based Content-Type and returns templated or raw Markup"""
-        if getattr(page_object, 'template', None):
+        """Takes a Page-based Content-Type and returns templated or raw
+        Markup"""
+
+        template = getattr(page_object, 'template', None)
+        content = getattr(page_object, 'html', None) or page_object.content
+
+        if template:
             template = self.Environment.get_template(page_object.template)
-            page_object.template_vars['content'] = page_object.html
-            return template.render(**page_object.template_vars)
+            markup = template.render(content=content, **template_vars)
 
         else:
-            return  Markup(page_object.html)
+            logging.info('No template found')
+            markup = content
 
-    def page(self, page_object=Page, **kwargs):
-        page = page_object(**kwargs)
-        path = Path(f'{self.output_path}/{page_object.slug}.html')
-        return path.write_text(self.Markup(page))
+        logging.info(f'content - {content}')
+        logging.info(f'markup - {markup}')
+
+        return Markup(markup)
+
+    def page(self, *slugs, page_object=Page, extension='.html'):
+        def build_page(f, **kwargs):
+            for slug in slugs:
+                if slug == '/' or not slug:
+                    slug = '/index'
+                func_kwargs = f(**kwargs)
+                p = page_object(slug=slug, **func_kwargs)
+                logging.info(p.__dict__)
+
+                with open(f'{self.output_path}{slug}{extension}', 'w') as fp:
+                    fp.write(self.Markup(p))
+            return f
+
+        return build_page
