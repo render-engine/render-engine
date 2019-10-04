@@ -69,8 +69,16 @@ class Engine:
 
         return Markup(markup)
 
-    def page(self, *slugs, page_object=Page, extension='.html'):
+    def route(self, *slugs, page_object=Page, extension='.html'):
+        """with functionality similar to flask and a name to match. This is to
+        help with transitions to static generation.
+
+        This decorator is what makes the static pages. While you could just
+        call `Markup` and then write the output this is the thing that makes
+        life easier."""
+
         def build_page(f, **kwargs):
+
             for slug in slugs:
                 if slug == '/' or not slug:
                     slug = '/index'
@@ -83,3 +91,32 @@ class Engine:
             return f
 
         return build_page
+
+
+    def build_collection(
+            content_path,
+            *,
+            template,
+            collection_object=Collection,
+            extension='.html',
+            **kwargs,
+            ):
+        """This is a way to make similar items based on markdown content that
+        you can save in a content_path This iterates through the
+        content_path and creates the page object for you.
+
+        For this to work some assumptions are made:
+            All objects are the same content type and use the same template.
+
+        TODO: Allow for a custom collection to be used.
+        """
+
+        content_path = collection_object(
+                content_path=content_path,
+                template=template,
+                **kwargs,
+                )
+
+        for page in content_path.pages:
+            with open(f'{self.output_path}{page.slug}{extension}', 'w') as fp:
+                fp.write(self.Markup(page)
