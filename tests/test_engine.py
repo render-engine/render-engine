@@ -21,6 +21,5 @@ def test_engine_markup_returns_content_with_template(base_engine):
     pass
 
 @pytest.mark.skip(reason="NOT SURE HOW TO WRITE - ISSUE SUBMITTED")
-def test_engine_page_writes_markup(base_engine)
-    """Not Sure How to Write this Test"""
+def test_engine_page_writes_markup(base_engine):
     pass
