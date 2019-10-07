@@ -9,7 +9,7 @@ from itertools import zip_longest
 from render_engine.page import Page
 from pathlib import Path
 import json
-
+import logging
 
 PathString = Union[str, Type[Path]]
 
@@ -51,7 +51,7 @@ class Collection:
             index_template: Optional[PathString]=None,
             index_page: bool=True,
             content_path: Optional[PathString]=None,
-            default_content_type: Type[Page]=Page,
+            page_content_type: Type[Page]=Page,
             template_vars: dict={},
             index_template_vars: dict={},
             pages: Sequence=[],
@@ -61,22 +61,32 @@ class Collection:
 
         self.template = template
         self.template_vars = template_vars
+        self.pages = pages
 
         if index_page:
-            self.index_template = template
+            self.index_template = index_template
             self.index_template_vars = index_template_vars
 
-
-        self.pages = pages
 
         if content_path:
             if exclude:
                 include = list(map(lambda x: f'!{x}', exclude))
 
             glob_start = '**' if recursive else ''
+            logging.debug(f'filetypes - {include}')
 
             for extension in include:
-                Path(content_path).glob(f'{glob_start}{x}')
+                content_pages= list(
+                        Path(content_path)\
+                                .glob(f'{glob_start}{extension}')
+                                )
+                logging.info(content_pages)
+                for page in content_pages:
+                    p = page_content_type(
+                                content_path=page,
+                                template=template
+                                )
+                    self.pages.append(p)
 
     def __iter__(self):
         return self.pages

@@ -18,12 +18,13 @@ class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
 
-    def __init__(self,
+    def __init__(
+            self,
             output_path:PathString=Path('output'),
             static_path:PathString=Path('static'),
             strict: bool=False,
-            env_variables: dict={},
             templates_dir: Union[str, Sequence]='templates', #Jinja2.FileSystemLoader takes str or iterable not Path
+            **env_variables,
             ):
 
         self.output_path = Path(output_path)
@@ -58,18 +59,18 @@ class Engine:
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            markup = template.render(content=content, **template_vars)
+            markup = template.render(content=content, **page_object.template_vars)
 
         else:
             logging.info('No template found')
             markup = content
 
-        logging.info(f'content - {content}')
-        logging.info(f'markup - {markup}')
+        logging.debug(f'content - {content}')
+        logging.debug(f'markup - {markup}')
 
         return Markup(markup)
 
-    def route(self, *slugs, page_object=Page, extension='.html'):
+    def route(self, *slugs, template=None, page_object=Page, extension='.html'):
         """with functionality similar to flask and a name to match. This is to
         help with transitions to static generation.
 
@@ -77,26 +78,27 @@ class Engine:
         call `Markup` and then write the output this is the thing that makes
         life easier."""
 
-        def build_page(f, **kwargs):
+        def build_page(func, **kwargs):
 
             for slug in slugs:
                 if slug == '/' or not slug:
                     slug = '/index'
-                func_kwargs = f(**kwargs)
-                p = page_object(slug=slug, **func_kwargs)
+                func_kwargs = func(**kwargs)
+                p = page_object(slug=slug, template=template, **func_kwargs)
                 logging.info(p.__dict__)
 
-                with open(f'{self.output_path}{slug}{extension}', 'w') as fp:
+                with open(f'{self.output_path}/{slug}{extension}', 'w') as fp:
                     fp.write(self.Markup(p))
-            return f
+            return func
 
         return build_page
 
 
-    def build_collection(
+    def collection(
+            self,
+            *output_paths,
             content_path,
-            *,
-            template,
+            template=None,
             collection_object=Collection,
             extension='.html',
             **kwargs,
@@ -118,5 +120,12 @@ class Engine:
                 )
 
         for page in content_path.pages:
-            with open(f'{self.output_path}{page.slug}{extension}', 'w') as fp:
-                fp.write(self.Markup(page)
+            for output_path in output_paths:
+                base_dir = Path(f'{self.output_path}{output_path}')
+                base_dir.mkdir(exist_ok=True)
+
+                logging.debug(f'output_path - {output_path}')
+                filepath = base_dir.joinpath(f'{page.slug}{extension}')
+
+                logging.debug(f'filepath - {filepath}')
+                filepath.write_text(self.Markup(page))

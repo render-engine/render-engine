@@ -20,12 +20,12 @@ class Page():
     def __init__(
             self,
             *,
-            slug: str,
+            slug: Optional[str]=None,
             content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
             extension: str=".html",
             template: Optional[Union[str, Path]]=None,
-            template_vars: Optional[dict]={},
+            **template_vars,
             ):
         """
         initializes a new Page object
@@ -34,7 +34,6 @@ class Page():
         to template_vars. Will overwrite content
         used in template rendering.
         """
-        self.slug = slug
         self.extension = extension
 
         # Set Content from content and/or content_path
@@ -44,11 +43,13 @@ class Page():
         if content:
             _ = load_content(content)
             template_vars.update(_['attrs'])
-            content = _.get('content', None)
+            content = _.get('content')
 
         self.content = content
         self.template = template
         self.template_vars = template_vars
+        self.slug = slug or template_vars.get('slug')
+        logging.debug(f'slug - {self.slug}')
 
     @property
     def html(self):
