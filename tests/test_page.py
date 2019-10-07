@@ -4,6 +4,7 @@ import re
 
 
 
+@pytest.mark.skip(reason="SLUG CAN BE PULLED FROM CONTENT")
 def test_Page_slug(base_page):
     """Pages should always have slugs"""
     with pytest.raises(TypeError):
