@@ -48,8 +48,9 @@ class Collection:
             includes: Sequence=['*.md', '*.html'],
             excludes: Optional[Sequence]=None,
             template: Optional[PathString]=None,
+            index_name: Optional[str]=None,
             index_template: Optional[PathString]=None,
-            index_page: bool=True,
+            index_page_content_type: Type[Page]=Page,
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
             template_vars: Optional[dict]=None,
@@ -61,12 +62,7 @@ class Collection:
 
         self.template = template
         self.template_vars = template_vars or {}
-        self.pages = pages
-
-        if index_page:
-            self.index_template = index_template
-            self.index_template_vars = index_template_vars
-
+        self.pages = set(pages) if pages else set()
 
         if content_path:
             self.content_path = Path(content_path)
@@ -80,7 +76,6 @@ class Collection:
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
                     includes]
 
-            self.pages = set()
             for glob in globs:
                 for page in glob:
                     self.pages.add(
@@ -89,6 +84,16 @@ class Collection:
                             template=template,
                             ),
                         )
+
+        if index_name:
+            self.index_template = index_template
+            self.index_template_vars = index_template_vars
+            self.pages.add(index_page_content_type(
+                    slug=index_name,
+                    template=index_template,
+                    pages=self.pages))
+
+
 
     def __iter__(self):
         return self.pages

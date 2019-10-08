@@ -60,7 +60,7 @@ class Engine:
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            markup = template.render(content=page_object.html, **page_object.template_vars)
+            markup = template.render(content=Markup(page_object.html), **page_object.template_vars)
 
         else:
             logging.info('No template found')
@@ -69,7 +69,7 @@ class Engine:
         logging.debug(f'content - {content}')
         logging.debug(f'markup - {markup}')
 
-        return Markup(markup)
+        return markup
 
     def route(self, *slugs, template=None, page_object=Page, extension='.html'):
         """with functionality similar to flask and a name to match. This is to
