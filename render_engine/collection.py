@@ -45,22 +45,22 @@ class Collection:
     def __init__(
             self,
             *,
-            include: Sequence=['*.md', '*.html'],
-            exclude: Optional[Sequence]=None,
+            includes: Sequence=['*.md', '*.html'],
+            excludes: Optional[Sequence]=None,
             template: Optional[PathString]=None,
             index_template: Optional[PathString]=None,
             index_page: bool=True,
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
-            template_vars: dict={},
-            index_template_vars: dict={},
-            pages: Sequence=[],
+            template_vars: Optional[dict]=None,
+            index_template_vars: Optional[dict]=None,
+            pages: Optional[Sequence]=None,
             recursive: bool=False,
             ):
         """initialize a collection object"""
 
         self.template = template
-        self.template_vars = template_vars
+        self.template_vars = template_vars or {}
         self.pages = pages
 
         if index_page:
@@ -69,24 +69,26 @@ class Collection:
 
 
         if content_path:
-            if exclude:
-                include = list(map(lambda x: f'!{x}', exclude))
+            self.content_path = Path(content_path)
+
+            if excludes:
+                includes = [f'!{x}' for x in excludes]
 
             glob_start = '**' if recursive else ''
-            logging.debug(f'filetypes - {include}')
 
-            for extension in include:
-                extension = f'{glob_start}{extension}'
-                logging.debug(extension)
-                content_pages= (
-                        Path(content_path)\
-                                .glob(extension)
-                                )
-                logging.info(content_pages)
-                (page_content_type(
+            # This will overwrite any pages that are called
+            globs = [self.content_path.glob(f'{glob_start}{x}') for x in
+                    includes]
+
+            self.pages = set()
+            for glob in globs:
+                for page in glob:
+                    self.pages.add(
+                        page_content_type(
                             content_path=page,
-                            template=template
-                            ) for page in content_pages)
+                            template=template,
+                            ),
+                        )
 
     def __iter__(self):
         return self.pages

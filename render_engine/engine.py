@@ -100,7 +100,7 @@ class Engine:
             *output_paths,
             content_path,
             template=None,
-            collection_object=None,
+            collection_object=Collection,
             extension='.html',
             **kwargs,
             ):
@@ -117,22 +117,17 @@ class Engine:
         for output_path in output_paths:
             logging.debug(f'content_path - {content_path}')
 
-            if not collection_object:
-                content = Collection(
-                        content_path=content_path,
-                        template=template,
-                        **kwargs,
+            content = collection_object(
+                    content_path=content_path,
+                    template=template,
+                    **kwargs,
                     )
 
-            else:
-                content = collection_object(
-                        content_path=content_path,
-                        template=template,
-                        **kwargs,
-                        )
 
-            logging.warning(f'pages - {content.pages}')
+            logging.warning(f'pages - {content}')
+
             for page in content.pages:
+                logging.warning(f'Page - page')
                 base_dir = Path(f'{self.output_path}{output_path}')
                 base_dir.mkdir(exist_ok=True)
 
