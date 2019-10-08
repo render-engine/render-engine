@@ -60,11 +60,11 @@ class Engine:
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            markup = template.render(content=content, **page_object.template_vars)
+            markup = template.render(content=page_object.html, **page_object.template_vars)
 
         else:
             logging.info('No template found')
-            markup = content
+            markup = page_object.html
 
         logging.debug(f'content - {content}')
         logging.debug(f'markup - {markup}')
