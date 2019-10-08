@@ -97,7 +97,7 @@ class Collection:
         if self.index_name:
             return self.index_page_content_type(
                     slug=self.index_name,
-                    template=index_template,
+                    template=self.index_template,
                     pages=self.pages)
         else:
             return None

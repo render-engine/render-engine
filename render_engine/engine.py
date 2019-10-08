@@ -52,25 +52,21 @@ class Engine:
         if env_variables:
             self.Environment.globals = env_variables
 
-    def Markup(self, page_object):
+    def Markup(self, page_object, **kwargs):
         """Takes a Page-based Content-Type and returns templated or raw
         Markup"""
 
         template = getattr(page_object, 'template', None)
-        content = getattr(page_object, 'html', None) or page_object.content
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            markup = template.render(
-                    content=Markup(page_object.html),
-                    **page_object.template_vars
-                    )
+            kwargs['content'] = Markup(page_object.html)
+            markup = template.render(**kwargs)
 
         else:
             logging.info('No template found')
             markup = page_object.html
 
-        logging.debug(f'content - {content}')
         logging.debug(f'markup - {markup}')
 
         return markup
@@ -130,10 +126,11 @@ class Engine:
 
             logging.debug(f'pages - {content}')
 
+            base_dir = Path(f'{self.output_path}{output_path}')
+            base_dir.mkdir(exist_ok=True)
+
             for page in content.pages:
                 logging.debug(f'Page - page')
-                base_dir = Path(f'{self.output_path}{output_path}')
-                base_dir.mkdir(exist_ok=True)
 
                 logging.debug(f'output_path - {output_path}')
                 filepath = base_dir.joinpath(f'{page.slug}{extension}')
@@ -142,5 +139,7 @@ class Engine:
                 filepath.write_text(self.Markup(page))
 
             if content.index:
-                index_path = base_dir_.joinpath(f'{content.index.slug}.html')
+                for x in content.pages:
+                    logging.warning(f"content {x.title}")
+                index_path = base_dir.joinpath(f'{content.index.slug}.html')
                 index_path.write_text(self.Markup(content.index))

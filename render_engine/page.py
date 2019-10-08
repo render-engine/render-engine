@@ -42,13 +42,13 @@ class Page():
 
         if content:
             _ = load_content(content)
-            template_vars.update(_['attrs'])
+            logging.warning(f"attrs - {_['attrs']}")
+            for key, val in _['attrs'].items():
+                setattr(self, key, val)
             content = _.get('content')
 
         self.content = content
         self.template = template
-        self.template_vars = template_vars
-        self.slug = slug or template_vars.get('slug')
         logging.debug(f'slug - {self.slug}')
 
     @property

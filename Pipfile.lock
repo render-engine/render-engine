@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b6a46a4a76c5cd5a62a7d4e1c8be3f040291ba9e81192e778be0c38a339247bf"
+            "sha256": "a559860953d38bde4c689b5e37f1f089f684e4d7c5ea74ffb7eebf5ebf6bdf28"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -145,6 +145,9 @@
                 "sha256:c8532b79afc0375a85f10433eca157d6b50f7d6990f337fa498c96cd4bfc203d"
             ],
             "version": "==24.0"
+        },
+        "render-engine": {
+            "path": "./../render_engine/dist/render_engine-2019.10.8.dev9.tar.gz"
         },
         "requests": {
             "hashes": [
