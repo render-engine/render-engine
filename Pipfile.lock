@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3633bebe776a0fe696494faab3abf65e4c73fdb146202b10145640f09bdd35c0"
+            "sha256": "b6a46a4a76c5cd5a62a7d4e1c8be3f040291ba9e81192e778be0c38a339247bf"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -145,9 +145,6 @@
                 "sha256:c8532b79afc0375a85f10433eca157d6b50f7d6990f337fa498c96cd4bfc203d"
             ],
             "version": "==24.0"
-        },
-        "render-engine": {
-            "path": "./../render_engine/dist/render_engine-2019.10.dev5.tar.gz"
         },
         "requests": {
             "hashes": [
@@ -369,19 +366,19 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:13c1c9b22127a77fc684eee24791efafcef343335d855e3573791c68588fe1a5",
-                "sha256:d8ba7be9466f55ef96ba203fc0f90d0cf212f2f927e69186e1353e30bc7f62e5"
+                "sha256:7e4800063ccfc306a53c461442526c5571e1462f61583506ce97e4da6a1d88c8",
+                "sha256:ca563435f4941d0cb34767301c27bc65c510cb82e90b9ecf9cb52dc2c63caaa0"
             ],
             "index": "pypi",
-            "version": "==5.2.0"
+            "version": "==5.2.1"
         },
         "pytest-cov": {
             "hashes": [
-                "sha256:9b64b54d21bd0fd77f7eb6ccb38638b8daba8d98ab5a51d67c93a133ec8c5ba4",
-                "sha256:a42cb9af7a429b6cd7c97be307cbb4cefca1d50c5b3018711558341979946851"
+                "sha256:cc6742d8bac45070217169f5f72ceee1e0e55b0221f54bcf24845972d3a47f2b",
+                "sha256:cdbdef4f870408ebdbfeb44e63e07eb18bb4619fae852f6e760645fa36172626"
             ],
             "index": "pypi",
-            "version": "==2.8.0"
+            "version": "==2.8.1"
         },
         "pytest-mock": {
             "hashes": [

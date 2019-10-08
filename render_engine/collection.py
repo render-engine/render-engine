@@ -76,17 +76,17 @@ class Collection:
             logging.debug(f'filetypes - {include}')
 
             for extension in include:
-                content_pages= list(
+                extension = f'{glob_start}{extension}'
+                logging.debug(extension)
+                content_pages= (
                         Path(content_path)\
-                                .glob(f'{glob_start}{extension}')
+                                .glob(extension)
                                 )
                 logging.info(content_pages)
-                for page in content_pages:
-                    p = page_content_type(
-                                content_path=page,
-                                template=template
-                                )
-                    self.pages.append(p)
+                (page_content_type(
+                            content_path=page,
+                            template=template
+                            ) for page in content_pages)
 
     def __iter__(self):
         return self.pages

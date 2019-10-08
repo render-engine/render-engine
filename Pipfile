@@ -23,7 +23,6 @@ pyyaml = "*"
 markdown = "*"
 wheel = "*"
 twine = "*"
-render-engine = {path = "./../render_engine/dist/render_engine-2019.10.dev5.tar.gz"}
 
 [requires]
 

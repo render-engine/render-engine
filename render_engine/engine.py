@@ -1,4 +1,5 @@
-from render_engine.collection import Collection, Page
+from render_engine.collection import Collection
+from render_engine.page import Page
 from itertools import zip_longest
 from jinja2 import Environment, FileSystemLoader, select_autoescape, Markup
 from pathlib import Path
@@ -10,7 +11,7 @@ import shutil
 import yaml
 
 # Currently all of the Configuration Information is saved to Default
-logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.INFO))
+logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.WARNING))
 
 PathString = Union[str, Type[Path]]
 
@@ -99,7 +100,7 @@ class Engine:
             *output_paths,
             content_path,
             template=None,
-            collection_object=Collection,
+            collection_object=None,
             extension='.html',
             **kwargs,
             ):
@@ -113,14 +114,25 @@ class Engine:
         TODO: Allow for a custom collection to be used.
         """
 
-        content_path = collection_object(
-                content_path=content_path,
-                template=template,
-                **kwargs,
-                )
+        for output_path in output_paths:
+            logging.debug(f'content_path - {content_path}')
 
-        for page in content_path.pages:
-            for output_path in output_paths:
+            if not collection_object:
+                content = Collection(
+                        content_path=content_path,
+                        template=template,
+                        **kwargs,
+                    )
+
+            else:
+                content = collection_object(
+                        content_path=content_path,
+                        template=template,
+                        **kwargs,
+                        )
+
+            logging.warning(f'pages - {content.pages}')
+            for page in content.pages:
                 base_dir = Path(f'{self.output_path}{output_path}')
                 base_dir.mkdir(exist_ok=True)
 
