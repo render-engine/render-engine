@@ -24,7 +24,8 @@ class Engine:
             output_path:PathString=Path('output'),
             static_path:PathString=Path('static'),
             strict: bool=False,
-            templates_dir: Union[str, Sequence]='templates', #Jinja2.FileSystemLoader takes str or iterable not Path
+            #Jinja2.FileSystemLoader takes str or iterable not Path
+            templates_dir: Union[str, Sequence]='templates',
             **env_variables,
             ):
 
@@ -60,7 +61,10 @@ class Engine:
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            markup = template.render(content=Markup(page_object.html), **page_object.template_vars)
+            markup = template.render(
+                    content=Markup(page_object.html),
+                    **page_object.template_vars
+                    )
 
         else:
             logging.info('No template found')
@@ -124,10 +128,10 @@ class Engine:
                     )
 
 
-            logging.warning(f'pages - {content}')
+            logging.debug(f'pages - {content}')
 
             for page in content.pages:
-                logging.warning(f'Page - page')
+                logging.debug(f'Page - page')
                 base_dir = Path(f'{self.output_path}{output_path}')
                 base_dir.mkdir(exist_ok=True)
 
@@ -136,3 +140,7 @@ class Engine:
 
                 logging.debug(f'filepath - {filepath}')
                 filepath.write_text(self.Markup(page))
+
+            if content.index:
+                index_path = base_dir_.joinpath(f'{content.index.slug}.html')
+                index_path.write_text(self.Markup(content.index))

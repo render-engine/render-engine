@@ -48,15 +48,16 @@ class Collection:
             includes: Sequence=['*.md', '*.html'],
             excludes: Optional[Sequence]=None,
             template: Optional[PathString]=None,
-            index_name: Optional[str]=None,
-            index_template: Optional[PathString]=None,
-            index_page_content_type: Type[Page]=Page,
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
             template_vars: Optional[dict]=None,
-            index_template_vars: Optional[dict]=None,
             pages: Optional[Sequence]=None,
             recursive: bool=False,
+            # Index properties
+            index_name: Optional[str]=None,
+            index_template: Optional[PathString]=None,
+            index_page_content_type: Type[Page]=Page,
+            index_template_vars: Optional[dict]=None,
             ):
         """initialize a collection object"""
 
@@ -85,15 +86,21 @@ class Collection:
                             ),
                         )
 
-        if index_name:
-            self.index_template = index_template
-            self.index_template_vars = index_template_vars
-            self.pages.add(index_page_content_type(
-                    slug=index_name,
+        self.index_name = index_name
+        self.index_template = index_template
+        self.index_template_vars = index_template_vars
+        self.index_page_content_type = index_page_content_type
+
+
+    @property
+    def index(self):
+        if self.index_name:
+            return self.index_page_content_type(
+                    slug=self.index_name,
                     template=index_template,
-                    pages=self.pages))
-
-
+                    pages=self.pages)
+        else:
+            return None
 
     def __iter__(self):
         return self.pages
