@@ -139,7 +139,6 @@ class Engine:
                 filepath.write_text(self.Markup(page))
 
             if content.index:
-                for x in content.pages:
-                    logging.warning(f"content {x.title}")
-                index_path = base_dir.joinpath(f'{content.index.slug}.html')
-                index_path.write_text(self.Markup(content.index))
+                index = content.index
+                index_path = base_dir.joinpath(f'{index.slug}.html')
+                index_path.write_text(self.Markup(index))

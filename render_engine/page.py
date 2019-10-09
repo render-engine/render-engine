@@ -47,9 +47,11 @@ class Page():
                 setattr(self, key, val)
             content = _.get('content')
 
+        if slug:
+            self.slug = slug
+
         self.content = content
         self.template = template
-        logging.debug(f'slug - {self.slug}')
 
     @property
     def html(self):

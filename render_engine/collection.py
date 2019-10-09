@@ -60,37 +60,41 @@ class Collection:
             index_template_vars: Optional[dict]=None,
             ):
         """initialize a collection object"""
-
         self.template = template
         self.template_vars = template_vars or {}
-        self.pages = set(pages) if pages else set()
+        self.recursive = recursive
+        self.page_content_type = page_content_type
 
-        if content_path:
-            self.content_path = Path(content_path)
-
-            if excludes:
-                includes = [f'!{x}' for x in excludes]
-
-            glob_start = '**' if recursive else ''
-
-            # This will overwrite any pages that are called
-            globs = [self.content_path.glob(f'{glob_start}{x}') for x in
-                    includes]
-
-            for glob in globs:
-                for page in glob:
-                    self.pages.add(
-                        page_content_type(
-                            content_path=page,
-                            template=template,
-                            ),
-                        )
+        self.content_path = Path(content_path) if content_path else None
+        self.includes = includes
+        self.excludes = excludes
 
         self.index_name = index_name
         self.index_template = index_template
         self.index_template_vars = index_template_vars
         self.index_page_content_type = index_page_content_type
 
+    @property
+    def pages(self):
+        if self.content_path:
+            if self.excludes:
+                self.includes = [f'!{x}' for x in self.excludes]
+
+            glob_start = '**' if self.recursive else ''
+
+            # This will overwrite any pages that are called
+            globs = [self.content_path.glob(f'{glob_start}{x}') for x in
+                    self.includes]
+
+            pages = set()
+            for glob in globs:
+                for page in glob:
+                    pages.add(
+                        self.page_content_type(
+                            content_path=page,
+                            template=self.template,
+                            ),
+                        )
 
     @property
     def index(self):
@@ -98,7 +102,8 @@ class Collection:
             return self.index_page_content_type(
                     slug=self.index_name,
                     template=self.index_template,
-                    pages=self.pages)
+                    pages=self.pages,
+                    )
         else:
             return None
 
