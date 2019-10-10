@@ -42,7 +42,7 @@ class Page():
 
         if content:
             _ = load_content(content)
-            logging.warning(f"attrs - {_['attrs']}")
+            logging.debug(f"attrs - {_['attrs']}")
             for key, val in _['attrs'].items():
                 setattr(self, key, val)
             content = _.get('content')

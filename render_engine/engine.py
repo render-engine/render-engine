@@ -124,21 +124,23 @@ class Engine:
                     )
 
 
-            logging.debug(f'pages - {content}')
 
-            base_dir = Path(f'{self.output_path}{output_path}')
-            base_dir.mkdir(exist_ok=True)
+            content.base_dir = Path(f'{self.output_path}{output_path}')
+            content.base_dir.mkdir(exist_ok=True)
+            logging.debug(f'base_dir: {content.base_dir}')
 
+            logging.debug(f'content_path - {content.content_path}')
+            logging.debug(f'pages - {content.pages}')
             for page in content.pages:
                 logging.debug(f'Page - page')
 
                 logging.debug(f'output_path - {output_path}')
-                filepath = base_dir.joinpath(f'{page.slug}{extension}')
+                filepath = content.base_dir.joinpath(f'{page.slug}{extension}')
 
                 logging.debug(f'filepath - {filepath}')
                 filepath.write_text(self.Markup(page))
 
             if content.index:
                 index = content.index
-                index_path = base_dir.joinpath(f'{index.slug}.html')
-                index_path.write_text(self.Markup(index))
+                index_path = content.base_dir.joinpath(f'{index.slug}.html')
+                index_path.write_text(self.Markup(index, pages=content.pages))

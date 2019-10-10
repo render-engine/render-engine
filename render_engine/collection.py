@@ -67,7 +67,9 @@ class Collection:
 
         self.content_path = Path(content_path) if content_path else None
         self.includes = includes
-        self.excludes = excludes
+
+        if excludes:
+            self.includes += [f'!{x}' for x in excludes]
 
         self.index_name = index_name
         self.index_template = index_template
@@ -76,15 +78,14 @@ class Collection:
 
     @property
     def pages(self):
+        logging.debug(f'content - {self.content_path}')
         if self.content_path:
-            if self.excludes:
-                self.includes = [f'!{x}' for x in self.excludes]
 
             glob_start = '**' if self.recursive else ''
-
             # This will overwrite any pages that are called
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
                     self.includes]
+            logging.warning(f'globs - {globs}')
 
             pages = set()
             for glob in globs:
@@ -95,6 +96,7 @@ class Collection:
                             template=self.template,
                             ),
                         )
+            return pages
 
     @property
     def index(self):
