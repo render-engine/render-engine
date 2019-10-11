@@ -1,4 +1,5 @@
 from pathlib import Path
+from jinja2 import Markup
 from markdown import markdown
 from typing import (
         Optional,
@@ -45,21 +46,22 @@ class Page():
             logging.debug(f"attrs - {_['attrs']}")
             for key, val in _['attrs'].items():
                 setattr(self, key, val)
-            content = _.get('content')
+            self.raw_content = _.get('content')
 
         if slug:
             self.slug = slug
 
-        self.content = content
         self.template = template
 
     @property
-    def html(self):
+    def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
-        if self.content:
-            return markdown(self.content)
+        if getattr(self, 'raw_content', None):
+            logging.info(f'content found')
+            return Markup(markdown(self.raw_content))
 
         else:
+            logging.info(f'content NOT found')
             return None
 
 

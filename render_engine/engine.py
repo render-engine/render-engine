@@ -60,13 +60,17 @@ class Engine:
 
         if template:
             template = self.Environment.get_template(page_object.template)
-            kwargs['content'] = Markup(page_object.html)
-            markup = template.render(**kwargs)
+            markup = template.render(
+                    content=page_object.content,
+                    **page_object.__dict__,
+                    **kwargs,
+                    )
 
         else:
             logging.info('No template found')
-            markup = page_object.html
+            markup = page_object.content
 
+        logging.debug(page_object.__dict__)
         logging.debug(f'markup - {markup}')
 
         return markup

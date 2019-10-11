@@ -85,7 +85,7 @@ class Collection:
             # This will overwrite any pages that are called
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
                     self.includes]
-            logging.warning(f'globs - {globs}')
+            logging.debug(f'globs - {globs}')
 
             pages = set()
             for glob in globs:

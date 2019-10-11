@@ -1,3 +1,4 @@
+from jinja2 import Markup
 from render_engine import Page
 import pytest
 import re
@@ -37,17 +38,18 @@ def test_can_create_Page_with_only_slug():
 
 def test_page_kwargs_become_properties(page_with_content_path):
     """Custom Parameters can be passed in as Properties"""
-    assert page_with_content_path.template_vars['custom'] == 'Testing 1,2,3'
+    assert page_with_content_path.custom == 'Testing 1,2,3'
 
 
 def test_page_content_separated_from_attrs(page_with_content_path):
     """When given markdown for content convert it to html and return it as markup"""
     p = page_with_content_path
     assert """# Test Header
-Test Paragraph""" in p.content
-    assert """title: Test Title""" not in p.content
+Test Paragraph""" == p.raw_content
 
 
 def test_page_content_converts_to_html(page_with_content_path):
     """When given markdown for content convert it to html and return it as markup"""
-    assert '<h1>Test Header</h1>' in page_with_content_path.html
+    assert \
+            page_with_content_path.content == \
+            Markup('<h1>Test Header</h1>\n<p>Test Paragraph</p>')
