@@ -45,6 +45,7 @@ class Collection:
     def __init__(
             self,
             *,
+            Title: str='',
             includes: Sequence=['*.md', '*.html'],
             excludes: Optional[Sequence]=None,
             template: Optional[PathString]=None,

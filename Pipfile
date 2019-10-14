@@ -2,14 +2,6 @@
 name = "pypi"
 url = "https://pypi.org/simple"
 
-[[source]]
-name = "pythonhosted"
-url = "https://files.pythonhosted.org"
-
-[[source]]
-name = "pypi - test"
-url = "https://test.pypi.org/simple"
-
 [dev-packages]
 pytest = "*"
 v = {editable = true,version = "*"}
@@ -23,6 +15,7 @@ pyyaml = "*"
 markdown = "*"
 wheel = "*"
 twine = "*"
+maya = "*"
 
 [requires]
 
