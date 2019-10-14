@@ -4,14 +4,6 @@ import pytest
 import re
 
 
-
-@pytest.mark.skip(reason="SLUG CAN BE PULLED FROM CONTENT")
-def test_Page_slug(base_page):
-    """Pages should always have slugs"""
-    with pytest.raises(TypeError):
-        Page()
-
-
 @pytest.mark.skip(reason="HOLD TILL POST v1 Milestone")
 def test_Page_slug_is_string():
     """Page slugs must be strings otherwise raise Value Error"""

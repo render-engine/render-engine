@@ -15,7 +15,6 @@ def test_collection_if_template_then_vars(collection, template_var):
 
 def test_collection_can_add_pages(base_page, base_collection):
     assert len(base_collection) == 0
-    for x in range(4):
-        base_collection.pages.append(base_page)
+    base_collection.pages.add(base_page)
 
-    assert len(base_collection) == 4
+    assert len(base_collection) == 1

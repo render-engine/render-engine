@@ -76,8 +76,6 @@ class Collection:
         self.index_template_vars = index_template_vars
         self.index_page_content_type = index_page_content_type
 
-    @property
-    def pages(self):
         logging.debug(f'content - {self.content_path}')
         if self.content_path:
 
@@ -96,7 +94,9 @@ class Collection:
                             template=self.template,
                             ),
                         )
-            return pages
+            self.pages = pages
+        else:
+            self.pages = set([])
 
     @property
     def index(self):
