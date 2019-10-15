@@ -3,7 +3,7 @@ import logging
 import maya
 from more_itertools import unique_everseen
 
-from render_engine import Collection
+from .collection import Collection
 
 
 class Blog(Collection):

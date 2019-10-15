@@ -37,44 +37,29 @@ class Collection:
 
     index_template_vars: dict={}
     """
-    default_sort_field='title'
-    reverse_sort=False
+    _default_sort_field = 'title'
+    _reverse_sort = False
+    _includes = ['*.md', '*.txt', '*.html']
+    _pages = set()
+    content_path = None
 
     def __init__(
             self,
             *,
-            Title: str='',
-            includes: Sequence=['*.md', '*.html'],
-            excludes: Optional[Sequence]=None,
-            template: Optional[PathString]=None,
+            title: str='',
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
-            template_vars: Optional[dict]=None,
-            pages: Optional[Sequence]=[],
+            pages: [Sequence]=[],
             recursive: bool=False,
-            # Index properties
-            index_name: Optional[str]='All Items',
-            index_template: Optional[PathString]=None,
-            index_page_content_type: Type[Page]=Page,
-            index_template_vars: Optional[dict]=None,
             ):
         """initialize a collection object"""
-        self.template = template
-        self.template_vars = template_vars or {}
         self.recursive = recursive
         self.page_content_type = page_content_type
 
-        self.content_path = Path(content_path) if content_path else None
-        self.includes = includes
+        if content_path:
+            self.content_path = Path(content_path)
 
-        if excludes:
-            self.includes += [f'!{x}' for x in excludes]
-
-        self._pages = pages
-        self.index_name = index_name
-        self.index_template = index_template
-        self.index_template_vars = index_template_vars
-        self.index_page_content_type = index_page_content_type
+        self._pages = set(pages)
 
     @property
     def pages(self):
@@ -82,56 +67,34 @@ class Collection:
             return self._pages
 
         elif self.content_path:
+            # ** is equivalent to rglob
             glob_start = '**' if self.recursive else ''
-            # This will overwrite any pages that are called
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
                     self.includes]
-            logging.debug(f'globs - {globs}')
 
-            pages = set()
+
             for glob in globs:
                 for page in glob:
-                    pages.add(
-                        self.page_content_type(
-                            content_path=page,
-                            template=self.template,
-                            ),
-                        )
+                    p = self.page_content_type(content_path=page)
+                    pages.add(p)
+
             self._pages = pages
             return pages
 
         else:
             return set()
 
-    @property
-    def _iterators(self):
-        return [self.pages]
-
-    @staticmethod
-    def generate_index(
-            title,
-            iterable,
-            *,
-            slug='',
-            template,
-            sort_key,
-            reverse,
-            ):
-
-        if not slug:
-            slug = title.lower().replace(' ', '-')
-
-        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
-
-        return page(
-                slug=slug,
-                title=title,
-                template=template,
-                pages=pages,
-                )
-
-    def __iter__(self):
+    def add(self, *pages):
+        pages = filter(lambda p: isinstance(p, self.page_content_type), pages)
+        self._pages.add(pages)
         return self.pages
 
+    @property
+    def _iterators(self):
+        return self.pages
+
+    def __iter__(self):
+        return self._pages
+
     def __len__(self):
-        return len(self.pages)
+        return len(self._pages)

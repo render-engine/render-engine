@@ -13,7 +13,7 @@ def test_engine_defaults(base_engine):
 
 
 def test_engine_markup_returns_content_with_no_template(base_engine):
-    page = Page(slug='foo', content="#Foo")
+    page = Page(content="#Foo")
     assert base_engine.Markup(page) == Markup('<h1>Foo</h1>')
 
 @pytest.mark.skip(reason="NOT SURE HOW TO WRITE - ISSUE SUBMITTED")

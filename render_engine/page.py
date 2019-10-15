@@ -18,39 +18,29 @@ class Page():
         page
         template_vars= accepts a dictionary and saves items as properties to be
         """
-    _default_sort_field = 'title'
-    content = ''
-    content_path = ''
     title = ''
 
     def __init__(
             self,
             *,
-            content: Optional[str]=None,
-            content_path: Optional[Union[str, Path]]=None,
+            content: str='',
+            content_path: Optional[Union[str, Path]]=None
            ):
-       """
-       initializes a new Page object
-       --------
-       content = raw content to be loaded
-       content_path = filepath to get content and attributes. Attributes added
-       to template_vars.
-       extension
-       """
-       self.extension = extension
-
-       # get the slug of the page from either the defined slug, the title,
-       # or the content_path
-
-       # Set Content from content and/or content_path
-       self.content_path = Path(content_path)
-
-       if content_path:
+        """
+        initializes a new Page object
+        --------
+        content = raw content to be loaded
+        content_path = filepath to get content and attributes. Attributes added
+        to template_vars.
+        extension
+        """
+        if content_path:
            # content_path will always overwrite the content
+           self.content_path = Path(content_path)
            content = content_path.read_text()
 
-       loaded_content = self.load_content(content)
-       for key, val in loaded_content['attrs'].items():
+        loaded_content = self.load_content(content)
+        for key, val in loaded_content['attrs'].items():
            setattr(self, key, val)
 
         self.content = loaded_content['content']

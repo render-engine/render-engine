@@ -67,7 +67,7 @@ class Engine:
 
         else:
             logging.info('No template found')
-            markup = page_object.content
+            markup = page_object.markup
 
         logging.debug(page_object.__dict__)
         logging.debug(f'markup - {markup}')
@@ -126,13 +126,13 @@ class Engine:
                     **kwargs,
                     )
 
-            for pages in content
-            content.base_dir = Path(f'{self.output_path}{output_path}')
-            content.base_dir.mkdir(exist_ok=True)
-            logging.debug(f'base_dir: {content.base_dir}')
+            for pages in content:
+                content.base_dir = Path(f'{self.output_path}{output_path}')
+                content.base_dir.mkdir(exist_ok=True)
+                logging.debug(f'base_dir: {content.base_dir}')
 
-            logging.debug(f'content_path - {content.content_path}')
-            logging.debug(f'pages - {content.pages}')
+                logging.debug(f'content_path - {content.content_path}')
+                logging.debug(f'pages - {content.pages}')
 
             for page in content.pages:
                 logging.debug(f'Page - page')
@@ -142,3 +142,27 @@ class Engine:
 
                 logging.debug(f'filepath - {filepath}')
                 filepath.write_text(self.Markup(page))
+
+    @staticmethod
+    def generate_index(
+            title,
+            iterable,
+            *,
+            slug='',
+            template,
+            sort_key,
+            reverse,
+            ):
+
+        if not slug:
+            slug = title.lower().replace(' ', '-')
+
+        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
+
+        return page(
+                slug=slug,
+                title=title,
+                template=template,
+                pages=pages,
+                )
+
