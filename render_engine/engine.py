@@ -61,9 +61,6 @@ class Engine:
         else:
             html = page.markup
 
-        if slug.startswith('/'):
-            slug = slug.lstrip('/')
-
         if not extension.startswith('.'):
             extension = f'.{extension}'
 
@@ -89,7 +86,7 @@ class Engine:
                 page = page_object()
 
                 self.write_page(
-                        slug=slug,
+                        slug=slug.lstrip('/'),
                         page = page,
                         extension=extension,
                         template=template,
@@ -135,9 +132,10 @@ class Engine:
 
             for iterator in collection_object._iterators:
                 page_obj = Page(title=iterator.name)
+                slug = _get_slug(iterator).lstrip('/')
                 self.write_page(
                         page=page_obj,
-                        slug=output_path.joinpath(self._get_slug(iterator)),
+                        slug=output_path.joinpath(slug),
                         extension=extension,
                         template=index_template,
                         pages=iterator.pages,
