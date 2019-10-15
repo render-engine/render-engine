@@ -7,6 +7,7 @@ from typing import (
         )
 import re
 import logging
+import maya
 
 
 class Page():
@@ -18,6 +19,8 @@ class Page():
         page
         template_vars= accepts a dictionary and saves items as properties to be
         """
+    default_sort_field = 'title'
+
     def __init__(
             self,
             *,
@@ -47,6 +50,15 @@ class Page():
             for key, val in _['attrs'].items():
                 setattr(self, key, val)
             self.raw_content = _.get('content')
+
+        if not getattr(self, 'date_created', None):
+            if getattr(self, 'date', None):
+                self.date_created = maya.parse(self.date)
+
+        else:
+            self.date_created = maya.parse(self.date_created)
+
+
 
         if slug:
             self.slug = slug

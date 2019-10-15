@@ -41,6 +41,8 @@ class Collection:
 
     index_template_vars: dict={}
     """
+    default_sort_field='title'
+    reverse_sort=False
 
     def __init__(
             self,
@@ -72,11 +74,14 @@ class Collection:
         if excludes:
             self.includes += [f'!{x}' for x in excludes]
 
-        self.index_name = index_name
-        self.index_template = index_template
-        self.index_template_vars = index_template_vars
-        self.index_page_content_type = index_page_content_type
+        if index_name:
+            self.index_name = index_name
+            self.index_template = index_template
+            self.index_template_vars = index_template_vars
+            self.index_page_content_type = index_page_content_type
 
+    @property
+    def pages(self):
         logging.debug(f'content - {self.content_path}')
         if self.content_path:
 
@@ -95,20 +100,32 @@ class Collection:
                             template=self.template,
                             ),
                         )
-            self.pages = pages
+            return list()
         else:
-            self.pages = set([])
+            return set()
 
-    @property
-    def index(self):
-        if self.index_name:
-            return self.index_page_content_type(
-                    slug=self.index_name,
-                    template=self.index_template,
-                    pages=self.pages,
-                    )
-        else:
-            return None
+    @staticmethod
+    def generate_index(
+            title,
+            *,
+            slug='',
+            iterable=self.pages,
+            template=self.index_template,
+            sort_key=self.default_sort_field,
+            reverse=self.reverse,
+            ):
+
+        if not slug:
+            slug = title.lower().replace(' ', '-')
+
+        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
+
+        return page(
+                slug=slug,
+                title=title,
+                template=template,
+                pages=pages,
+                )
 
     def __iter__(self):
         return self.pages

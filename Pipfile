@@ -16,6 +16,7 @@ markdown = "*"
 wheel = "*"
 twine = "*"
 maya = "*"
+more-itertools = "*"
 
 [requires]
 

@@ -1,5 +1,6 @@
 from jinja2 import Markup
 from render_engine import Page
+from datetime import datetime, tzinfo, timezone
 import pytest
 import re
 
@@ -45,3 +46,16 @@ def test_page_content_converts_to_html(page_with_content_path):
     assert \
             page_with_content_path.content == \
             Markup('<h1>Test Header</h1>\n<p>Test Paragraph</p>')
+
+@pytest.mark.parametrize('date_value', ['date_created', 'date'])
+def tests_page_date_converts_to_date_created(date_value):
+    page = Page(content=f'{date_value}: 14 Oct 2019 8:00PM\n\nThis is a test')
+    t = datetime(
+            year=2019,
+            month=10,
+            day=14,
+            hour=20,
+            minute=0,
+            tzinfo=timezone.utc,
+            )
+    assert page.date_created.datetime() == t
