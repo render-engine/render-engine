@@ -1,5 +1,6 @@
 from render_engine.collection import Collection
 from render_engine.page import Page
+from itertools import zip_longest
 from jinja2 import Environment, FileSystemLoader, select_autoescape, Markup
 from pathlib import Path
 from typing import Type, Optional, Union, TypeVar, Sequence
@@ -7,6 +8,7 @@ from typing import Type, Optional, Union, TypeVar, Sequence
 import logging
 import os
 import shutil
+import yaml
 
 # Currently all of the Configuration Information is saved to Default
 logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.WARNING))
@@ -119,20 +121,20 @@ class Engine:
         for output_path in output_paths:
             logging.debug(f'content_path - {content_path}')
 
-            collection = collection_object(
+            content = collection_object(
                     content_path=content_path,
                     template=template,
                     **kwargs,
                     )
 
-            for pages in content
+
+
             content.base_dir = Path(f'{self.output_path}{output_path}')
             content.base_dir.mkdir(exist_ok=True)
             logging.debug(f'base_dir: {content.base_dir}')
 
             logging.debug(f'content_path - {content.content_path}')
             logging.debug(f'pages - {content.pages}')
-
             for page in content.pages:
                 logging.debug(f'Page - page')
 
@@ -141,3 +143,8 @@ class Engine:
 
                 logging.debug(f'filepath - {filepath}')
                 filepath.write_text(self.Markup(page))
+
+            if content.index:
+                index = content.index
+                index_path = content.base_dir.joinpath(f'{index.slug}.html')
+                index_path.write_text(self.Markup(index, pages=content.pages))

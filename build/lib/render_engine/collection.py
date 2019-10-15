@@ -41,23 +41,20 @@ class Collection:
 
     index_template_vars: dict={}
     """
-    default_sort_field='title'
-    reverse_sort=False
 
     def __init__(
             self,
             *,
-            Title: str='',
             includes: Sequence=['*.md', '*.html'],
             excludes: Optional[Sequence]=None,
             template: Optional[PathString]=None,
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
             template_vars: Optional[dict]=None,
-            pages: Optional[Sequence]=[],
+            pages: Optional[Sequence]=None,
             recursive: bool=False,
             # Index properties
-            index_name: Optional[str]='All Items',
+            index_name: Optional[str]=None,
             index_template: Optional[PathString]=None,
             index_page_content_type: Type[Page]=Page,
             index_template_vars: Optional[dict]=None,
@@ -74,7 +71,6 @@ class Collection:
         if excludes:
             self.includes += [f'!{x}' for x in excludes]
 
-        self._pages = pages
         self.index_name = index_name
         self.index_template = index_template
         self.index_template_vars = index_template_vars
@@ -82,10 +78,9 @@ class Collection:
 
     @property
     def pages(self):
-        if self._pages:
-            return self._pages
+        logging.debug(f'content - {self.content_path}')
+        if self.content_path:
 
-        elif self.content_path:
             glob_start = '**' if self.recursive else ''
             # This will overwrite any pages that are called
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
@@ -101,38 +96,18 @@ class Collection:
                             template=self.template,
                             ),
                         )
-            self._pages = pages
             return pages
 
-        else:
-            return set()
-
     @property
-    def _iterators(self):
-        return [self.pages]
-
-    @staticmethod
-    def generate_index(
-            title,
-            iterable,
-            *,
-            slug='',
-            template,
-            sort_key,
-            reverse,
-            ):
-
-        if not slug:
-            slug = title.lower().replace(' ', '-')
-
-        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
-
-        return page(
-                slug=slug,
-                title=title,
-                template=template,
-                pages=pages,
-                )
+    def index(self):
+        if self.index_name:
+            return self.index_page_content_type(
+                    slug=self.index_name,
+                    template=self.index_template,
+                    pages=self.pages,
+                    )
+        else:
+            return None
 
     def __iter__(self):
         return self.pages
