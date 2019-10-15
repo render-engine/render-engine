@@ -1,23 +1,26 @@
 import json
 import logging
-from collections import defaultdict
-from itertools import zip_longest
+import urllib.parse
 from pathlib import Path
 from typing import Optional, Sequence, Type, Union
+from dataclasses import dataclass
 
 from render_engine.page import Page
 
 PathString = Union[str, Type[Path]]
 
+@dataclass
+class Index:
+    name: str
+    pages: Sequence=list
+
+    @property
+    def slug(self):
+        return urllib.parse.quote(self.name.lower())
+
 class Collection:
     """
     Create a Collection of Similar Page Objects
-
-    include: Sequence=['*.md', '*.html'] - list of patterns to include from the
-        content path. Uses the syntax as defined in pathlib.Path.glob
-
-    exclude: Optional[Sequence]=None - pattern to exclude from the content_path
-        same as include=["!<PATTERN>"]
 
     template: Optional[Union[str, Type[Path]]=None - the template file that the
         engine will use to build the page (default: None). This will be assigned
@@ -53,6 +56,7 @@ class Collection:
             recursive: bool=False,
             ):
         """initialize a collection object"""
+        self.title = title
         self.recursive = recursive
         self.page_content_type = page_content_type
 
@@ -70,13 +74,12 @@ class Collection:
             # ** is equivalent to rglob
             glob_start = '**' if self.recursive else ''
             globs = [self.content_path.glob(f'{glob_start}{x}') for x in
-                    self.includes]
+                    self._includes]
 
-
+            pages = set()
             for glob in globs:
-                for page in glob:
-                    p = self.page_content_type(content_path=page)
-                    pages.add(p)
+                for item_file in glob:
+                    pages.add(self.page_content_type(content_path=item_file))
 
             self._pages = pages
             return pages
@@ -91,7 +94,7 @@ class Collection:
 
     @property
     def _iterators(self):
-        return self.pages
+        return [Index(name=f'All {self.title}', pages=self.pages)]
 
     def __iter__(self):
         return self._pages

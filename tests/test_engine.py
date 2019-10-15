@@ -10,16 +10,3 @@ def base_engine():
 
 def test_engine_defaults(base_engine):
     assert base_engine.output_path == Path('output')
-
-
-def test_engine_markup_returns_content_with_no_template(base_engine):
-    page = Page(content="#Foo")
-    assert base_engine.Markup(page) == Markup('<h1>Foo</h1>')
-
-@pytest.mark.skip(reason="NOT SURE HOW TO WRITE - ISSUE SUBMITTED")
-def test_engine_markup_returns_content_with_template(base_engine):
-    pass
-
-@pytest.mark.skip(reason="NOT SURE HOW TO WRITE - ISSUE SUBMITTED")
-def test_engine_page_writes_markup(base_engine):
-    pass

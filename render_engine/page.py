@@ -9,20 +9,13 @@ from jinja2 import Markup
 from markdown import markdown
 
 
-class Page():
-    """Base component used to make web pages
-        content = the data that will be used to create a page object
-        extension = tells the Engine what extension to use when creating the page
-        slug = the name of the document. Used as the filename of the output path
-        template = the template filepath that the engine will use to build the
-        page
-        template_vars= accepts a dictionary and saves items as properties to be
-        """
-    title = ''
-
+class Page:
+    """Base component used to make web pages"""
     def __init__(
             self,
             *,
+            slug = '',
+            title = '',
             content: str='',
             content_path: Optional[Union[str, Path]]=None
            ):
@@ -34,6 +27,9 @@ class Page():
         to template_vars.
         extension
         """
+        self.title = title
+        self.slug = slug
+
         if content_path:
            # content_path will always overwrite the content
            self.content_path = Path(content_path)

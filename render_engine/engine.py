@@ -20,92 +20,95 @@ class Engine:
 
     def __init__(
             self,
-            output_path:PathString=Path('output'),
-            static_path:PathString=Path('static'),
-            strict: bool=False,
+            output_path: PathString=Path('output'),
+            static_path: PathString=Path('static'),
             #Jinja2.FileSystemLoader takes str or iterable not Path
-            templates_dir: Union[str, Sequence]='templates',
+            templates_path: str='templates',
+            strict: bool=False,
             **env_variables,
             ):
 
         self.output_path = Path(output_path)
-
-        if strict and output_path.is_dir():
-                shutil.rmtree(self.output_path)
+        if strict and self.output_path.is_dir():
+            shutil.rmtree(self.output_path)
 
         self.output_path.mkdir(exist_ok=True)
-        self.static_path = Path(static_path)
 
-        if self.static_path.is_dir():
-            output_static_path = self.output_path.joinpath(self.static_path)
+        if Path(static_path).is_dir():
+            output_static_path = self.output_path.joinpath(static_path)
 
             if output_static_path.exists():
                 shutil.rmtree(output_static_path)
                 shutil.copytree(src=static_path, dst=output_static_path)
 
         self.Environment = Environment(
-               loader=FileSystemLoader(templates_dir),
+               loader=FileSystemLoader(templates_path),
                autoescape=select_autoescape(['html', 'xml', 'rss']),
                )
 
-        if env_variables:
-            self.Environment.globals = env_variables
+        self.Environment.globals = env_variables
 
-    def Markup(self, page_object, **kwargs):
-        """Takes a Page-based Content-Type and returns templated or raw
-        Markup"""
-
-        template = getattr(page_object, 'template', None)
+    def write_page(self, slug, page, extension='.html', template=None, **template_vars):
+        """writes the page object to the output path"""
 
         if template:
-            template = self.Environment.get_template(page_object.template)
-            markup = template.render(
-                    content=page_object.content,
-                    **page_object.__dict__,
-                    **kwargs,
+            template = self.Environment.get_template(template)
+            html = template.render(
+                    content=page.markup,
+                    **template_vars,
                     )
 
         else:
-            logging.info('No template found')
-            markup = page_object.markup
+            html = page.markup
 
-        logging.debug(page_object.__dict__)
-        logging.debug(f'markup - {markup}')
+        if slug.startswith('/'):
+            slug = slug.lstrip('/')
 
-        return markup
+        if not extension.startswith('.'):
+            extension = f'.{extension}'
 
-    def route(self, *slugs, template=None, page_object=Page, extension='.html'):
-        """with functionality similar to flask and a name to match. This is to
-        help with transitions to static generation.
+        self.output_path.joinpath(f'{slug}{extension}').write_text(html)
+        return html
 
-        This decorator is what makes the static pages. While you could just
-        call `Markup` and then write the output this is the thing that makes
-        life easier."""
+    def route(
+            self,
+            *slugs,
+            template=None,
+            page_object=Page,
+            extension='.html',
+            ):
+        """decorator that creates a page and writes it"""
 
-        def build_page(func, **kwargs):
+        def inner(func, *args, **kwargs):
 
             for slug in slugs:
                 if slug == '/' or not slug:
                     slug = '/index'
-                func_kwargs = func(**kwargs)
-                p = page_object(slug=slug, template=template, **func_kwargs)
-                logging.info(p.__dict__)
 
-                with open(f'{self.output_path}/{slug}{extension}', 'w') as fp:
-                    fp.write(self.Markup(p))
+                func_kwargs = func(*args, **kwargs)
+                page = page_object()
+
+                self.write_page(
+                        slug=slug,
+                        page = page,
+                        extension=extension,
+                        template=template,
+                        **func_kwargs,
+                        )
             return func
 
-        return build_page
-
+        return inner
 
     def collection(
             self,
-            *output_paths,
+            *routes,
+            name,
             content_path,
             template=None,
-            collection_object=Collection,
+            index_template=None,
+            collection_type=Collection,
             extension='.html',
-            **kwargs,
+            **collection_kwargs,
             ):
         """This is a way to make similar items based on markdown content that
         you can save in a content_path This iterates through the
@@ -113,56 +116,47 @@ class Engine:
 
         For this to work some assumptions are made:
             All objects are the same content type and use the same template.
-
-        TODO: Allow for a custom collection to be used.
         """
 
-        for output_path in output_paths:
-            logging.debug(f'content_path - {content_path}')
+        for route in routes:
+            output_path = self.output_path.joinpath(route.lstrip('/'))
+            output_path.mkdir(exist_ok=True)
+            collection_object = collection_type(content_path=content_path)
 
-            collection = collection_object(
-                    content_path=content_path,
-                    template=template,
-                    **kwargs,
-                    )
 
-            for pages in content:
-                content.base_dir = Path(f'{self.output_path}{output_path}')
-                content.base_dir.mkdir(exist_ok=True)
-                logging.debug(f'base_dir: {content.base_dir}')
+            for page_obj in collection_object.pages:
+                self.write_page(
+                        page=page_obj,
+                        slug=output_path.joinpath(self._get_slug(page_obj)),
+                        extension=extension,
+                        template=template,
+                        **collection_kwargs,
+                        )
 
-                logging.debug(f'content_path - {content.content_path}')
-                logging.debug(f'pages - {content.pages}')
-
-            for page in content.pages:
-                logging.debug(f'Page - page')
-
-                logging.debug(f'output_path - {output_path}')
-                filepath = content.base_dir.joinpath(f'{page.slug}{extension}')
-
-                logging.debug(f'filepath - {filepath}')
-                filepath.write_text(self.Markup(page))
+            for iterator in collection_object._iterators:
+                page_obj = Page(title=iterator.name)
+                self.write_page(
+                        page=page_obj,
+                        slug=output_path.joinpath(self._get_slug(iterator)),
+                        extension=extension,
+                        template=index_template,
+                        pages=iterator.pages,
+                        **collection_kwargs,
+                        )
 
     @staticmethod
-    def generate_index(
-            title,
-            iterable,
-            *,
-            slug='',
-            template,
-            sort_key,
-            reverse,
-            ):
+    def _get_slug(page):
+        if not page.slug:
+            if page.title:
+                return urllib.parse.quote(page.title.lower())
 
-        if not slug:
-            slug = title.lower().replace(' ', '-')
+            elif page.content_path:
+                return urllib.parse.quote(page.content_path.lower())
 
-        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
+            else:
+                error_msg = 'Collection content must have a slug, \
+                        title or content_path'
+                raise AttributeError(error_msg)
 
-        return page(
-                slug=slug,
-                title=title,
-                template=template,
-                pages=pages,
-                )
-
+        else:
+            return page.slug
