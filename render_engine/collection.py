@@ -104,15 +104,19 @@ class Collection:
         else:
             return set()
 
+    @property
+    def _iterators(self):
+        return (self.pages)
+
     @staticmethod
     def generate_index(
             title,
+            iterable,
             *,
             slug='',
-            iterable=self.pages,
-            template=self.index_template,
-            sort_key=self.default_sort_field,
-            reverse=self.reverse,
+            template,
+            sort_key,
+            reverse,
             ):
 
         if not slug:

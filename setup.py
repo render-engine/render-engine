@@ -149,6 +149,7 @@ setup(
     'markdown',
     'jinja2',
     'pyyaml',
+    'more_itertools',
     ],  # Optional
 
     # List additional groups of dependencies here (e.g. development

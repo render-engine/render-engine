@@ -10,15 +10,20 @@ class Blog(Collection):
 
     _categories = _tags = set()
 
-    for page in self.pages:
-        if getattr(page, 'category', None):
-            _categories.add(page.category)
+    @property
+    def categories(self):
+        for page in self.pages:
+            if getattr(page, 'category', None):
+                self._categories.add(page.category)
+        return [filter_pages('category', category) for category in _categories]
 
-        if getattr(page, 'tags', None):
-            _tags.add(page.tags.split(tag_separator))
+    @property
+    def tags(self):
+        for page in self.pages:
+            if getattr(page, 'tags', None):
+                _tags.add(page.tags.split(self.tag_separator))
 
-    categories = [self.filter_pages('category', category) for category in _categories]
-    tags = [self.filter_pages('tags', tag, multiple=True) for tag in _tags]
+        return [filter_pages('tags', tag, multiple=True) for tag in _tags]
 
     @property
     def is_valid(self):
@@ -30,15 +35,15 @@ class Blog(Collection):
 
     @staticmethod
     def check_validity(checks):
-    logging.debug(checks.items())
-    if all(list(map(lambda x: x[1], checks.items()))):
-        return True
+        logging.debug(checks.items())
+        if all(list(map(lambda x: x[1], checks.items()))):
+            return True
 
-    else:
-        invalid = filter(lambda x: x[1] == False, checks.items())
-        for item in invalid:
-            print(f'{item[0]} does not have a valid value: {item[1]}')
-        return False
+        else:
+            invalid = filter(lambda x: x[1] == False, checks.items())
+            for item in invalid:
+                print(f'{item[0]} does not have a valid value: {item[1]}')
+            return False
 
     @property
     def show_warnings(self):
@@ -78,3 +83,7 @@ class Blog(Collection):
                     multiple=multiple,
                     ):
                 filtered_list.append(x)
+
+    @property
+    def _iterators(self):
+        return [self.pages, self.categories, self.tags]
