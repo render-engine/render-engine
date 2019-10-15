@@ -1,13 +1,12 @@
+import logging
+import re
+import urllib.parse
 from pathlib import Path
+from typing import Optional, Union
+
+import maya
 from jinja2 import Markup
 from markdown import markdown
-from typing import (
-        Optional,
-        Union,
-        )
-import re
-import logging
-import maya
 
 
 class Page():
@@ -19,78 +18,63 @@ class Page():
         page
         template_vars= accepts a dictionary and saves items as properties to be
         """
-    default_sort_field = 'title'
+    _default_sort_field = 'title'
+    content = ''
+    content_path = ''
+    title = ''
 
     def __init__(
             self,
             *,
-            slug: Optional[str]=None,
             content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None,
-            extension: str=".html",
-            template: Optional[Union[str, Path]]=None,
-            **template_vars,
-            ):
-        """
-        initializes a new Page object
-        --------
-        content_path = filepath to get content and attributes. Attributes added
-        to template_vars. Will overwrite content
-        used in template rendering.
-        """
-        self.extension = extension
+           ):
+       """
+       initializes a new Page object
+       --------
+       content = raw content to be loaded
+       content_path = filepath to get content and attributes. Attributes added
+       to template_vars.
+       extension
+       """
+       self.extension = extension
 
-        # Set Content from content and/or content_path
-        if content_path:
-            content = Path(content_path).read_text()
+       # get the slug of the page from either the defined slug, the title,
+       # or the content_path
 
-        if content:
-            _ = load_content(content)
-            logging.debug(f"attrs - {_['attrs']}")
-            for key, val in _['attrs'].items():
-                setattr(self, key, val)
-            self.raw_content = _.get('content')
+       # Set Content from content and/or content_path
+       self.content_path = Path(content_path)
 
-        if not getattr(self, 'date_created', None):
-            if getattr(self, 'date', None):
-                self.date_created = maya.parse(self.date)
+       if content_path:
+           # content_path will always overwrite the content
+           content = content_path.read_text()
 
-        else:
-            self.date_created = maya.parse(self.date_created)
+       loaded_content = self.load_content(content)
+       for key, val in loaded_content['attrs'].items():
+           setattr(self, key, val)
 
-
-
-        if slug:
-            self.slug = slug
-
-        self.template = template
+        self.content = loaded_content['content']
 
     @property
-    def content(self):
+    def markup(self):
         """html = rendered html (not marked up). Is None if content is none"""
-        if getattr(self, 'raw_content', None):
-            logging.info(f'content found')
-            return Markup(markdown(self.raw_content))
+        return Markup(markdown(self.content))
 
-        else:
-            logging.info(f'content NOT found')
-            return None
+    @staticmethod
+    def load_content(content):
+        matcher = r'^\w+:'
+        md_content = content.splitlines()
+        attrs = {}
 
+        if len(md_content) > 1:
+            while re.match(matcher, md_content[0]):
+                line = md_content.pop(0)
+                line_data = line.split(': ', 1)
+                key = line_data[0].lower()
+                value = line_data[-1].rstrip()
+                attrs[key] = value
 
-def load_content(content):
-    matcher = r'^\w+:'
-    md_content = content.splitlines()
-    attrs = {}
-
-    if len(md_content) > 1:
-        while re.match(matcher, md_content[0]):
-            line = md_content.pop(0)
-            line_data = line.split(': ', 1)
-            key = line_data[0].lower()
-            value = line_data[-1].rstrip()
-            attrs[key] = value
-
-    return {
-        'attrs': attrs,
-        'content': '\n'.join(md_content).strip('\n'),
-        }
+        return {
+            'attrs': attrs,
+            'content': '\n'.join(md_content).strip('\n'),
+            }

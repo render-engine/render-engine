@@ -1,5 +1,7 @@
 from pathlib import Path
+
 import yaml
+
 
 def created_message(path):
     return f'{path} created!'

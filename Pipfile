@@ -17,6 +17,7 @@ wheel = "*"
 twine = "*"
 maya = "*"
 more-itertools = "*"
+isort = "*"
 
 [requires]
 

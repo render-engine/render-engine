@@ -1,7 +1,10 @@
 import logging
+
 import maya
-from render_engine import Collection
 from more_itertools import unique_everseen
+
+from render_engine import Collection
+
 
 class Blog(Collection):
     default_sort_field = 'date_created'

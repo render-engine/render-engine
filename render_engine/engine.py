@@ -1,12 +1,13 @@
-from render_engine.collection import Collection
-from render_engine.page import Page
-from jinja2 import Environment, FileSystemLoader, select_autoescape, Markup
-from pathlib import Path
-from typing import Type, Optional, Union, TypeVar, Sequence
-
 import logging
 import os
 import shutil
+from pathlib import Path
+from typing import Optional, Sequence, Type, TypeVar, Union
+
+from jinja2 import Environment, FileSystemLoader, Markup, select_autoescape
+
+from render_engine.collection import Collection
+from render_engine.page import Page
 
 # Currently all of the Configuration Information is saved to Default
 logging.basicConfig(level=os.environ.get('LOGGING_LEVEL', logging.WARNING))

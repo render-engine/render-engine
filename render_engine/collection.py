@@ -1,15 +1,11 @@
-from typing import (
-    Optional,
-    Type,
-    Union,
-    Sequence,
-    )
-from collections import defaultdict
-from itertools import zip_longest
-from render_engine.page import Page
-from pathlib import Path
 import json
 import logging
+from collections import defaultdict
+from itertools import zip_longest
+from pathlib import Path
+from typing import Optional, Sequence, Type, Union
+
+from render_engine.page import Page
 
 PathString = Union[str, Type[Path]]
 

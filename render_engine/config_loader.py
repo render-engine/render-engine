@@ -1,6 +1,8 @@
-from pathlib import Path
 import logging
+from pathlib import Path
+
 import yaml
+
 
 def load_config(config_path, section):
     """Tests for a valid config file and loads a section of the yaml file,
