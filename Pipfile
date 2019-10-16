@@ -8,6 +8,7 @@ v = {editable = true,version = "*"}
 pytest-mock = "*"
 pytest-cov = "*"
 mkdocs = "*"
+black = "*"
 
 [packages]
 jinja2 = "*"

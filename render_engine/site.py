@@ -1,9 +1,12 @@
-class Site:
-    def __init__(self), output_path:
-      self.engines = {}
-      self.routes = {}
+from pathlib import Path
 
-      self.output_path  = output_path
+
+class Site:
+    def __init__(self, output_path):
+        self.engines = {}
+        self.routes = {}
+        self.output_path = Path(output_path)
+
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls
 
