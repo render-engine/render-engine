@@ -2,10 +2,11 @@ from pathlib import Path
 
 
 class Site:
-    def __init__(self, output_path):
+    def __init__(self, output_path='output', **site_vals):
         self.engines = {}
         self.routes = {}
         self.output_path = Path(output_path)
+        self.site_vals = site_vals
 
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls

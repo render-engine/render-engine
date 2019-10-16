@@ -11,18 +11,15 @@ from render_engine.page import Page
 class Collection:
     def __init__(
         self,
-        *,
         content_path: Optional[PathString] = None,
-        pages: [Sequence] = {},
-        **collection_attrs,
+        pages: Optional[Sequence] = None,
+        content_type: Type[Page] = Page,
     ):
         """initialize a collection object"""
-        if content_path and pages:
-            error_msg = "Supply either content_path or pages. Not Both"
-            raise AttributeError(error_msg)
-
-        if content_path:
-            self.content_path = Path(content_path)
+        self.content_path = content_path
+        self.pages = {}
+        self.routes = self.__class__.__name__.lower()
+        self.template_vars = {}
 
     @property
     def _pages(self):
