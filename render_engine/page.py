@@ -11,11 +11,12 @@ from markdown import markdown
 
 class Page:
     """Base component used to make web pages"""
+    title = ''
+    _slug = ''
+
     def __init__(
             self,
             *,
-            slug = '',
-            title = '',
             content: str='',
             content_path: Optional[Union[str, Path]]=None
            ):
@@ -27,8 +28,6 @@ class Page:
         to template_vars.
         extension
         """
-        self.title = title
-        self.slug = slug
 
         if content_path:
            # content_path will always overwrite the content
@@ -37,9 +36,21 @@ class Page:
 
         loaded_content = self.load_content(content)
         for key, val in loaded_content['attrs'].items():
-           setattr(self, key, val)
+            if key == 'slug':
+                key = '_slug'
+            setattr(self, key, val)
 
         self.content = loaded_content['content']
+
+
+    @property
+    def slug(self):
+        slug = self._slug or self.title or self.content_path
+
+        if slug == '/' or not slug:
+            slug = '/index'
+
+        return urllib.parse.quote_plus(slug.lower())
 
     @property
     def markup(self):
@@ -64,3 +75,18 @@ class Page:
             'attrs': attrs,
             'content': '\n'.join(md_content).strip('\n'),
             }
+
+    def write(self, template=None, extension='.html', **template_kwargs):
+        """adds the markup to a template (if exists) and then saves the markup
+        to file"""
+
+        logging.warning('write called')
+
+        if template:
+            markup = template.render(content=self.markup, **template_kwargs)
+
+        else:
+            markup = self.markup
+
+        filename = Path(f'{self.slug}{extension}'.lstrip('/'))
+        return filename.write_text(markup)

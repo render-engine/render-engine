@@ -9,14 +9,11 @@ from render_engine.page import Page
 
 PathString = Union[str, Type[Path]]
 
-@dataclass
 class Index:
-    name: str
-    pages: Sequence=list
-
-    @property
-    def slug(self):
-        return urllib.parse.quote(self.name.lower())
+    def __init__(self, name, pages):
+        self.name = name
+        self.pages = pages
+        self.slug=urllib.parse.quote_plus(name.lower())
 
 class Collection:
     """
@@ -49,14 +46,14 @@ class Collection:
     def __init__(
             self,
             *,
-            title: str='',
+            name: str,
             content_path: Optional[PathString]=None,
             page_content_type: Type[Page]=Page,
             pages: [Sequence]=[],
             recursive: bool=False,
             ):
         """initialize a collection object"""
-        self.title = title
+        self.name = name
         self.recursive = recursive
         self.page_content_type = page_content_type
 
@@ -94,7 +91,7 @@ class Collection:
 
     @property
     def _iterators(self):
-        return [Index(name=f'All {self.title}', pages=self.pages)]
+        return [Index(name=f'All {self.name}', pages=self.pages)]
 
     def __iter__(self):
         return self._pages

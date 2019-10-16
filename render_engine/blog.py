@@ -7,7 +7,7 @@ from .collection import Collection
 
 
 class Blog(Collection):
-    default_sort_field = 'date_created'
+    default_sort_field = 'date_published'
     reverse_sort = True
     tag_separator = ','
 
@@ -67,25 +67,6 @@ class Blog(Collection):
                     }
 
         return check_validity(checks)
-
-    @classmethod
-    def __filtered(page, filter_key, filter_value, multiple=False):
-        if not multiple and getattr(page, filter_key) == filter_value:
-            return True
-
-        elif multiple and filter_value in getattr(page, filter_key):
-            return True
-
-    @staticmethod
-    def filter_pages(iterator, filter_key, filter_value, multiple=False):
-        filtered_list = []
-        for x in iterator:
-            if x.__filtered(
-                    filter_key=filter_key,
-                    filter_value=filter_value,
-                    multiple=multiple,
-                    ):
-                filtered_list.append(x)
 
     @property
     def _iterators(self):
