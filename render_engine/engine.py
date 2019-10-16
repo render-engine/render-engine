@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional, Sequence, Type
 from .helpers import PathString
 
-import jinja2 import FileSystemLoader, select_autoescape
+from jinja2 import FileSystemLoader, select_autoescape
 
 from render_engine.page import Page
 
