@@ -18,6 +18,8 @@ class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
 
+
+
     def __init__(
             self,
             output_path: PathString=Path('output'),
@@ -47,55 +49,32 @@ class Engine:
                )
         self.Environment.globals = env_variables
 
-    def route(
-            self,
-            *routes,
-            template=None,
-            page_type=Page,
-            extension='.html',
-            ):
-        """decorator that creates a page and writes it"""
-        def inner(func, *args, **kwargs):
-            logging.warning('inner-called')
-            f = func(*args, **kwargs)
-            return f
-
-        if template:
-            template = self.Environment.get_template(template)
-
-        f = inner
-        for routes in routes:
-            page_obj = page_type(slug=slug)
-            attrs = {}
-
-            self.write(
-                page=page_obj,
-                extension=extension,
-                markup=markup,
-                template=template,
-                )
-
-
+    def render_template(self, template_name):
+        def inner (f, *args, **kwargs):
+            func = f(*args, **kwargs)
+            attrs = func.__dict__
+            template = self.Environment.get_template(template_name)
+            render = template.render(content=func.markup, **attrs)
+            self.output_path.joinpath(func.slug.lstrip('/')).write_text(render)
+        return inner
 
 
     def collection(
             self,
-            *routes,
             name,
             content_path,
             template=None,
             index_template=None,
             collection_type=Collection,
             extension='.html',
+            **template_vars,
             ):
         """This iterates through the content_path and creates the page object
         for you"""
 
         def inner(func, *args, **kwargs):
-            logging.warning('inner-called')
-
             f = func(*args, **kwargs)
-
+            f.update(**template_vars)
             return f
 
         for route in routes:
@@ -104,12 +83,11 @@ class Engine:
 
         for page_obj in collection_object.pages:
             page_obj._slug = f'{route}/{page_obj.slug}'
-            attrs = page_obj.__dict__
-            page_obj.write(
+            self.write(
+                    page_obj,
                     extension=extension,
                     template=template,
-                    **inner,
-                    **attrs,
+                    **f,
                     )
 
         if index_template:
@@ -118,11 +96,26 @@ class Engine:
         for iterator in collection_object._iterators:
             page_obj = Page(title=iterator.name)
             page_obj._slug = f'{route}/{page_obj.slug}'
-            attrs = page_obj.__dict__
-            page_obj.write(
+            self.write(
+                    page_obj,
                     extension=extension,
                     template=index_template,
-                    **inner,
-                    **attrs,
+                    **f,
                     )
         return inner
+
+
+    def write(self, page, template, extension='.html', **template_vars):
+        markup = page.markup
+
+        if template:
+            content = template.render(content=markup, **template_kwargs)
+
+        else:
+            content = markup
+
+        filename = self.output_path.joinpath(
+                Path(f'{self.slug}{extension}'.lstrip('/')))
+        filename.mkdir(exist_ok=True)
+        return filename.write_text(content)
+

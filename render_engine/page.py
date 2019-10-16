@@ -10,14 +10,16 @@ from markdown import markdown
 
 
 class Page:
-    """Base component used to make web pages"""
-    title = ''
-    _slug = ''
+    title = None
+    _slug = None
+    engine = None
 
+    """Base component used to make web pages"""
     def __init__(
             self,
             *,
-            content: str='',
+            self: Optional[str]=None,
+            content: Optional[str]=None,
             content_path: Optional[Union[str, Path]]=None
            ):
         """
@@ -29,6 +31,10 @@ class Page:
         extension
         """
 
+        if content and content_path:
+            error_msg = 'Supply either content or content_path. Not Both'
+            raise AttributeError(errorMsg)
+
         if content_path:
            # content_path will always overwrite the content
            self.content_path = Path(content_path)
@@ -36,11 +42,13 @@ class Page:
 
         loaded_content = self.load_content(content)
         for key, val in loaded_content['attrs'].items():
-            if key == 'slug':
+
+            if key == 'slug': # To Avoid Slug Conflicts with Slug Property
                 key = '_slug'
+
             setattr(self, key, val)
 
-        self.content = loaded_content['content']
+        self._content = loaded_content['content']
 
 
     @property
@@ -53,9 +61,14 @@ class Page:
         return urllib.parse.quote_plus(slug.lower())
 
     @property
-    def markup(self):
+    def html(self):
+        """the text from self._content converted to html"""
+        return markdown(self._content)
+
+    @property
+    def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
-        return Markup(markdown(self.content))
+        return Markup(self.content)
 
     @staticmethod
     def load_content(content):
@@ -76,17 +89,8 @@ class Page:
             'content': '\n'.join(md_content).strip('\n'),
             }
 
-    def write(self, template=None, extension='.html', **template_kwargs):
-        """adds the markup to a template (if exists) and then saves the markup
-        to file"""
-
-        logging.warning('write called')
-
-        if template:
-            markup = template.render(content=self.markup, **template_kwargs)
-
-        else:
-            markup = self.markup
-
-        filename = Path(f'{self.slug}{extension}'.lstrip('/'))
-        return filename.write_text(markup)
+   def render_template(self, template_name):
+        template = self.engine.environment.get_template(template_name)
+        kwargs = self.__dict__
+        render = render(template.render(content=self.content))
+        self.filename.write_text(render)
