@@ -6,6 +6,7 @@ from typing import Optional, Sequence, Type
 from .helpers import PathString
 
 from jinja2 import FileSystemLoader, select_autoescape
+import jinja2.Environment
 
 from render_engine.page import Page
 
