@@ -12,7 +12,6 @@ class Collection:
     def __init__(
         self,
         content_path: Optional[PathString] = None,
-        pages: Optional[Sequence] = None,
         content_type: Type[Page] = Page,
     ):
         """initialize a collection object"""

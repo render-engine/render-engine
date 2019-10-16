@@ -2,17 +2,16 @@ from pathlib import Path
 
 
 class Site:
-    def __init__(self, output_path='output', **site_vals):
+    def __init__(self, output_path='output'):
         self.engines = {}
         self.routes = {}
         self.output_path = Path(output_path)
-        self.site_vals = site_vals
 
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls
 
     def register_collection(self, cls):
-        for page in cls.pages:
+        for page in cls._pages:
             self.route(page)
 
     def route(self, cls):
