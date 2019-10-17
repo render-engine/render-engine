@@ -11,14 +11,16 @@ from render_engine.page import Page
 class Collection:
     def __init__(
         self,
-        content_path: Optional[PathString] = None,
+        content_path: Optional[PathString] = "content",
         content_type: Type[Page] = Page,
     ):
         """initialize a collection object"""
-        self.content_path = content_path
+        self.content_type = content_type
+        self.content_path = Path(content_path)
         self.pages = {}
         self.routes = self.__class__.__name__.lower()
         self.template_vars = {}
+        self.includes = ["*.md", "*.html"]
 
     @property
     def _pages(self):
@@ -26,4 +28,8 @@ class Collection:
             return self.pages
 
         else:
-            return [p for p in self.content_path.iter_dir()]
+            return (
+                self.content_type(content_path=p)
+                for i in self.includes
+                for p in self.content_path.glob(i)
+            )

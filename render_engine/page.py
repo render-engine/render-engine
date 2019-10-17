@@ -34,7 +34,7 @@ class Page:
             self._content = content
 
         elif content_path:
-            self._load_content(content_path)
+            self._load_content(content_path.read_text())
 
         self.filename = self.__class__.__name__
 
@@ -52,10 +52,9 @@ class Page:
         """html = rendered html (not marked up). Is None if content is none"""
         return Markup(self.content)
 
-    @staticmethod
-    def _load_content(content):
+    def _load_content(self, content):
         matcher = r"^\w+:"
-        md_content = content.splitlines()
+        md_content = content.splitlines(keepends=True)
 
         if len(md_content) > 1:
             while re.match(matcher, md_content[0]):
@@ -65,4 +64,4 @@ class Page:
                 value = line_data[-1].rstrip()
                 setattr(self, key, value)
 
-        self._content = ("\n".join(md_content).strip("\n"),)
+        self._content = "".join(md_content)

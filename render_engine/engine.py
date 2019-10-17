@@ -24,23 +24,13 @@ class Engine:
         output_path: PathString = Path("output"),
         # Jinja2.FileSystemLoader takes str or iterable not Path
         templates_path: str = "templates",
-        environment: Optional[Type[jinja2.Environment]] = None,
-        extension: str = '.html',
-        autoescape: Sequence = ['html'],
-        **env_variables,
+        extension: str = ".html",
+        autoescape: Sequence = ["html"],
     ):
 
-        if environment and any([templates_path, autoescape]):
-            warning_msg = 'templates_path and autoescape cannot be applied \
-                    with environment. Those values will not be used'
-            logging.warning(warning_msg)
+        self.environment = jinja2.Environment(
+                loader=FileSystemLoader(templates_path),
+                autoescape=select_autoescape(autoescape),
+            )
 
-        if not environment:
-            environment = jinja2.Environment(
-                    loader=FileSystemLoader(templates_path),
-                    autoescape=select_autoescape(autoescape),
-                    )
-
-        self.environment = environment
-        self.Environment.globals = env_variables
         self.content_type = content_type
