@@ -1,26 +1,17 @@
 [[source]]
 name = "pypi"
 url = "https://pypi.org/simple"
+verify_ssl = true
 
 [dev-packages]
-pytest = "*"
-v = {editable = true,version = "*"}
-pytest-mock = "*"
-pytest-cov = "*"
-mkdocs = "*"
 black = "*"
 
 [packages]
-jinja2 = "*"
-pyyaml = "*"
-markdown = "*"
-wheel = "*"
-twine = "*"
-maya = "*"
-more-itertools = "*"
-isort = "*"
+Jinja2 = "==2.10.1"
+Markdown = "==3.1.1"
 
 [requires]
+python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
