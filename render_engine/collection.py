@@ -7,23 +7,20 @@ from typing import Optional, Sequence, Type
 from .helpers import PathString
 from render_engine.page import Page
 
-
 class Collection:
     def __init__(
         self,
-        content_path: Optional[PathString] = None,
-        content_type: Type[Page] = Page,
-    ):
+        content_path: PathString,
+        content_type: Type[Page],
+        engine: Optional[str] = None,
+        glob: Sequence = ['.md', '.html']
+        ):
         """initialize a collection object"""
         self.content_path = content_path
-        self.pages = {}
-        self.routes = self.__class__.__name__.lower()
-        self.template_vars = {}
+        self.content_type = content_type
 
     @property
-    def _pages(self):
-        if self.pages:
-            return self.pages
-
-        else:
-            return [p for p in self.content_path.iter_dir()]
+    def pages(self):
+        return (
+                content_type(content_path=p) for p in for i in content_path.glob('i')
+                )
