@@ -1,17 +1,10 @@
-import logging
-import os
-import shutil
 from pathlib import Path
 from typing import Optional, Sequence, Type
-from .helpers import PathString
 
-from jinja2 import FileSystemLoader, select_autoescape
 import jinja2
+from jinja2 import FileSystemLoader, select_autoescape, Template
 
 from .page import Page
-
-# Currently all of the Configuration Information is saved to Default
-logging.basicConfig(level=os.environ.get("LOGGING_LEVEL", logging.WARNING))
 
 
 class Engine:
@@ -30,10 +23,10 @@ class Engine:
             )
         self.extension = extension
 
-    def get_template(self, template):
+    def get_template(self, template=Type[Template]):
         return self.environment.Template(template)
 
-    def render(self, page):
+    def render(self, page: Type[Page]):
         if page.template:
             template = self.get_template(template)
             kwargs = {'content': page.content}

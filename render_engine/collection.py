@@ -5,6 +5,7 @@ from .page import Page
 class Collection:
     template = None
     engine = None
+    routes = ['']
 
     def __init__(self):
         """initialize a collection object"""
@@ -14,8 +15,11 @@ class Collection:
 
     @property
     def pages(self):
-        return (
-                self.content_type(content_path=p)
-                for i in self.includes
-                for p in self.content_path.glob(i)
-            )
+        pages = []
+
+        for i in self.includes:
+
+            for p in self.content_path.glob(i):
+                pages.append(self.content_type(content_path=p))
+
+        return pages
