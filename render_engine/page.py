@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Optional, Union
+from typing import Type
 
 from jinja2 import Markup
 from markdown import markdown
@@ -10,6 +10,8 @@ from .helpers import PathString
 
 class Page:
     """Base component used to make web pages"""
+    engine=None
+    template=None
 
     def __init__(self, content_path: Type[PathString]):
         content = Path(content_path).read_text()
@@ -23,12 +25,12 @@ class Page:
             value = line_data[-1].rstrip()
             setattr(self, key, value)
 
-        self.content = "".join(md_content)
+        self._content= "".join(md_content)
 
     @property
     def html(self):
         """the text from self._content converted to html"""
-        return markdown(self.content)
+        return markdown(self._content)
 
     @property
     def content(self):

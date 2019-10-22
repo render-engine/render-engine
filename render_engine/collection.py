@@ -1,14 +1,15 @@
 from pathlib import Path
 
-from .render_engine import Page
-
+from .page import Page
 
 class Collection:
+    template = None
+    engine = None
+
     def __init__(self):
         """initialize a collection object"""
         self.content_type = Page
         self.content_path = Path('content')
-        self.pages = {}
         self.includes = ["*.md", "*.html"]
 
     @property
