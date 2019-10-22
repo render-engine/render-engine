@@ -22,7 +22,6 @@ class Engine:
         self,
         content_type: Type[Page],
         output_path: PathString = Path("output"),
-        # Jinja2.FileSystemLoader takes str or iterable not Path
         templates_path: str = "templates",
         extension: str = ".html",
         autoescape: Sequence = ["html"],
@@ -34,3 +33,4 @@ class Engine:
             )
 
         self.content_type = content_type
+	self.output_path = Path(output_path)
