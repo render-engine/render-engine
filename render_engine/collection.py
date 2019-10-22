@@ -1,22 +1,13 @@
-import logging
-import urllib.parse
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Sequence, Type
 
-from .helpers import PathString
-from render_engine.page import Page
+from .render_engine.page import Page
 
 
 class Collection:
-    def __init__(
-        self,
-        content_path: Optional[PathString] = "content",
-        content_type: Type[Page] = Page,
-    ):
+    def __init__(self):
         """initialize a collection object"""
-        self.content_type = content_type
-        self.content_path = Path(content_path)
+        self.content_type = Page
+        self.content_path = Path('content')
         self.pages = {}
         self.includes = ["*.md", "*.html"]
 

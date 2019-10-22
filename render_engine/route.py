@@ -1,6 +1,6 @@
 with .render_engine import Page, Engine
 
-from typingi import Type
+from typing import Type
 
 
 class Route:
