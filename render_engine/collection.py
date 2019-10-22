@@ -1,25 +1,23 @@
 from pathlib import Path
 
+import logging
+
 from .page import Page
 
 class Collection:
     template = None
     engine = None
+    content_type = Page
+    content_path = 'content'
+    includes = ["*.md", "*.html"]
     routes = ['']
-
-    def __init__(self):
-        """initialize a collection object"""
-        self.content_type = Page
-        self.content_path = Path('content')
-        self.includes = ["*.md", "*.html"]
 
     @property
     def pages(self):
         pages = []
 
         for i in self.includes:
-
-            for p in self.content_path.glob(i):
+            for p in Path(self.content_path).glob(i):
                 pages.append(self.content_type(content_path=p))
 
         return pages

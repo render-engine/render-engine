@@ -12,17 +12,16 @@ class Site:
         self.engines = {}
         self.routes = []
         self.output_path = Path(output_path)
+
+        # Make Output Path if it doesn't Exist
         self.output_path.mkdir(exist_ok=True)
 
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls
 
     def register_collection(self, cls):
-        for route in cls().routes:
-            if route:
-                self.output_path.joinpath(route.strip('/').mkdir(exist_ok=True))
-
         for page in cls().pages:
+            page.routes = cls.routes
             self.register_route(cls=page)
 
     def register_route(self, cls):
@@ -36,13 +35,16 @@ class Site:
             return self.default_engine
 
     def render(self, dry_run: bool=False):
-        logging.warning(self.routes)
-
         for page in self.routes:
             engine = self.get_engine(page.engine)
             content = engine.render(page)
 
-            if not dry_run:
-                filename = Path(page.slug).with_suffix(engine.extension)
-                filepath = self.output_path.joinpath(filename)
-                filepath.write_text(content)
+            for route in page.routes:
+                route = self.output_path.joinpath(route.strip('/'))
+                route.mkdir(exist_ok=True)
+
+                if not dry_run:
+                    filename = Path(page.slug).with_suffix(engine.extension)
+                    filepath = route.joinpath(filename)
+                    filepath.write_text(content)
+
