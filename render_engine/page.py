@@ -1,4 +1,3 @@
-import logging
 import re
 from pathlib import Path
 from typing import Optional, Union
@@ -15,7 +14,6 @@ class Page:
     def __init__(
         self,
         *,
-        content: Optional[str] = None,
         content_path: Optional[PathString] = None,
     ):
         """
@@ -25,22 +23,20 @@ class Page:
         content_path = filepath to get content and attributes. Attributes added
         to template_vars.
         """
+        content = Path(content_path).read_text()
+        md_content = content.splitlines(keepends=True)
 
-        if content and content_path:
-            error_msg = "Supply either content or content_path. Not Both"
-            raise AttributeError(error_msg)
+        if len(md_content) > 1:
+            matcher = r"^\w+:"
 
-        if content:
-            self._content = content
+            while re.match(matcher, md_content[0]):
+                line = md_content.pop(0)
+                line_data = line.split(": ", 1)
+                key = line_data[0].lower()
+                value = line_data[-1].rstrip()
+                setattr(self, key, value)
 
-        elif content_path:
-            self._load_content(content_path.read_text())
-
-        self.filename = self.__class__.__name__
-
-    @property
-    def _filename(self):
-        return self.filename
+        self.content = "".join(md_content)
 
     @property
     def html(self):
@@ -50,18 +46,4 @@ class Page:
     @property
     def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
-        return Markup(self.content)
-
-    def _load_content(self, content):
-        matcher = r"^\w+:"
-        md_content = content.splitlines(keepends=True)
-
-        if len(md_content) > 1:
-            while re.match(matcher, md_content[0]):
-                line = md_content.pop(0)
-                line_data = line.split(": ", 1)
-                key = line_data[0].lower()
-                value = line_data[-1].rstrip()
-                setattr(self, key, value)
-
-        self._content = "".join(md_content)
+        return Markup(self.html)
