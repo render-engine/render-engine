@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .render_engine.page import Page
+from .render_engine import Page
 
 
 class Collection:
