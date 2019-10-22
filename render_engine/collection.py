@@ -18,17 +18,11 @@ class Collection:
         self.content_type = content_type
         self.content_path = Path(content_path)
         self.pages = {}
-        self.routes = self.__class__.__name__.lower()
-        self.template_vars = {}
         self.includes = ["*.md", "*.html"]
 
     @property
-    def _pages(self):
-        if self.pages:
-            return self.pages
-
-        else:
-            return (
+    def pages(self):
+        return (
                 self.content_type(content_path=p)
                 for i in self.includes
                 for p in self.content_path.glob(i)
