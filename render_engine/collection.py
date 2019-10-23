@@ -1,27 +1,22 @@
-from pathlib import Path
-
 import logging
+from pathlib import Path
 
 from .page import Page
 
-class Collection:
-    template = None
-    engine = None
-    content_type = Page
-    content_path = 'content'
-    includes = ["*.md", "*.html"]
-    routes = ['']
 
-    def __init__(self, index=False, index_template=''):
-        if index and index_template:
-            self.index = self.gen_index(index_template)
+class Collection:
+    content_type = Page
+    content_path = "content"
+    engine = None
+    template = "page.html"
+    includes = ["*.md", "*.html"]
+    routes = [""]
 
     @property
     def pages(self):
         pages = []
 
         for i in self.includes:
-
             for p in Path(self.content_path).glob(i):
                 page = self.content_type(content_path=p)
 
@@ -31,9 +26,3 @@ class Collection:
                 pages.append(page)
 
         return pages
-
-    def gen_index(self, template):
-        pages = self.pages()
-        page = self.content_type
-        page.template = template
-        return template

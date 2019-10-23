@@ -5,13 +5,14 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+isort = "*"
 
 [packages]
 Jinja2 = "==2.10.1"
 Markdown = "==3.1.1"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true

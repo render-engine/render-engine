@@ -33,6 +33,16 @@ class Page:
             self._content = ''
 
     @property
+    def _slug(self):
+        if hasattr(self, 'slug'):
+            return self.slug
+
+        if hasattr(self, 'title'):
+            return self.title
+
+        return self.__class__.__name__
+
+    @property
     def html(self):
         """the text from self._content converted to html"""
         return markdown(self._content)
