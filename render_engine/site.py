@@ -7,6 +7,8 @@ from .helpers import PathString
 
 class Site:
     default_engine = Engine()
+    engines = {}
+    routes = []
 
     def __init__(
             self,
@@ -14,12 +16,14 @@ class Site:
             static_path: PathString='static',
             strict: bool=False,
             ):
-        self.engines = {}
-        self.routes = []
-        self.output_path = Path(output_path)
 
         # Make Output Path if it doesn't Exist
+        self.output_path = Path(output_path)
         self.output_path.mkdir(exist_ok=True)
+
+    def __setattr__(self, name, value):
+        self.default_engine.environment.globals[name] = value
+        object.__setattr__(self, name, value)
 
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls
@@ -48,6 +52,9 @@ class Site:
             content = engine.render(page)
 
             for route in page.routes:
+                logging.warning(f'page - {page.__class__.__name__}')
+                logging.warning(f'template - {page.template}')
+                logging.warning(f'content - {content}')
                 route = self.output_path.joinpath(route.strip('/'))
                 route.mkdir(exist_ok=True)
 

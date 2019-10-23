@@ -27,9 +27,6 @@ class Engine:
         return self.environment.get_template(template)
 
     def render(self, page: Type[Page]):
-        logging.debug(f'page - {page.__class__.__name__}')
-        logging.debug(f'template - {page.template}')
-        logging.debug(f'content - {page.content}')
         if page.template:
             template = self.get_template(page.template)
             kwargs = {'content': page.content}
