@@ -8,7 +8,12 @@ from .helpers import PathString
 class Site:
     default_engine = Engine()
 
-    def __init__(self, output_path: PathString="output", strict: bool=False):
+    def __init__(
+            self,
+            output_path: PathString="output",
+            static_path: PathString='static',
+            strict: bool=False,
+            ):
         self.engines = {}
         self.routes = []
         self.output_path = Path(output_path)
@@ -22,10 +27,13 @@ class Site:
     def register_collection(self, cls):
         for page in cls().pages:
             page.routes = cls.routes
-            self.register_route(cls=page)
+            self.route(cls=page)
+
+    def route(self, cls):
+        self.routes.append(cls)
 
     def register_route(self, cls):
-        return self.routes.append(cls)
+        self.routes.append(cls())
 
     def get_engine(self, engine):
         if engine:

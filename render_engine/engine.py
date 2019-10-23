@@ -1,11 +1,11 @@
+import logging
 from pathlib import Path
 from typing import Optional, Sequence, Type
 
 import jinja2
-from jinja2 import FileSystemLoader, select_autoescape, Template
+from jinja2 import FileSystemLoader, select_autoescape
 
 from .page import Page
-
 
 class Engine:
     """This is the engine that is builds your static site.
@@ -23,12 +23,15 @@ class Engine:
             )
         self.extension = extension
 
-    def get_template(self, template=Type[Template]):
-        return self.environment.Template(template)
+    def get_template(self, template: str):
+        return self.environment.get_template(template)
 
     def render(self, page: Type[Page]):
+        logging.debug(f'page - {page.__class__.__name__}')
+        logging.debug(f'template - {page.template}')
+        logging.debug(f'content - {page.content}')
         if page.template:
-            template = self.get_template(template)
+            template = self.get_template(page.template)
             kwargs = {'content': page.content}
             kwargs.update(page.__dict__)
             return template.render(**kwargs)

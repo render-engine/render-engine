@@ -10,11 +10,11 @@ from .helpers import PathString
 
 class Page:
     """Base component used to make web pages"""
-    engine = None
-    template = None
+    engine = ''
+    template = ''
     routes = ['']
 
-    def __init__(self, content_path: Optional[PathString]=None):
+    def __init__(self, content_path: Optional[PathString]=''):
         if content_path:
             content = Path(content_path).read_text()
             md_content = content.splitlines(keepends=True)
@@ -27,7 +27,10 @@ class Page:
                 value = line_data[-1].rstrip()
                 setattr(self, key, value)
 
-            self._content= "".join(md_content)
+            self._content = "".join(md_content)
+
+        else:
+            self._content = ''
 
     @property
     def html(self):
