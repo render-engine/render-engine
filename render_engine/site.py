@@ -37,9 +37,8 @@ class Site:
     def register_engine(self, cls):
         self.engines[cls.__class__.__name__] = cls
 
-    def register_collection(self, cls):
-        for page in cls().pages:
-            page.routes = cls.routes
+    def register_collection(self, collection_cls):
+        for page in collection_cls.pages:
             self.route(cls=page)
 
     def route(self, cls):

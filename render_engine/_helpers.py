@@ -1,5 +1,3 @@
-from pathlib import Path
-from typing
+import typing
 
-PathString = typing.Union[str, typing.Type[Path]]
-
+PathString = typing.Union[str, typing._PathLike[str]]

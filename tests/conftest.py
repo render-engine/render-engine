@@ -15,6 +15,10 @@ def base_page():
     """Tests can a simple Page be created given no Parameters"""
     return Page()
 
+@pytest.fixture()
+def base_collection():
+    return Collection
+
 
 @pytest.fixture()
 def page_with_content_path(mocker, content):

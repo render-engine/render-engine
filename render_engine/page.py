@@ -1,20 +1,20 @@
+import os
 import re
+import typing
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Markup
 from markdown import markdown
 
-from .helpers import PathString
-
 
 class Page:
     """Base component used to make web pages"""
-    engine = ''
-    template = ''
-    routes = ['']
 
-    def __init__(self, content_path: Optional[PathString]=''):
+    engine: str = ""
+    template: str = ""
+    routes: typing.List = [""]
+
+    def __init__(self, content_path: typing.Union[str, of.PathLike] = ""): -> None
         if content_path:
             content = Path(content_path).read_text()
             md_content = content.splitlines(keepends=True)
@@ -27,17 +27,17 @@ class Page:
                 value = line_data[-1].rstrip()
                 setattr(self, key, value)
 
-            self._content = "".join(md_content)
+            self._content = "".join(md_content).strip()
 
         else:
-            self._content = ''
+            self._content = ""
 
     @property
     def _slug(self):
-        if hasattr(self, 'slug'):
+        if hasattr(self, "slug"):
             return self.slug
 
-        if hasattr(self, 'title'):
+        if hasattr(self, "title"):
             return self.title
 
         return self.__class__.__name__

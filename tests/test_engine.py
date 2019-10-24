@@ -7,6 +7,3 @@ import pytest
 def base_engine():
     return Engine()
 
-
-def test_engine_defaults(base_engine):
-    assert base_engine.output_path == Path('output')

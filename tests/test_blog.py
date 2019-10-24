@@ -1,4 +1,4 @@
-from render_engine import Blog
+from render_engine.blog import Blog
 import pytest
 
 @pytest.fixture()
