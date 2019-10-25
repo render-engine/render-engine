@@ -4,7 +4,7 @@ from render_engine import Page
 
 @pytest.fixture()
 def content():
-    return """title: Test Title
+   return """title: Test Title
 custom: Testing 1,2,3
 
 # Test Header

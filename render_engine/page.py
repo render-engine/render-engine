@@ -29,22 +29,25 @@ class Page:
             logging.debug(f'{parsed_content=}')
             self._content = parsed_content.pop().strip()
             logging.debug(f'{self._content=}')
-            valid_attrs = filter(lambda x: x != '\n', parsed_content)
+            valid_attrs = (x for x in parsed_content if x.strip('\n'))
+            # We want to allow leading spaces and tabs so only strip new-lines
 
             for attr in valid_attrs:
                 name, value = attr.split(': ')
                 logging.debug(f'{name=}, {value=}')
                 setattr(self, name.lower(), value.strip())
 
-    @property
-    def _slug(self):
+    def __str__(self):
         if hasattr(self, "slug"):
-            return self.slug
+            string = self.slug
 
-        if hasattr(self, "title"):
-            return self.title
+        elif hasattr(self, "title"):
+            string = self.title
 
-        return self.__class__.__name__
+        else:
+            string = self.__class__.__name__
+
+        return string.lower().replace(' ', '_')
 
     @property
     def html(self):
@@ -60,6 +63,3 @@ class Page:
     def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
         return Markup(self.html)
-
-    def __str__(self):
-        return self._slug

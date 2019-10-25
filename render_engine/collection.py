@@ -28,4 +28,4 @@ class Collection:
 
     @property
     def __iter__(self) -> typing.List[typing.Type[Page]]:
-        return self.pages
+        return self.page
