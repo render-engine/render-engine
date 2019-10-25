@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import typing
@@ -6,6 +7,9 @@ from pathlib import Path
 from jinja2 import Markup
 from markdown import markdown
 
+from ._type_hint_helpers import PathString
+
+logging.basicConfig(level=logging.DEBUG, filename='page_creation.log')
 
 class Page:
     """Base component used to make web pages"""
@@ -13,24 +17,24 @@ class Page:
     engine: str = ""
     template: str = ""
     routes: typing.List = [""]
+    match_param: str = r'(\w+: .+)'
 
-    def __init__(self, content_path: typing.Union[str, of.PathLike] = ""): -> None
+    def __init__(self, content_path: PathString="") -> None:
+        """If a content_path exists, check the associated file, processing the
+        vars at the top and restitching the remaining lines"""
+
         if content_path:
             content = Path(content_path).read_text()
-            md_content = content.splitlines(keepends=True)
-            matcher = r"^\w+:"
+            parsed_content = re.split(self.match_param, content, flags=re.M)
+            logging.debug(f'{parsed_content=}')
+            self._content = parsed_content.pop().strip()
+            logging.debug(f'{self._content=}')
+            valid_attrs = filter(lambda x: x != '\n', parsed_content)
 
-            while re.match(matcher, md_content[0]):
-                line = md_content.pop(0)
-                line_data = line.split(": ", 1)
-                key = line_data[0].lower()
-                value = line_data[-1].rstrip()
-                setattr(self, key, value)
-
-            self._content = "".join(md_content).strip()
-
-        else:
-            self._content = ""
+            for attr in valid_attrs:
+                name, value = attr.split(': ')
+                logging.debug(f'{name=}, {value=}')
+                setattr(self, name.lower(), value.strip())
 
     @property
     def _slug(self):
@@ -45,9 +49,17 @@ class Page:
     @property
     def html(self):
         """the text from self._content converted to html"""
-        return markdown(self._content)
+
+        if hasattr(self, '_content'):
+            return markdown(self._content)
+
+        else:
+            return ''
 
     @property
     def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
         return Markup(self.html)
+
+    def __str__(self):
+        return self._slug

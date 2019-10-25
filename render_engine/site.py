@@ -1,21 +1,25 @@
 import logging
+import os
 import shutil
+import typing
 from pathlib import Path
 
+from ._type_hint_helpers import PathString
+from .collection import Collection
 from .engine import Engine
-from .helpers import PathString
 from .route import Route
 
+logging.basicConfig(level=logging.INFO, filename='.build_site.log')
 
 class Site:
-    default_engine = Engine()
-    engines = {}
-    routes = []
+    default_engine: typing.Type[Engine] = Engine()
+    engines: typing.Dict[str, typing.Type[Engine]] = {}
+    routes: typing.List[str] = []
 
     def __init__(
         self,
         output_path: PathString = "output",
-        static_path: PathString = "static",
+        static_path: PathString =  "static",
         strict: bool = False,
     ):
 
@@ -30,39 +34,37 @@ class Site:
             static_path, self.output_path.joinpath(static_path), dirs_exist_ok=True
         )
 
-    def __setattr__(self, name, value):
-        self.default_engine.environment.globals[name] = value
+    def __setattr__(self, name, value) -> None:
         object.__setattr__(self, name, value)
+        self.default_engine.environment.globals[name] = value
 
-    def register_engine(self, cls):
+    def register_engine(self, cls: Engine) -> None:
         self.engines[cls.__class__.__name__] = cls
 
-    def register_collection(self, collection_cls):
-        for page in collection_cls.pages:
+    def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
+        for page in collection_cls:
             self.route(cls=page)
 
-    def route(self, cls):
+    def route(self, cls) -> None:
         self.routes.append(cls)
 
-    def register_route(self, cls):
+    def register_route(self, cls) -> None:
         self.routes.append(cls())
 
-    def get_engine(self, engine):
+    def get_engine(self, engine) -> typing.Type[Engine]:
         if engine:
             return self.engines[engine]
 
         else:
             return self.default_engine
 
-    def render(self, dry_run: bool = False):
+    def render(self, dry_run: bool = False) -> None:
         for page in self.routes:
             engine = self.get_engine(page.engine)
             content = engine.render(page)
 
+            logging.info(f'building {page.routes=}')
             for route in page.routes:
-                logging.debug(f"page - {page.__class__.__name__}")
-                logging.debug(f"template - {page.template}")
-                logging.debug(f"content - {content}")
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)
 
