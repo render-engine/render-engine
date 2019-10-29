@@ -25,7 +25,3 @@ class Collection:
                 pages.append(page)
 
         return pages
-
-    @property
-    def __iter__(self) -> typing.List[typing.Type[Page]]:
-        return self.page

@@ -9,7 +9,7 @@ from .collection import Collection
 from .engine import Engine
 from .route import Route
 
-logging.basicConfig(level=logging.INFO, filename='.build_site.log')
+logging.basicConfig(level=logging.INFO)
 
 class Site:
     default_engine: typing.Type[Engine] = Engine()
@@ -42,7 +42,7 @@ class Site:
         self.engines[cls.__class__.__name__] = cls
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
-        for page in collection_cls:
+        for page in collection_cls().pages:
             self.route(cls=page)
 
     def route(self, cls) -> None:
@@ -60,10 +60,11 @@ class Site:
 
     def render(self, dry_run: bool = False) -> None:
         for page in self.routes:
+            logging.debug(page.__class__.__name__)
             engine = self.get_engine(page.engine)
             content = engine.render(page)
 
-            logging.info(f'building {page.routes=}')
+            logging.debug(f'building {page.routes=}')
             for route in page.routes:
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)

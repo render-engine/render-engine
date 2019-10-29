@@ -9,17 +9,15 @@ from markdown import markdown
 
 from ._type_hint_helpers import PathString
 
-logging.basicConfig(level=logging.DEBUG, filename='page_creation.log')
 
 class Page:
     """Base component used to make web pages"""
-
     engine: str = ""
     template: str = ""
+    match_param: str = r'(^\w+: \b.+$)'
     routes: typing.List = [""]
-    match_param: str = r'(\w+: .+)'
 
-    def __init__(self, content_path: PathString="") -> None:
+    def __init__(self, content_path=None):
         """If a content_path exists, check the associated file, processing the
         vars at the top and restitching the remaining lines"""
 
@@ -30,9 +28,11 @@ class Page:
             self._content = parsed_content.pop().strip()
             logging.debug(f'{self._content=}')
             valid_attrs = (x for x in parsed_content if x.strip('\n'))
+            logging.debug(valid_attrs)
             # We want to allow leading spaces and tabs so only strip new-lines
 
             for attr in valid_attrs:
+                logging.debug(attr)
                 name, value = attr.split(': ')
                 logging.debug(f'{name=}, {value=}')
                 setattr(self, name.lower(), value.strip())
