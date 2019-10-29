@@ -1,0 +1,12 @@
+<item>
+{% if item.title %}
+<title>{{item.title}}</title>
+{% endif %}
+{% if item.description %}
+<description>{{item.description}}</description>
+{% endif %}
+{% if item.guid %}
+<guid>{{item.guid}}</guid>
+{% endif %}
+
+</item>
