@@ -14,31 +14,37 @@ from .page import Page
 class RSSFeedItem():
     version = 2.0
 
-    def __init__(self, Page):
-        if not hasattr(Page, 'title'):
-            Page.title = ''
+    def __init__(self):
+        if getattr(self, 'title', None) == True:
+            self.title = ''
 
-        if hasattr(Page, 'description'):
+        if getattr(self, 'description', None) == True:
             pass
 
-        elif hasattr(Page, 'content'):
-            Page.description = Page.content
+        elif getattr(self, 'content', None) == True :
+            self.description = self.content
 
-        elif hasattr(Page, 'summary'):
-            Page.description = Page.summary
+        elif getattr(self, 'summary', None) == True:
+            self.description = self.summary
 
         else:
             Page.description = ''
 
-        if not any([Page.title, Page.description]):
+        if not any([self.title, self.description]):
             error_msg = "Your page must have either a title or a description"
             raise AttributeError(error_msg)
 
-        self.page = Page
+        if getattr(self, 'guid', None) == True:
+            pass
+
+        else:
+            self.guid = self._slug
+
 
     @property
     def content(self):
-        template = '''<item>{% if page.title %}{{page.title}}{% endif %}</item>'''
+        pass
+
 
 class RSSFeed(Page):
     pass
