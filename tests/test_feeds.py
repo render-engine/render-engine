@@ -37,14 +37,10 @@ def test_description_can_pull_from_content_if_no_description(base_feed_item):
 
 def test_rssfeeditem_with_no_title_or_description_raises_error(base_feed_item):
     # Must have either a title or description
-    class Page(base_feed_item):
-        title = ''
-        description = ''
-        content = ''
-        slug = ''
 
     with pytest.raises(AttributeError):
-        Page()
+        RSSFeedItem()
+
 
 
 def test_rssfeeditem_guid_is_guid_by_default(base_feed_item):
