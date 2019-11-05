@@ -1,5 +1,6 @@
 <item>
 {% if item.title %}<title>{{item.title}}</title>{% endif %}
+{#
 {% if item.link %}<link>{{item.link}}</link> {% endif %}
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
@@ -19,5 +20,5 @@
 {% if item.author %}{{item.author %}}{% endif %}
 {% if item.comments %}{{item.comments}}{% endif %}
 {% if item.source %}<source url="{{item.source.url}}">{{item.source}}</source>{% endif %}
-{% block rss_extension%}{% endblock %}
+	#}
 </item>

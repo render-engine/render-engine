@@ -11,28 +11,29 @@ from .route import Route
 
 logging.basicConfig(level=logging.INFO)
 
+
 class Site:
     default_engine: typing.Type[Engine] = Engine()
     engines: typing.Dict[str, typing.Type[Engine]] = {}
     routes: typing.List[str] = []
+    output_path: Path = Path("output")
+    static_path: Path = Path("static")
 
-    def __init__(
-        self,
-        output_path: PathString = "output",
-        static_path: PathString =  "static",
-        strict: bool = False,
-    ):
+    def __init__(self, strict: bool = False):
 
         # Make Output Path if it doesn't Exist
-        self.output_path = Path(output_path)
+        self.output_path = Path(self.output_path)
 
         if strict and self.output_path.is_dir():
             shutil.rmtree(self.output_path)
 
-        self.output_path.mkdir(exist_ok=True)
-        shutil.copytree(
-            static_path, self.output_path.joinpath(static_path), dirs_exist_ok=True
-        )
+        if Path(self.static_path).is_dir():
+            self.output_path.mkdir(exist_ok=True)
+            shutil.copytree(
+                self.static_path,
+                self.output_path.joinpath(self.static_path),
+                dirs_exist_ok=True,
+                )
 
     def __setattr__(self, name, value) -> None:
         object.__setattr__(self, name, value)
@@ -64,7 +65,7 @@ class Site:
             engine = self.get_engine(page.engine)
             content = engine.render(page)
 
-            logging.debug(f'building {page.routes=}')
+            logging.debug(f"building {page.routes=}")
             for route in page.routes:
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)

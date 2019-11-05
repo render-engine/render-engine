@@ -11,17 +11,11 @@ class Engine:
     """This is the engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path."""
 
-    def __init__(
-            self,
-            templates_path: str = "templates",
-            extension: str = ".html",
-            autoescape: Sequence = ["html"],
-            ):
-        self.environment = jinja2.Environment(
-                loader=FileSystemLoader(templates_path),
-                autoescape=select_autoescape(autoescape),
-            )
-        self.extension = extension
+    extension: str = ".html"
+    environment = jinja2.Environment(
+                autoescape=select_autoescape(),
+                loader=FileSystemLoader('templates')
+                )
 
     def get_template(self, template: str):
         return self.environment.get_template(template)

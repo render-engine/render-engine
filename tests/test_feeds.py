@@ -1,57 +1,38 @@
-from render_engine.feeds import RSSFeedItem
 import pytest
+import logging
+from render_engine.feeds import RSSFeedItem, RSSFeedEngine
+from render_engine.blog import Blog, BlogSite
+from render_engine.page import Page
+import pathlib
+
 
 @pytest.fixture()
-def base_feed_item():
-    class Page(RSSFeedItem):
-        title = 'this is a test item title'
-        description = 'this is the test item description'
-        content = 'this is the test item content'
-        summary = 'this is the test item summary'
-        guid = 'this is the test item guid'
-        _slug = 'this is the test item _slug'
+def base_rss_engine():
+    class baseEngine(RSSFeedEngine):
+        pass
 
-    return Page
+    return baseEngine
 
 
-def test_rssfeeditem_has_title_but_no_description(base_feed_item):
-    # Must have either a title or description
-    assert base_feed_item().description == 'this is the test item description'
+def test_render_engine_templates_path(base_rss_engine):
+    loader = base_rss_engine().environment.loader.searchpath[0]
+    assert pathlib.Path(loader).is_dir()
 
 
-def test_rssfeeditem_has_description_from_content(base_feed_item):
-    # Must have either a title or description
-    class Page(base_feed_item):
-        description = ''
-
-    assert Page().description == 'this is the test item content'
+def test_render_engine_templates_path_has_rss_file(base_rss_engine):
+    loader = base_rss_engine().environment.loader.searchpath[0]
+    rss_item = pathlib.Path(loader)
+    assert len(list(rss_item.glob("*.rss"))) >= 1
 
 
-def test_description_can_pull_from_content_if_no_description(base_feed_item):
-    class Page(base_feed_item):
-        description = ''
-        content = ''
+def test_render_feed_renders():
+    rss_site = BlogSite(
+            title = 'Demo Site',
+            description = 'Site Description',
+            link = 'https://example.com/site.rss',
+            )
 
-    assert Page().description == 'this is the test item summary'
+    class page(RSSFeedItem):
+        title = 'Demo Page Title'
 
-
-def test_rssfeeditem_with_no_title_or_description_raises_error(base_feed_item):
-    # Must have either a title or description
-
-    with pytest.raises(AttributeError):
-        RSSFeedItem()
-
-
-
-def test_rssfeeditem_guid_is_guid_by_default(base_feed_item):
-    assert base_feed_item().guid == 'this is the test item guid'
-
-
-def test_rssfeeditem_guid_is__slug_if_no_guid(base_feed_item):
-    class Page(base_feed_item):
-        guid = ''
-
-    assert Page().guid == 'this is the test item _slug'
-
-
-
+    rss_item = rss_site.feed_engine.render_feed([page])
