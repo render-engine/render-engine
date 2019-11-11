@@ -4,13 +4,12 @@ import typing
 import maya
 from more_itertools import flatten
 
-from .archive import Archive
 from .page import Page
-from .feeds import RSSFeedItem, RSSFeedEngine
+from .feeds import RSSFeedItem, RSSFeed, RSSFeedEngine
 from .site import Site
 
 
-class BlogPost(Page):
+class BlogPost(RSSFeedItem):
     """Page Like Object with slight modifications to work with BlogPosts"""
 
     template: str = "blog_post.html"
@@ -22,6 +21,7 @@ class BlogPost(Page):
         "modified_date",
     ]
 
+
     def __init__(self, **kwargs):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
@@ -30,9 +30,10 @@ class BlogPost(Page):
                 date_object = getattr(self, option)
                 maya_date = maya.parse(date_object)
                 self.date_published = maya_date.rfc2822()
+        logging.warning(f'{self.content}')
 
 
-class Blog(Archive):
+class Blog(RSSFeed):
     default_sort: str = "date_published"
     page_content_type: typing.Type[BlogPost] = BlogPost
     reverse: bool = True
@@ -88,5 +89,3 @@ class BlogSite(Site):
     def render(self):
         super().render()
         content = self.feed_engine.render_feed(self.routes)
-        route = self.output_path.joinpath(self.blog_name)
-        route.write_text(content)

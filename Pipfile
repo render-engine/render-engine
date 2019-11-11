@@ -7,6 +7,8 @@ verify_ssl = true
 black = "*"
 isort = "*"
 ipdb = "*"
+mccabe = "*"
+flake8 = "*"
 
 [packages]
 Jinja2 = "==2.10.1"

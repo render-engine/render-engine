@@ -1,3 +1,5 @@
+import logging
+
 from .collection import Collection
 from .page import Page
 
@@ -21,6 +23,7 @@ class Archive(Collection):
         return page_dot_pages
 
     def _create_archive_page(self, archive_pages):
+        logging.warning(f'{self.archive_content_type=}')
         page = self.archive_content_type()
         page.template = self.archive_template
         page.slug = self.archive_slug
