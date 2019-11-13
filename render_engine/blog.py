@@ -1,15 +1,15 @@
-import logging
 import typing
 
 import maya
 from more_itertools import flatten
 
+from .collection import Collection
 from .page import Page
 from .feeds import RSSFeedItem, RSSFeed, RSSFeedEngine
 from .site import Site
 
 
-class BlogPost(RSSFeedItem):
+class BlogPost(Page):
     """Page Like Object with slight modifications to work with BlogPosts"""
 
     template: str = "blog_post.html"
@@ -21,7 +21,6 @@ class BlogPost(RSSFeedItem):
         "modified_date",
     ]
 
-
     def __init__(self, **kwargs):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
@@ -30,62 +29,16 @@ class BlogPost(RSSFeedItem):
                 date_object = getattr(self, option)
                 maya_date = maya.parse(date_object)
                 self.date_published = maya_date.rfc2822()
-        logging.warning(f'{self.content}')
 
+    @property
+    def rss_feed_item(self):
+        return RSSFeedItem(self)
 
-class Blog(RSSFeed):
-    default_sort: str = "date_published"
+class Blog(Collection):
     page_content_type: typing.Type[BlogPost] = BlogPost
     reverse: bool = True
+    has_archive = True
 
-    def __init__(self):
-        super().__init__()
-
-    def _generate_archive_page_pages(
-        self, collection_pages: typing.List[typing.Type[BlogPost]]
-    ) -> typing.List[typing.Type[BlogPost]]:
-
-        page_dot_pages = sorted(
-            collection_pages,
-            key=lambda page: self.default_sort,
-            reverse=self.reverse,
-        )
-
-        return page_dot_pages
-
-
-class BlogSite(Site):
-    tags = []
-    categories = []
-    name = 'blog.rss'
-
-    def __init__(self, *, title, description, link):
-        self.title = title
-        self.description = description
-        self.link = link
-        self.feed_engine = RSSFeedEngine()
-        self.feed_engine.environment.globals.update({
-                'title': self.title,
-                'description': self.description,
-                'link': self.link,
-                })
-
-    def register_collection(self, collection_cls):
-        """Create a site dedicated to the blog posts"""
-        collection = collection_cls().pages
-
-        for page in collection:
-            rssItem = RSSFeedItem(page)
-
-            if hasattr(page, "tags"):
-                self.tags.add(page.tags)
-
-            if hasattr(page, "category"):
-                self.tags.add(page.tags)
-
-            self.route(cls=page)
-
-
-    def render(self):
-        super().render()
-        content = self.feed_engine.render_feed(self.routes)
+    @staticmethod
+    def _archive_default_sort(cls):
+        return cls.date_published

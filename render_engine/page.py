@@ -1,4 +1,3 @@
-import logging
 import os
 import re
 import typing
@@ -39,13 +38,10 @@ class Page:
             parsed_content = re.split(self.match_param, content, flags=re.M)
             self._content = parsed_content.pop().strip()
             valid_attrs = (x for x in parsed_content if x.strip("\n"))
-            logging.debug(valid_attrs)
             # We want to allow leading spaces and tabs so only strip new-lines
 
             for attr in valid_attrs:
-                logging.debug(attr)
                 name, value = attr.split(": ")
-                logging.debug(f"{name=}, {value=}")
                 setattr(self, name.lower(), value.strip())
 
     def __str__(self):
