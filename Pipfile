@@ -20,6 +20,7 @@ mypy = "*"
 pytest-mypy = "*"
 pytest-mock = "*"
 more-itertools = "*"
+click = "*"
 
 [requires]
 python_version = "3.8"

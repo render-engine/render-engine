@@ -31,20 +31,21 @@ class RSSFeedItem:
             error_msg = "Your page must have either a title or a description"
             raise AttributeError(error_msg)
 
-        self.guid = getattr(page, "guid", None) or page.slug
+        self.guid = getattr(cls, "guid", None) or cls.slug
+        self.pub_date = cls.date_published
 
 
-class RSSFeed:
+class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
-
-    def __init__(self, archive, **kwargs):
-        self.archive = archive
-        self.archive.archive_content_type = RSSFeedItem
+    template = 'rss2.0.rss'
+    engine = 'rss_engine'
+    title = 'RSS Feed'
+    link = ''
+    slug = ''
 
 
 class RSSFeedEngine(Engine):
     """The Engine that Processes RSS Feed"""
-
     extension = ".rss"
     environment = jinja2.Environment(
         loader=PackageLoader("render_engine", "rss"),

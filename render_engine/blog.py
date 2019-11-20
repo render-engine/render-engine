@@ -1,3 +1,4 @@
+import logging
 import typing
 
 import maya
@@ -29,10 +30,12 @@ class BlogPost(Page):
                 date_object = getattr(self, option)
                 maya_date = maya.parse(date_object)
                 self.date_published = maya_date.rfc2822()
+                break
 
     @property
     def rss_feed_item(self):
-        return RSSFeedItem(self)
+        feed_item = RSSFeedItem(self)
+        return feed_item
 
 class Blog(Collection):
     page_content_type: typing.Type[BlogPost] = BlogPost

@@ -20,7 +20,7 @@ class Engine:
     def get_template(self, template: str):
         return self.environment.get_template(template)
 
-    def render(self, page: Type[Page]):
+    def render(self, page: Type[Page], **kwargs):
         if page.template:
             template = self.get_template(page.template)
             kwargs = {'content': page.content}

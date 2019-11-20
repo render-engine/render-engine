@@ -150,6 +150,7 @@ setup(
     'jinja2',
     'pyyaml',
     'more_itertools',
+    'click',
     ],  # Optional
 
     # List additional groups of dependencies here (e.g. development

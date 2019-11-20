@@ -4,27 +4,24 @@ import shutil
 import typing
 from pathlib import Path
 
+import click
+
 from ._type_hint_helpers import PathString
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
+from .page import Page
 from .route import Route
-
-default_engine = Engine()
-archive_engine = RSSFeedEngine()
 
 
 class Site:
-    engines: typing.Dict[str, typing.Type[Engine]] = {
-        "default_engine": default_engine,
-        "archive_engine": archive_engine,
-    }
     routes: typing.List[str] = []
     output_path: Path = Path("output")
     static_path: Path = Path("static")
+    SITE_TITLE: str = "Untitled Site"
+    SITE_LINK: str = "https://example.com"
 
     def __init__(self, strict: bool = False):
-
         # Make Output Path if it doesn't Exist
         self.output_path = Path(self.output_path)
 
@@ -39,8 +36,18 @@ class Site:
                 dirs_exist_ok=True,
             )
 
-    def register_engine(self, cls: Engine) -> None:
-        self.engines[cls.__class__.__name__] = cls
+        self.engines: typing.Dict[str, typing.Type[Engine]] = {
+                "default_engine": Engine(),
+                "rss_engine": RSSFeedEngine(),
+        }
+
+
+    def register_feed(self, feed, collection: Collection) -> None:
+        feed.slug = ''.join([collection.__class__.__name__.lower(), feed.slug])
+        feed.items = [page.rss_feed_item for page in collection.pages]
+        feed.title = ' - '.join([self.SITE_TITLE, feed.title])
+        feed.link = ''.join([self.SITE_LINK, feed.link])
+        self.route(cls=feed)
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         collection = collection_cls()
@@ -51,23 +58,20 @@ class Site:
         if collection.has_archive:
             self.route(cls=collection.archive)
 
+            for _, feed in collection.feeds.items():
+                if feed:
+                    self.register_feed(feed=feed, collection=collection)
+
     def route(self, cls) -> None:
         self.routes.append(cls)
 
     def register_route(self, cls) -> None:
         self.routes.append(cls())
 
-    def get_engine(self, engine) -> typing.Type[Engine]:
-        if engine:
-            return self.engines[engine]
-
-        else:
-            return self.engines['default_engine']
-
     def render(self, dry_run: bool = False) -> None:
         for page in self.routes:
-            engine = self.get_engine(page.engine)
-            content = engine.render(page)
+            engine = self.engines.get(page.engine, self.engines["default_engine"])
+            content = engine.render(page, **self.__dict__)
 
             for route in page.routes:
                 route = self.output_path.joinpath(route.strip("/"))

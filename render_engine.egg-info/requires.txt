@@ -3,6 +3,7 @@ markdown
 jinja2
 pyyaml
 more_itertools
+click
 
 [dev]
 pipenv
