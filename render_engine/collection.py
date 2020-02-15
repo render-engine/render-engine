@@ -1,138 +1,56 @@
-from typing import (
-    Optional,
-    Type,
-    Union,
-    Sequence,
-    )
-from collections import defaultdict
-from itertools import zip_longest
-from render_engine.page import Page
-from pathlib import Path
-import json
 import logging
+import typing
+from pathlib import Path
 
-PathString = Union[str, Type[Path]]
+from .page import Page
+from .feeds import RSSFeed
+
 
 class Collection:
-    """
-    Create a Collection of Similar Page Objects
-
-    include: Sequence=['*.md', '*.html'] - list of patterns to include from the
-        content path. Uses the syntax as defined in pathlib.Path.glob
-
-    exclude: Optional[Sequence]=None - pattern to exclude from the content_path
-        same as include=["!<PATTERN>"]
-
-    template: Optional[Union[str, Type[Path]]=None - the template file that the
-        engine will use to build the page (default: None). This will be assigned
-        to the iterated pages but not any associated files.
-
-    index_template: Optional[Union[str, Type[Path]]=None the template file that
-        will be used to create an index for the pages.
-
-    no_index: bool=False
-
-    content_path = filepath to get content and attributes from if not content.
-        attributes will be saved as properties. (defined by load_page_from_file) else None.
-
-    default_content_type: Type[Page]
-
-    template_vars: dict={}
-
-    index_template_vars: dict={}
-    """
-    default_sort_field='title'
-    reverse_sort=False
-
-    def __init__(
-            self,
-            *,
-            Title: str='',
-            includes: Sequence=['*.md', '*.html'],
-            excludes: Optional[Sequence]=None,
-            template: Optional[PathString]=None,
-            content_path: Optional[PathString]=None,
-            page_content_type: Type[Page]=Page,
-            template_vars: Optional[dict]=None,
-            pages: Optional[Sequence]=None,
-            recursive: bool=False,
-            # Index properties
-            index_name: Optional[str]=None,
-            index_template: Optional[PathString]=None,
-            index_page_content_type: Type[Page]=Page,
-            index_template_vars: Optional[dict]=None,
-            ):
-        """initialize a collection object"""
-        self.template = template
-        self.template_vars = template_vars or {}
-        self.recursive = recursive
-        self.page_content_type = page_content_type
-
-        self.content_path = Path(content_path) if content_path else None
-        self.includes = includes
-
-        if excludes:
-            self.includes += [f'!{x}' for x in excludes]
-
-        if index_name:
-            self.index_name = index_name
-            self.index_template = index_template
-            self.index_template_vars = index_template_vars
-            self.index_page_content_type = index_page_content_type
-
-    @property
-    def pages(self):
-        logging.debug(f'content - {self.content_path}')
-        if self.content_path:
-
-            glob_start = '**' if self.recursive else ''
-            # This will overwrite any pages that are called
-            globs = [self.content_path.glob(f'{glob_start}{x}') for x in
-                    self.includes]
-            logging.debug(f'globs - {globs}')
-
-            pages = set()
-            for glob in globs:
-                for page in glob:
-                    pages.add(
-                        self.page_content_type(
-                            content_path=page,
-                            template=self.template,
-                            ),
-                        )
-            return list()
-        else:
-            return set()
-
-    @property
-    def _iterators(self):
-        return (self.pages)
+    engine = ''
+    page_content_type = Page
+    content_path = "content"
+    template = "page.html"
+    includes = ["*.md", "*.html"]
+    routes = ['']
+    has_archive = False
+    _archive_template = "archive.html"
+    _archive_slug = "all_posts"
+    _archive_content_type = Page
+    _archive_reverse = False
+    # engines that will generate feeds. Engine should output 'rss', or 'JSON' format
+    feeds = {
+            'rss': RSSFeed(),
+            }
 
     @staticmethod
-    def generate_index(
-            title,
-            iterable,
-            *,
-            slug='',
-            template,
-            sort_key,
-            reverse,
-            ):
+    def _archive_default_sort(cls):
+        return cls.slug
 
-        if not slug:
-            slug = title.lower().replace(' ', '-')
+    @property
+    def pages(self) -> typing.List[typing.Type[Page]]:
+        pages = []
 
-        pages = list(sorted(lambda x: getattr(x, sort_key), iterable))
+        for i in self.includes:
+            for _file in Path(self.content_path).glob(i):
+                page = self.page_content_type(content_path=_file)
+                page.routes = self.routes
+                page.template = self.template
+                pages.append(page)
 
-        return page(
-                slug=slug,
-                title=title,
-                template=template,
-                pages=pages,
-                )
+        return pages
 
-    def __iter__(self):
-        return self.pages
+    @property
+    def archive(self):
+        """Get the collection's pages and create an arcive for those items"""
+        archive_page = self._archive_content_type()
+        archive_page.template = self._archive_template
+        archive_page.slug = self._archive_slug
+        archive_page.engine = ''
+        archive_page.pages = sorted(
+            self.pages,
+            key=lambda p: self._archive_default_sort(p),
+            reverse=self._archive_reverse
+        )
+        return archive_page
 
-    def __len__(self):
-        return len(self.pages)

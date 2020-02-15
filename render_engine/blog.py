@@ -1,89 +1,47 @@
 import logging
+import typing
+
 import maya
-from render_engine import Collection
-from more_itertools import unique_everseen
+from more_itertools import flatten
+
+from .collection import Collection
+from .page import Page
+from .feeds import RSSFeedItem, RSSFeed, RSSFeedEngine
+from .site import Site
+
+
+class BlogPost(Page):
+    """Page Like Object with slight modifications to work with BlogPosts"""
+
+    template: str = "blog_post.html"
+    publish_options: typing.List[str] = [
+        "date_published",
+        "date",
+        "publish_date",
+        "date_modified",
+        "modified_date",
+    ]
+
+    def __init__(self, **kwargs):
+        """checks published options and accepts the first that is listed"""
+        super().__init__(**kwargs)
+        for option in self.publish_options:
+            if hasattr(self, option):
+                date_object = getattr(self, option)
+                maya_date = maya.parse(date_object)
+                self.date_published = maya_date.rfc2822()
+                break
+
+    @property
+    def rss_feed_item(self):
+        feed_item = RSSFeedItem(self)
+        return feed_item
 
 class Blog(Collection):
-    default_sort_field = 'date_created'
-    reverse_sort = True
-    tag_separator = ','
-
-    _categories = _tags = set()
-
-    @property
-    def categories(self):
-        for page in self.pages:
-            if getattr(page, 'category', None):
-                self._categories.add(page.category)
-        return [filter_pages('category', category) for category in _categories]
-
-    @property
-    def tags(self):
-        for page in self.pages:
-            if getattr(page, 'tags', None):
-                _tags.add(page.tags.split(self.tag_separator))
-
-        return [filter_pages('tags', tag, multiple=True) for tag in _tags]
-
-    @property
-    def is_valid(self):
-        checks = {
-                'title': getattr(self, 'title', False),
-                'link': getattr(self, 'link', False),
-                }
-        return check_validity(checks)
+    page_content_type: typing.Type[BlogPost] = BlogPost
+    reverse: bool = True
+    has_archive = True
 
     @staticmethod
-    def check_validity(checks):
-        logging.debug(checks.items())
-        if all(list(map(lambda x: x[1], checks.items()))):
-            return True
-
-        else:
-            invalid = filter(lambda x: x[1] == False, checks.items())
-            for item in invalid:
-                print(f'{item[0]} does not have a valid value: {item[1]}')
-            return False
-
-    @property
-    def show_warnings(self):
-        self.is_valid()
-
-        for page in self.pages:
-            has_created_time = getattr(page, 'created_time', False)
-
-            if has_created_time:
-                created_time = maya.parse(has_created_time)
-
-            else:
-                created_time = False
-
-            checks = {
-                    'title': getattr(page, 'title', False),
-                    'created_time': created_time,
-                    }
-
-        return check_validity(checks)
-
-    @classmethod
-    def __filtered(page, filter_key, filter_value, multiple=False):
-        if not multiple and getattr(page, filter_key) == filter_value:
-            return True
-
-        elif multiple and filter_value in getattr(page, filter_key):
-            return True
-
-    @staticmethod
-    def filter_pages(iterator, filter_key, filter_value, multiple=False):
-        filtered_list = []
-        for x in iterator:
-            if x.__filtered(
-                    filter_key=filter_key,
-                    filter_value=filter_value,
-                    multiple=multiple,
-                    ):
-                filtered_list.append(x)
-
-    @property
-    def _iterators(self):
-        return [self.pages, self.categories, self.tags]
+    def _archive_default_sort(cls):
+        return cls.date_published
