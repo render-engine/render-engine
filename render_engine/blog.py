@@ -30,7 +30,7 @@ class BlogPost(Page):
                 date_object = getattr(self, option)
                 maya_date = maya.parse(date_object)
                 self.date_published = maya_date.rfc2822()
-                break
+                self.slug = str(self)
 
     @property
     def rss_feed_item(self):
@@ -44,4 +44,5 @@ class Blog(Collection):
 
     @staticmethod
     def _archive_default_sort(cls):
+        logging.info(vars(cls))
         return cls.date_published

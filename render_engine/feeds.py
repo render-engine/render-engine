@@ -10,7 +10,7 @@ JSON: https://jsonfeed.org/version/1
 import logging
 
 import jinja2
-from jinja2 import FileSystemLoader, PackageLoader, select_autoescape
+from jinja2 import PackageLoader, select_autoescape
 from more_itertools import first_true
 
 from .engine import Engine

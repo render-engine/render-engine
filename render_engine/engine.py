@@ -13,9 +13,9 @@ class Engine:
 
     extension: str = ".html"
     environment = jinja2.Environment(
-                autoescape=select_autoescape(),
-                loader=FileSystemLoader('templates')
-                )
+            autoescape=select_autoescape(),
+            loader=FileSystemLoader('templates'),
+            )
 
     def get_template(self, template: str):
         return self.environment.get_template(template)
@@ -23,8 +23,9 @@ class Engine:
     def render(self, page: Type[Page], **kwargs):
         if page.template:
             template = self.get_template(page.template)
-            kwargs = {'content': page.content}
+            kwargs.update({'content': page.content})
             kwargs.update(page.__dict__)
+
             return template.render(**kwargs)
 
         else:
