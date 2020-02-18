@@ -1,3 +1,5 @@
+import logging
+
 import os
 import re
 import typing
@@ -35,26 +37,31 @@ class Page:
                 raise ValueError('The content_path does not exist')
 
             content = Path(content_path).read_text()
+            self.content_path = content_path
             parsed_content = re.split(self.match_param, content, flags=re.M)
             self._content = parsed_content.pop().strip()
-            valid_attrs = (x for x in parsed_content if x.strip("\n"))
+            valid_attrs = [x for x in parsed_content if x.strip("\n")]
             # We want to allow leading spaces and tabs so only strip new-lines
 
             for attr in valid_attrs:
-                name, value = attr.split(": ")
+                name, value = attr.split(": ", maxsplit=1)
                 setattr(self, name.lower(), value.strip())
 
+            if not hasattr(self, 'slug'):
+                if hasattr(self, 'title'):
+                    self.slug = self.title.lower().replace(" ", "_")
+                else:
+                    self.slug = self.__class__.__name__.lower().replace(" ", "_")
+
+            else:
+                self.slug = self.slug.lower().replace(" ", "_")
+
+    @property
+    def html(self):
+        """the text from self._content converted to html"""
+
     def __str__(self):
-        if hasattr(self, "slug"):
-            string = self.slug
-
-        elif hasattr(self, "title"):
-            string = self.title
-
-        else:
-            string = self.__class__.__name__
-
-        return string.lower().replace(" ", "_")
+        return self.slug
 
     @property
     def html(self):

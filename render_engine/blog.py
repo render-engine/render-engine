@@ -31,6 +31,7 @@ class BlogPost(Page):
                 maya_date = maya.parse(date_object)
                 self.date_published = maya_date.rfc2822()
                 break
+            self.slug = str(self)
 
     @property
     def rss_feed_item(self):

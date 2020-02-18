@@ -72,11 +72,22 @@ class Site:
             engine = self.engines.get(page.engine, self.engines["default_engine"])
             content = engine.render(page, **vars(self))
 
+            logging.debug(f'{engine=}')
+            logging.debug(f'{content=}')
+
             for route in page.routes:
+
+                logging.info(f'starting on {route=}')
+
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)
 
+                filename = Path(page.slug).with_suffix(engine.extension)
+                filepath = route.joinpath(filename)
+
                 if not dry_run:
-                    filename = Path(page.slug).with_suffix(engine.extension)
-                    filepath = route.joinpath(filename)
                     filepath.write_text(content)
+
+                else:
+                    print(f'{content} writes to {filepath}')
+

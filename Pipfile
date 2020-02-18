@@ -1,24 +1,29 @@
 [[source]]
 name = "pypi"
 url = "https://pypi.org/simple"
+verify_ssl = true
 
 [dev-packages]
-pytest = "*"
-v = {editable = true,version = "*"}
-pytest-mock = "*"
-pytest-cov = "*"
-mkdocs = "*"
+black = "*"
+isort = "*"
+ipdb = "*"
+mccabe = "*"
+flake8 = "*"
 
 [packages]
-jinja2 = "*"
-pyyaml = "*"
+Jinja2 = "==2.10.1"
 markdown = "*"
-wheel = "*"
 twine = "*"
 maya = "*"
+pytest = "*"
+mypy = "*"
+pytest-mypy = "*"
+pytest-mock = "*"
 more-itertools = "*"
+click = "*"
 
 [requires]
+python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true
