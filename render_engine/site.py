@@ -11,7 +11,6 @@ from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
 from .page import Page
-from .route import Route
 
 
 class Site:
