@@ -41,7 +41,7 @@ Check out our [Quickstart](docs/QUICKSTART.md) to get started...
 # Installing Render Engine
 
 ### Using pip
-`pip install -i https://test.pypi.org/simple/ render-engine`
+`pip install render-engine`
 
 [Jinja2]: https://jinja.palletsprojects.com/en/latest
 [Pendulum]: https://pendulum.eustace.io
