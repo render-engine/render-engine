@@ -1,4 +1,5 @@
 *.pyc
 lib
+lib64
 bin
-
+*.egg-info
