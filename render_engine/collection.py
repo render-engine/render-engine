@@ -19,7 +19,6 @@ class Collection:
     _archive_content_type = Page
     _archive_reverse = False
     # engines that will generate feeds. Engine should output 'rss', or 'JSON' format
-    feeds = [RSSFeed]
 
     @staticmethod
     def _archive_default_sort(cls):

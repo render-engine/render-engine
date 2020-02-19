@@ -16,6 +16,7 @@ from .route import Route
 
 class Site:
     routes: typing.List[str] = []
+    collections = {}
     output_path: Path = Path("output")
     static_path: Path = Path("static")
     SITE_TITLE: str = "Untitled Site"
@@ -43,6 +44,7 @@ class Site:
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         collection = collection_cls()
+        self.collections.update({collection.__class__.__name__: collection})
 
         for page in collection.pages:
             self.route(cls=page)
@@ -55,13 +57,13 @@ class Site:
                     self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
-        class Feed(feed):
-            slug = ''.join([collection.__class__.__name__.lower(), feed.slug])
-            items = [page.rss_feed_item for page in collection.pages]
-            title = ' - '.join([self.SITE_TITLE, feed.title])
-            link = ''.join([self.SITE_LINK, feed.link])
+        _feed = feed()
+        _feed.slug = ''.join([collection.__class__.__name__.lower(), _feed.slug])
+        _feed.items = [page.rss_feed_item for page in collection.pages]
+        _feed.title = ' - '.join([self.SITE_TITLE, _feed.title])
+        _feed.link = ''.join([self.SITE_LINK, _feed.link])
 
-        self.register_route(cls=Feed)
+        self.route(cls=_feed)
 
 
     def route(self, cls) -> None:

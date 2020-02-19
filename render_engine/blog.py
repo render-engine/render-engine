@@ -42,6 +42,7 @@ class Blog(Collection):
     page_content_type: typing.Type[BlogPost] = BlogPost
     reverse: bool = True
     has_archive = True
+    feeds = [RSSFeed]
 
     @staticmethod
     def _archive_default_sort(cls):
