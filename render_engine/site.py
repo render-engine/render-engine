@@ -41,13 +41,6 @@ class Site:
                 "rss_engine": RSSFeedEngine(),
         }
 
-    def register_feed(self, feed, collection: Collection) -> None:
-        feed.slug = ''.join([collection.__class__.__name__.lower(), feed.slug])
-        feed.items = [page.rss_feed_item for page in collection.pages]
-        feed.title = ' - '.join([self.SITE_TITLE, feed.title])
-        feed.link = ''.join([self.SITE_LINK, feed.link])
-        self.route(cls=feed)
-
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         collection = collection_cls()
 
@@ -57,9 +50,19 @@ class Site:
         if collection.has_archive:
             self.route(cls=collection.archive)
 
-            for _, feed in collection.feeds.items():
+            for feed in collection.feeds:
                 if feed:
                     self.register_feed(feed=feed, collection=collection)
+
+    def register_feed(self, feed, collection: Collection) -> None:
+        class Feed(feed):
+            slug = ''.join([collection.__class__.__name__.lower(), feed.slug])
+            items = [page.rss_feed_item for page in collection.pages]
+            title = ' - '.join([self.SITE_TITLE, feed.title])
+            link = ''.join([self.SITE_LINK, feed.link])
+
+        self.register_route(cls=Feed)
+
 
     def route(self, cls) -> None:
         self.routes.append(cls)
