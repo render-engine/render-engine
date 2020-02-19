@@ -1,25 +1,10 @@
 # QUICKSTART #
 ## Installing Render Engine ##
 
-> **Note:** This Product is Not Officially Released. These are the instructions for installing from the test repository
-
-Render Engine is currently hosted in the [_Test Python Package Index_](https://test.pypi.org/project/render-engine/)
+> **Note:** This Product is in Beta. Instructions are subject to change.
 
 ### Using pip
 `pip install -i https://test.pypi.org/simple/ render-engine`
-
-### Using [pipenv](https://pipenv.readthedocs.io/en/latest/) ###
-In your `Pipfile` add the following.
-```
-[[[[source]]]]
-name = "pypi - test"
-url = "https://test.pypi.org/simple"
-
-[pipenv]
-allow_prereleases = true
-```
-
-The [[[[source]]]] adds the _Test PyPI_ to the lists of repositories to check for packages. Then you can install the package using  `pipenv install`.  
 
 ## 1. Create a new python file. 
 

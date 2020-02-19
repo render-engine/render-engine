@@ -37,5 +37,11 @@ Check out our [Quickstart](docs/QUICKSTART.md) to get started...
 - [Jinja2]
 - [Pendulum]
 
-- [Jinja2]: https://jinja.palletsprojects.com/en/latest
-- [Pendulum]: https://pendulum.eustace.io
+
+# Installing Render Engine
+
+### Using pip
+`pip install -i https://test.pypi.org/simple/ render-engine`
+
+[Jinja2]: https://jinja.palletsprojects.com/en/latest
+[Pendulum]: https://pendulum.eustace.io
