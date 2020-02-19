@@ -1,7 +1,7 @@
 import logging
 import typing
 
-import maya
+import pendulum
 from more_itertools import flatten
 
 from .collection import Collection
@@ -28,9 +28,12 @@ class BlogPost(Page):
         for option in self.publish_options:
             if hasattr(self, option):
                 date_object = getattr(self, option)
-                maya_date = maya.parse(date_object)
-                self.date_published = maya_date.rfc2822()
+                self.sortable_date = pendulum.parse(date_object, strict=False)
+                self.sortable_date = self.sortable_date.set(
+                        tz=pendulum.local_timezone())
+                self.date_published = self.sortable_date.to_rfc2822_string()
                 break
+
             self.slug = str(self)
 
     @property
@@ -40,10 +43,10 @@ class BlogPost(Page):
 
 class Blog(Collection):
     page_content_type: typing.Type[BlogPost] = BlogPost
-    reverse: bool = True
-    has_archive = True
+    _archive_reverse: bool = True
+    has_archive: bool = True
     feeds = [RSSFeed]
 
     @staticmethod
     def _archive_default_sort(cls):
-        return cls.date_published
+        return cls.sortable_date

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: render-engine
-Version: 2020.2.dev2
+Version: 2020.2.dev6
 Summary: Static Page Generation with Flask-like simplicity and flair ✨
 Home-page: https://github.com/kjaymiller/render_engine
 Author: Jay Miller
@@ -57,10 +57,5 @@ Classifier: Programming Language :: Python :: 3.6
 Classifier: Programming Language :: Python :: 3.7
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
-<<<<<<< HEAD
-Provides-Extra: dev
-Provides-Extra: test
-=======
 Provides-Extra: test
 Provides-Extra: dev
->>>>>>> kl-review-refactor
