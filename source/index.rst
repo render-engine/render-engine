@@ -5,6 +5,8 @@
 
 Welcome to Render Engine's documentation!
 =========================================
+.. automodule::render_engine.site
+   :members:
 
 .. toctree::
    :maxdepth: 2
