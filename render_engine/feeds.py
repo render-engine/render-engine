@@ -32,6 +32,7 @@ class RSSFeedItem:
             raise AttributeError(error_msg)
 
         self.guid = getattr(cls, "guid", None) or cls.slug
+        self.link = cls.slug
         self.pub_date = cls.date_published
 
 

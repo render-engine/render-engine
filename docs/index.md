@@ -25,3 +25,43 @@ You can expand on these areas to customize your engine to your liking.
 - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
 - Dynamically create content at runtime to include into your static sites
 
+## Getting Started (Quickly)
+
+### Requirements
+Render Engine requires Python 3.7 or later to run.
+
+* While this "should" run on any operating system, it has been tested on _Unix-based systems_.
+
+### Install via `pip`
+
+```
+pip install render-engine
+```
+
+### Setup Directory
+The default engine used is [Jinja2](). You don't _have_ to supply a template but if you don't the engine will only supply the content directly.
+
+```
+- run.py
+- templates/
+|
+---- page.html
+```
+
+in `run.py`
+
+```
+from render-engine import Site, Engine, Page
+
+app = Site()
+app.SITE_TITLE = 'YOUR WEBSITE'
+app.SITE_LINK = 'http://example.com'
+
+
+
+@app.register_route
+class Index(Page):
+    content = '<h1>Hello World</h1>'
+
+@app.render()
+```

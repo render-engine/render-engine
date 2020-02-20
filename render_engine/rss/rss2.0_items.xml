@@ -1,6 +1,5 @@
 <item>
 {% if item.title %}<title>{{item.title}}</title>{% endif %}
-{% if item.link %}<link>{{item.link}}</link> {% endif %}
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
 {% endif %}
@@ -15,6 +14,7 @@
     <category>{{item.category}}</category>
   {% endif %}
 {% endif %}
+<link>{{SITE_LINK}}/{{item.link}}</link>
 {% if item.pub_date %}<pubDate>{{item.pub_date}}</pubDate>{% endif %}
 {% if item.guid %}<guid isPermaLink="false">{{item.guid}}</guid>{% endif %}
 {% if item.author %}{{item.author}}{% endif %}
