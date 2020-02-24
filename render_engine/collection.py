@@ -26,6 +26,7 @@ class Collection:
 
     @property
     def pages(self) -> typing.List[typing.Type[Page]]:
+        """Iterate through set of pages and generate a page object for each"""
         pages = []
 
         for i in self.includes:

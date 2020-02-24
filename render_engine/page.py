@@ -64,6 +64,13 @@ class Page:
         all routes that the file should be created at. default []
     content_path: List[PathString], optional
         the filepath to load content from.
+    slug: str
+        The engine's default route filename
+    content: str
+        preprocessed text stripped from initialized content. This will not
+        include any defined attrs
+    html: str
+        text converted to html from _content
 
     Methods
     -------
@@ -74,38 +81,42 @@ class Page:
     match_param: str = r"(^\w+: \b.+$)"
     routes: List[str] = []
 
-    def __init__(self, content_path=None):
+    def __init__(self, content_path: PathString=None, content: str=''):
         """If a content_path exists, check the associated file, processing the
         vars at the top and restitching the remaining lines
+
+        content_path: List[PathString], optional
+            the filepath to load content from.
+        content: str, optional
+            raw text to be processed into HTML
+
+        TODOs
+        -----
+        - ADD Documentation for attrs/content
+        - MOVE parse content to function
+
         """
-
         if content_path:
-            if not Path(content_path).exists():
-                raise ValueError("The content_path does not exist")
-
             content = Path(content_path).read_text()
-            self.content_path = content_path
-            parsed_content = re.split(self.match_param, content, flags=re.M)
-            self._content = parsed_content.pop().strip()
-            valid_attrs = [x for x in parsed_content if x.strip("\n")]
-            # We want to allow leading spaces and tabs so only strip new-lines
 
-            for attr in valid_attrs:
-                name, value = attr.split(": ", maxsplit=1)
-                setattr(self, name.lower(), value.strip())
+        self.content_path = content_path
+        parsed_content = re.split(self.match_param, content, flags=re.M)
+        self._content = parsed_content.pop().strip()
+        valid_attrs = [x for x in parsed_content if x.strip("\n")]
+        # We want to allow leading spaces and tabs so only strip new-lines
 
-            if not hasattr(self, "slug"):
-                if hasattr(self, "title"):
-                    self.slug = self.title.lower().replace(" ", "_")
-                else:
-                    self.slug = self.__class__.__name__.lower().replace(" ", "_")
+        for attr in valid_attrs:
+            name, value = attr.split(": ", maxsplit=1)
+            setattr(self, name.lower(), value.strip())
 
+        if not hasattr(self, "slug"):
+
+            if hasattr(self, "title"):
+                self.slug = self.title
             else:
-                self.slug = self.slug.lower().replace(" ", "_")
+                self.slug = self.__class__.__name__
 
-    @property
-    def html(self):
-        """the text from self._content converted to html"""
+        self.slug = self.slug.lower().replace(" ", "_")
 
     def __str__(self):
         return self.slug
@@ -123,4 +134,5 @@ class Page:
     @property
     def content(self):
         """html = rendered html (not marked up). Is None if content is none"""
-        return Markup(self.html)
+        if self._content:
+            return Markup(self.html)
