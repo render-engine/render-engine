@@ -20,6 +20,7 @@ class Collection:
     _archive_reverse = False
     # engines that will generate feeds. Engine should output 'rss', or 'JSON' format
 
+
     @staticmethod
     def _archive_default_sort(cls):
         return cls.slug
@@ -44,6 +45,7 @@ class Collection:
         archive_page.template = self._archive_template
         archive_page.slug = self._archive_slug
         archive_page.engine = ''
+        archive_page.title = self.__class__.__name__
         archive_page.pages = sorted(
             self.pages,
             key=lambda p: self._archive_default_sort(p),

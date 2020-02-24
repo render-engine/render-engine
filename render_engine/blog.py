@@ -28,13 +28,11 @@ class BlogPost(Page):
         for option in self.publish_options:
             if hasattr(self, option):
                 date_object = getattr(self, option)
-                self.sortable_date = pendulum.parse(date_object, strict=False)
-                self.sortable_date = self.sortable_date.set(
+                self.date = pendulum.parse(date_object, strict=False)
+                self.date = self.date.set(
                         tz=pendulum.local_timezone())
-                self.date_published = self.sortable_date.to_rfc2822_string()
+                self.date_published = self.date.to_rfc2822_string()
                 break
-
-            self.slug = str(self)
 
     @property
     def rss_feed_item(self):
@@ -49,4 +47,4 @@ class Blog(Collection):
 
     @staticmethod
     def _archive_default_sort(cls):
-        return cls.sortable_date
+        return cls.date
