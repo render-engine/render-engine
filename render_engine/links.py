@@ -1,10 +1,10 @@
-# Header Links
-class Link:
-    def __init__(self, name, url="", image="", links=[]):
-        self.name = name
-        self.url = url
-        self.links = links
-        self.image = image
+from typing import List, Any
+from dataclasses import dataclass
 
-    def __repr__(self):
-        return f'{self.name} <{self.url}>'
+@dataclass
+class Link:
+    """An opinionated format to reference links. Great for creating headers"""
+    name: str
+    url: str
+    links: list = List[Any]
+    image: str = ''

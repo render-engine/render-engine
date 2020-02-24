@@ -38,15 +38,17 @@ class RSSFeedItem:
 
 class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
-    template = 'rss2.0.rss'
-    engine = 'rss_engine'
-    title = 'RSS Feed'
-    link = ''
-    slug = ''
+
+    template = "rss2.0.rss"
+    engine = "rss_engine"
+    title = "RSS Feed"
+    link = ""
+    slug = ""
 
 
 class RSSFeedEngine(Engine):
     """The Engine that Processes RSS Feed"""
+
     extension = ".rss"
     environment = jinja2.Environment(
         loader=PackageLoader("render_engine", "rss"),

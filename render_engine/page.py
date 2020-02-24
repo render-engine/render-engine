@@ -1,6 +1,5 @@
 import logging
 
-import os
 import re
 import typing
 from pathlib import Path
@@ -34,7 +33,7 @@ class Page:
 
         if content_path:
             if not Path(content_path).exists():
-                raise ValueError('The content_path does not exist')
+                raise ValueError("The content_path does not exist")
 
             content = Path(content_path).read_text()
             self.content_path = content_path
@@ -47,8 +46,8 @@ class Page:
                 name, value = attr.split(": ", maxsplit=1)
                 setattr(self, name.lower(), value.strip())
 
-            if not hasattr(self, 'slug'):
-                if hasattr(self, 'title'):
+            if not hasattr(self, "slug"):
+                if hasattr(self, "title"):
                     self.slug = self.title.lower().replace(" ", "_")
                 else:
                     self.slug = self.__class__.__name__.lower().replace(" ", "_")

@@ -29,8 +29,7 @@ class BlogPost(Page):
             if hasattr(self, option):
                 date_object = getattr(self, option)
                 self.date = pendulum.parse(date_object, strict=False)
-                self.date = self.date.set(
-                        tz=pendulum.local_timezone())
+                self.date = self.date.set(tz=pendulum.local_timezone())
                 self.date_published = self.date.to_rfc2822_string()
                 break
 
@@ -38,6 +37,7 @@ class BlogPost(Page):
     def rss_feed_item(self):
         feed_item = RSSFeedItem(self)
         return feed_item
+
 
 class Blog(Collection):
     page_content_type: typing.Type[BlogPost] = BlogPost
