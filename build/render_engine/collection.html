@@ -34,6 +34,53 @@ from .feeds import RSSFeed
 
 class Collection:
     engine = &#34;&#34;
+    &#34;&#34;&#34;Collection objects serve as a way to quickly process pages that have a
+    LARGE portion of content that is similar or file driven.
+
+    The most common form of collection would be a Blog, but can also be
+    static pages that have their content stored in a dedicated file.
+
+    Currently, collections must come from a content_path and all be the same
+    content type.
+
+
+    Example
+    -------
+    from render_engine import Collection
+
+    @site.register_collection()
+    class BasicCollection(Collection):
+        pass
+
+
+    Attributes
+    ----------
+    engine: str, optional
+        The engine that the collection will pass to each page. Site&#39;s default
+        engine
+    template: str
+        The template that each page will use to render
+    routes: List[str]
+        all routes that the file should be created at. default []
+    content_path: List[PathString], optional
+        the filepath to load content from.
+    includes: List[str], optional
+        the types of files in the content path that will be processed
+        default [&#34;*.md&#34;, &#34;*.html&#34;]
+    has_archive: Bool
+        if `True`, create an archive page with all of the processed pages saved
+        as `pages`. default `False`
+    _archive_template: str, optional
+        template filename that will be used if `has_archive==True` default: archive.html&#34;
+    _archive_slug: str, optional
+        slug for rendered page if `has_archive == True` default: all_posts
+    _archive_content_type: Type[Page], optional
+        content_type for the rendered archive page
+    _archive_reverse: Bool, optional
+        should the sorted `pages` be listed in reverse order. default: False
+
+    &#34;&#34;&#34;
+    engine = &#39;&#39;
     page_content_type = Page
     content_path = &#34;content&#34;
     template = &#34;page.html&#34;
@@ -48,11 +95,12 @@ class Collection:
 
     @staticmethod
     def _archive_default_sort(cls):
+        &#34;&#34;&#34;attribute pulled from a rendered Page to sort `pages`&#34;&#34;&#34;
         return cls.slug
 
     @property
     def pages(self) -&gt; typing.List[typing.Type[Page]]:
-        &#34;&#34;&#34;Iterate through set of pages and generate a page object for each&#34;&#34;&#34;
+        &#34;&#34;&#34;Iterate through set of pages and generate a `Page`-like object for each.&#34;&#34;&#34;
         pages = []
 
         for i in self.includes:
@@ -66,7 +114,7 @@ class Collection:
 
     @property
     def archive(self):
-        &#34;&#34;&#34;Get the collection&#39;s pages and create an arcive for those items&#34;&#34;&#34;
+        &#34;&#34;&#34;Create a `Page` object for those items&#34;&#34;&#34;
         archive_page = self._archive_content_type()
         archive_page.template = self._archive_template
         archive_page.slug = self._archive_slug
@@ -100,6 +148,53 @@ class Collection:
 </summary>
 <pre><code class="python">class Collection:
     engine = &#34;&#34;
+    &#34;&#34;&#34;Collection objects serve as a way to quickly process pages that have a
+    LARGE portion of content that is similar or file driven.
+
+    The most common form of collection would be a Blog, but can also be
+    static pages that have their content stored in a dedicated file.
+
+    Currently, collections must come from a content_path and all be the same
+    content type.
+
+
+    Example
+    -------
+    from render_engine import Collection
+
+    @site.register_collection()
+    class BasicCollection(Collection):
+        pass
+
+
+    Attributes
+    ----------
+    engine: str, optional
+        The engine that the collection will pass to each page. Site&#39;s default
+        engine
+    template: str
+        The template that each page will use to render
+    routes: List[str]
+        all routes that the file should be created at. default []
+    content_path: List[PathString], optional
+        the filepath to load content from.
+    includes: List[str], optional
+        the types of files in the content path that will be processed
+        default [&#34;*.md&#34;, &#34;*.html&#34;]
+    has_archive: Bool
+        if `True`, create an archive page with all of the processed pages saved
+        as `pages`. default `False`
+    _archive_template: str, optional
+        template filename that will be used if `has_archive==True` default: archive.html&#34;
+    _archive_slug: str, optional
+        slug for rendered page if `has_archive == True` default: all_posts
+    _archive_content_type: Type[Page], optional
+        content_type for the rendered archive page
+    _archive_reverse: Bool, optional
+        should the sorted `pages` be listed in reverse order. default: False
+
+    &#34;&#34;&#34;
+    engine = &#39;&#39;
     page_content_type = Page
     content_path = &#34;content&#34;
     template = &#34;page.html&#34;
@@ -114,11 +209,12 @@ class Collection:
 
     @staticmethod
     def _archive_default_sort(cls):
+        &#34;&#34;&#34;attribute pulled from a rendered Page to sort `pages`&#34;&#34;&#34;
         return cls.slug
 
     @property
     def pages(self) -&gt; typing.List[typing.Type[Page]]:
-        &#34;&#34;&#34;Iterate through set of pages and generate a page object for each&#34;&#34;&#34;
+        &#34;&#34;&#34;Iterate through set of pages and generate a `Page`-like object for each.&#34;&#34;&#34;
         pages = []
 
         for i in self.includes:
@@ -132,7 +228,7 @@ class Collection:
 
     @property
     def archive(self):
-        &#34;&#34;&#34;Get the collection&#39;s pages and create an arcive for those items&#34;&#34;&#34;
+        &#34;&#34;&#34;Create a `Page` object for those items&#34;&#34;&#34;
         archive_page = self._archive_content_type()
         archive_page.template = self._archive_template
         archive_page.slug = self._archive_slug
@@ -165,15 +261,43 @@ errors defaults to 'strict'.</p></section>
 </dd>
 <dt id="render_engine.collection.Collection.engine"><code class="name">var <span class="ident">engine</span></code></dt>
 <dd>
-<section class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></section>
+<section class="desc"><p>Collection objects serve as a way to quickly process pages that have a
+LARGE portion of content that is similar or file driven.</p>
+<p>The most common form of collection would be a Blog, but can also be
+static pages that have their content stored in a dedicated file.</p>
+<p>Currently, collections must come from a content_path and all be the same
+content type.</p>
+<h2 id="example">Example</h2>
+<p>from render_engine import Collection</p>
+<p>@site.register_collection()
+class BasicCollection(Collection):
+pass</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>The engine that the collection will pass to each page. Site's default
+engine</dd>
+<dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
+<dd>The template that each page will use to render</dd>
+<dt><strong><code>routes</code></strong> :&ensp;<code>List</code>[<code>str</code>]</dt>
+<dd>all routes that the file should be created at. default []</dd>
+<dt><strong><code>content_path</code></strong> :&ensp;<code>List</code>[<code>PathString</code>], optional</dt>
+<dd>the filepath to load content from.</dd>
+<dt><strong><code>includes</code></strong> :&ensp;<code>List</code>[<code>str</code>], optional</dt>
+<dd>the types of files in the content path that will be processed
+default ["<em>.md", "</em>.html"]</dd>
+<dt><strong><code>has_archive</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if <code>True</code>, create an archive page with all of the processed pages saved
+as <code>pages</code>. default <code>False</code></dd>
+<dt><strong><code>_archive_template</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>template filename that will be used if <code>has_archive==True</code> default: archive.html"</dd>
+<dt><strong><code>_archive_slug</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>slug for rendered page if <code>has_archive == True</code> default: all_posts</dd>
+<dt><strong><code>_archive_content_type</code></strong> :&ensp;<code>Type</code>[<code>Page</code>], optional</dt>
+<dd>content_type for the rendered archive page</dd>
+<dt><strong><code>_archive_reverse</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>should the sorted <code>pages</code> be listed in reverse order. default: False</dd>
+</dl></section>
 </dd>
 <dt id="render_engine.collection.Collection.has_archive"><code class="name">var <span class="ident">has_archive</span></code></dt>
 <dd>
@@ -224,7 +348,7 @@ class InheritingPage(Page):
 </code></pre>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>engine</code></strong> :&ensp;<code>str</code></dt>
+<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
 <dd>The engine that the Site should refer to or the site's default engine</dd>
 <dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
 <dd>The template that the Site should refer to. If empty, use site's default</dd>
@@ -290,11 +414,11 @@ include any defined attrs</dd>
 
     Attributes
     ----------
-    engine: str
+    engine: str, optional
         The engine that the Site should refer to or the site&#39;s default engine
     template: str
         The template that the Site should refer to. If empty, use site&#39;s default
-    match_param: str 
+    match_param: str
         The regular expression used to identify metadata in a content file
         (default &#34;r(^\w+: \b.+$)&#34;)
     routes: List[str]
@@ -398,14 +522,14 @@ errors defaults to 'strict'.</p></section>
 <dl>
 <dt id="render_engine.collection.Collection.archive"><code class="name">var <span class="ident">archive</span></code></dt>
 <dd>
-<section class="desc"><p>Get the collection's pages and create an arcive for those items</p></section>
+<section class="desc"><p>Create a <code>Page</code> object for those items</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def archive(self):
-    &#34;&#34;&#34;Get the collection&#39;s pages and create an arcive for those items&#34;&#34;&#34;
+    &#34;&#34;&#34;Create a `Page` object for those items&#34;&#34;&#34;
     archive_page = self._archive_content_type()
     archive_page.template = self._archive_template
     archive_page.slug = self._archive_slug
@@ -421,14 +545,14 @@ def archive(self):
 </dd>
 <dt id="render_engine.collection.Collection.pages"><code class="name">var <span class="ident">pages</span></code></dt>
 <dd>
-<section class="desc"><p>Iterate through set of pages and generate a page object for each</p></section>
+<section class="desc"><p>Iterate through set of pages and generate a <code>Page</code>-like object for each.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def pages(self) -&gt; typing.List[typing.Type[Page]]:
-    &#34;&#34;&#34;Iterate through set of pages and generate a page object for each&#34;&#34;&#34;
+    &#34;&#34;&#34;Iterate through set of pages and generate a `Page`-like object for each.&#34;&#34;&#34;
     pages = []
 
     for i in self.includes:

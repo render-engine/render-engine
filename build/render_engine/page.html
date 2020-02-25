@@ -80,11 +80,11 @@ class Page:
 
     Attributes
     ----------
-    engine: str
+    engine: str, optional
         The engine that the Site should refer to or the site&#39;s default engine
     template: str
         The template that the Site should refer to. If empty, use site&#39;s default
-    match_param: str 
+    match_param: str
         The regular expression used to identify metadata in a content file
         (default &#34;r(^\w+: \b.+$)&#34;)
     routes: List[str]
@@ -213,7 +213,7 @@ class InheritingPage(Page):
 </code></pre>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>engine</code></strong> :&ensp;<code>str</code></dt>
+<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
 <dd>The engine that the Site should refer to or the site's default engine</dd>
 <dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
 <dd>The template that the Site should refer to. If empty, use site's default</dd>
@@ -292,11 +292,11 @@ vars at the top and restitching the remaining lines</p>
 
     Attributes
     ----------
-    engine: str
+    engine: str, optional
         The engine that the Site should refer to or the site&#39;s default engine
     template: str
         The template that the Site should refer to. If empty, use site&#39;s default
-    match_param: str 
+    match_param: str
         The regular expression used to identify metadata in a content file
         (default &#34;r(^\w+: \b.+$)&#34;)
     routes: List[str]

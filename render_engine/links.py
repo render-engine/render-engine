@@ -8,16 +8,16 @@ class Link:
 
     Attributes
     ----------
-    name: str
+    name : str
         the content of the link. 
 
-    url: str
+    url : str
         the href that points to a webpage
 
-    links: List[Any]
+    links : List[Any]
         Can be used to embed other link objects (userful for submenus)
 
-    image: str, optional
+    image : str, optional
         the source url for the image link
     """
     name: str
