@@ -7,17 +7,54 @@ from .feeds import RSSFeed
 
 
 class Collection:
-<<<<<<< Updated upstream
     engine = ""
-=======
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
 
-    The most common form of collection would be the Blog,
-    but can also be static pages that have their content stored in a dedicated file.
+    The most common form of collection would be a Blog, but can also be
+    static pages that have their content stored in a dedicated file.
+
+    Currently, collections must come from a content_path and all be the same
+    content type.
+
+
+    Example
+    -------
+    from render_engine import Collection
+
+    @site.register_collection()
+    class BasicCollection(Collection):
+        pass
+
+
+    Attributes
+    ----------
+    engine: str, optional
+        The engine that the collection will pass to each page. Site's default
+        engine
+    template: str
+        The template that each page will use to render
+    routes: List[str]
+        all routes that the file should be created at. default []
+    content_path: List[PathString], optional
+        the filepath to load content from.
+    includes: List[str], optional
+        the types of files in the content path that will be processed
+        default ["*.md", "*.html"]
+    has_archive: Bool
+        if `True`, create an archive page with all of the processed pages saved
+        as `pages`. default `False`
+    _archive_template: str, optional
+        template filename that will be used if `has_archive==True` default: archive.html"
+    _archive_slug: str, optional
+        slug for rendered page if `has_archive == True` default: all_posts
+    _archive_content_type: Type[Page], optional
+        content_type for the rendered archive page
+    _archive_reverse: Bool, optional
+        should the sorted `pages` be listed in reverse order. default: False
+
     """
     engine = ''
->>>>>>> Stashed changes
     page_content_type = Page
     content_path = "content"
     template = "page.html"
@@ -32,11 +69,12 @@ class Collection:
 
     @staticmethod
     def _archive_default_sort(cls):
+        """attribute pulled from a rendered Page to sort `pages`"""
         return cls.slug
 
     @property
     def pages(self) -> typing.List[typing.Type[Page]]:
-        """Iterate through set of pages and generate a page object for each"""
+        """Iterate through set of pages and generate a `Page`-like object for each."""
         pages = []
 
         for i in self.includes:
@@ -50,7 +88,7 @@ class Collection:
 
     @property
     def archive(self):
-        """Get the collection's pages and create an arcive for those items"""
+        """Create a `Page` object for those items"""
         archive_page = self._archive_content_type()
         archive_page.template = self._archive_template
         archive_page.slug = self._archive_slug

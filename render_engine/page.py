@@ -54,11 +54,11 @@ class Page:
 
     Attributes
     ----------
-    engine: str
+    engine: str, optional
         The engine that the Site should refer to or the site's default engine
     template: str
         The template that the Site should refer to. If empty, use site's default
-    match_param: str 
+    match_param: str
         The regular expression used to identify metadata in a content file
         (default "r(^\w+: \b.+$)")
     routes: List[str]
