@@ -7,7 +7,17 @@ from .feeds import RSSFeed
 
 
 class Collection:
+<<<<<<< Updated upstream
     engine = ""
+=======
+    """Collection objects serve as a way to quickly process pages that have a
+    LARGE portion of content that is similar or file driven.
+
+    The most common form of collection would be the Blog,
+    but can also be static pages that have their content stored in a dedicated file.
+    """
+    engine = ''
+>>>>>>> Stashed changes
     page_content_type = Page
     content_path = "content"
     template = "page.html"
