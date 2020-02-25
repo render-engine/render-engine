@@ -10,6 +10,28 @@ from markdown import markdown
 
 from ._type_hint_helpers import PathString
 
+# default matching param for posts
+base_matcher = re.compile(r'(^\w+: \b.+$)', flags=re.M)
+
+def parse_content(
+        content: str,
+        matcher=base_matcher,
+        ):
+    """split content into attributes and content text
+    Parameters
+    ----------
+    content : str
+        The content to be parsed
+    matcher : str, optional
+        A compiled regular expression that splits the content.
+        default `base_matcher`
+    -----
+    """
+    parsed_content = re.split(matcher, content)
+    content = parsed_content.pop().strip()
+    attrs = list(filter(lambda x:x.strip(), parsed_content))
+    return attrs, content
+
 
 class Page:
     """
@@ -58,9 +80,6 @@ class Page:
         The engine that the Site should refer to or the site's default engine
     template: str
         The template that the Site should refer to. If empty, use site's default
-    match_param: str
-        The regular expression used to identify metadata in a content file
-        (default "r(^\w+: \b.+$)")
     routes: List[str]
         all routes that the file should be created at. default []
     content_path: List[PathString], optional
@@ -72,17 +91,19 @@ class Page:
         include any defined attrs
     html: str
         text converted to html from _content
-
-
-
     """
+
 
     engine = ""
     template = ""
-    match_param = r"(^\w+: \b.+$)"
-    routes = []
+    routes = ['']
 
-    def __init__(self, content_path: PathString=None, content: str=''):
+    def __init__(
+            self,
+            content_path: PathString=None,
+            content: str='',
+            matcher=base_matcher,
+            ):
         """If a content_path exists, check the associated file, processing the
         vars at the top and restitching the remaining lines
 
@@ -90,32 +111,33 @@ class Page:
             the filepath to load content from.
         content: str, optional
             raw text to be processed into HTML
+        matcher: str, optional
+            A compiled regular expression that splits the content.
+            defatul `base_matcher`
 
         TODOs
         -----
         - ADD Documentation for attrs/content
-        - MOVE parse content to function
+        - Make Slug Conversion Smarter
 
         """
+
+        self.content_path = content_path
+
         if content_path:
             content = Path(content_path).read_text()
 
-        self.content_path = content_path
-        parsed_content = re.split(self.match_param, content, flags=re.M)
-        self._content = parsed_content.pop().strip()
-        valid_attrs = [x for x in parsed_content if x.strip("\n")]
-        # We want to allow leading spaces and tabs so only strip new-lines
+        valid_attrs, self._content = parse_content(
+               content,
+               matcher=matcher,
+         )
 
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
             setattr(self, name.lower(), value.strip())
 
         if not hasattr(self, "slug"):
-
-            if hasattr(self, "title"):
-                self.slug = self.title
-            else:
-                self.slug = self.__class__.__name__
+            self.slug = getattr(self, 'title', self.__class__.__name__)
 
         self.slug = self.slug.lower().replace(" ", "_")
 
@@ -124,7 +146,7 @@ class Page:
 
     @property
     def html(self):
-        """the text from self._content converted to html"""
+        """Text from self._content converted to html"""
 
         if hasattr(self, "_content"):
             return markdown(self._content)
@@ -137,3 +159,6 @@ class Page:
         """html = rendered html (not marked up). Is `None` if `content == None`"""
         if self._content:
             return Markup(self.html)
+
+        else:
+            return ''

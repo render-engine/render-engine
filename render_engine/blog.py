@@ -1,8 +1,9 @@
 import logging
 import typing
+from typing import List
 
 import pendulum
-from more_itertools import flatten
+from more_itertools import first_true
 
 from .collection import Collection
 from .page import Page
@@ -11,27 +12,24 @@ from .site import Site
 
 
 class BlogPost(Page):
-    """Page Like Object with slight modifications to work with BlogPosts"""
+    """
+    `Page` Like object with slight modifications to work with BlogPosts.
+    """
 
     template: str = "blog_post.html"
-    publish_options: typing.List[str] = [
-        "date_published",
-        "date",
-        "publish_date",
-        "date_modified",
-        "modified_date",
-    ]
-
     def __init__(self, **kwargs):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
-        for option in self.publish_options:
-            if hasattr(self, option):
-                date_object = getattr(self, option)
-                self.date = pendulum.parse(date_object, strict=False)
-                self.date = self.date.set(tz=pendulum.local_timezone())
-                self.date_published = self.date.to_rfc2822_string()
-                break
+        date = first_true([
+                getattr(self, 'date_modified', None),
+                getattr(self, 'modified_date', None),
+                getattr(self, 'date_published', None),
+                getattr(self, 'publish_date', None),
+                getattr(self, 'date'),
+                ])
+        parsed_date = pendulum.parse(date, strict=False)
+        self.date = parsed_date.set(tz=pendulum.local_timezone())
+        self.date_published = self.date.to_rfc2822_string()
 
     @property
     def rss_feed_item(self):
