@@ -41,6 +41,7 @@ JSON: https://jsonfeed.org/version/1
 import logging
 
 import jinja2
+import pendulum
 from jinja2 import PackageLoader, select_autoescape
 from more_itertools import first_true
 
@@ -99,20 +100,29 @@ class RSSFeedEngine(Engine):
 <dl>
 <dt id="render_engine.feeds.RSSFeed"><code class="flex name class">
 <span>class <span class="ident">RSSFeed</span></span>
-<span>(</span><span>content_path=None, content='')</span>
+<span>(</span><span>content_path=None, content='', matcher=re.compile('(^\\w+: \\b.+$)', re.MULTILINE))</span>
 </code></dt>
 <dd>
 <section class="desc"><p>The RSS Feed Component of an Archive Object</p>
 <p>If a content_path exists, check the associated file, processing the
 vars at the top and restitching the remaining lines</p>
-<p>content_path: List[PathString], optional
-the filepath to load content from.
-content: str, optional
-raw text to be processed into HTML</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>content_path</code></strong></dt>
+<dd>List[PathString], optional
+the filepath to load content from.</dd>
+<dt><strong><code>content</code></strong></dt>
+<dd>str, optional
+raw text to be processed into HTML</dd>
+<dt><strong><code>matcher</code></strong></dt>
+<dd>str, optional
+A compiled regular expression that splits the content.
+defatul <code>base_matcher</code></dd>
+</dl>
 <h2 id="todos">TODOs</h2>
 <ul>
 <li>ADD Documentation for attrs/content</li>
-<li>MOVE parse content to function</li>
+<li>Make Slug Conversion Smarter</li>
 </ul></section>
 <details class="source">
 <summary>
@@ -177,7 +187,6 @@ errors defaults to 'strict'.</p></section>
 <li><code><a title="render_engine.page.Page.content" href="page.html#render_engine.page.Page.content">content</a></code></li>
 <li><code><a title="render_engine.page.Page.engine" href="page.html#render_engine.page.Page.engine">engine</a></code></li>
 <li><code><a title="render_engine.page.Page.html" href="page.html#render_engine.page.Page.html">html</a></code></li>
-<li><code><a title="render_engine.page.Page.match_param" href="page.html#render_engine.page.Page.match_param">match_param</a></code></li>
 <li><code><a title="render_engine.page.Page.routes" href="page.html#render_engine.page.Page.routes">routes</a></code></li>
 <li><code><a title="render_engine.page.Page.template" href="page.html#render_engine.page.Page.template">template</a></code></li>
 </ul>

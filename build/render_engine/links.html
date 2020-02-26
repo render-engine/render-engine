@@ -45,11 +45,15 @@ class Link:
 
     image : str, optional
         the source url for the image link
+
+    icon : str, optional
+        similar to image, but allows for custom html for icons
     &#34;&#34;&#34;
     name: str
     url: str
     links: list = List[Any]
-    image: str = &#39;&#39;</code></pre>
+    image: str = &#39;&#39;
+    icon: str = &#39;&#39;</code></pre>
 </details>
 </section>
 <section>
@@ -63,7 +67,7 @@ class Link:
 <dl>
 <dt id="render_engine.links.Link"><code class="flex name class">
 <span>class <span class="ident">Link</span></span>
-<span>(</span><span>name, url, links=typing.List[typing.Any], image='')</span>
+<span>(</span><span>name, url, links=typing.List[typing.Any], image='', icon='')</span>
 </code></dt>
 <dd>
 <section class="desc"><p>An opinionated format to reference links. Great for creating headers</p>
@@ -77,6 +81,8 @@ class Link:
 <dd>Can be used to embed other link objects (userful for submenus)</dd>
 <dt><strong><code>image</code></strong> :&ensp;<code>str</code>, optional</dt>
 <dd>the source url for the image link</dd>
+<dt><strong><code>icon</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>similar to image, but allows for custom html for icons</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -99,14 +105,30 @@ class Link:
 
     image : str, optional
         the source url for the image link
+
+    icon : str, optional
+        similar to image, but allows for custom html for icons
     &#34;&#34;&#34;
     name: str
     url: str
     links: list = List[Any]
-    image: str = &#39;&#39;</code></pre>
+    image: str = &#39;&#39;
+    icon: str = &#39;&#39;</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
+<dt id="render_engine.links.Link.icon"><code class="name">var <span class="ident">icon</span></code></dt>
+<dd>
+<section class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></section>
+</dd>
 <dt id="render_engine.links.Link.image"><code class="name">var <span class="ident">image</span></code></dt>
 <dd>
 <section class="desc"><p>str(object='') -&gt; str
@@ -149,6 +171,7 @@ this is used by e.g. typing.List and typing.Dict.</p></section>
 <li>
 <h4><code><a title="render_engine.links.Link" href="#render_engine.links.Link">Link</a></code></h4>
 <ul class="">
+<li><code><a title="render_engine.links.Link.icon" href="#render_engine.links.Link.icon">icon</a></code></li>
 <li><code><a title="render_engine.links.Link.image" href="#render_engine.links.Link.image">image</a></code></li>
 <li><code><a title="render_engine.links.Link.links" href="#render_engine.links.Link.links">links</a></code></li>
 </ul>

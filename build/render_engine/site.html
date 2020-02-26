@@ -97,21 +97,17 @@ class Site:
     def register_route(self, cls) -&gt; None:
         self.routes.append(cls())
 
+
     def render(self, dry_run: bool = False) -&gt; None:
         for page in self.routes:
             engine = self.engines.get(page.engine, self.engines[&#34;default_engine&#34;])
             content = engine.render(page, **vars(self))
 
-            logging.debug(f&#39;{engine=}&#39;)
-            logging.debug(f&#39;{content=}&#39;)
 
             for route in page.routes:
-
                 logging.info(f&#39;starting on {route=}&#39;)
-
                 route = self.output_path.joinpath(route.strip(&#34;/&#34;))
                 route.mkdir(exist_ok=True)
-
                 filename = Path(page.slug).with_suffix(engine.extension)
                 filepath = route.joinpath(filename)
 
@@ -199,21 +195,17 @@ class Site:
     def register_route(self, cls) -&gt; None:
         self.routes.append(cls())
 
+
     def render(self, dry_run: bool = False) -&gt; None:
         for page in self.routes:
             engine = self.engines.get(page.engine, self.engines[&#34;default_engine&#34;])
             content = engine.render(page, **vars(self))
 
-            logging.debug(f&#39;{engine=}&#39;)
-            logging.debug(f&#39;{content=}&#39;)
 
             for route in page.routes:
-
                 logging.info(f&#39;starting on {route=}&#39;)
-
                 route = self.output_path.joinpath(route.strip(&#34;/&#34;))
                 route.mkdir(exist_ok=True)
-
                 filename = Path(page.slug).with_suffix(engine.extension)
                 filepath = route.joinpath(filename)
 
@@ -352,16 +344,11 @@ The argument must be an iterable if specified.</p></section>
         engine = self.engines.get(page.engine, self.engines[&#34;default_engine&#34;])
         content = engine.render(page, **vars(self))
 
-        logging.debug(f&#39;{engine=}&#39;)
-        logging.debug(f&#39;{content=}&#39;)
 
         for route in page.routes:
-
             logging.info(f&#39;starting on {route=}&#39;)
-
             route = self.output_path.joinpath(route.strip(&#34;/&#34;))
             route.mkdir(exist_ok=True)
-
             filename = Path(page.slug).with_suffix(engine.extension)
             filepath = route.joinpath(filename)
 

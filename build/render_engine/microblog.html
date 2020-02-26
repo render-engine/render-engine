@@ -70,7 +70,22 @@ class MicroBlog(Blog):
 <span>class <span class="ident">MicroBlog</span></span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Custom Collection Class with Archiving Enabled and the RSS Feed</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>page_content_type</code></strong> :&ensp;<code>BlogPost</code></dt>
+<dd>default BlogPost</dd>
+<dt><strong><code>_archive_reverse</code></strong> :&ensp;<code>bool</code></dt>
+<dd>default True</dd>
+<dt><strong><code>_archive_default_sort</code></strong> :&ensp;<code>Any</code></dt>
+<dd>default BlogPost.date</dd>
+<dt><strong><code>feeds</code></strong> :&ensp;<code>List</code></dt>
+<dd>default ['RSSFeed']</dd>
+</dl>
+<h2 id="todo">Todo</h2>
+<ul>
+<li>Add Support for JSON Feeds</li>
+</ul></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -89,6 +104,29 @@ class MicroBlog(Blog):
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="render_engine.microblog.MicroBlog.page_content_type"><code class="name">var <span class="ident">page_content_type</span></code></dt>
+<dd>
+<section class="desc"><p>Page Like Object with slight modifications to work with BlogPosts</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MicroBlogPost(BlogPost):
+    &#34;&#34;&#34;Page Like Object with slight modifications to work with BlogPosts&#34;&#34;&#34;
+
+    title = &#34;&#34;
+
+    def __init__(self, **kwargs):
+        &#34;&#34;&#34;checks published options and accepts the first that is listed&#34;&#34;&#34;
+        super().__init__(**kwargs)
+        self.slug = pendulum.parse(self.date_published, strict=False).format(&#34;YMDHmS&#34;)
+
+    @property
+    def rss_feed_item(self):
+        feed_item = RSSFeedItem(self)
+        return feed_item</code></pre>
+</details>
+</dd>
 <dt id="render_engine.microblog.MicroBlog.reverse"><code class="name">var <span class="ident">reverse</span></code></dt>
 <dd>
 <section class="desc"><p>bool(x) -&gt; bool</p>
@@ -107,7 +145,6 @@ The class bool is a subclass of the class int, and cannot be subclassed.</p></se
 <li><code><a title="render_engine.blog.Blog.feeds" href="blog.html#render_engine.blog.Blog.feeds">feeds</a></code></li>
 <li><code><a title="render_engine.blog.Blog.has_archive" href="collection.html#render_engine.collection.Collection.has_archive">has_archive</a></code></li>
 <li><code><a title="render_engine.blog.Blog.includes" href="collection.html#render_engine.collection.Collection.includes">includes</a></code></li>
-<li><code><a title="render_engine.blog.Blog.page_content_type" href="blog.html#render_engine.blog.Blog.page_content_type">page_content_type</a></code></li>
 <li><code><a title="render_engine.blog.Blog.pages" href="collection.html#render_engine.collection.Collection.pages">pages</a></code></li>
 <li><code><a title="render_engine.blog.Blog.routes" href="collection.html#render_engine.collection.Collection.routes">routes</a></code></li>
 <li><code><a title="render_engine.blog.Blog.template" href="collection.html#render_engine.collection.Collection.template">template</a></code></li>
@@ -184,8 +221,6 @@ def rss_feed_item(self):
 <li><code><a title="render_engine.blog.BlogPost.content" href="page.html#render_engine.page.Page.content">content</a></code></li>
 <li><code><a title="render_engine.blog.BlogPost.engine" href="page.html#render_engine.page.Page.engine">engine</a></code></li>
 <li><code><a title="render_engine.blog.BlogPost.html" href="page.html#render_engine.page.Page.html">html</a></code></li>
-<li><code><a title="render_engine.blog.BlogPost.match_param" href="page.html#render_engine.page.Page.match_param">match_param</a></code></li>
-<li><code><a title="render_engine.blog.BlogPost.publish_options" href="blog.html#render_engine.blog.BlogPost.publish_options">publish_options</a></code></li>
 <li><code><a title="render_engine.blog.BlogPost.routes" href="page.html#render_engine.page.Page.routes">routes</a></code></li>
 <li><code><a title="render_engine.blog.BlogPost.template" href="page.html#render_engine.page.Page.template">template</a></code></li>
 </ul>
@@ -211,6 +246,7 @@ def rss_feed_item(self):
 <li>
 <h4><code><a title="render_engine.microblog.MicroBlog" href="#render_engine.microblog.MicroBlog">MicroBlog</a></code></h4>
 <ul class="">
+<li><code><a title="render_engine.microblog.MicroBlog.page_content_type" href="#render_engine.microblog.MicroBlog.page_content_type">page_content_type</a></code></li>
 <li><code><a title="render_engine.microblog.MicroBlog.reverse" href="#render_engine.microblog.MicroBlog.reverse">reverse</a></code></li>
 </ul>
 </li>

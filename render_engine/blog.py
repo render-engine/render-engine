@@ -13,13 +13,29 @@ from .site import Site
 
 class BlogPost(Page):
     """
-    `Page` Like object with slight modifications to work with BlogPosts.
+    Page Like object with slight modifications to work with BlogPosts.
+
+    Attributes:
+        template : str
+        rss_feed_item : RSSFeedItem
+
     """
 
-    template: str = "blog_post.html"
+    template = "blog_post.html"
 
     def __init__(self, **kwargs):
-        """checks published options and accepts the first that is listed"""
+        """
+        checks published options and accepts the first that is listed
+
+        Attributes:
+            date : pendulum.datetime
+                date parsed in datetime format. usesul for sorting and things
+            date_published : str
+                date formated for `RSSFeed`
+            date_friendly : str
+                an easy to read string version of the date
+        """
+
         super().__init__(**kwargs)
         date = first_true([
                 getattr(self, 'date_modified', None),
@@ -35,11 +51,27 @@ class BlogPost(Page):
 
     @property
     def rss_feed_item(self):
-        feed_item = RSSFeedItem(self)
-        return feed_item
+        return RSSFeedItem(self)
 
 
 class Blog(Collection):
+    """
+    Custom Collection Class with Archiving Enabled and the RSS Feed
+
+    Attributes:
+        page_content_type : BlogPost
+            default BlogPost
+        _archive_reverse : bool
+            default True
+        _archive_default_sort : Any
+            default BlogPost.date
+        feeds : List
+            default ['RSSFeed']
+
+    Todo:
+        - Add Support for JSON Feeds
+    """
+
     page_content_type: typing.Type[BlogPost] = BlogPost
     _archive_reverse: bool = True
     has_archive: bool = True

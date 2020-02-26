@@ -320,52 +320,51 @@ Render Engine should be a Page object.</p>
 <p>Pages can be rendered directly from a template or from a file.</p>
 <p>Page objects can be used to extend existing page objects.</p>
 <h2 id="examples">Examples</h2>
-<pre><code># Basic Page with No Template Variables
-@site.register_route('basic_page.html')
+<h1 id="basic-page-with-no-template-variables">Basic Page with No Template Variables</h1>
+<p>@site.register_route('basic_page.html')
 class BasicPage(Page):
-    template = 'template_file.html' # user provided template
-
-# Basic Page with Variables
-@site.register_route('page_with_vars')
+template = 'template_file.html' # user provided template</p>
+<h1 id="basic-page-with-variables">Basic Page with Variables</h1>
+<p>@site.register_route('page_with_vars')
 class PageWithVars(Page):
-    title = 'Site Title'
-
-# Page Loading from File
-@site.register_route('page_from_file')
+title = 'Site Title'</p>
+<h1 id="page-loading-from-file">Page Loading from File</h1>
+<p>@site.register_route('page_from_file')
 class PageFromFile(Page):
-    content_path = 'index.md' # loaded from content path can be '.md' or '.html'
-
-# Page Inherited from Other Page
-@site.register_route('basic_page.html')
+content_path = 'index.md' # loaded from content path can be '.md' or '.html'</p>
+<h1 id="page-inherited-from-other-page">Page Inherited from Other Page</h1>
+<p>@site.register_route('basic_page.html')
 class BasicPage(Page):
-    template = 'template_file.html' # user provided template
-    title = 'Base Page'
-
-@site.register_route('other_page.html')
+template = 'template_file.html' # user provided template
+title = 'Base Page'</p>
+<p>@site.register_route('other_page.html')
 class InheritingPage(Page):
-    # template will be inherited from the BasicPage
-    title = 'Inherited Page'
-</code></pre>
+# template will be inherited from the BasicPage
+title = 'Inherited Page'</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>engine</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>The engine that the Site should refer to or the site's default engine</dd>
-<dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
-<dd>The template that the Site should refer to. If empty, use site's default</dd>
-<dt><strong><code>match_param</code></strong> :&ensp;<code>str</code></dt>
-<dd>The regular expression used to identify metadata in a content file
-(default "r(^\w+: .+$)")</dd>
-<dt><strong><code>routes</code></strong> :&ensp;<code>List</code>[<code>str</code>]</dt>
-<dd>all routes that the file should be created at. default []</dd>
-<dt><strong><code>content_path</code></strong> :&ensp;<code>List</code>[<code>PathString</code>], optional</dt>
-<dd>the filepath to load content from.</dd>
-<dt><strong><code>slug</code></strong> :&ensp;<code>str</code></dt>
-<dd>The engine's default route filename</dd>
-<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
-<dd>preprocessed text stripped from initialized content. This will not
+<dt><strong><code>engine</code></strong></dt>
+<dd>str, optional
+The engine that the Site should refer to or the site's default engine</dd>
+<dt><strong><code>template</code></strong></dt>
+<dd>str
+The template that the Site should refer to. If empty, use site's default</dd>
+<dt><strong><code>routes</code></strong></dt>
+<dd>List[str]
+all routes that the file should be created at. default []</dd>
+<dt><strong><code>content_path</code></strong></dt>
+<dd>List[PathString], optional
+the filepath to load content from.</dd>
+<dt><strong><code>slug</code></strong></dt>
+<dd>str
+The engine's default route filename</dd>
+<dt><strong><code>content</code></strong></dt>
+<dd>str
+preprocessed text stripped from initialized content. This will not
 include any defined attrs</dd>
-<dt><strong><code>html</code></strong> :&ensp;<code>str</code></dt>
-<dd>text converted to html from _content</dd>
+<dt><strong><code>html</code></strong></dt>
+<dd>str
+text converted to html from _content</dd>
 </dl></section>
 <details class="source">
 <summary>
@@ -383,8 +382,7 @@ include any defined attrs</dd>
     Page objects can be used to extend existing page objects.
 
 
-    Examples
-    --------
+    Examples:
         # Basic Page with No Template Variables
         @site.register_route(&#39;basic_page.html&#39;)
         class BasicPage(Page):
@@ -412,70 +410,63 @@ include any defined attrs</dd>
             title = &#39;Inherited Page&#39;
 
 
-    Attributes
-    ----------
-    engine: str, optional
-        The engine that the Site should refer to or the site&#39;s default engine
-    template: str
-        The template that the Site should refer to. If empty, use site&#39;s default
-    match_param: str
-        The regular expression used to identify metadata in a content file
-        (default &#34;r(^\w+: \b.+$)&#34;)
-    routes: List[str]
-        all routes that the file should be created at. default []
-    content_path: List[PathString], optional
-        the filepath to load content from.
-    slug: str
-        The engine&#39;s default route filename
-    content: str
-        preprocessed text stripped from initialized content. This will not
-        include any defined attrs
-    html: str
-        text converted to html from _content
-
-
-
+    Attributes:
+        engine: str, optional
+            The engine that the Site should refer to or the site&#39;s default engine
+        template: str
+            The template that the Site should refer to. If empty, use site&#39;s default
+        routes: List[str]
+            all routes that the file should be created at. default []
+        content_path: List[PathString], optional
+            the filepath to load content from.
+        slug: str
+            The engine&#39;s default route filename
+        content: str
+            preprocessed text stripped from initialized content. This will not
+            include any defined attrs
+        html: str
+            text converted to html from _content
     &#34;&#34;&#34;
 
     engine = &#34;&#34;
     template = &#34;&#34;
-    match_param = r&#34;(^\w+: \b.+$)&#34;
-    routes = []
+    routes = [&#34;&#34;]
 
-    def __init__(self, content_path: PathString=None, content: str=&#39;&#39;):
-        &#34;&#34;&#34;If a content_path exists, check the associated file, processing the
+    def __init__(
+        self, content_path: PathString = None, content: str = &#34;&#34;, matcher=base_matcher
+    ):
+        &#34;&#34;&#34;
+        If a content_path exists, check the associated file, processing the
         vars at the top and restitching the remaining lines
 
-        content_path: List[PathString], optional
-            the filepath to load content from.
-        content: str, optional
-            raw text to be processed into HTML
+        Parameters:
+            content_path: List[PathString], optional
+                the filepath to load content from.
+            content: str, optional
+                raw text to be processed into HTML
+            matcher: str, optional
+                A compiled regular expression that splits the content.
+                defatul `base_matcher`
 
-        TODOs
-        -----
-        - ADD Documentation for attrs/content
-        - MOVE parse content to function
+        TODOs:
+            - ADD Documentation for attrs/content
+            - Make Slug Conversion Smarter
 
         &#34;&#34;&#34;
+
+        self.content_path = content_path
+
         if content_path:
             content = Path(content_path).read_text()
 
-        self.content_path = content_path
-        parsed_content = re.split(self.match_param, content, flags=re.M)
-        self._content = parsed_content.pop().strip()
-        valid_attrs = [x for x in parsed_content if x.strip(&#34;\n&#34;)]
-        # We want to allow leading spaces and tabs so only strip new-lines
+        valid_attrs, self._content = parse_content(content, matcher=matcher)
 
         for attr in valid_attrs:
             name, value = attr.split(&#34;: &#34;, maxsplit=1)
             setattr(self, name.lower(), value.strip())
 
         if not hasattr(self, &#34;slug&#34;):
-
-            if hasattr(self, &#34;title&#34;):
-                self.slug = self.title
-            else:
-                self.slug = self.__class__.__name__
+            self.slug = getattr(self, &#34;title&#34;, self.__class__.__name__)
 
         self.slug = self.slug.lower().replace(&#34; &#34;, &#34;_&#34;)
 
@@ -484,7 +475,7 @@ include any defined attrs</dd>
 
     @property
     def html(self):
-        &#34;&#34;&#34;the text from self._content converted to html&#34;&#34;&#34;
+        &#34;&#34;&#34;Text from self._content converted to html&#34;&#34;&#34;
 
         if hasattr(self, &#34;_content&#34;):
             return markdown(self._content)
@@ -496,7 +487,10 @@ include any defined attrs</dd>
     def content(self):
         &#34;&#34;&#34;html = rendered html (not marked up). Is `None` if `content == None`&#34;&#34;&#34;
         if self._content:
-            return Markup(self.html)</code></pre>
+            return Markup(self.html)
+
+        else:
+            return &#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="render_engine.collection.Collection.routes"><code class="name">var <span class="ident">routes</span></code></dt>
