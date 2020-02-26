@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.4" />
+<title>render_engine.engine API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>render_engine.engine</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import logging
+from pathlib import Path
+from typing import Optional, Sequence, Type
+
+import jinja2
+from jinja2 import FileSystemLoader, select_autoescape
+
+from .page import Page
+
+
+class Engine:
+    &#34;&#34;&#34;
+    This is the engine that is builds your static site.
+    Use `Engine.run()` to output the files to the designated output path.
+
+    Attributes:
+        extension : str
+            the extension to use in the rendered files
+            default &#39;.html&#39;
+        environment : Any
+            the environment renderer that you want to use. You can use any environment that you like. Environments
+            should support a `get_template` and `render`
+
+    Todos:
+        * Create default template
+        * Method to build template directory
+    &#34;&#34;&#34;
+
+    extension: str = &#34;.html&#34;
+    environment = jinja2.Environment(
+        autoescape=select_autoescape(), loader=FileSystemLoader(&#34;templates&#34;)
+    )
+
+    def get_template(self, template: str):
+        &#34;&#34;&#34;
+        fetches the requested template from the environment. Purely a
+        convenience method
+
+        Parameters:
+            template : str
+                the template file to look for
+        &#34;&#34;&#34;
+        return self.environment.get_template(template)
+
+    def render(self, page: Type[Page], **kwargs):
+        &#34;&#34;&#34;
+        generates the rendered HTML from from environment
+
+        Parameters:
+            page : Page
+                the page object to render into html
+        &#34;&#34;&#34;
+        if page.template:
+            template = self.get_template(page.template)
+            kwargs.update({&#34;content&#34;: page.content})
+            kwargs.update(page.__dict__)
+
+            return template.render(**kwargs)
+
+        else:
+            return page.content</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="render_engine.engine.Engine"><code class="flex name class">
+<span>class <span class="ident">Engine</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>This is the engine that is builds your static site.
+Use <code>Engine.run()</code> to output the files to the designated output path.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>extension</code></strong> :&ensp;<code>str</code></dt>
+<dd>the extension to use in the rendered files
+default '.html'</dd>
+<dt><strong><code>environment</code></strong> :&ensp;<code>Any</code></dt>
+<dd>the environment renderer that you want to use. You can use any environment that you like. Environments
+should support a <code>get_template</code> and <code>render</code></dd>
+</dl>
+<h2 id="todos">Todos</h2>
+<ul>
+<li>Create default template</li>
+<li>Method to build template directory</li>
+</ul></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Engine:
+    &#34;&#34;&#34;
+    This is the engine that is builds your static site.
+    Use `Engine.run()` to output the files to the designated output path.
+
+    Attributes:
+        extension : str
+            the extension to use in the rendered files
+            default &#39;.html&#39;
+        environment : Any
+            the environment renderer that you want to use. You can use any environment that you like. Environments
+            should support a `get_template` and `render`
+
+    Todos:
+        * Create default template
+        * Method to build template directory
+    &#34;&#34;&#34;
+
+    extension: str = &#34;.html&#34;
+    environment = jinja2.Environment(
+        autoescape=select_autoescape(), loader=FileSystemLoader(&#34;templates&#34;)
+    )
+
+    def get_template(self, template: str):
+        &#34;&#34;&#34;
+        fetches the requested template from the environment. Purely a
+        convenience method
+
+        Parameters:
+            template : str
+                the template file to look for
+        &#34;&#34;&#34;
+        return self.environment.get_template(template)
+
+    def render(self, page: Type[Page], **kwargs):
+        &#34;&#34;&#34;
+        generates the rendered HTML from from environment
+
+        Parameters:
+            page : Page
+                the page object to render into html
+        &#34;&#34;&#34;
+        if page.template:
+            template = self.get_template(page.template)
+            kwargs.update({&#34;content&#34;: page.content})
+            kwargs.update(page.__dict__)
+
+            return template.render(**kwargs)
+
+        else:
+            return page.content</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="render_engine.feeds.RSSFeedEngine" href="feeds.html#render_engine.feeds.RSSFeedEngine">RSSFeedEngine</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="render_engine.engine.Engine.environment"><code class="name">var <span class="ident">environment</span></code></dt>
+<dd>
+<section class="desc"><p>The core component of Jinja is the <code>Environment</code>.
+It contains
+important shared variables like configuration, filters, tests,
+globals and others.
+Instances of this class may be modified if
+they are not shared and if no template was loaded so far.
+Modifications on environments after the first template was loaded
+will lead to surprising effects and undefined behavior.</p>
+<p>Here are the possible initialization parameters:</p>
+<pre><code>`block_start_string`
+    The string marking the beginning of a block.  Defaults to ``'{%'``.
+
+`block_end_string`
+    The string marking the end of a block.  Defaults to ``'%}'``.
+
+`variable_start_string`
+    The string marking the beginning of a print statement.
+    Defaults to ``'{{'``.
+
+`variable_end_string`
+    The string marking the end of a print statement.  Defaults to
+    ``'}}'``.
+
+`comment_start_string`
+    The string marking the beginning of a comment.  Defaults to ``'{#'``.
+
+`comment_end_string`
+    The string marking the end of a comment.  Defaults to ``'#}'``.
+
+`line_statement_prefix`
+    If given and a string, this will be used as prefix for line based
+    statements.  See also :ref:`line-statements`.
+
+`line_comment_prefix`
+    If given and a string, this will be used as prefix for line based
+    comments.  See also :ref:`line-statements`.
+
+    !!! versionadded "Added in version:&amp;ensp;2.2"
+
+
+`trim_blocks`
+    If this is set to ``True`` the first newline after a block is
+    removed (block, not variable tag!).  Defaults to `False`.
+
+`lstrip_blocks`
+    If this is set to ``True`` leading spaces and tabs are stripped
+    from the start of a line to a block.  Defaults to `False`.
+
+`newline_sequence`
+    The sequence that starts a newline.  Must be one of ``'\r'``,
+    ``'\n'`` or ``'\r\n'``.  The default is ``'\n'`` which is a
+    useful default for Linux and OS X systems as well as web
+    applications.
+
+`keep_trailing_newline`
+    Preserve the trailing newline when rendering templates.
+    The default is ``False``, which causes a single newline,
+    if present, to be stripped from the end of the template.
+
+    !!! versionadded "Added in version:&amp;ensp;2.7"
+
+
+`extensions`
+    List of Jinja extensions to use.  This can either be import paths
+    as strings or extension classes.  For more information have a
+    look at :ref:`the extensions documentation &lt;jinja-extensions&gt;`.
+
+`optimized`
+    should the optimizer be enabled?  Default is ``True``.
+
+`undefined`
+    :class:`Undefined` or a subclass of it that is used to represent
+    undefined values in the template.
+
+`finalize`
+    A callable that can be used to process the result of a variable
+    expression before it is output.  For example one can convert
+    ``None`` implicitly into an empty string here.
+
+`autoescape`
+    If set to ``True`` the XML/HTML autoescaping feature is enabled by
+    default.  For more details about autoescaping see
+    :class:`~jinja2.utils.Markup`.  As of Jinja 2.4 this can also
+    be a callable that is passed the template name and has to
+    return ``True`` or ``False`` depending on autoescape should be
+    enabled by default.
+
+    !!! versionchanged "Changed in version:&amp;ensp;2.4"
+        `autoescape` can now be a function
+
+`loader`
+    The template loader for this environment.
+
+`cache_size`
+    The size of the cache.  Per default this is ``400`` which means
+    that if more than 400 templates are loaded the loader will clean
+    out the least recently used template.  If the cache size is set to
+    ``0`` templates are recompiled all the time, if the cache size is
+    ``-1`` the cache will not be cleaned.
+
+    !!! versionchanged "Changed in version:&amp;ensp;2.8"
+        The cache size was increased to 400 from a low 50.
+
+`auto_reload`
+    Some loaders load templates from locations where the template
+    sources may change (ie: file system or database).  If
+    ``auto_reload`` is set to ``True`` (default) every time a template is
+    requested the loader checks if the source changed and if yes, it
+    will reload the template.  For higher performance it's possible to
+    disable that.
+
+`bytecode_cache`
+    If set to a bytecode cache object, this object will provide a
+    cache for the internal Jinja bytecode so that templates don't
+    have to be parsed if they were not changed.
+
+    See :ref:`bytecode-cache` for more information.
+
+`enable_async`
+    If set to true this enables async template execution which allows
+    you to take advantage of newer Python features.  This requires
+    Python 3.6 or later.
+</code></pre></section>
+</dd>
+<dt id="render_engine.engine.Engine.extension"><code class="name">var <span class="ident">extension</span></code></dt>
+<dd>
+<section class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></section>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="render_engine.engine.Engine.get_template"><code class="name flex">
+<span>def <span class="ident">get_template</span></span>(<span>self, template)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>fetches the requested template from the environment. Purely a
+convenience method</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
+<dd>the template file to look for</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_template(self, template: str):
+    &#34;&#34;&#34;
+    fetches the requested template from the environment. Purely a
+    convenience method
+
+    Parameters:
+        template : str
+            the template file to look for
+    &#34;&#34;&#34;
+    return self.environment.get_template(template)</code></pre>
+</details>
+</dd>
+<dt id="render_engine.engine.Engine.render"><code class="name flex">
+<span>def <span class="ident">render</span></span>(<span>self, page, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>generates the rendered HTML from from environment</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>page</code></strong> :&ensp;<code>Page</code></dt>
+<dd>the page object to render into html</dd>
+</dl></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def render(self, page: Type[Page], **kwargs):
+    &#34;&#34;&#34;
+    generates the rendered HTML from from environment
+
+    Parameters:
+        page : Page
+            the page object to render into html
+    &#34;&#34;&#34;
+    if page.template:
+        template = self.get_template(page.template)
+        kwargs.update({&#34;content&#34;: page.content})
+        kwargs.update(page.__dict__)
+
+        return template.render(**kwargs)
+
+    else:
+        return page.content</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="render_engine" href="index.html">render_engine</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="render_engine.engine.Engine" href="#render_engine.engine.Engine">Engine</a></code></h4>
+<ul class="">
+<li><code><a title="render_engine.engine.Engine.environment" href="#render_engine.engine.Engine.environment">environment</a></code></li>
+<li><code><a title="render_engine.engine.Engine.extension" href="#render_engine.engine.Engine.extension">extension</a></code></li>
+<li><code><a title="render_engine.engine.Engine.get_template" href="#render_engine.engine.Engine.get_template">get_template</a></code></li>
+<li><code><a title="render_engine.engine.Engine.render" href="#render_engine.engine.Engine.render">render</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
