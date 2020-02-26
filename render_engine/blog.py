@@ -67,16 +67,6 @@ class Blog(Collection):
     """
     Custom Collection Class with Archiving Enabled and the RSS Feed
 
-    Attributes:
-        page_content_type : BlogPost
-            default BlogPost
-        _archive_reverse : bool
-            default True
-        _archive_default_sort : Any
-            default BlogPost.date
-        feeds : List
-            default ['RSSFeed']
-
     Todos:
         - Add Support for JSON Feeds
         - Rename the archive items so they are not private

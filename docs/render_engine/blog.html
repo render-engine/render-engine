@@ -93,16 +93,6 @@ class Blog(Collection):
     &#34;&#34;&#34;
     Custom Collection Class with Archiving Enabled and the RSS Feed
 
-    Attributes:
-        page_content_type : BlogPost
-            default BlogPost
-        _archive_reverse : bool
-            default True
-        _archive_default_sort : Any
-            default BlogPost.date
-        feeds : List
-            default [&#39;RSSFeed&#39;]
-
     Todos:
         - Add Support for JSON Feeds
         - Rename the archive items so they are not private
@@ -142,17 +132,6 @@ class Blog(Collection):
 </code></dt>
 <dd>
 <section class="desc"><p>Custom Collection Class with Archiving Enabled and the RSS Feed</p>
-<h2 id="attributes">Attributes</h2>
-<dl>
-<dt><strong><code>page_content_type</code></strong> :&ensp;<a title="render_engine.blog.BlogPost" href="#render_engine.blog.BlogPost"><code>BlogPost</code></a></dt>
-<dd>default BlogPost</dd>
-<dt><strong><code>_archive_reverse</code></strong> :&ensp;<code>bool</code></dt>
-<dd>default True</dd>
-<dt><strong><code>_archive_default_sort</code></strong> :&ensp;<code>Any</code></dt>
-<dd>default BlogPost.date</dd>
-<dt><strong><code>feeds</code></strong> :&ensp;<code>List</code></dt>
-<dd>default ['RSSFeed']</dd>
-</dl>
 <h2 id="todos">Todos</h2>
 <ul>
 <li>Add Support for JSON Feeds</li>
@@ -165,16 +144,6 @@ class Blog(Collection):
 <pre><code class="python">class Blog(Collection):
     &#34;&#34;&#34;
     Custom Collection Class with Archiving Enabled and the RSS Feed
-
-    Attributes:
-        page_content_type : BlogPost
-            default BlogPost
-        _archive_reverse : bool
-            default True
-        _archive_default_sort : Any
-            default BlogPost.date
-        feeds : List
-            default [&#39;RSSFeed&#39;]
 
     Todos:
         - Add Support for JSON Feeds

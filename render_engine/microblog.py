@@ -8,7 +8,19 @@ from .feeds import RSSFeedItem, RSSFeedEngine
 
 
 class MicroBlogPost(BlogPost):
-    """Page Like Object with slight modifications to work with BlogPosts"""
+    """
+    Page Like Object with slight modifications to work with BlogPosts
+
+    Attribtues:
+        title : str
+            default ''. Leave blank.
+
+        slug : str
+            the name for the file for that will
+
+        rss_feed_item : RSSFeedItem
+            the content in an rss format
+    """
 
     title = ""
 
@@ -24,8 +36,11 @@ class MicroBlogPost(BlogPost):
 
 
 class MicroBlog(Blog):
+    """
+    Custom Blog Class pointing to custom templates
+    """
     _archive_template = "microblog_archive.html"
     _archive_slug = "all_microblog_posts"
     page_content_type: typing.Type[MicroBlogPost] = MicroBlogPost
-    reverse: bool = True
+    _archive_reverse: bool = True
     has_archive = True
