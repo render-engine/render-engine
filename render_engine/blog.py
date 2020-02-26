@@ -79,4 +79,11 @@ class Blog(Collection):
 
     @staticmethod
     def _archive_default_sort(cls):
+        """
+        How to sort pages
+
+        Attributes:
+        _archive_default_sort : Any
+            default BlogPost.date
+        """
         return cls.date
