@@ -45,6 +45,7 @@ class Page:
 
 
     Examples:
+        ```
         # Basic Page with No Template Variables
         @site.register_route('basic_page.html')
         class BasicPage(Page):
@@ -70,7 +71,7 @@ class Page:
         class InheritingPage(Page):
             # template will be inherited from the BasicPage
             title = 'Inherited Page'
-
+        ```
 
     Attributes:
         engine: str, optional

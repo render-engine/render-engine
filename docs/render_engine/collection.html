@@ -320,27 +320,32 @@ Render Engine should be a Page object.</p>
 <p>Pages can be rendered directly from a template or from a file.</p>
 <p>Page objects can be used to extend existing page objects.</p>
 <h2 id="examples">Examples</h2>
-<h1 id="basic-page-with-no-template-variables">Basic Page with No Template Variables</h1>
-<p>@site.register_route('basic_page.html')
+<pre><code># Basic Page with No Template Variables
+@site.register_route('basic_page.html')
 class BasicPage(Page):
-template = 'template_file.html' # user provided template</p>
-<h1 id="basic-page-with-variables">Basic Page with Variables</h1>
-<p>@site.register_route('page_with_vars')
+    template = 'template_file.html' # user provided template
+
+# Basic Page with Variables
+@site.register_route('page_with_vars')
 class PageWithVars(Page):
-title = 'Site Title'</p>
-<h1 id="page-loading-from-file">Page Loading from File</h1>
-<p>@site.register_route('page_from_file')
+    title = 'Site Title'
+
+# Page Loading from File
+@site.register_route('page_from_file')
 class PageFromFile(Page):
-content_path = 'index.md' # loaded from content path can be '.md' or '.html'</p>
-<h1 id="page-inherited-from-other-page">Page Inherited from Other Page</h1>
-<p>@site.register_route('basic_page.html')
+    content_path = 'index.md' # loaded from content path can be '.md' or '.html'
+
+# Page Inherited from Other Page
+@site.register_route('basic_page.html')
 class BasicPage(Page):
-template = 'template_file.html' # user provided template
-title = 'Base Page'</p>
-<p>@site.register_route('other_page.html')
+    template = 'template_file.html' # user provided template
+    title = 'Base Page'
+
+@site.register_route('other_page.html')
 class InheritingPage(Page):
-# template will be inherited from the BasicPage
-title = 'Inherited Page'</p>
+    # template will be inherited from the BasicPage
+    title = 'Inherited Page'
+</code></pre>
 <h2 id="attributes">Attributes</h2>
 <dl>
 <dt><strong><code>engine</code></strong></dt>
@@ -383,6 +388,7 @@ text converted to html from _content</dd>
 
 
     Examples:
+        ```
         # Basic Page with No Template Variables
         @site.register_route(&#39;basic_page.html&#39;)
         class BasicPage(Page):
@@ -408,7 +414,7 @@ text converted to html from _content</dd>
         class InheritingPage(Page):
             # template will be inherited from the BasicPage
             title = &#39;Inherited Page&#39;
-
+        ```
 
     Attributes:
         engine: str, optional
