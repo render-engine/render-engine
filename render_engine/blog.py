@@ -70,6 +70,7 @@ class Blog(Collection):
 
     Todo:
         - Add Support for JSON Feeds
+        - Rename the archive items so they are not private
     """
 
     page_content_type: typing.Type[BlogPost] = BlogPost
@@ -83,7 +84,10 @@ class Blog(Collection):
         How to sort pages
 
         Attributes:
-        _archive_default_sort : Any
-            default BlogPost.date
+            _archive_default_sort : Any
+                default BlogPost.date
+
+        Todo:
+            - Rename the archive items so they are not private
         """
         return cls.date
