@@ -2,5 +2,6 @@ site_name: Render Engine
 
 nav:
     - Home: index.md
+    - API : render_engine
 
 theme: readthedocs
