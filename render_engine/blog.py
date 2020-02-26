@@ -17,6 +17,7 @@ class BlogPost(Page):
     """
 
     template: str = "blog_post.html"
+
     def __init__(self, **kwargs):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
@@ -30,6 +31,7 @@ class BlogPost(Page):
         parsed_date = pendulum.parse(date, strict=False)
         self.date = parsed_date.set(tz=pendulum.local_timezone())
         self.date_published = self.date.to_rfc2822_string()
+        self.date_friendly = self.date.format('MMM DD, YYYY HH:mm A')
 
     @property
     def rss_feed_item(self):

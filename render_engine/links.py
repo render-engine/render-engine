@@ -19,8 +19,12 @@ class Link:
 
     image : str, optional
         the source url for the image link
+
+    icon : str, optional
+        similar to image, but allows for custom html for icons
     """
     name: str
     url: str
     links: list = List[Any]
     image: str = ''
+    icon: str = ''
