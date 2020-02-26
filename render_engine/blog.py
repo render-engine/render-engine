@@ -17,7 +17,15 @@ class BlogPost(Page):
 
     Attributes:
         template : str
+            the default template that the site will look for
         rss_feed_item : RSSFeedItem
+            the content in an rss format
+        date : pendulum.datetime
+            date parsed in datetime format. usesul for sorting and things
+        date_published : str
+            date formated for `RSSFeed`
+        date_friendly : str
+            an easy to read string version of the date
 
     """
 
@@ -37,6 +45,7 @@ class BlogPost(Page):
         """
 
         super().__init__(**kwargs)
+        # Add some flexibility to date detection
         date = first_true([
                 getattr(self, 'date_modified', None),
                 getattr(self, 'modified_date', None),
@@ -68,7 +77,7 @@ class Blog(Collection):
         feeds : List
             default ['RSSFeed']
 
-    Todo:
+    Todos:
         - Add Support for JSON Feeds
         - Rename the archive items so they are not private
     """
@@ -87,7 +96,7 @@ class Blog(Collection):
             _archive_default_sort : Any
                 default BlogPost.date
 
-        Todo:
+        Todos:
             - Rename the archive items so they are not private
         """
         return cls.date
