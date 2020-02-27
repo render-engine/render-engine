@@ -1,15 +1,15 @@
 from render_engine.blog import Blog, BlogPost
-import maya
 import pytest
+import pendulum
 
 @pytest.fixture()
 def base_blog_post():
     class BaseBlogPost(BlogPost):
-        date_published = maya.now()
-        date = maya.now()
-        publish_date = maya.now()
-        date_modified = maya.now()
-        modified_date = maya.now()
+        date_published = pendulum.now()
+        date = pendulum.now()
+        publish_date = pendulum.now()
+        date_modified = pendulum.now()
+        modified_date = pendulum.now()
 
     return BaseBlogPost
 
@@ -33,6 +33,6 @@ def test_blog_index_sorted_by_created_time(base_blog):
 def test_blog_date_published_order(base_blog_post, date):
     """blog date_published"""
     blog = base_blog_post()
-    val = maya.now().rfc2822()
+    val = pendulum.now().to_rfc2822_string()
     setattr(blog, date, val)
     assert blog.date_published == val

@@ -29,19 +29,20 @@ def test_page_content_converts_to_html(page_with_content_path):
         Markup("<h1>Test Header</h1>\n<p>Test Paragraph</p>")
 
 @pytest.mark.parametrize(
-    "attr, value",
+    "attr, value, result",
     (
-        [None, "page_with_no_title"],
-        ["title", "Page has Title"],
-        ["slug", "page has slug"],
+        [None, None, "page"],
+        ["title", "Page has Title", "page_has_title"],
+        ["slug", "page has slug", "page_has_slug"],
     ),
 )
-def test_page__slug_can_find__slug(attr, value):
-    class Page_With_No_Title(Page):
-        def __init__(self, _attr, _value):
+def test_page_slug_can_find_slug(attr, value, result):
+    if attr:
+        content= f"""{attr}: {value}
 
-            if _attr:
-                setattr(self, _attr, _value)
+Test Content"""
+        p = Page(content=content)
 
-    p = Page_With_No_Title(attr, value)
-    assert p.__str__() == value.lower().replace(" ", "_")
+    else:
+        p = Page()
+    assert p.slug == result
