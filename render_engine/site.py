@@ -4,8 +4,6 @@ import shutil
 import typing
 from pathlib import Path
 
-import click
-
 from ._type_hint_helpers import PathString
 from .collection import Collection
 from .engine import Engine
