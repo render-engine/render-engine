@@ -80,4 +80,25 @@ Classes
     * render_engine.engine.Engine
 
 `RSSFeedItem(cls)`
-:   The Object to be used with an RSS Feed
+:   The Object to be used with an RSS Feed.
+    
+    Attributes:
+        title (str):
+            Title of the post
+        description (str):
+            Content of the post. Can be the post's (in order) `description`,
+            `content` or `summary`.
+        guid (str):
+            unique identifier of the content
+        link (str): link to the post. Due to the design of the system, use the
+            reference link and expand to the full link using information from the `site`
+        pub_date (str):
+            datetime formatted to RFC 822 (or 2822)
+    
+    .. _should conform to the RSS 2.0 specification:
+       <https://cyber.harvard.edu/rss/rss.html>
+    
+    Parse information from the given class object.
+    
+    Raises:
+        AttributeError:
