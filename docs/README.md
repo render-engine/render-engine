@@ -10,10 +10,10 @@ Other static-site generators like _Pelican_ were built without modern architec
 
 ## The _4 layer_ Architecture 
 
-* **[Page](/render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
-* **[Collection](/render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
-* **[Engine](/render_engine/engine.html)** - The environments that turn your pre-content and templates into rendered HTML
-* **[Site](/render_engine/site.html)** - The container that holds all Pages and Collections and gives access to global configurations and settings.
+* **[Page](render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
+* **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
+* **[Engine](render_engine/engine.html)** - The environments that turn your pre-content and templates into rendered HTML
+* **[Site](render_engine/site.html)** - The container that holds all Pages and Collections and gives access to global configurations and settings.
 
 You can expand on these areas to customize your engine to your liking.
 
