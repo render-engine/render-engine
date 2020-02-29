@@ -93,7 +93,7 @@ class Site:
         }
 
         # check for errors
-        if self.SITE_TITLE == "Untitle Site"
+        if self.SITE_TITLE == "Untitle Site":
             logging.warning(f"No custom site title defined. Using the {SITE_TITLE=}")
 
         if self.SITE_URL == self.SITE_LINK == "https://example.com":
