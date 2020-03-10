@@ -1,5 +1,4 @@
 jinja2==2.10.1
 markdown==3.1.1
 markupsafe==1.1.1
-pyyaml==5.1.2
 wheel==0.33.6
