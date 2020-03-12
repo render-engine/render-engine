@@ -1,0 +1,10 @@
+from render_engine import Site, Page, Collections
+
+
+site = Site()
+
+@site.register_route()
+class index(Page):
+    pass
+
+site.render()
