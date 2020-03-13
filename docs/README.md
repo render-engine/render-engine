@@ -34,6 +34,7 @@ You can expand on these areas to customize your engine to your liking.
 - [Python3.7](https://python.org) or later.
 - [Jinja2] - for template things
 - [Pendulum] - for datetime things
+- [Click] - for some commandline goodness
 
 
 # Installing Render Engine
@@ -41,5 +42,24 @@ You can expand on these areas to customize your engine to your liking.
 ### Using pip
 `pip install render-engine`
 
+# Get Started Quickly
+
+Render Engine DOESN'T Need the following but the this is a base module that can quickly get you on your way
+
+```
+content/ # store content for collections here
+run.py # use render_engine run.py to build site
+templates/
+  - page.html # default template for Page objects. Modify this file to fit your design
+  - all_posts.html # default template for Collection objects. Modify this file to fit your design
+static/ # will be copied into your generated output. great for storing css/.js/image files
+```
+
+[ ] Todo: Build this functionality out into quickstart
+
+
 [Jinja2]: https://jinja.palletsprojects.com/en/latest
 [Pendulum]: https://pendulum.eustace.io
+[Click]: https://click.palletsprojects.com/en/latest
+
+
