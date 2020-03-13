@@ -6,16 +6,18 @@ import shutil
 from pathlib import Path
 
 
-def create_static_dir (base_dir: str=Path.cwd() : str = "static"):
+def create_static_dir (base_dir: str=Path.cwd(), static_dir: str = "static"):
     """/"""
     Path(base_dir).joinpath(static_dir).mkdir(exist_ok=True)
+
 
 def create_content_path(base_dir: str=Path.cwd(), content_path: str = "content"):
     """/"""
     Path(base_dir).joinpath(content_path).mkdir(exist_ok=True)
 
+
 def create_templates_path(
-    base_dir: str = Path().cwd()
+    base_dir: str = Path().cwd(),
     include_template_files: bool = True,
     ):
     """
@@ -24,28 +26,13 @@ def create_templates_path(
     """
 
     base_dir = Path(base_dir).joinpath('templates')
-    templates_path = ''
+    templates_path = 'templates'
 
     if base_template_files:
-        return shutil.copytree(, base_dir, dirs_exist_ok=True)
+        return shutil.copytree(base_dir, templates_path, dirs_exist_ok=True)
 
     else:
         return Path(base_dir).joinpath(content_path).mkdir(exist_ok=True)
-
-
-def create_base_page(
-    base_dir: str = "./",
-    templates_path: str = "templates",
-    ):
-
-    templates_path.joinpath("page.html").touch(exist_ok=True)
-
-
-def gen_run_template():
-    env = Environment(loader=PackageLoader("render_engine", "templates"))
-    template = env.get_template("run.txt")
-    return template.render()
-
 
 
 @click.command()
@@ -73,11 +60,8 @@ def _main(
     - Test Folders Do Not Overwrite
     - Test Folders Do Not Error if exists already
     """
+    pass
 
-    click.echo(f"{output_dir=} created")
-    click.echo(f"{content_path=} created")
-    click.echo(f"{static_dir=} created")
-    Path("run.py").write_text(get_run_template)
 
 
 if __name__ == "__main__":

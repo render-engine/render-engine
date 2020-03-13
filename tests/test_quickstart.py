@@ -13,7 +13,7 @@ def test_create_content_path_does_not_exist():
         shutil.rmtree(path)
 
     #test
-    quickstart.create_output_path('./tests', 'content')
+    quickstart.create_content_path('./tests', 'content')
     assert path.is_dir()
 
     # cleanup
@@ -26,7 +26,7 @@ def test_create_content_path_does_exists():
     path.mkdir()
 
     #test
-    quickstart.create_output_path('./tests', 'content')
+    quickstart.create_content_path('./tests', 'content')
     assert path.is_dir()
 
     # cleanup
@@ -41,7 +41,7 @@ def test_create_templates_path_does_not_exist():
         shutil.rmtree(path)
 
     #test
-    quickstart.create_output_path('./tests', 'templates')
+    quickstart.create_content_path('./tests', 'templates')
     assert path.is_dir()
 
     # cleanup
@@ -56,7 +56,7 @@ def test_create_templates_path_does_exists():
     path.mkdir()
 
     #test
-    quickstart.create_output_path('./tests', 'templates')
+    quickstart.create_content_path('./tests', 'templates')
     assert path.is_dir()
 
     # cleanup
