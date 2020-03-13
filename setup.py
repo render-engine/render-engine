@@ -41,7 +41,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2020.3.dev2',  # Required
+    version='2020.3.dev4',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -172,7 +172,7 @@ setup(
     # MANIFEST.in as well.
      package_data={  # Optional
     #    'sample': ['package_data.dat'],
-         'render_engine': ['rss/*'],
+         'render_engine': ['rss/*', 'templates/*'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

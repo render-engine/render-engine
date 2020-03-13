@@ -1,4 +1,4 @@
-
+import render_engine
 import click
 from jinja2 import Environment, PackageLoader
 
@@ -6,63 +6,103 @@ import shutil
 from pathlib import Path
 
 
-def create_static_dir (base_dir: str=Path.cwd(), static_dir: str = "static"):
-    """/"""
-    Path(base_dir).joinpath(static_dir).mkdir(exist_ok=True)
-
-
-def create_content_path(base_dir: str=Path.cwd(), content_path: str = "content"):
-    """/"""
-    Path(base_dir).joinpath(content_path).mkdir(exist_ok=True)
-
-
-def create_templates_path(
+def create_templates_directory(
     base_dir: str = Path().cwd(),
+    templates_dir: str = "templates",
     include_template_files: bool = True,
-    ):
+):
     """
     Create Base Folders for your
     output_dir, static_dir, content_path, and templates_path
     """
 
-    base_dir = Path(base_dir).joinpath('templates')
-    templates_path = 'templates'
+    source_folder = Path(Path(render_engine.__file__).parent, "templates")
+    templates_path = Path(base_dir).joinpath(templates_dir)
 
-    if base_template_files:
-        return shutil.copytree(base_dir, templates_path, dirs_exist_ok=True)
+    if include_template_files:
+        return shutil.copytree(source_folder, templates_path, dirs_exist_ok=True)
 
     else:
-        return Path(base_dir).joinpath(content_path).mkdir(exist_ok=True)
+        return Path(base_dir).joinpath(content_path).mkdir(parents=True, exist_ok=True)
 
 
 @click.command()
-@click.option('--base-directory', default='./', help='starting directory for your project')
-@click.option('--static-path', '-s', default='output', help='directory that rendered HTML files will be saved')
-@click.option('--content-path', '-c', default=False, help='directory that rendered HTML files')
-@click.option('--blog', prompt='Would you like to create a blog object', help='Add a Blog Object')
-@click.option('--microblog', default=True)
-@click.option('--pages-directory', prompt='create a separate pages directory in your content path')
-@click.option('--no-static-path', '-Xs', default=False, help='If True, do not create a static directory')
-@click.option('--no-content-path', '-Xc', default=False, help='If True, do not create a content directory')
+@click.option(
+    "--base-directory", default=".", help="starting directory for your project"
+)
+@click.option(
+    "--static-directory", default="static", help="static directory for your project"
+)
+@click.option(
+    "--content-directory", default="content", help="content directory for your project"
+)
+@click.option(
+    "--static-path/--no-static-path", "-s/-S", default=True, help="create a static path"
+)
+@click.option(
+    "--content-path/--no-content-path",
+    "-c/-C",
+    default=True,
+    help="directory for prerendered files",
+)
+@click.option(
+    "--templates-path/--no-templates-path",
+    "-t/-T",
+    default=True,
+    help="directory for template files",
+)
+@click.option(
+    "--templates-files/--no-templates-files",
+    "-f/-F",
+    default=True,
+    help="files for templates-directory",
+)
+@click.option(
+    "--blog",
+    is_flag=True,
+    prompt="Would you like to create a blog object",
+    help="Add a Blog Object",
+)
+@click.option("--microblog", is_flag=True, default=False)
+@click.option(
+    "--pages-directory",
+    is_flag=True,
+    help="create a separate pages directory inside of your content path",
+)
+@click.option("--templates-directory", default='templates',
+        help="directory for template files")
 def _main(
     base_directory,
     static_path,
     content_path,
     templates_path,
-    no_static_path,
-    no_content_path,
     blog,
     microblog,
+    templates_files,
+    static_directory,
+    content_directory,
+    pages_directory,
+    templates_directory,
 ):
     """
-    - Create Folders
-    - Test Folders Created
-    - Test Folders Do Not Overwrite
-    - Test Folders Do Not Error if exists already
+    CLI that allows folks to quickly build their starting directory
     """
-    pass
 
+    if static_path:
+        Path(base_directory).joinpath(static_directory).mkdir(
+            parents=True, exist_ok=True
+        )
+
+    if content_path:
+        Path(base_directory).joinpath(content_directory).mkdir(
+            parents=True, exist_ok=True
+        )
+
+    if templates_path:
+        create_templates_directory(
+            base_directory, templates_directory, templates_files
+        )
 
 
 if __name__ == "__main__":
-    typer.run(_main())
+    _main()
