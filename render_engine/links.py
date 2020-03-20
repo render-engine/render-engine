@@ -25,6 +25,6 @@ class Link:
     """
     name: str
     url: str
-    links: list = List[Any]
+    links: List = List[Any]
     image: str = ''
     icon: str = ''

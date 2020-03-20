@@ -92,13 +92,6 @@ class Site:
                 "rss_engine": RSSFeedEngine(),
         }
 
-        # check for errors
-        if self.SITE_TITLE == "Untitle Site":
-            logging.warning(f"No custom site title defined. Using the {SITE_TITLE=}")
-
-        if self.SITE_URL == self.SITE_LINK == "https://example.com":
-            logging.warning(f"No custom site URL defined. Using the {SITE_URL=}")
-
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
         Add a class to your `self.collections`
@@ -124,10 +117,23 @@ class Site:
         for page in collection.pages:
             self.route(cls=page)
 
+        for subcollection in collection.subcollections:
+            logging.debug(f'{subcollection=}')
+            subc = collection.subcollect(subcollection)
+
+            for x in subc:
+                sb = Collection()
+                sb.content_items = x.items
+                sb.title = x.title
+                sb._archive_slug = f'all_{x.title}'
+                sb.has_archive = True
+                self.route(cls=sb.archive)
+
         if collection.has_archive:
             self.route(cls=collection.archive)
 
             for feed in collection.feeds:
+
                 if feed:
                     self.register_feed(feed=feed, collection=collection)
 
@@ -149,10 +155,16 @@ class Site:
 
 
     def render(self, dry_run: bool = False) -> None:
+        # check for errors
+        if self.SITE_TITLE == "Untitle Site":
+            logging.warning(f"No custom site title defined. Using the {SITE_TITLE=}")
+
+        if self.SITE_URL == "https://example.com":
+            logging.warning(f"No custom site URL defined. Using the {self.SITE_URL=}")
+
         for page in self.routes:
             engine = self.engines.get(page.engine, self.engines["default_engine"])
             content = engine.render(page, **vars(self))
-
 
             for route in page.routes:
                 logging.info(f'starting on {route=}')
@@ -166,4 +178,3 @@ class Site:
 
                 else:
                     print(f'{content} writes to {filepath}')
-

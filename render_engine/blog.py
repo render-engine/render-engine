@@ -53,6 +53,7 @@ class BlogPost(Page):
                 getattr(self, 'publish_date', None),
                 getattr(self, 'date'),
                 ])
+        logging.debug(f'{date=} detected!')
         parsed_date = pendulum.parse(date, strict=False)
         self.date = parsed_date.set(tz=pendulum.local_timezone())
         self.date_published = self.date.to_rfc2822_string()

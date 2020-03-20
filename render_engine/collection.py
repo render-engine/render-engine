@@ -1,13 +1,14 @@
+import itertools
+import operator
 import logging
 import typing
 from pathlib import Path
 
 from .page import Page
 from .feeds import RSSFeed
-
+from .subcollections import SubCollection
 
 class Collection:
-    engine = ""
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
 
@@ -57,9 +58,11 @@ class Collection:
     engine = ''
     page_content_type = Page
     content_path = "content"
+    content_items = []
     template = "page.html"
     includes = ["*.md", "*.html"]
     routes = [""]
+    subcollections = []
     has_archive = False
     _archive_template = "archive.html"
     _archive_slug = "all_posts"
@@ -77,12 +80,20 @@ class Collection:
         """Iterate through set of pages and generate a `Page`-like object for each."""
         pages = []
 
-        for i in self.includes:
-            for _file in Path(self.content_path).glob(i):
-                page = self.page_content_type(content_path=_file)
-                page.routes = self.routes
-                page.template = self.template
-                pages.append(page)
+        if self.content_items:
+            pages += self.content_items
+
+        else:
+            for i in self.includes:
+                for _file in Path(self.content_path).glob(i):
+                    page = self.page_content_type(content_path=_file)
+                    page.routes = self.routes
+                    page.template = self.template
+
+                    for attr in self.subcollections:
+                        if not hasattr(page, attr):
+                            setattr(page, attr, '')
+                    pages.append(page)
 
         return pages
 
@@ -100,3 +111,15 @@ class Collection:
             reverse=self._archive_reverse,
         )
         return archive_page
+
+
+    def subcollect(self, attr):
+        """"""
+        groups = []
+
+        for attr in self.subcollections:
+            attrvals = operator.attrgetter(attr)
+
+            groups += [SubCollection(x, list(y)) for x, y in itertools.groupby(self.pages, key=operator.attrgetter(attr))]
+
+        return groups

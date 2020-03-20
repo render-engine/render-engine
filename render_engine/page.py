@@ -10,6 +10,8 @@ from markdown import markdown
 
 from ._type_hint_helpers import PathString
 
+#some attributes will need to be protected from manipulation
+
 # default matching param for posts
 base_matcher = re.compile(r"(^\w+: \b.+$)", flags=re.M)
 
@@ -123,10 +125,29 @@ class Page:
             content = Path(content_path).read_text()
 
         valid_attrs, self._content = parse_content(content, matcher=matcher)
+        logging.debug(valid_attrs)
+
+        protected_attrs = [
+                'title',
+                'date',
+                'date_published',
+                'published_date',
+                'modified_date',
+                'date_modified',
+                ]
 
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
-            setattr(self, name.lower(), value.strip())
+
+
+            # comma delimit attributes.
+            if len(value.split(', ')) > 1 and name.lower() not in protected_attrs:
+                value = value.split(', ')
+
+            else:
+                value = value.strip()
+
+            setattr(self, name.lower(), value)
 
         if not hasattr(self, "slug"):
             self.slug = getattr(self, "title", self.__class__.__name__)
