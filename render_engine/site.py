@@ -115,6 +115,7 @@ class Site:
         self.collections.update({collection.__class__.__name__: collection})
 
         for page in collection.pages:
+            print(page.template)
             self.route(cls=page)
 
         for subcollection in collection.subcollections:

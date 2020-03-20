@@ -1,3 +1,4 @@
+import more_itertools
 import itertools
 import operator
 import logging
@@ -115,11 +116,34 @@ class Collection:
 
     def subcollect(self, attr):
         """"""
-        groups = []
+        SubCollections = []
 
         for attr in self.subcollections:
+            groups = []
             attrvals = operator.attrgetter(attr)
+            subcategories = [x for x, y in itertools.groupby(self.pages,
+                key=attrvals)]
 
-            groups += [SubCollection(x, list(y)) for x, y in itertools.groupby(self.pages, key=operator.attrgetter(attr))]
+            for subcategory in subcategories:
 
-        return groups
+                if isinstance(subcategory, list):
+                    for subsub in subcategory:
+                        groups.append(subsub)
+
+                else:
+                    groups.append(subcategory)
+
+            groups = list(filter(lambda x:x, groups))
+
+            for val in groups:
+                subcollection_pages = []
+
+                for page in self.pages:
+                    if hasattr(page, attr):
+                        if val in getattr(page, attr):
+                            subcollection_pages.append(page)
+
+                logging.debug(f'{attr=} {val} - {subcollection_pages}!')
+                SubCollections.append(SubCollection(val, subcollection_pages))
+            print(SubCollections)
+            return SubCollections
