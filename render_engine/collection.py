@@ -145,5 +145,4 @@ class Collection:
 
                 logging.debug(f'{attr=} {val} - {subcollection_pages}!')
                 SubCollections.append(SubCollection(val, subcollection_pages))
-            print(SubCollections)
             return SubCollections
