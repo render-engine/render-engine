@@ -115,7 +115,6 @@ class Site:
         self.collections.update({collection.__class__.__name__: collection})
 
         for page in collection.pages:
-            print(page.template)
             self.route(cls=page)
 
         for subcollection in collection.subcollections:
@@ -125,17 +124,19 @@ class Site:
             for x in subc:
                 sb = Collection()
                 sb.content_items = x.items
-                sb.title = x.title
+
+                sb.title = f'all_{x.title}'
+                sb._archive_template = collection._archive_template
                 sb._archive_slug = f'all_{x.title}'
                 sb.has_archive = True
+
                 self.route(cls=sb.archive)
 
         if collection.has_archive:
             self.route(cls=collection.archive)
 
+        if hasattr(collection, 'feeds'):
             for feed in collection.feeds:
-
-                if feed:
                     self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
@@ -165,7 +166,7 @@ class Site:
 
         for page in self.routes:
             engine = self.engines.get(page.engine, self.engines["default_engine"])
-            content = engine.render(page, **vars(self))
+            content = engine.render(page, content=page.content, **vars(self))
 
             for route in page.routes:
                 logging.info(f'starting on {route=}')

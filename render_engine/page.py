@@ -30,6 +30,7 @@ def parse_content(content: str, matcher=base_matcher):
 
     parsed_content = re.split(matcher, content)
     content = parsed_content.pop().strip()
+
     attrs = list(filter(lambda x: x.strip(), parsed_content))
     return attrs, content
 
@@ -119,13 +120,13 @@ class Page:
 
         """
 
-        self.content_path = content_path
+        if hasattr(self, 'content_path'):
+            content = Path(self.content_path).read_text()
 
-        if content_path:
+        elif content_path:
             content = Path(content_path).read_text()
 
         valid_attrs, self._content = parse_content(content, matcher=matcher)
-        logging.debug(valid_attrs)
 
         protected_attrs = [
                 'title',
@@ -135,6 +136,7 @@ class Page:
                 'modified_date',
                 'date_modified',
                 ]
+
 
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
@@ -149,10 +151,16 @@ class Page:
 
             setattr(self, name.lower(), value)
 
+        if not hasattr(self, 'title'):
+            self.title = self.__class__.__name__
+
         if not hasattr(self, "slug"):
             self.slug = getattr(self, "title", self.__class__.__name__)
 
         self.slug = self.slug.lower().replace(" ", "_")
+
+        logging.warning(f'{self.title}, {self.content}')
+
 
     def __str__(self):
         return self.slug

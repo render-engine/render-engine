@@ -69,7 +69,6 @@ class Collection:
     _archive_slug = "all_posts"
     _archive_content_type = Page
     _archive_reverse = False
-    # engines that will generate feeds. Engine should output 'rss', or 'JSON' format
 
     @staticmethod
     def _archive_default_sort(cls):
