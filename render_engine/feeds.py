@@ -40,7 +40,7 @@ class RSSFeedItem:
        <https://cyber.harvard.edu/rss/rss.html>
     """
 
-    def __init__(self, cls):
+    def __init__(self, cls, site_url=''):
         '''
         Parse information from the given class object.
 
@@ -62,7 +62,9 @@ class RSSFeedItem:
             raise AttributeError(error_msg)
 
         self.guid = getattr(cls, "guid", cls.slug)
-        self.link = cls.slug
+        logging.debug(vars(cls))
+        route = cls.routes[0].lstrip('/')
+        self.link = f'{route}/{cls.slug}'
         self.pub_date = cls.date_published
 
 
@@ -79,7 +81,7 @@ class RSSFeed(Page):
 class RSSFeedEngine(Engine):
     """The Engine that Processes RSS Feed"""
 
-    extension = ".rss"
+    extension = ".rss.xml"
     environment = jinja2.Environment(
         loader=PackageLoader("render_engine", "rss"),
         autoescape=select_autoescape(),

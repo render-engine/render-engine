@@ -53,7 +53,6 @@ class BlogPost(Page):
                 getattr(self, 'publish_date', None),
                 getattr(self, 'date'),
                 ])
-        logging.debug(f'{date=} detected!')
         parsed_date = pendulum.parse(date, strict=False)
         self.date = parsed_date.set(tz=pendulum.local_timezone())
         self.date_published = self.date.to_rfc2822_string()
@@ -74,12 +73,12 @@ class Blog(Collection):
     """
 
     page_content_type: typing.Type[BlogPost] = BlogPost
-    _archive_reverse: bool = True
+    archive_reverse: bool = True
     has_archive: bool = True
     feeds = [RSSFeed]
 
     @staticmethod
-    def _archive_default_sort(cls):
+    def archive_default_sort(cls):
         """
         How to sort pages
 

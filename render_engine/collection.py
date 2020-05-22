@@ -65,13 +65,13 @@ class Collection:
     routes = [""]
     subcollections = []
     has_archive = False
-    _archive_template = "archive.html"
-    _archive_slug = "all_posts"
-    _archive_content_type = Page
-    _archive_reverse = False
+    archive_template = "archive.html"
+    archive_slug = "all_posts"
+    archive_content_type = Page
+    archive_reverse = False
 
     @staticmethod
-    def _archive_default_sort(cls):
+    def archive_default_sort(cls):
         """attribute pulled from a rendered Page to sort `pages`"""
         return cls.slug
 
@@ -100,15 +100,15 @@ class Collection:
     @property
     def archive(self):
         """Create a `Page` object for those items"""
-        archive_page = self._archive_content_type()
-        archive_page.template = self._archive_template
-        archive_page.slug = self._archive_slug
+        archive_page = self.archive_content_type()
+        archive_page.template = self.archive_template
+        archive_page.slug = self.archive_slug
         archive_page.engine = ""
         archive_page.title = self.__class__.__name__
         archive_page.pages = sorted(
             self.pages,
-            key=lambda p: self._archive_default_sort(p),
-            reverse=self._archive_reverse,
+            key=lambda p: self.archive_default_sort(p),
+            reverse=self.archive_reverse,
         )
         return archive_page
 

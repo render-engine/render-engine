@@ -126,8 +126,8 @@ class Site:
                 sb.content_items = x.items
 
                 sb.title = f'all_{x.title}'
-                sb._archive_template = collection._archive_template
-                sb._archive_slug = f'all_{x.title}'
+                sb.archive_template = collection.archive_template
+                sb.archive_slug = f'all_{x.title}'
                 sb.has_archive = True
 
                 self.route(cls=sb.archive)
@@ -140,13 +140,15 @@ class Site:
                     self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
+        extension = self.engines['rss_engine'].extension
         _feed = feed()
-        _feed.slug = ''.join([collection.__class__.__name__.lower(), _feed.slug])
+        _feed.slug = collection.__class__.__name__.lower()
         _feed.items = [page.rss_feed_item for page in collection.pages]
-        _feed.title = ' - '.join([self.SITE_TITLE, _feed.title])
-        _feed.link = ''.join([self.SITE_LINK, _feed.link])
+        _feed.title = f'{self.SITE_TITLE} - {_feed.title}'
+        _feed.link = f'{self.SITE_URL}/{_feed.slug}{extension}'
 
         self.route(cls=_feed)
+        logging.debug(vars(_feed))
 
 
     def route(self, cls) -> None:

@@ -99,7 +99,7 @@ class Page:
     routes = [""]
 
     def __init__(
-        self, content_path: PathString = None, content: str = "", matcher=base_matcher
+        self, content_path: PathString = None, content: str = "", matcher=base_matcher,
     ):
         """
         If a content_path exists, check the associated file, processing the
@@ -157,9 +157,10 @@ class Page:
         if not hasattr(self, "slug"):
             self.slug = getattr(self, "title", self.__class__.__name__)
 
-        self.slug = self.slug.lower().replace(" ", "_")
+        _slug = self.slug.lower().replace(" ", "_")
+        self.slug = re.sub(r'[!\[\]\(\)]', '', _slug)
 
-        logging.warning(f'{self.title}, {self.content}')
+        logging.debug(f'{self.title}, {self.content}')
 
 
     def __str__(self):
