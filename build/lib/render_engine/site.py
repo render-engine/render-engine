@@ -148,7 +148,7 @@ class Site:
         _feed.link = f'{self.SITE_URL}/{_feed.slug}{extension}'
 
         self.route(cls=_feed)
-        logging.warning(vars(_feed))
+        logging.debug(vars(_feed))
 
 
     def route(self, cls) -> None:
