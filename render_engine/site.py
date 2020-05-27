@@ -53,7 +53,7 @@ class Site:
     SITE_LINK: str = "https://example.com"
     SITE_URL: str = "https://example.com"
 
-    def __init__(self, strict: bool = False):
+    def __init__(self, strict: bool = False, search = None, search_keys = []):
         """
         Clean Directory and Prepare Output Directory
 
@@ -91,6 +91,10 @@ class Site:
                 "default_engine": Engine(),
                 "rss_engine": RSSFeedEngine(),
         }
+
+        self.search = search
+        self.search_keys = search_keys
+        self.search_index_filename = 'search.json'
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
@@ -150,7 +154,6 @@ class Site:
         self.route(cls=_feed)
         logging.debug(vars(_feed))
 
-
     def route(self, cls) -> None:
         self.routes.append(cls)
 
@@ -167,6 +170,7 @@ class Site:
             logging.warning(f"No custom site URL defined. Using the {self.SITE_URL=}")
 
         for page in self.routes:
+
             engine = self.engines.get(page.engine, self.engines["default_engine"])
             content = engine.render(page, content=page.content, **vars(self))
 
@@ -182,3 +186,13 @@ class Site:
 
                 else:
                     print(f'{content} writes to {filepath}')
+
+
+        if self.search:
+            search_pages = filter(lambda x: x.no_index == False, self.routes)
+            search_index = self.search.build_index(
+                    pages=search_pages,
+                    keys=self.search_keys,
+                    filepath=self.output_path.joinpath(self.search_index_filename),
+                    )
+

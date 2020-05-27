@@ -63,7 +63,7 @@ class RSSFeedItem:
 
         self.guid = getattr(cls, "guid", cls.slug)
         logging.debug(vars(cls))
-        route = cls.routes[0].lstrip('/')
+        route = cls.routes[0]
         self.link = f'{route}/{cls.slug}'
         self.pub_date = cls.date_published
 
@@ -76,6 +76,10 @@ class RSSFeed(Page):
     title = "RSS Feed"
     link = ""
     slug = ""
+
+    def __init__(self):
+        super().__init__()
+        self.no_index = True
 
 
 class RSSFeedEngine(Engine):
