@@ -28,6 +28,7 @@ class MicroBlogPost(BlogPost):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
         self.slug = pendulum.parse(self.date_published, strict=False).format("YMDHmS")
+        self.url = f'{self.routes[0]}/{self.slug}'
 
     @property
     def rss_feed_item(self):

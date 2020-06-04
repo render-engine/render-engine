@@ -99,7 +99,11 @@ class Page:
     routes = [""]
 
     def __init__(
-        self, content_path: PathString = None, content: str = "", matcher=base_matcher,
+        self,
+        content_path: PathString = None,
+        content: str = "",
+        matcher=base_matcher,
+        no_index: bool = False,
     ):
         """
         If a content_path exists, check the associated file, processing the
@@ -120,6 +124,8 @@ class Page:
 
         """
 
+        self.no_index = no_index
+
         if hasattr(self, 'content_path'):
             content = Path(self.content_path).read_text()
 
@@ -128,13 +134,14 @@ class Page:
 
         valid_attrs, self._content = parse_content(content, matcher=matcher)
 
-        protected_attrs = [
+        no_split_attrs = [
                 'title',
                 'date',
                 'date_published',
                 'published_date',
                 'modified_date',
                 'date_modified',
+                'no_index',
                 ]
 
 
@@ -143,7 +150,7 @@ class Page:
 
 
             # comma delimit attributes.
-            if len(value.split(', ')) > 1 and name.lower() not in protected_attrs:
+            if len(value.split(', ')) > 1 and name.lower() not in no_split_attrs:
                 value = value.split(', ')
 
             else:
@@ -161,6 +168,8 @@ class Page:
         self.slug = re.sub(r'[!\[\]\(\)]', '', _slug)
 
         logging.debug(f'{self.title}, {self.content}')
+
+        self.url = f'{self.routes[0]}/{self.slug}'
 
 
     def __str__(self):

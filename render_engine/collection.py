@@ -9,6 +9,7 @@ from .page import Page
 from .feeds import RSSFeed
 from .subcollections import SubCollection
 
+
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
@@ -57,18 +58,18 @@ class Collection:
 
     """
     engine = ''
-    page_content_type = Page
-    content_path = "content"
-    content_items = []
-    template = "page.html"
-    includes = ["*.md", "*.html"]
-    routes = [""]
-    subcollections = []
-    has_archive = False
-    archive_template = "archive.html"
-    archive_slug = "all_posts"
-    archive_content_type = Page
-    archive_reverse = False
+    page_content_type: Page = Page
+    content_path: str = "content"
+    content_items: typing.List[Page] = []
+    template: str = "page.html"
+    includes: typing.List[str] = ["*.md", "*.html"]
+    routes: typing.List[str] = [""]
+    subcollections: typing.List[str] = []
+    has_archive: bool = False
+    archive_template: str = "archive.html"
+    archive_slug: str = "all_posts"
+    archive_content_type: Page = Page
+    archive_reverse: bool = False
 
     @staticmethod
     def archive_default_sort(cls):
@@ -78,24 +79,24 @@ class Collection:
     @property
     def pages(self) -> typing.List[typing.Type[Page]]:
         """Iterate through set of pages and generate a `Page`-like object for each."""
-        pages = []
+        _pages = self.content_items
 
-        if self.content_items:
-            pages += self.content_items
+        if not Path(self.content_path).exists():
+            return _pages # Do nothing if the path does not exist
 
-        else:
-            for i in self.includes:
-                for _file in Path(self.content_path).glob(i):
-                    page = self.page_content_type(content_path=_file)
-                    page.routes = self.routes
-                    page.template = self.template
+        if Path(self.content_path).samefile('/'):
+            logging.warning(f'{self.content_path=}! Accessing Root Directory is Dangerous...')
 
-                    for attr in self.subcollections:
-                        if not hasattr(page, attr):
-                            setattr(page, attr, '')
-                    pages.append(page)
+        for pattern in self.includes:
 
-        return pages
+            for filepath in Path(self.content_path).glob(pattern):
+                page = self.page_content_type(content_path=filepath)
+                page.routes = self.routes
+                page.template = self.template
+
+                _pages.append(page)
+
+        return _pages
 
     @property
     def archive(self):
@@ -113,19 +114,34 @@ class Collection:
         return archive_page
 
 
-    def subcollect(self, attr):
-        """"""
-        SubCollections = []
+    @classmethod
+    def subcollect(cls, self, attr):
+        attrvals = set()
 
-        for attr in self.subcollections:
-            groups = []
-            attrvals = operator.attrgetter(attr)
-            subcategories = [x for x, y in itertools.groupby(self.pages,
-                key=attrvals)]
+        for page in self.pages:
+            if hasattr(page, attr):
+                attrvals.add(page.attr)
 
-            for subcategory in subcategories:
+        subcollections = []
+        for attrval in attrvals:
+            for p in self.pages:
+                subcollections.append(
+                        SubCollection(title=attrval)
+                )
 
-                if isinstance(subcategory, list):
+
+        for page in self.pages():
+
+            # check page for the attribute
+            if (attrval:=getattr(page, attr, None)):
+
+                if isinstance(attrval, list):
+                    if attrval not in subcollection:
+                        subcollection[attrval] = [page]
+
+                    else:
+                        subcollection[attrval].append(page)
+
                     for subsub in subcategory:
                         groups.append(subsub)
 

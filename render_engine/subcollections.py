@@ -5,4 +5,3 @@ from dataclasses import dataclass
 class SubCollection:
     title: str
     items: List
-    

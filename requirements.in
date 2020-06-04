@@ -1,3 +1,7 @@
 jinja2
 markdown
 click
+pendulum
+pytest
+pytest-cov
+pytest-mock
