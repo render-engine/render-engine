@@ -7,7 +7,6 @@ from pathlib import Path
 
 from .page import Page
 from .feeds import RSSFeed
-from .subcollections import SubCollection
 
 
 class Collection:
@@ -60,16 +59,26 @@ class Collection:
     engine = ''
     page_content_type: Page = Page
     content_path: str = "content"
-    content_items: typing.List[Page] = []
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
     routes: typing.List[str] = [""]
     subcollections: typing.List[str] = []
-    has_archive: bool = False
     archive_template: str = "archive.html"
     archive_slug: str = "all_posts"
     archive_content_type: Page = Page
     archive_reverse: bool = False
+
+
+    def __init__(
+            self,
+            *,
+            title:str='',
+            content_items: typing.List[typing.Optional[Page]]=[],
+            has_archive: bool = False,
+    ):
+        self.content_items = content_items
+        self.title = title
+        self.has_archive = has_archive
 
     @staticmethod
     def archive_default_sort(cls):
@@ -113,51 +122,14 @@ class Collection:
         )
         return archive_page
 
-
     @classmethod
-    def subcollect(cls, self, attr):
-        attrvals = set()
+    def from_subcollection(cls, collection, attr, attrval):
+        content_items = []
 
-        for page in self.pages:
-            if hasattr(page, attr):
-                attrvals.add(page.attr)
+        for page in collection.pages:
 
-        subcollections = []
-        for attrval in attrvals:
-            for p in self.pages:
-                subcollections.append(
-                        SubCollection(title=attrval)
-                )
+            if attrval in getattr(page, attr, []):
+                content_items.append(page)
 
 
-        for page in self.pages():
-
-            # check page for the attribute
-            if (attrval:=getattr(page, attr, None)):
-
-                if isinstance(attrval, list):
-                    if attrval not in subcollection:
-                        subcollection[attrval] = [page]
-
-                    else:
-                        subcollection[attrval].append(page)
-
-                    for subsub in subcategory:
-                        groups.append(subsub)
-
-                else:
-                    groups.append(subcategory)
-
-            groups = list(filter(lambda x:x, groups))
-
-            for val in groups:
-                subcollection_pages = []
-
-                for page in self.pages:
-                    if hasattr(page, attr):
-                        if val in getattr(page, attr):
-                            subcollection_pages.append(page)
-
-                logging.debug(f'{attr=} {val} - {subcollection_pages}!')
-                SubCollections.append(SubCollection(val, subcollection_pages))
-            return SubCollections
+        return cls(title=attrval, content_items=content_items, has_archive=True)

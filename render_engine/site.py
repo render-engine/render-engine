@@ -9,7 +9,20 @@ from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
 from .page import Page
+from .links import Link
 
+
+def get_subcollections(collection):
+    subcollection_set = set()
+
+    for page in collection.pages:
+
+        for subcollection in collection.subcollections:
+
+            if attr:=getattr(page, subcollection, None):
+                subcollection_set.add((subcollection, attr))
+
+    return subcollection_set
 
 class Site:
     """
@@ -44,7 +57,6 @@ class Site:
         - make SITE_URL accesible as a Page variable and allow for switch for
             Relative and Absolute URLS
     """
-
     routes: typing.List[str] = []
     collections = {}
     output_path: Path = Path("output")
@@ -96,6 +108,7 @@ class Site:
         self.search_keys = search_keys
         self.search_index_filename = 'search.json'
 
+
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
         Add a class to your `self.collections`
@@ -121,23 +134,15 @@ class Site:
         for page in collection.pages:
             self.route(cls=page)
 
-        for subcollection in collection.subcollections:
-            logging.debug(f'{subcollection=}')
-            subc = collection.subcollect(subcollection)
-
-            for x in subc:
-                sb = Collection()
-                sb.content_items = x.items
-
-                sb.title = f'all_{x.title}'
-                sb.archive_template = collection.archive_template
-                sb.archive_slug = f'all_{x.title}'
-                sb.has_archive = True
-
-                self.route(cls=sb.archive)
-
         if collection.has_archive:
             self.route(cls=collection.archive)
+
+        for attr, attrval in get_subcollections(collection):
+            self.route(Collection.from_subcollection(
+                    collection,
+                    attr,
+                    attrval,
+                    ).archive)
 
         if hasattr(collection, 'feeds'):
             for feed in collection.feeds:

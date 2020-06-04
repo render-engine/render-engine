@@ -178,12 +178,8 @@ class Page:
     @property
     def html(self):
         """Text from self._content converted to html"""
+        return markdown(self._content)
 
-        if hasattr(self, "_content"):
-            return markdown(self._content)
-
-        else:
-            return ""
 
     @property
     def content(self):

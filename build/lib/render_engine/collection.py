@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .page import Page
 from .feeds import RSSFeed
-from .subcollections import SubCollection
+
 
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
@@ -57,18 +57,28 @@ class Collection:
 
     """
     engine = ''
-    page_content_type = Page
-    content_path = "content"
-    content_items = []
-    template = "page.html"
-    includes = ["*.md", "*.html"]
-    routes = [""]
-    subcollections = []
-    has_archive = False
-    archive_template = "archive.html"
-    archive_slug = "all_posts"
-    archive_content_type = Page
-    archive_reverse = False
+    page_content_type: Page = Page
+    content_path: str = "content"
+    template: str = "page.html"
+    includes: typing.List[str] = ["*.md", "*.html"]
+    routes: typing.List[str] = [""]
+    subcollections: typing.List[str] = []
+    archive_template: str = "archive.html"
+    archive_slug: str = "all_posts"
+    archive_content_type: Page = Page
+    archive_reverse: bool = False
+
+
+    def __init__(
+            self,
+            *,
+            title:str='',
+            content_items: typing.List[typing.Optional[Page]]=[],
+            has_archive: bool = False,
+    ):
+        self.content_items = content_items
+        self.title = title
+        self.has_archive = has_archive
 
     @staticmethod
     def archive_default_sort(cls):
@@ -78,24 +88,24 @@ class Collection:
     @property
     def pages(self) -> typing.List[typing.Type[Page]]:
         """Iterate through set of pages and generate a `Page`-like object for each."""
-        pages = []
+        _pages = self.content_items
 
-        if self.content_items:
-            pages += self.content_items
+        if not Path(self.content_path).exists():
+            return _pages # Do nothing if the path does not exist
 
-        else:
-            for i in self.includes:
-                for _file in Path(self.content_path).glob(i):
-                    page = self.page_content_type(content_path=_file)
-                    page.routes = self.routes
-                    page.template = self.template
+        if Path(self.content_path).samefile('/'):
+            logging.warning(f'{self.content_path=}! Accessing Root Directory is Dangerous...')
 
-                    for attr in self.subcollections:
-                        if not hasattr(page, attr):
-                            setattr(page, attr, '')
-                    pages.append(page)
+        for pattern in self.includes:
 
-        return pages
+            for filepath in Path(self.content_path).glob(pattern):
+                page = self.page_content_type(content_path=filepath)
+                page.routes = self.routes
+                page.template = self.template
+
+                _pages.append(page)
+
+        return _pages
 
     @property
     def archive(self):
@@ -112,36 +122,14 @@ class Collection:
         )
         return archive_page
 
+    @classmethod
+    def from_subcollection(cls, collection, attr, attrval):
+        content_items = []
 
-    def subcollect(self, attr):
-        """"""
-        SubCollections = []
+        for page in collection.pages:
 
-        for attr in self.subcollections:
-            groups = []
-            attrvals = operator.attrgetter(attr)
-            subcategories = [x for x, y in itertools.groupby(self.pages,
-                key=attrvals)]
+            if attrval in getattr(page, attr, []):
+                content_items.append(page)
 
-            for subcategory in subcategories:
 
-                if isinstance(subcategory, list):
-                    for subsub in subcategory:
-                        groups.append(subsub)
-
-                else:
-                    groups.append(subcategory)
-
-            groups = list(filter(lambda x:x, groups))
-
-            for val in groups:
-                subcollection_pages = []
-
-                for page in self.pages:
-                    if hasattr(page, attr):
-                        if val in getattr(page, attr):
-                            subcollection_pages.append(page)
-
-                logging.debug(f'{attr=} {val} - {subcollection_pages}!')
-                SubCollections.append(SubCollection(val, subcollection_pages))
-            return SubCollections
+        return cls(title=attrval, content_items=content_items, has_archive=True)
