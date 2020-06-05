@@ -59,26 +59,17 @@ class Collection:
     engine = ''
     page_content_type: Page = Page
     content_path: str = "content"
+    content_items: typing.List = []
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
     routes: typing.List[str] = [""]
     subcollections: typing.List[str] = []
+    has_archive: bool = False
     archive_template: str = "archive.html"
     archive_slug: str = "all_posts"
     archive_content_type: Page = Page
     archive_reverse: bool = False
 
-
-    def __init__(
-            self,
-            *,
-            title:str='',
-            content_items: typing.List[typing.Optional[Page]]=[],
-            has_archive: bool = False,
-    ):
-        self.content_items = content_items
-        self.title = title
-        self.has_archive = has_archive
 
     @staticmethod
     def archive_default_sort(cls):
@@ -124,12 +115,19 @@ class Collection:
 
     @classmethod
     def from_subcollection(cls, collection, attr, attrval):
-        content_items = []
+        sub_content_items = []
 
         for page in collection.pages:
 
             if attrval in getattr(page, attr, []):
-                content_items.append(page)
+                sub_content_items.append(page)
+
+        print(sub_content_items)
 
 
-        return cls(title=attrval, content_items=content_items, has_archive=True)
+        class SubCollection(Collection):
+            title=attrval
+            content_items=sub_content_items
+            has_archive=True
+
+        return SubCollection()

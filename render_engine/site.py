@@ -20,7 +20,13 @@ def get_subcollections(collection):
         for subcollection in collection.subcollections:
 
             if attr:=getattr(page, subcollection, None):
-                subcollection_set.add((subcollection, attr))
+                if isinstance(attr, list):
+                    map(
+                            lambda x: subcollection_set.add((subcollection, x)),
+                            attr)
+
+                else:
+                    subcollection_set.add((subcollection, attr))
 
     return subcollection_set
 
@@ -146,7 +152,7 @@ class Site:
 
         if hasattr(collection, 'feeds'):
             for feed in collection.feeds:
-                    self.register_feed(feed=feed, collection=collection)
+                self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
         extension = self.engines['rss_engine'].extension
@@ -200,4 +206,3 @@ class Site:
                     keys=self.search_keys,
                     filepath=self.output_path.joinpath(self.search_index_filename),
                     )
-

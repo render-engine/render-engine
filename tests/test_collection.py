@@ -29,9 +29,12 @@ def test_collection():
     page_4.title = 'Page 4'
     page_4.slug = 'page4'
 
-    content_items = [page_1, page_2, page_3, page_4]
 
-    return Collection(content_items=content_items)
+    class TestCollection(Collection):
+        content_items = [page_1, page_2, page_3, page_4]
+
+
+    return TestCollection()
 
 def test_collection_content_items_equals_pages_if_nothing_else_exists(test_collection):
     """Test that the collections content_items are visible in pages"""
