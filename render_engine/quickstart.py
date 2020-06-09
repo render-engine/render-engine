@@ -3,7 +3,9 @@ import click
 from jinja2 import Environment, PackageLoader
 
 import shutil
+import logging
 from pathlib import Path
+
 
 
 def create_templates_directory(
@@ -28,13 +30,13 @@ def create_templates_directory(
 
 @click.command()
 @click.option(
-    "--base-directory", default=".", help="starting directory for your project"
+    "--base-directory", default="./", help="starting directory for your project"
 )
 @click.option(
-    "--static-directory", default="static", help="static directory for your project"
+    "--static-directory", default="./static", help="static directory for your project"
 )
 @click.option(
-    "--content-directory", default="content", help="content directory for your project"
+    "--content-directory", default="./content/pages", help="content directory for your project"
 )
 @click.option(
     "--static-path/--no-static-path", "-s/-S", default=True, help="create a static path"
@@ -60,7 +62,7 @@ def create_templates_directory(
 @click.option(
     "--blog",
     is_flag=True,
-    prompt="Would you like to create a blog object",
+    default=True,
     help="Add a Blog Object",
 )
 @click.option("--microblog", is_flag=True, default=False)
@@ -71,7 +73,7 @@ def create_templates_directory(
 )
 @click.option("--templates-directory", default='templates',
         help="directory for template files")
-def _main(
+def quickstart(
     base_directory,
     static_path,
     content_path,
@@ -88,21 +90,32 @@ def _main(
     CLI that allows folks to quickly build their starting directory
     """
 
-    if static_path:
-        Path(base_directory).joinpath(static_directory).mkdir(
-            parents=True, exist_ok=True
+    click.echo('Initiating Quickstart')
+
+    if static_path and not (static_dir:=Path(static_directory)).exists():
+        static_dir.mkdir(parents=True)
+
+    else:
+        logging.warning(f'{static_dir=} already exists. Skipping.')
+
+    if content_path and not (content_dir:=Path(content_directory)).exists():
+        content_dir.mkdir(
+            parents=True,
         )
 
-    if content_path:
-        Path(base_directory).joinpath(content_directory).mkdir(
-            parents=True, exist_ok=True
-        )
+    else:
+        logging.warning(f'{content_dir=} already exists. Skipping.')
 
     if templates_path:
         create_templates_directory(
             base_directory, templates_directory, templates_files
         )
 
+    if not Path('./run.py').exists():
+        shutil.copy(
+                Path(render_engine.__file__).parent.joinpath(
+                        'run_template.txt'),
+                        './run.py')
 
-if __name__ == "__main__":
-    _main()
+    else:
+        logging.warning(f'run.py already exists. Skipping.')

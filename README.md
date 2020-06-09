@@ -42,7 +42,17 @@ You can expand on these areas to customize your engine to your liking.
 ### Using pip
 `pip install render-engine`
 
+
 # Get Started Quickly
+
+### The Quick Way
+
+`render-engine-quickstart`
+
+This will create your essential files and a `run.py` that you can use to build
+your output file.
+
+
 
 Render Engine DOESN'T Need the following but the this is a base module that can quickly get you on your way
 
@@ -54,8 +64,6 @@ templates/
   - all_posts.html # default template for Collection objects. Modify this file to fit your design
 static/ # will be copied into your generated output. great for storing css/.js/image files
 ```
-
-[ ] Todo: Build this functionality out into quickstart
 
 
 [Jinja2]: https://jinja.palletsprojects.com/en/latest

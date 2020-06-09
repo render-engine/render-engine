@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import typing
+import more_itertools
 from pathlib import Path
 
 from ._type_hint_helpers import PathString
@@ -20,9 +21,15 @@ def get_subcollections(collection):
         for subcollection in collection.subcollections:
 
             if attr:=getattr(page, subcollection, None):
-                subcollection_set.add((subcollection, attr))
+                if isinstance(attr, list):
+                    for subattr in attr:
+                        subcollection_set.add((subcollection, subattr))
+
+                else:
+                    subcollection_set.add((subcollection, attr))
 
     return subcollection_set
+
 
 class Site:
     """
@@ -59,6 +66,7 @@ class Site:
     """
     routes: typing.List[str] = []
     collections = {}
+    subcollections = {}
     output_path: Path = Path("output")
     static_path: Path = Path("static")
     SITE_TITLE: str = "Untitled Site"
@@ -137,7 +145,15 @@ class Site:
         if collection.has_archive:
             self.route(cls=collection.archive)
 
-        for attr, attrval in get_subcollections(collection):
+        subcollections = get_subcollections(collection)
+
+        for attr, attrval in subcollections:
+            if attr not in self.subcollections.keys():
+                self.subcollections[attr] = [attrval]
+
+            else:
+                self.subcollections[attr].append(attrval)
+
             self.route(Collection.from_subcollection(
                     collection,
                     attr,
@@ -146,7 +162,7 @@ class Site:
 
         if hasattr(collection, 'feeds'):
             for feed in collection.feeds:
-                    self.register_feed(feed=feed, collection=collection)
+                self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
         extension = self.engines['rss_engine'].extension
@@ -165,14 +181,7 @@ class Site:
     def register_route(self, cls) -> None:
         self.routes.append(cls())
 
-
     def render(self, dry_run: bool = False) -> None:
-        # check for errors
-        if self.SITE_TITLE == "Untitle Site":
-            logging.warning(f"No custom site title defined. Using the {SITE_TITLE=}")
-
-        if self.SITE_URL == "https://example.com":
-            logging.warning(f"No custom site URL defined. Using the {self.SITE_URL=}")
 
         for page in self.routes:
 
@@ -200,4 +209,3 @@ class Site:
                     keys=self.search_keys,
                     filepath=self.output_path.joinpath(self.search_index_filename),
                     )
-

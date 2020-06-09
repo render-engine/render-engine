@@ -171,7 +171,6 @@ class Page:
 
         self.url = f'{self.routes[0]}/{self.slug}'
 
-
     def __str__(self):
         return self.slug
 

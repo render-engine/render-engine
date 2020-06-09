@@ -57,28 +57,17 @@ class Collection:
 
     """
     engine = ''
-    page_content_type: Page = Page
-    content_path: str = "content"
+    page_content_type: typing.Type[Page] = Page
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
     routes: typing.List[str] = [""]
     subcollections: typing.List[str] = []
+    has_archive: bool = False
     archive_template: str = "archive.html"
     archive_slug: str = "all_posts"
     archive_content_type: Page = Page
     archive_reverse: bool = False
 
-
-    def __init__(
-            self,
-            *,
-            title:str='',
-            content_items: typing.List[typing.Optional[Page]]=[],
-            has_archive: bool = False,
-    ):
-        self.content_items = content_items
-        self.title = title
-        self.has_archive = has_archive
 
     @staticmethod
     def archive_default_sort(cls):
@@ -88,22 +77,24 @@ class Collection:
     @property
     def pages(self) -> typing.List[typing.Type[Page]]:
         """Iterate through set of pages and generate a `Page`-like object for each."""
-        _pages = self.content_items
 
-        if not Path(self.content_path).exists():
-            return _pages # Do nothing if the path does not exist
+        _pages = []
 
-        if Path(self.content_path).samefile('/'):
-            logging.warning(f'{self.content_path=}! Accessing Root Directory is Dangerous...')
+        if hasattr(self, 'content_items'):
+            _pages = self.content_items
 
-        for pattern in self.includes:
+        if hasattr(self, 'content_path'):
+            if Path(self.content_path).samefile('/'):
+                logging.warning(f'{self.content_path=}! Accessing Root Directory is Dangerous...')
 
-            for filepath in Path(self.content_path).glob(pattern):
-                page = self.page_content_type(content_path=filepath)
-                page.routes = self.routes
-                page.template = self.template
+            for pattern in self.includes:
 
-                _pages.append(page)
+                for filepath in Path(self.content_path).glob(pattern):
+                    page = self.page_content_type(content_path=filepath)
+                    page.routes = self.routes
+                    page.template = self.template
+
+                    _pages.append(page)
 
         return _pages
 
@@ -115,6 +106,7 @@ class Collection:
         archive_page.slug = self.archive_slug
         archive_page.engine = ""
         archive_page.title = self.__class__.__name__
+        archive_page.routes = [self.routes[0]]
         archive_page.pages = sorted(
             self.pages,
             key=lambda p: self.archive_default_sort(p),
@@ -124,12 +116,17 @@ class Collection:
 
     @classmethod
     def from_subcollection(cls, collection, attr, attrval):
-        content_items = []
+        sub_content_items = []
 
         for page in collection.pages:
 
             if attrval in getattr(page, attr, []):
-                content_items.append(page)
+                sub_content_items.append(page)
 
+        class SubCollection(Collection):
+            title=attrval
+            content_items=sub_content_items
+            has_archive=True
+            routes = [attrval]
 
-        return cls(title=attrval, content_items=content_items, has_archive=True)
+        return SubCollection()
