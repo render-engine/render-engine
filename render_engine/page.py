@@ -97,6 +97,7 @@ class Page:
     engine = ""
     template = ""
     routes = [""]
+    list_attrs = ['tags']
 
     def __init__(
         self,
@@ -134,23 +135,12 @@ class Page:
 
         valid_attrs, self._content = parse_content(content, matcher=matcher)
 
-        no_split_attrs = [
-                'title',
-                'date',
-                'date_published',
-                'published_date',
-                'modified_date',
-                'date_modified',
-                'no_index',
-                ]
-
 
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
 
-
             # comma delimit attributes.
-            if len(value.split(', ')) > 1 and name.lower() not in no_split_attrs:
+            if name.lower() in self.list_attrs:
                 value = value.split(', ')
 
             else:
@@ -159,7 +149,7 @@ class Page:
             setattr(self, name.lower(), value)
 
         if not hasattr(self, 'title'):
-            self.title = self.__class__.__name__
+            self.title = getattr(self, 'name', None) or self.__class__.__name__
 
         if not hasattr(self, "slug"):
             self.slug = getattr(self, "title", self.__class__.__name__)

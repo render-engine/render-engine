@@ -51,7 +51,7 @@ class BlogPost(Page):
                 getattr(self, 'modified_date', None),
                 getattr(self, 'date_published', None),
                 getattr(self, 'publish_date', None),
-                getattr(self, 'date'),
+                getattr(self, 'date', None),
                 ])
         parsed_date = pendulum.parse(date, strict=False)
         self.date = parsed_date.set(tz=pendulum.local_timezone())

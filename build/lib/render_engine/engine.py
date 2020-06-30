@@ -27,8 +27,13 @@ class Engine:
     """
 
     extension: str = ".html"
-    environment = jinja2.Environment(
-        autoescape=select_autoescape(), loader=FileSystemLoader("templates")
+    template_path = 'templates'
+
+    @property
+    def environment(self):
+        return jinja2.Environment(
+        autoescape=select_autoescape(),
+        loader=FileSystemLoader(self.template_path)
     )
 
     def get_template(self, template: str):

@@ -5,7 +5,7 @@ site = Site()
 
 @site.register_route
 class Index(Page):
-    template = "page.html" # page.html is the default template but you can make a custom template
+    template = "index.html" # page.html is the default template but you can make a custom template
     slug = "index"
 
 

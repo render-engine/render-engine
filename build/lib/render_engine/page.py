@@ -134,23 +134,14 @@ class Page:
 
         valid_attrs, self._content = parse_content(content, matcher=matcher)
 
-        no_split_attrs = [
-                'title',
-                'date',
-                'date_published',
-                'published_date',
-                'modified_date',
-                'date_modified',
-                'no_index',
-                ]
-
+        list_attrs = ['tags']
 
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
 
 
             # comma delimit attributes.
-            if len(value.split(', ')) > 1 and name.lower() not in no_split_attrs:
+            if name.lower() in list_attrs:
                 value = value.split(', ')
 
             else:

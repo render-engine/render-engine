@@ -148,11 +148,11 @@ class Site:
         subcollections = get_subcollections(collection)
 
         for attr, attrval in subcollections:
-            if attr not in self.subcollections.keys():
-                self.subcollections[attr] = [attrval]
+            if attr in self.subcollections.keys():
+                self.subcollections[attr].append(attrval)
 
             else:
-                self.subcollections[attr].append(attrval)
+                self.subcollections[attr] = [attrval]
 
             self.route(Collection.from_subcollection(
                     collection,

@@ -24,7 +24,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='render_engine',  # Required
-    version='2020.6.10',  # Required
+    version='2020.6.12',  # Required
     description='Static Page Generation with Flask-like simplicity and flair ✨',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
@@ -83,7 +83,7 @@ setup(
 
     package_data={  # Optional
     #    'sample': ['package_data.dat'],
-         'render_engine': ['rss/*', 'templates/*'],
+         'render_engine': ['rss/*', 'templates/*', 'run_template.txt'],
     },
     entry_points={  # Optional
         'console_scripts': [

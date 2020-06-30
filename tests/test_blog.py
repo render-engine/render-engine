@@ -1,3 +1,4 @@
+from render_engine.feeds import RSSFeedItem
 from render_engine.blog import Blog, BlogPost
 import pytest
 import pendulum
@@ -23,16 +24,39 @@ def base_blog():
     return BaseBlog
 
 
-def test_blog_index_sorted_by_created_time(base_blog):
+def test_blog_index_sorted_by_date_published(base_blog):
     """blogs have a customer default sort field"""
-    assert base_blog.default_sort == 'date_published'
+    class Foo:
+        some_other_option = 0
+        date = 1
+    assert base_blog.archive_default_sort(Foo) == 1
+
 
 @pytest.mark.parametrize('date',
-        ["date_published", "date", "publish_date", "date_modified",
-        "modified_date"])
-def test_blog_date_published_order(base_blog_post, date):
+        [
+            "date_published",
+            "date",
+            "publish_date",
+            "date_modified",
+            "modified_date",
+            ]
+        )
+def test_blogpost_date_published_order(date):
     """blog date_published"""
-    blog = base_blog_post()
-    val = pendulum.now().to_rfc2822_string()
-    setattr(blog, date, val)
-    assert blog.date_published == val
+    class testBlog(BlogPost):
+        def __init__(self, **kwargs):
+            setattr(self, date, 'Jan 1, 2020')
+            super().__init__(**kwargs)
+
+    tb = testBlog()
+
+    assert tb.date == pendulum.parse('Jan 1, 2020', strict=False).set(tz=pendulum.local_timezone())
+
+def test_assert_blog_rss_feed_item_is_rss_feed_item():
+    class testBlog(BlogPost):
+        def __init__(self, **kwargs):
+            self.date_published='Jan 1, 2020'
+            super().__init__(**kwargs)
+
+    tb = testBlog()
+    assert isinstance(tb.rss_feed_item, RSSFeedItem)
