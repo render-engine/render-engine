@@ -39,6 +39,8 @@ You can expand any of these areas to customize your engine to your liking.
 - [Jinja2] - for template things
 - [Pendulum] - for datetime things
 - [Click] - for some commandline goodness
+- [more-itertools] - for iteration things
+- [markdown] - for markdown things
 
 ### Using pip
 `pip install render-engine`
@@ -50,8 +52,10 @@ You can expand any of these areas to customize your engine to your liking.
 
 `render-engine-quickstart`
 
+![render-engine-quickstart](https://s3-us-west-2.amazonaws.com/kjaymiller/images/Render%20Engine%20Quickstart.gif)
+
 This will create your essential files and a `run.py` that you can use to build
-your output file.
+your output file using `python run.py`
 
 Render Engine DOESN'T Need the following but this model can quickly get you on your way.
 
