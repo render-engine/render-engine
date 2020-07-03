@@ -81,3 +81,4 @@ on github.
 
 ### Sponsors
 - [Brian Douglas](https://github.com/bdougie)
+- [Anthony Shaw](https://github.com/tonybaloney)
