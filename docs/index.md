@@ -5,7 +5,7 @@ Render Engine is designed to think in terms of pages.
 
 Render Engine's components build off of one another.
 
-At the base level there is a **Page**, it is just that a single entity of HTML and metadata goodness.
+At the base level there is a **Page**, it is just that, a single entity of HTML and metadata goodness.
 
 Sometimes a lot of pages will have a lot in common or belong to a group. We call these **Collections**. Collections can have any number of the same, or different attributes. Oh and your collections can even have collections...🤯
 
