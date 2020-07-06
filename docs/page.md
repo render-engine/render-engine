@@ -49,29 +49,6 @@ Built-in Attributes of `Page`
 Built-in attributes are not exposed to the template and can be used to give the
 site instructions for building.
 
-### engine
-`engine: Optional[str]=None # _inherits from Site_`
-
-:Caution: The engine is your translating tool, do no overwrite for a single
-page unless you are doing something very specific.
-
-```
-import Mako
-
-class mako(Engine):
-  ... # code for mako to be compatible with Render Engine
-
-site = Site()
-site.engines['Mako'] = mako
-
-class Index(Page):
-  engine = 'Mako'
-```
-
-The page's Engine of the is responsible for generating content for your
-webpage. In most cases this will be provided by the site and should not be
-changed.
-
 ### template
 
 `template: Optional[str]=None # _inherits from Site_`
@@ -152,6 +129,59 @@ class About(page):
   content_path = 'content/pages/about.md'
 ```
 
+Content loaded from a `content_path` is parsed using the `parse_content`
+method given the object's [matcher].
+
 ### list_attrs
 
 `list_attrs: Optional[Union['str']]=None`
+
+When loading content 
+
+## Not-So-Safe Attributes
+While you can modify most values with their given type there are a few object
+that should be left alone unless you are really going under the hood.
+
+### matcher
+`matcher: Optional['str']=r"(^\w+: \b.+$)"`
+
+`matcher` is the pattern given to `parse_content` to be matched for attributes when given a
+`content_path`.
+
+This can be modified to change your attribute value delimiter.
+
+NOTE: Matcher is used to match the entire line.
+
+```
+class matching_item(Page):
+    content_path = 'content/matching_item.md'
+    matcher = r"(^\w+- \b.+$)" # This would match content in content/matching_item.md
+
+# content/matching_item.md
+-----
+
+title - This is a test
+
+Some content here...
+```
+
+### engine
+`engine: Optional[str]=None # _inherits from Site_`
+
+```
+import Mako
+
+class mako(Engine):
+  ... # code for mako to be compatible with Render Engine
+
+site = Site()
+site.engines['Mako'] = mako
+
+class Index(Page):
+  engine = 'Mako'
+```
+
+The page's Engine of the is responsible for generating content for your
+webpage. In most cases this will be provided by the site and should not be
+changed.
+
