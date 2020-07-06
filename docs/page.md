@@ -49,7 +49,7 @@ Built-in Attributes of `Page`
 Built-in attributes are not exposed to the template and can be used to give the
 site instructions for building.
 
-### Engine
+### engine
 `engine: Optional[str]=None # _inherits from Site_`
 
 :Caution: The engine is your translating tool, do no overwrite for a single
@@ -72,7 +72,7 @@ The page's Engine of the is responsible for generating content for your
 webpage. In most cases this will be provided by the site and should not be
 changed.
 
-### Template
+### template
 
 `template: Optional[str]=None # _inherits from Site_`
 
@@ -90,7 +90,7 @@ class Index(Page): # the overriden template `templates/index.html` will be used.
     template = 'index.html'
 ```
 
-### Routes
+### routes
 
 `route: Optional[Union['str']]=['']`
 
@@ -102,7 +102,7 @@ class About(Page):
 
 ```
 
-### Slug
+### slug
 
 `slug: Optional[str]=''`
 
