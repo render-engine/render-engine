@@ -9,7 +9,7 @@ from render_engine.page import parse_content
 
 def test_parse_content_splits_text():
     content = 'title: Some Title\n\nThis is the content.'
-    assert parse_content(content) == (
+    assert parse_content(content, r"(^\w+: \b.+$)") == (
             ['title: Some Title'],
             'This is the content.',
             )

@@ -12,11 +12,7 @@ from ._type_hint_helpers import PathString
 
 #some attributes will need to be protected from manipulation
 
-# default matching param for posts
-base_matcher = re.compile(r"(^\w+: \b.+$)", flags=re.M)
-
-
-def parse_content(content: str, matcher=base_matcher):
+def parse_content(content: str, matcher: str):
     """
     split content into attributes and content text
 
@@ -28,7 +24,8 @@ def parse_content(content: str, matcher=base_matcher):
             default `base_matcher`
     """
 
-    parsed_content = re.split(matcher, content)
+    matchmaker = re.compile(matcher, flags=re.M)
+    parsed_content = re.split(matchmaker, content)
     content = parsed_content.pop().strip()
 
     attrs = list(filter(lambda x: x.strip(), parsed_content))
@@ -94,17 +91,17 @@ class Page:
             text converted to html from _content
     """
 
-    engine = ""
-    template = ""
+    engine: typing.Optional[str] = "" # by default inherits from Site
+    template: typing.Optional[str] = "" # by default inherits from Site
     routes = [""]
     list_attrs = ['tags']
+    no_index: bool = False,
+    matcher: str = r"(^\w+: \b.+$)"
 
     def __init__(
         self,
         content_path: PathString = None,
         content: str = "",
-        matcher=base_matcher,
-        no_index: bool = False,
     ):
         """
         If a content_path exists, check the associated file, processing the
@@ -125,15 +122,13 @@ class Page:
 
         """
 
-        self.no_index = no_index
-
         if hasattr(self, 'content_path'):
             content = Path(self.content_path).read_text()
 
         elif content_path:
             content = Path(content_path).read_text()
 
-        valid_attrs, self._content = parse_content(content, matcher=matcher)
+        valid_attrs, self._content = parse_content(content, matcher=self.matcher)
 
 
         for attr in valid_attrs:

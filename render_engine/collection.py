@@ -104,7 +104,8 @@ class Collection:
     @property
     def archive(self):
         """Create a `Page` object for those items"""
-        archive_page = self.archive_content_type(no_index=True)
+        archive_page = self.archive_content_type()
+        archive_page.no_index = True
         archive_page.template = self.archive_template
         archive_page.slug = self.archive_slug
         archive_page.engine = ""

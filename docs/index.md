@@ -13,4 +13,4 @@ All of these pages we build need a home. This is a **Site**. A site serves as a 
 
 Last but not least is the **Engine**. And engine is what is doing the work building out your pages from the data and templates that you have provided it. How do you start that engine? Simple.
 
-## `site.render()`
+**`site.render()`**
