@@ -7,6 +7,5 @@ nav:
     - Collection: collection.md
     - Site: site.md
     - Engine: engine.md
-    - API: render_engine
 
 theme: readthedocs
