@@ -60,3 +60,9 @@ def test_assert_blog_rss_feed_item_is_rss_feed_item():
 
     tb = testBlog()
     assert isinstance(tb.rss_feed_item, RSSFeedItem)
+
+
+def test_page_with_attr_with_multiple_values():
+    t = BlogPost(content='date: October 1, 2020 8:00\ntags: foo, bar')
+    assert t.tags == ['foo', 'bar']
+

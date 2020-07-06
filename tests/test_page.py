@@ -31,10 +31,6 @@ def test_page_content_path_defined_in_object_caught(mocker, content):
     assert t._content == '# Test Header\nTest Paragraph'
 
 
-def test_page_with_attr_with_multiple_values():
-    t = Page(content='tags: foo, bar')
-    assert t.tags == ['foo', 'bar']
-
 def test_page_as_str_is_slug():
     class tp(Page):
         pass

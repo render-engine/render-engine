@@ -30,6 +30,7 @@ class BlogPost(Page):
     """
 
     template = "blog_post.html"
+    list_attrs = ['tags', 'category']
 
     def __init__(self, **kwargs):
         """

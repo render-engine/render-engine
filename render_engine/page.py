@@ -94,7 +94,7 @@ class Page:
     engine: typing.Optional[str] = "" # by default inherits from Site
     template: typing.Optional[str] = "" # by default inherits from Site
     routes = [""]
-    list_attrs = ['tags']
+    list_attrs: typing.Optional[typing.Union[str]] = []
     no_index: bool = False,
     matcher: str = r"(^\w+: \b.+$)"
 
