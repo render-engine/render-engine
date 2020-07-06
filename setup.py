@@ -24,11 +24,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='render_engine',  # Required
-    version='2020.6.12',  # Required
+    version='2020.7.03',  # Required
     description='Static Page Generation with Flask-like simplicity and flair ✨',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
-    url='https://github.com/kjaymiller/render_engine',  # Optional
+    url='https://render-engine.site',  # Optional
     author='Jay Miller',  # Optional
     author_email='jay@productivityintech.com',  # Optional
     classifiers=[  # Optional
@@ -48,7 +48,6 @@ setup(
 
         # Natural Language
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
 

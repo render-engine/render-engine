@@ -68,6 +68,9 @@ class Collection:
     archive_content_type: Page = Page
     archive_reverse: bool = False
 
+    def __init__(self):
+        if not hasattr(self, 'title'):
+            self.title = self.__class__.__name__
 
     @staticmethod
     def archive_default_sort(cls):
@@ -105,13 +108,14 @@ class Collection:
         archive_page.template = self.archive_template
         archive_page.slug = self.archive_slug
         archive_page.engine = ""
-        archive_page.title = self.__class__.__name__
         archive_page.routes = [self.routes[0]]
         archive_page.pages = sorted(
             self.pages,
             key=lambda p: self.archive_default_sort(p),
             reverse=self.archive_reverse,
         )
+        archive_page.title = self.title
+
         return archive_page
 
     @classmethod
@@ -124,10 +128,24 @@ class Collection:
                 sub_content_items.append(page)
 
         class SubCollection(Collection):
-            title=attrval
-            content_items=sub_content_items
-            has_archive=True
+            archive_template = collection.archive_template
+            archive_slug = collection.archive_slug
+            archive_content_type = collection.archive_content_type
+            archive_reverse = collection.archive_reverse
+            content_items = sub_content_items
+            has_archive = True
             routes = [attrval]
+            title = attrval
 
 
         return SubCollection()
+
+    def subcollection(self, attr):
+        """Returns a list of all of the values in a subcollection"""
+        attrvals = []
+
+        for page in self.pages:
+            if hasattr(page, attr):
+                attrvals.append(getattr(page,attr))
+
+        return attrvals

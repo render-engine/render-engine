@@ -8,19 +8,19 @@ Dynamic Services like _Flask_ required overhead of a server where in many case
 Extensions to Flask that provided a static component added even more unnecessary complexity and updates have been inconsistent.
 Other static-site generators like _Pelican_ were built without modern architectures and design practices in mind.
 
-## The _4 layer_ Architecture 
+## The _3 layer_ Architecture 
 
 * **[Page](render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
 * **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
-* **[Engine](render_engine/engine.html)** - The environments that turn your pre-content and templates into rendered HTML
 * **[Site](render_engine/site.html)** - The container that holds all Pages and Collections and gives access to global configurations and settings.
 
-You can expand on these areas to customize your engine to your liking.
+Your site will have an [Engine](render_engine/engine.html) that can _render_ your html (and other things), hence the name.
 
+You can expand any of these areas to customize your engine to your liking.
 
 **Things you can do in with Render Engine:**
 
-- Create **Custom Page Objects** (Like Blogs or MicroBlog Posts)
+- Create **Custom Page Objects** (Like Blog or MicroBlog Posts)
 - Create all types of Page Objects, not just 'html' pages
 - Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
 - Dynamically create content at runtime to include into your static sites
@@ -30,36 +30,54 @@ You can expand on these areas to customize your engine to your liking.
 - Render Engine uses [Jinja2] as the defaul engine to bring the power of templates to your page. You can create your own custom engines if you have a specific need.
 - Content can be markdown/html/or RAW DATA to give you the content you need.
 
+# Installing Render Engine
+
 ## Dependencies:
-- [Python3.7](https://python.org) or later.
+- [Python3.8](https://python.org) or later.
+
+### Other Dependencies that install with render-engine
 - [Jinja2] - for template things
 - [Pendulum] - for datetime things
 - [Click] - for some commandline goodness
-
-
-# Installing Render Engine
+- [more-itertools] - for iteration things
+- [markdown] - for markdown things
 
 ### Using pip
 `pip install render-engine`
 
 # Get Started Quickly
 
-Render Engine DOESN'T Need the following but the this is a base module that can quickly get you on your way
+### The Quick Way
+
+`render-engine-quickstart`
+
+![render-engine-quickstart](https://s3-us-west-2.amazonaws.com/kjaymiller/images/Render%20Engine%20Quickstart.gif)
+
+This will create your essential files and a `run.py` that you can use to build
+your output file using `python run.py`
+
+Render Engine DOESN'T Need the following but this model can quickly get you on your way.
 
 ```
 content/ # store content for collections here
-run.py # use render_engine run.py to build site
+run.py # use `python run.py` to build your site.
 templates/
   - page.html # default template for Page objects. Modify this file to fit your design
   - all_posts.html # default template for Collection objects. Modify this file to fit your design
 static/ # will be copied into your generated output. great for storing css/.js/image files
 ```
 
-[ ] Todo: Build this functionality out into quickstart
-
-
 [Jinja2]: https://jinja.palletsprojects.com/en/latest
 [Pendulum]: https://pendulum.eustace.io
 [Click]: https://click.palletsprojects.com/en/latest
 
 
+## Sponsors
+This and much of the work that I do is made possible by those that sponsor me
+on github. 
+
+<iframe src="https://github.com/sponsors/kjaymiller/button" title="Sponsor kjaymiller" height="35" width="107" style="border: 0;"></iframe>
+
+### Sponsors
+- [Brian Douglas](https://github.com/bdougie)
+- [Anthony Shaw](https://github.com/tonybaloney)

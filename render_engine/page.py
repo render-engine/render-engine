@@ -141,7 +141,7 @@ class Page:
 
             # comma delimit attributes.
             if name.lower() in self.list_attrs:
-                value = value.split(', ')
+                value = list(map(lambda x:x.lower(), value.split(', ')))
 
             else:
                 value = value.strip()

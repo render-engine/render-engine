@@ -33,7 +33,7 @@ You can expand any of these areas to customize your engine to your liking.
 # Installing Render Engine
 
 ## Dependencies:
-- [Python3.7](https://python.org) or later.
+- [Python3.8](https://python.org) or later.
 
 ### Other Dependencies that install with render-engine
 - [Jinja2] - for template things
@@ -44,7 +44,6 @@ You can expand any of these areas to customize your engine to your liking.
 
 ### Using pip
 `pip install render-engine`
-
 
 # Get Started Quickly
 
@@ -61,7 +60,7 @@ Render Engine DOESN'T Need the following but this model can quickly get you on y
 
 ```
 content/ # store content for collections here
-run.py # use render_engine run.py to build site
+run.py # use `python run.py` to build your site.
 templates/
   - page.html # default template for Page objects. Modify this file to fit your design
   - all_posts.html # default template for Collection objects. Modify this file to fit your design

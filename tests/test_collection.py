@@ -76,3 +76,9 @@ def test_collection_from_subcollection_does_not_include_bad_items(test_collectio
     a.subcollections = 'tags'
     subcollection = Collection.from_subcollection(a, 'tags', 'foo')
     assert list(map(lambda x:x.slug, subcollection.content_items)) == ['page1', 'page3']
+
+def test_collection_from_subcollection_title_has_name_of_subcollection_value(test_collection):
+    a = copy.copy(test_collection)
+    a.subcollections = 'tags'
+    subcollection = Collection.from_subcollection(a, 'tags', 'foo')
+    assert subcollection.title == 'foo'

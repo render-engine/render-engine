@@ -65,8 +65,6 @@ class Site:
             Relative and Absolute URLS
     """
     routes: typing.List[str] = []
-    collections = {}
-    subcollections = {}
     output_path: Path = Path("output")
     static_path: Path = Path("static")
     SITE_TITLE: str = "Untitled Site"
@@ -90,6 +88,9 @@ class Site:
                 into the `output_path`
             strict (bool):
         """
+
+        self.collections = {}
+        self.subcollections = {}
 
         # Make Output Path if it doesn't Exist
         self.output_path = Path(self.output_path)
@@ -138,6 +139,7 @@ class Site:
         """
         collection = collection_cls()
         self.collections.update({collection.__class__.__name__: collection})
+        setattr(self, collection.title, collection)
 
         for page in collection.pages:
             self.route(cls=page)
@@ -148,17 +150,19 @@ class Site:
         subcollections = get_subcollections(collection)
 
         for attr, attrval in subcollections:
-            if attr in self.subcollections.keys():
-                self.subcollections[attr].append(attrval)
-
-            else:
-                self.subcollections[attr] = [attrval]
-
-            self.route(Collection.from_subcollection(
+            subcollection = Collection.from_subcollection(
                     collection,
                     attr,
                     attrval,
-                    ).archive)
+                    )
+
+            if attr in self.subcollections.keys():
+                self.subcollections[attr].append(subcollection)
+
+            else:
+                self.subcollections[attr] = [subcollection]
+
+            self.route(subcollection.archive)
 
         if hasattr(collection, 'feeds'):
             for feed in collection.feeds:
