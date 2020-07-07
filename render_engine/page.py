@@ -91,12 +91,12 @@ class Page:
             text converted to html from _content
     """
 
-    engine: typing.Optional[str] = "" # by default inherits from Site
-    template: typing.Optional[str] = "" # by default inherits from Site
-    routes = [""]
-    list_attrs: typing.Optional[typing.Union[str]] = []
-    no_index: bool = False,
-    matcher: str = r"(^\w+: \b.+$)"
+    engine: typing.Optional[str] = "" # (default) inherits from Site
+    template: typing.Optional[str] = "" #(default) inherits from Site
+    routes = [""] # create page at each route
+    list_attrs: typing.Optional[typing.Union[str]] = [] # comma-delim listed attrs
+    no_index: bool = False # hides from search index
+    matcher: str = r"(^\w+: \b.+$)" # expression to find attrs/vals
 
     def __init__(
         self,

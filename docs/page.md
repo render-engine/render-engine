@@ -136,7 +136,47 @@ method given the object's [matcher].
 
 `list_attrs: Optional[Union['str']]=None`
 
-When loading content 
+When loading content from a `content_path`, attribute values are strings unless
+the attribute is in the `list_attrs`. This is for when an attribute has more
+than one value. Values should be comma-delimited.
+
+```
+class SomePage(Page):
+  content_path = 'content/some-page.md'
+  list_attrs = ['tags'] # will results in tags=['Foo', 'Bar']
+
+
+#content/some-page.md
+----
+
+tags: Foo, Bar
+
+This is a test.
+
+```
+
+### no_index
+
+`no_index: bool = False`
+
+If your site has a Search object, setting no_index = True will omit the page
+from the generated search index.
+
+```
+from render_engine.search import Fuse
+
+site = Site()
+site.search = Fuse
+
+class About(Page): # will be indexed
+  pass
+
+class Index(Page): # will not be indexed
+  no_index = True
+
+```
+
+Setting `no_index` when your site does not have search defined does nothing.
 
 ## Not-So-Safe Attributes
 While you can modify most values with their given type there are a few object
