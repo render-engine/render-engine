@@ -21,9 +21,56 @@ like verbage. Ex:
 - Ensure that all existing tests pass unless you are correcting the behavior of
   a feature previously tested.
 - Ensure that new dependencies are listed and justified.
+- Your PR should outline which issue is being addressed and one issue per PR
+  should be submitted.
+- New Attributes or features should be properly documented using the
+  Documentation guidelines.
 
 ## Style Guidelines
-Render Engine 
+Render Engine uses two modules to style code.
 
-- Add any Documentation to explain usage of feature
+- [isort](https://github.com/timothycrosley/isort)
+- [black](https://github.com/psf/black)
 
+Code should follow the stylings from isort and black before merged. This can be
+done by executing the following command (with both modules installed).
+
+`$render_engine> isort render_engine && black render_engine`
+
+## Contributing to Documentation
+Render Engine uses [readthedocs](https://readthedocs.org) in combination with
+[MkDocs](). The primary objects (Page, Collection, Site, and Engine) have their
+own documentation page. There are also a page for included Collection classes (Blog,
+Microblog) and a page for helper objects (Links, Images).
+
+When adding documentation of a feature, please include the attribute to utilize
+the feature. A description of the feature and how it is implemented and a code
+example. Lastly, include any situations that would return an error or would
+make the code not work as intended.
+
+Example:
+
+> ### no_index
+>
+> `no_index: bool = False`
+>
+> If your site has a Search object, setting no_index = True will omit the page
+> from the generated search index.
+>
+> ```
+> from render_engine.search import Fuse
+>
+> site = Site()
+> site.search = Fuse
+>
+> class About(Page): # will be indexed
+>     pass
+>
+> class Index(Page): # will not be indexed
+>     no_index = True
+>
+> ```
+>
+> Setting `no_index` when your site does not have search defined does nothing.
+
+Build your document changes using `mkdocs build`.
