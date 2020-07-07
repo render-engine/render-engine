@@ -71,9 +71,11 @@ static/ # will be copied into your generated output. great for storing css/.js/i
 This and much of the work that I do is made possible by those that sponsor me
 on github. 
 
-### Sponsors
+### Sponsors at the $50/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
 - [Anthony Shaw](https://github.com/tonybaloney)
+
+Thank you to them and all of those that continue to support this project!
 
 [Jinja2]: https://jinja.palletsprojects.com/en/latest
 [Pendulum]: https://pendulum.eustace.io
