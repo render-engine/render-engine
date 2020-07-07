@@ -67,10 +67,6 @@ templates/
 static/ # will be copied into your generated output. great for storing css/.js/image files
 ```
 
-[Jinja2]: https://jinja.palletsprojects.com/en/latest
-[Pendulum]: https://pendulum.eustace.io
-[Click]: https://click.palletsprojects.com/en/latest
-
 ## Sponsors
 This and much of the work that I do is made possible by those that sponsor me
 on github. 
@@ -78,3 +74,10 @@ on github.
 ### Sponsors
 - [Brian Douglas](https://github.com/bdougie)
 - [Anthony Shaw](https://github.com/tonybaloney)
+
+[Jinja2]: https://jinja.palletsprojects.com/en/latest
+[Pendulum]: https://pendulum.eustace.io
+[Click]: https://click.palletsprojects.com/en/latest
+[more-itertools]: https://more-itertools.readthedocs.io/en/stable/
+[markdown]: https://python-markdown.github.io
+
