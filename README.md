@@ -71,7 +71,7 @@ static/ # will be copied into your generated output. great for storing css/.js/i
 This and much of the work that I do is made possible by those that sponsor me
 on github. 
 
-### Sponsors at the $50/month and higher Level
+### Sponsors at the $20/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
 - [Anthony Shaw](https://github.com/tonybaloney)
 
