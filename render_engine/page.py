@@ -1,16 +1,16 @@
 import logging
-
 import re
 import typing
-from typing import List
 from pathlib import Path
+from typing import List
 
 from jinja2 import Markup
 from markdown import markdown
 
 from ._type_hint_helpers import PathString
 
-#some attributes will need to be protected from manipulation
+# some attributes will need to be protected from manipulation
+
 
 def parse_content(content: str, matcher: str):
     """
@@ -91,17 +91,15 @@ class Page:
             text converted to html from _content
     """
 
-    engine: typing.Optional[str] = "" # (default) inherits from Site
-    template: typing.Optional[str] = "" #(default) inherits from Site
-    routes = [""] # create page at each route
-    list_attrs: typing.Optional[typing.Union[str]] = [] # comma-delim listed attrs
-    no_index: bool = False # hides from search index
-    matcher: str = r"(^\w+: \b.+$)" # expression to find attrs/vals
+    engine: typing.Optional[str] = ""  # (default) inherits from Site
+    template: typing.Optional[str] = ""  # (default) inherits from Site
+    routes = [""]  # create page at each route
+    list_attrs: typing.Optional[typing.Union[str]] = []  # comma-delim listed attrs
+    no_index: bool = False  # hides from search index
+    matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
 
     def __init__(
-        self,
-        content_path: PathString = None,
-        content: str = "",
+        self, content_path: PathString = None, content: str = "",
     ):
         """
         If a content_path exists, check the associated file, processing the
@@ -122,7 +120,7 @@ class Page:
 
         """
 
-        if hasattr(self, 'content_path'):
+        if hasattr(self, "content_path"):
             content = Path(self.content_path).read_text()
 
         elif content_path:
@@ -130,31 +128,30 @@ class Page:
 
         valid_attrs, self._content = parse_content(content, matcher=self.matcher)
 
-
         for attr in valid_attrs:
             name, value = attr.split(": ", maxsplit=1)
 
             # comma delimit attributes.
             if name.lower() in self.list_attrs:
-                value = list(map(lambda x:x.lower(), value.split(', ')))
+                value = list(map(lambda x: x.lower(), value.split(", ")))
 
             else:
                 value = value.strip()
 
             setattr(self, name.lower(), value)
 
-        if not hasattr(self, 'title'):
-            self.title = getattr(self, 'name', None) or self.__class__.__name__
+        if not hasattr(self, "title"):
+            self.title = getattr(self, "name", None) or self.__class__.__name__
 
         if not hasattr(self, "slug"):
             self.slug = getattr(self, "title", self.__class__.__name__)
 
         _slug = self.slug.lower().replace(" ", "_")
-        self.slug = re.sub(r'[!\[\]\(\)]', '', _slug)
+        self.slug = re.sub(r"[!\[\]\(\)]", "", _slug)
 
-        logging.debug(f'{self.title}, {self.content}')
+        logging.debug(f"{self.title}, {self.content}")
 
-        self.url = f'{self.routes[0]}/{self.slug}'
+        self.url = f"{self.routes[0]}/{self.slug}"
 
     def __str__(self):
         return self.slug
@@ -163,7 +160,6 @@ class Page:
     def html(self):
         """Text from self._content converted to html"""
         return markdown(self._content)
-
 
     @property
     def content(self):

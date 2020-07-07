@@ -1,5 +1,6 @@
-from typing import List, Any
 from dataclasses import dataclass
+from typing import Any, List
+
 
 @dataclass
 class Link:
@@ -23,8 +24,9 @@ class Link:
     icon : str, optional
         similar to image, but allows for custom html for icons
     """
+
     name: str
     url: str
     links: List = List[Any]
-    image: str = ''
-    icon: str = ''
+    image: str = ""
+    icon: str = ""

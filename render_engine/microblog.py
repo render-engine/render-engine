@@ -1,10 +1,11 @@
 import logging
 import typing
+
 import pendulum
 
-from .blog import BlogPost, Blog
+from .blog import Blog, BlogPost
+from .feeds import RSSFeedEngine, RSSFeedItem
 from .site import Site
-from .feeds import RSSFeedItem, RSSFeedEngine
 
 
 class MicroBlogPost(BlogPost):
@@ -28,7 +29,7 @@ class MicroBlogPost(BlogPost):
         """checks published options and accepts the first that is listed"""
         super().__init__(**kwargs)
         self.slug = pendulum.parse(self.date_published, strict=False).format("YMDHmS")
-        self.url = f'{self.routes[0]}/{self.slug}'
+        self.url = f"{self.routes[0]}/{self.slug}"
 
     @property
     def rss_feed_item(self):
@@ -40,6 +41,7 @@ class MicroBlog(Blog):
     """
     Custom Blog Class pointing to custom templates
     """
+
     _archive_template = "microblog_archive.html"
     _archive_slug = "all_microblog_posts"
     page_content_type: typing.Type[MicroBlogPost] = MicroBlogPost

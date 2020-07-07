@@ -6,8 +6,8 @@ import pendulum
 from more_itertools import first_true
 
 from .collection import Collection
+from .feeds import RSSFeed, RSSFeedEngine, RSSFeedItem
 from .page import Page
-from .feeds import RSSFeedItem, RSSFeed, RSSFeedEngine
 from .site import Site
 
 
@@ -30,7 +30,7 @@ class BlogPost(Page):
     """
 
     template = "blog_post.html"
-    list_attrs = ['tags', 'category']
+    list_attrs = ["tags", "category"]
 
     def __init__(self, **kwargs):
         """
@@ -47,17 +47,19 @@ class BlogPost(Page):
 
         super().__init__(**kwargs)
         # Add some flexibility to date detection
-        date = first_true([
-                getattr(self, 'date_modified', None),
-                getattr(self, 'modified_date', None),
-                getattr(self, 'date_published', None),
-                getattr(self, 'publish_date', None),
-                getattr(self, 'date', None),
-                ])
+        date = first_true(
+            [
+                getattr(self, "date_modified", None),
+                getattr(self, "modified_date", None),
+                getattr(self, "date_published", None),
+                getattr(self, "publish_date", None),
+                getattr(self, "date", None),
+            ]
+        )
         parsed_date = pendulum.parse(date, strict=False)
         self.date = parsed_date.set(tz=pendulum.local_timezone())
         self.date_published = self.date.to_rfc2822_string()
-        self.date_friendly = self.date.format('MMM DD, YYYY HH:mm A')
+        self.date_friendly = self.date.format("MMM DD, YYYY HH:mm A")
 
     @property
     def rss_feed_item(self):

@@ -71,7 +71,6 @@ static/ # will be copied into your generated output. great for storing css/.js/i
 [Pendulum]: https://pendulum.eustace.io
 [Click]: https://click.palletsprojects.com/en/latest
 
-
 ## Sponsors
 This and much of the work that I do is made possible by those that sponsor me
 on github. 

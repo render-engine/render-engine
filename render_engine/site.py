@@ -2,15 +2,16 @@ import logging
 import os
 import shutil
 import typing
-import more_itertools
 from pathlib import Path
+
+import more_itertools
 
 from ._type_hint_helpers import PathString
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
-from .page import Page
 from .links import Link
+from .page import Page
 
 
 def get_subcollections(collection):
@@ -20,7 +21,7 @@ def get_subcollections(collection):
 
         for subcollection in collection.subcollections:
 
-            if attr:=getattr(page, subcollection, None):
+            if attr := getattr(page, subcollection, None):
                 if isinstance(attr, list):
                     for subattr in attr:
                         subcollection_set.add((subcollection, subattr))
@@ -64,6 +65,7 @@ class Site:
         - make SITE_URL accesible as a Page variable and allow for switch for
             Relative and Absolute URLS
     """
+
     routes: typing.List[str] = []
     output_path: Path = Path("output")
     static_path: Path = Path("static")
@@ -71,7 +73,7 @@ class Site:
     SITE_LINK: str = "https://example.com"
     SITE_URL: str = "https://example.com"
 
-    def __init__(self, strict: bool = False, search = None, search_keys = []):
+    def __init__(self, strict: bool = False, search=None, search_keys=[]):
         """
         Clean Directory and Prepare Output Directory
 
@@ -109,14 +111,13 @@ class Site:
             )
 
         self.engines: typing.Dict[str, typing.Type[Engine]] = {
-                "default_engine": Engine(),
-                "rss_engine": RSSFeedEngine(),
+            "default_engine": Engine(),
+            "rss_engine": RSSFeedEngine(),
         }
 
         self.search = search
         self.search_keys = search_keys
-        self.search_index_filename = 'search.json'
-
+        self.search_index_filename = "search.json"
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
@@ -150,11 +151,7 @@ class Site:
         subcollections = get_subcollections(collection)
 
         for attr, attrval in subcollections:
-            subcollection = Collection.from_subcollection(
-                    collection,
-                    attr,
-                    attrval,
-                    )
+            subcollection = Collection.from_subcollection(collection, attr, attrval,)
 
             if attr in self.subcollections.keys():
                 self.subcollections[attr].append(subcollection)
@@ -164,17 +161,17 @@ class Site:
 
             self.route(subcollection.archive)
 
-        if hasattr(collection, 'feeds'):
+        if hasattr(collection, "feeds"):
             for feed in collection.feeds:
                 self.register_feed(feed=feed, collection=collection)
 
     def register_feed(self, feed, collection: Collection) -> None:
-        extension = self.engines['rss_engine'].extension
+        extension = self.engines["rss_engine"].extension
         _feed = feed()
         _feed.slug = collection.__class__.__name__.lower()
         _feed.items = [page.rss_feed_item for page in collection.pages]
-        _feed.title = f'{self.SITE_TITLE} - {_feed.title}'
-        _feed.link = f'{self.SITE_URL}/{_feed.slug}{extension}'
+        _feed.title = f"{self.SITE_TITLE} - {_feed.title}"
+        _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
 
         self.route(cls=_feed)
         logging.debug(vars(_feed))
@@ -193,7 +190,7 @@ class Site:
             content = engine.render(page, content=page.content, **vars(self))
 
             for route in page.routes:
-                logging.info(f'starting on {route=}')
+                logging.info(f"starting on {route=}")
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)
                 filename = Path(page.slug).with_suffix(engine.extension)
@@ -203,13 +200,12 @@ class Site:
                     filepath.write_text(content)
 
                 else:
-                    print(f'{content} writes to {filepath}')
-
+                    print(f"{content} writes to {filepath}")
 
         if self.search:
             search_pages = filter(lambda x: x.no_index == False, self.routes)
             search_index = self.search.build_index(
-                    pages=search_pages,
-                    keys=self.search_keys,
-                    filepath=self.output_path.joinpath(self.search_index_filename),
-                    )
+                pages=search_pages,
+                keys=self.search_keys,
+                filepath=self.output_path.joinpath(self.search_index_filename),
+            )

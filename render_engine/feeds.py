@@ -40,13 +40,13 @@ class RSSFeedItem:
        <https://cyber.harvard.edu/rss/rss.html>
     """
 
-    def __init__(self, cls, site_url=''):
-        '''
+    def __init__(self, cls, site_url=""):
+        """
         Parse information from the given class object.
 
         Raises:
             AttributeError:
-        '''
+        """
 
         self.title = getattr(cls, "title", "")
         # Posts will have one or many of the following
@@ -64,7 +64,7 @@ class RSSFeedItem:
         self.guid = getattr(cls, "guid", cls.slug)
         logging.debug(vars(cls))
         route = cls.routes[0]
-        self.link = f'{route}/{cls.slug}'
+        self.link = f"{route}/{cls.slug}"
         self.pub_date = cls.date_published
 
 

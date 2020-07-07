@@ -1,12 +1,13 @@
-import more_itertools
 import itertools
-import operator
 import logging
+import operator
 import typing
 from pathlib import Path
 
-from .page import Page
+import more_itertools
+
 from .feeds import RSSFeed
+from .page import Page
 
 
 class Collection:
@@ -56,7 +57,8 @@ class Collection:
         should the sorted `pages` be listed in reverse order. default: False
 
     """
-    engine = ''
+
+    engine = ""
     page_content_type: typing.Type[Page] = Page
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
@@ -69,7 +71,7 @@ class Collection:
     archive_reverse: bool = False
 
     def __init__(self):
-        if not hasattr(self, 'title'):
+        if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
     @staticmethod
@@ -83,12 +85,14 @@ class Collection:
 
         _pages = []
 
-        if hasattr(self, 'content_items'):
+        if hasattr(self, "content_items"):
             _pages = self.content_items
 
-        if hasattr(self, 'content_path'):
-            if Path(self.content_path).samefile('/'):
-                logging.warning(f'{self.content_path=}! Accessing Root Directory is Dangerous...')
+        if hasattr(self, "content_path"):
+            if Path(self.content_path).samefile("/"):
+                logging.warning(
+                    f"{self.content_path=}! Accessing Root Directory is Dangerous..."
+                )
 
             for pattern in self.includes:
 
@@ -138,7 +142,6 @@ class Collection:
             routes = [attrval]
             title = attrval
 
-
         return SubCollection()
 
     def subcollection(self, attr):
@@ -147,6 +150,6 @@ class Collection:
 
         for page in self.pages:
             if hasattr(page, attr):
-                attrvals.append(getattr(page,attr))
+                attrvals.append(getattr(page, attr))
 
         return attrvals

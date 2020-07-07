@@ -1,11 +1,11 @@
-import render_engine
+import logging
+import shutil
+from pathlib import Path
+
 import click
 from jinja2 import Environment, PackageLoader
 
-import shutil
-import logging
-from pathlib import Path
-
+import render_engine
 
 
 def create_templates_directory(
@@ -36,7 +36,9 @@ def create_templates_directory(
     "--static-directory", default="./static", help="static directory for your project"
 )
 @click.option(
-    "--content-directory", default="./content/pages", help="content directory for your project"
+    "--content-directory",
+    default="./content/pages",
+    help="content directory for your project",
 )
 @click.option(
     "--static-path/--no-static-path", "-s/-S", default=True, help="create a static path"
@@ -60,10 +62,7 @@ def create_templates_directory(
     help="files for templates-directory",
 )
 @click.option(
-    "--blog",
-    is_flag=True,
-    default=True,
-    help="Add a Blog Object",
+    "--blog", is_flag=True, default=True, help="Add a Blog Object",
 )
 @click.option("--microblog", is_flag=True, default=False)
 @click.option(
@@ -71,8 +70,9 @@ def create_templates_directory(
     is_flag=True,
     help="create a separate pages directory inside of your content path",
 )
-@click.option("--templates-directory", default='templates',
-        help="directory for template files")
+@click.option(
+    "--templates-directory", default="templates", help="directory for template files"
+)
 def quickstart(
     base_directory,
     static_path,
@@ -90,32 +90,27 @@ def quickstart(
     CLI that allows folks to quickly build their starting directory
     """
 
-    click.echo('Initiating Quickstart')
+    click.echo("Initiating Quickstart")
 
-    if static_path and not (static_dir:=Path(static_directory)).exists():
+    if static_path and not (static_dir := Path(static_directory)).exists():
         static_dir.mkdir(parents=True)
 
     else:
-        logging.warning(f'{static_dir=} already exists. Skipping.')
+        logging.warning(f"{static_dir=} already exists. Skipping.")
 
-    if content_path and not (content_dir:=Path(content_directory)).exists():
-        content_dir.mkdir(
-            parents=True,
-        )
+    if content_path and not (content_dir := Path(content_directory)).exists():
+        content_dir.mkdir(parents=True,)
 
     else:
-        logging.warning(f'{content_dir=} already exists. Skipping.')
+        logging.warning(f"{content_dir=} already exists. Skipping.")
 
     if templates_path:
-        create_templates_directory(
-            base_directory, templates_directory, templates_files
+        create_templates_directory(base_directory, templates_directory, templates_files)
+
+    if not Path("./run.py").exists():
+        shutil.copy(
+            Path(render_engine.__file__).parent.joinpath("run_template.txt"), "./run.py"
         )
 
-    if not Path('./run.py').exists():
-        shutil.copy(
-                Path(render_engine.__file__).parent.joinpath(
-                        'run_template.txt'),
-                        './run.py')
-
     else:
-        logging.warning(f'run.py already exists. Skipping.')
+        logging.warning(f"run.py already exists. Skipping.")
