@@ -19,6 +19,18 @@ def test_page_kwargs_become_properties(page_with_content_path):
     """Custom Parameters can be passed in as Properties"""
     assert page_with_content_path.custom == "Testing 1,2,3"
 
+def test_page_content_path_defined_in_object_caught_with_fake_path(content):
+    """Tests when given a file as the content_path, parse it into data """
+
+    with tempfile.TemporaryDirectory() as temp:
+            fake_path = pathlib.Path(temp) / 'fake_path.md'
+            fake_path.write_text(content)
+
+            class tp(Page):
+                content_path = fake_path
+            t = tp()
+
+    assert t._content == '# Test Header\nTest Paragraph'
 
 def test_page_content_path_defined_in_object_caught(mocker, content):
     mocker.patch.object(render_engine.page, 'Path')
