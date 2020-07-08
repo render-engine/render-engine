@@ -74,6 +74,7 @@ on github.
 ### Sponsors at the $20/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
 - [Anthony Shaw](https://github.com/tonybaloney)
+- [Carol Willing](https://github.com/willingc)
 
 Thank you to them and all of those that continue to support this project!
 
