@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List
 
 from jinja2 import Markup
-from markdown import markdown
+from markdown2 import markdown
 
 from ._type_hint_helpers import PathString
 
@@ -99,7 +99,9 @@ class Page:
     matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
 
     def __init__(
-        self, content_path: PathString = None, content: str = "",
+        self,
+        content_path: PathString = None,
+        content: str = "",
     ):
         """
         If a content_path exists, check the associated file, processing the
@@ -159,7 +161,7 @@ class Page:
     @property
     def html(self):
         """Text from self._content converted to html"""
-        return markdown(self._content)
+        return markdown(self._content, extras=['fenced-code-blocks'])
 
     @property
     def content(self):

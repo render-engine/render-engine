@@ -2,7 +2,9 @@ import logging
 import os
 import shutil
 import typing
+import pendulum
 from pathlib import Path
+
 
 import more_itertools
 
@@ -73,7 +75,13 @@ class Site:
     SITE_LINK: str = "https://example.com"
     SITE_URL: str = "https://example.com"
 
-    def __init__(self, strict: bool = False, search=None, search_keys=[]):
+    def __init__(
+            self,
+            strict: bool = False,
+            search=None,
+            search_keys=[],
+            timezone: str='',
+            ):
         """
         Clean Directory and Prepare Output Directory
 
@@ -110,6 +118,17 @@ class Site:
                 dirs_exist_ok=True,
             )
 
+        # sets the timezone environment variable to the local timezone if not present
+
+        os.environ['render_engine_timezone'] = more_itertools.first_true(
+                [
+                    getattr(self, 'timezone', None),
+                    timezone,
+                    pendulum.local_timezone().name
+                    ]
+                )
+
+
         self.engines: typing.Dict[str, typing.Type[Engine]] = {
             "default_engine": Engine(),
             "rss_engine": RSSFeedEngine(),
@@ -118,6 +137,8 @@ class Site:
         self.search = search
         self.search_keys = search_keys
         self.search_index_filename = "search.json"
+
+
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """

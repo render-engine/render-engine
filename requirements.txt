@@ -6,20 +6,20 @@
 #
 attrs==19.3.0             # via pytest
 click==7.1.2              # via -r requirements.in
-coverage==5.1             # via pytest-cov
+coverage==5.2             # via pytest-cov
 jinja2==2.11.2            # via -r requirements.in
-markdown==3.2.2           # via -r requirements.in
+markdown2==2.3.9          # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
-more-itertools==8.3.0     # via pytest
+more-itertools==8.4.0     # via pytest
 packaging==20.4           # via pytest
 pendulum==2.1.0           # via -r requirements.in
 pluggy==0.13.1            # via pytest
-py==1.8.1                 # via pytest
+py==1.9.0                 # via pytest
 pyparsing==2.4.7          # via packaging
-pytest-cov==2.9.0         # via -r requirements.in
-pytest-mock==3.1.0        # via -r requirements.in
-pytest==5.4.2             # via -r requirements.in, pytest-cov, pytest-mock
+pytest-cov==2.10.0        # via -r requirements.in
+pytest-mock==3.1.1        # via -r requirements.in
+pytest==5.4.3             # via -r requirements.in, pytest-cov, pytest-mock
 python-dateutil==2.8.1    # via pendulum
 pytzdata==2019.3          # via pendulum
 six==1.15.0               # via packaging, python-dateutil
-wcwidth==0.1.9            # via pytest
+wcwidth==0.2.5            # via pytest

@@ -1,3 +1,4 @@
+import os
 import logging
 import typing
 from typing import List
@@ -57,7 +58,13 @@ class BlogPost(Page):
             ]
         )
         parsed_date = pendulum.parse(date, strict=False)
-        self.date = parsed_date.set(tz=pendulum.local_timezone())
+
+        # Set Timezone with environment_variable 'render_engine_timezone'
+        tz = os.environ.get(
+                'render_engine_timezone',
+                pendulum.local_timezone(),
+                )
+        self.date = parsed_date.set(tz=tz)
         self.date_published = self.date.to_rfc2822_string()
         self.date_friendly = self.date.format("MMM DD, YYYY HH:mm A")
 

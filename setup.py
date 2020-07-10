@@ -24,7 +24,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='render_engine',  # Required
-    version='2020.7.04',  # Required
+    version='2020.7.06',  # Required
     description='Static Page Generation with Flask-like simplicity and flair ✨',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
@@ -70,7 +70,8 @@ setup(
     python_requires='>=3.8',
     install_requires=[
     'pendulum',
-    'markdown',
+    'pygments',
+    'markdown2',
     'jinja2',
     'more-itertools',
     'click',
