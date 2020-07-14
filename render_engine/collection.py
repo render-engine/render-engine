@@ -58,7 +58,9 @@ class Collection:
 
     """
 
-    engine = ""
+    engine: typing.Optional[str] = ""
+    content_items: typing.List[Page] = []
+    content_path: str = ""
     page_content_type: typing.Type[Page] = Page
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
@@ -69,6 +71,8 @@ class Collection:
     archive_slug: str = "all_posts"
     archive_content_type: Page = Page
     archive_reverse: bool = False
+    paginated: bool = False
+    items_per_page: int = 10
 
     def __init__(self):
         if not hasattr(self, "title"):
@@ -80,15 +84,13 @@ class Collection:
         return cls.slug
 
     @property
-    def pages(self) -> typing.List[typing.Type[Page]]:
-        """Iterate through set of pages and generate a `Page`-like object for each."""
-
+    def _pages(self) -> typing.List[Page]:
         _pages = []
 
-        if hasattr(self, "content_items"):
+        if self.content_items:
             _pages = self.content_items
 
-        if hasattr(self, "content_path"):
+        if self.content_path:
             if Path(self.content_path).samefile("/"):
                 logging.warning(
                     f"{self.content_path=}! Accessing Root Directory is Dangerous..."
@@ -102,32 +104,74 @@ class Collection:
                     page.template = self.template
 
                     _pages.append(page)
-
         return _pages
+
+
+    @property
+    def pages(self) -> typing.List[typing.Union[Page, typing.List]]:
+        """Iterate through set of pages and generate a `Page`-like object for each."""
+
+        sorted_pages = sorted(
+            self._pages,
+            key=lambda p: self.archive_default_sort(p),
+            reverse=self.archive_reverse,
+        )
+
+        if self.paginated:
+            return list(more_itertools.chunked(sorted_pages, self.items_per_page))
+
+        else:
+            return sorted_pages
+
 
     @property
     def archive(self):
-        """Create a `Page` object for those items"""
+        """Create a `Page` object for the pages in the collection"""
         archive_page = self.archive_content_type()
         archive_page.no_index = True
         archive_page.template = self.archive_template
         archive_page.slug = self.archive_slug
         archive_page.engine = ""
         archive_page.routes = [self.routes[0]]
-        archive_page.pages = sorted(
-            self.pages,
-            key=lambda p: self.archive_default_sort(p),
-            reverse=self.archive_reverse,
-        )
+        archive_page.pages = self.pages
         archive_page.title = self.title
 
-        return archive_page
+        if self.paginated:
+            archive_pages = []
+
+            for index, page in enumerate(self.pages):
+                archive_page = self.archive_content_type()
+                archive_page.no_index = True
+                archive_page.template = self.archive_template
+                archive_page.slug = f"{self.archive_slug}_{index}"
+                archive_page.engine = ""
+                archive_page.routes = [self.routes[0]]
+                archive_page.pages = self.pages[index]
+                archive_page.title = self.title
+                archive_page.index_position = index
+                archive_pages.append(archive_page)
+
+
+            return archive_pages
+
+        else:
+            archive_page = self.archive_content_type()
+            archive_page.no_index = True
+            archive_page.template = self.archive_template
+            archive_page.slug = f"{self.archive_slug}"
+            archive_page.engine = ""
+            archive_page.routes = [self.routes[0]]
+            archive_page.pages = self.pages
+            archive_page.title = self.title
+            archive_page.index_position = 0
+            return [archive_page]
+
 
     @classmethod
     def from_subcollection(cls, collection, attr, attrval):
         sub_content_items = []
 
-        for page in collection.pages:
+        for page in collection._pages:
 
             if attrval in getattr(page, attr, []):
                 sub_content_items.append(page)
@@ -139,6 +183,7 @@ class Collection:
             archive_reverse = collection.archive_reverse
             content_items = sub_content_items
             has_archive = True
+            paginated = False
             routes = [attrval]
             title = attrval
 
@@ -148,7 +193,7 @@ class Collection:
         """Returns a list of all of the values in a subcollection"""
         attrvals = []
 
-        for page in self.pages:
+        for page in self._pages:
             if hasattr(page, attr):
                 attrvals.append(getattr(page, attr))
 

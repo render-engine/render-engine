@@ -19,7 +19,7 @@ from .page import Page
 def get_subcollections(collection):
     subcollection_set = set()
 
-    for page in collection.pages:
+    for page in collection._pages:
 
         for subcollection in collection.subcollections:
 
@@ -163,11 +163,12 @@ class Site:
         self.collections.update({collection.__class__.__name__: collection})
         setattr(self, collection.title, collection)
 
-        for page in collection.pages:
+        for page in collection._pages:
             self.route(cls=page)
 
         if collection.has_archive:
-            self.route(cls=collection.archive)
+            for archive in collection.archive:
+                self.route(cls=archive)
 
         subcollections = get_subcollections(collection)
 
@@ -190,7 +191,7 @@ class Site:
         extension = self.engines["rss_engine"].extension
         _feed = feed()
         _feed.slug = collection.__class__.__name__.lower()
-        _feed.items = [page.rss_feed_item for page in collection.pages]
+        _feed.items = [page.rss_feed_item for page in collection._pages]
         _feed.title = f"{self.SITE_TITLE} - {_feed.title}"
         _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
 
@@ -206,7 +207,6 @@ class Site:
     def render(self, dry_run: bool = False) -> None:
 
         for page in self.routes:
-
             engine = self.engines.get(page.engine, self.engines["default_engine"])
             content = engine.render(page, content=page.content, **vars(self))
 

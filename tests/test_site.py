@@ -11,13 +11,18 @@ def test_site_environment_var():
     assert os.environ['render_engine_timezone'] == 'US/Eastern'
 
 
-
+@pytest.mark.skip()
 def test_register_route():
     pass
 
+@pytest.mark.skip()
 def test_register_collection():
     pass
 
+@pytest.mark.skip()
 def test_register_feed():
     pass
 
+
+def test_site_registers_each_archive_page()
+    pass
