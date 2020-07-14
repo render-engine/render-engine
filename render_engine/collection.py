@@ -148,7 +148,7 @@ class Collection:
                 archive_page.routes = [self.routes[0]]
                 archive_page.pages = self.pages[index]
                 archive_page.title = self.title
-                archive_page.index_position = index
+                archive_page.page_index = index
                 archive_pages.append(archive_page)
 
 
@@ -163,7 +163,7 @@ class Collection:
             archive_page.routes = [self.routes[0]]
             archive_page.pages = self.pages
             archive_page.title = self.title
-            archive_page.index_position = 0
+            archive_page.page_index = 0
             return [archive_page]
 
 
@@ -183,7 +183,6 @@ class Collection:
             archive_reverse = collection.archive_reverse
             content_items = sub_content_items
             has_archive = True
-            paginated = False
             routes = [attrval]
             title = attrval
 

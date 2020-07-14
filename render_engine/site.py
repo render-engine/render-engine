@@ -181,7 +181,7 @@ class Site:
             else:
                 self.subcollections[attr] = [subcollection]
 
-            self.route(subcollection.archive)
+            map(lambda x:self.route(x), subcollection.archive)
 
         if hasattr(collection, "feeds"):
             for feed in collection.feeds:
