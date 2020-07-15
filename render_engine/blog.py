@@ -4,7 +4,7 @@ import typing
 from typing import List
 
 import pendulum
-from more_itertools import first_true
+import more_itertools
 
 from .collection import Collection
 from .feeds import RSSFeed, RSSFeedEngine, RSSFeedItem
@@ -48,7 +48,7 @@ class BlogPost(Page):
 
         super().__init__(**kwargs)
         # Add some flexibility to date detection
-        date = first_true(
+        date = more_itertools.first_true(
             [
                 getattr(self, "date_modified", None),
                 getattr(self, "modified_date", None),
@@ -57,6 +57,10 @@ class BlogPost(Page):
                 getattr(self, "date", None),
             ]
         )
+
+        if date == None:
+            raise ValueError(f"{self.content_path=} has no Date!")
+
         parsed_date = pendulum.parse(date, strict=False)
 
         # Set Timezone with environment_variable 'render_engine_timezone'

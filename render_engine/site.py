@@ -139,7 +139,6 @@ class Site:
         self.search_index_filename = "search.json"
 
 
-
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
         Add a class to your `self.collections`
@@ -164,6 +163,7 @@ class Site:
         setattr(self, collection.title, collection)
 
         for page in collection._pages:
+            logging.warning(page)
             self.route(cls=page)
 
         if collection.has_archive:
@@ -174,6 +174,7 @@ class Site:
 
         for attr, attrval in subcollections:
             subcollection = Collection.from_subcollection(collection, attr, attrval,)
+            self.collections[attrval] = subcollection
 
             if attr in self.subcollections.keys():
                 self.subcollections[attr].append(subcollection)
@@ -188,6 +189,7 @@ class Site:
             for feed in collection.feeds:
                 self.register_feed(feed=feed, collection=collection)
 
+
     def register_feed(self, feed, collection: Collection) -> None:
         extension = self.engines["rss_engine"].extension
         _feed = feed()
@@ -199,11 +201,14 @@ class Site:
         self.route(cls=_feed)
         logging.debug(vars(_feed))
 
+
     def route(self, cls) -> None:
         self.routes.append(cls)
 
+
     def register_route(self, cls) -> None:
         self.routes.append(cls())
+
 
     def render(self, dry_run: bool = False) -> None:
 

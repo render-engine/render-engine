@@ -5,7 +5,7 @@ from render_engine import Page
 @pytest.fixture()
 def content():
    return """title: Test Title
-custom: Testing 1,2,3
+custom: 1, 2, 3
 
 # Test Header
 Test Paragraph"""
@@ -23,4 +23,4 @@ def base_collection():
 @pytest.fixture()
 def page_with_content_path(mocker, content):
     mocker.patch('pathlib.Path.read_text', lambda _:content)
-    return Page(content_path=Path('fake_path.md'))
+    return Page.from_content_path('fake_path.md')

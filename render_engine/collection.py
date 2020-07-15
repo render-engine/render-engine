@@ -73,9 +73,10 @@ class Collection:
     archive_reverse: bool = False
     paginated: bool = False
     items_per_page: int = 10
+    title: typing.Optional[str] = ''
 
     def __init__(self):
-        if not hasattr(self, "title"):
+        if not self.title:
             self.title = self.__class__.__name__
 
     @staticmethod
@@ -91,6 +92,7 @@ class Collection:
             _pages = self.content_items
 
         if self.content_path:
+
             if Path(self.content_path).samefile("/"):
                 logging.warning(
                     f"{self.content_path=}! Accessing Root Directory is Dangerous..."
@@ -99,11 +101,11 @@ class Collection:
             for pattern in self.includes:
 
                 for filepath in Path(self.content_path).glob(pattern):
-                    page = self.page_content_type(content_path=filepath)
+                    page = self.page_content_type.from_content_path(filepath)
                     page.routes = self.routes
                     page.template = self.template
-
                     _pages.append(page)
+
         return _pages
 
 
@@ -187,6 +189,7 @@ class Collection:
             title = attrval
 
         return SubCollection()
+
 
     def subcollection(self, attr):
         """Returns a list of all of the values in a subcollection"""

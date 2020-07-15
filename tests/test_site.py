@@ -24,5 +24,5 @@ def test_register_feed():
     pass
 
 
-def test_site_registers_each_archive_page()
+def test_site_registers_each_archive_page():
     pass

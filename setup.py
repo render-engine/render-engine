@@ -24,7 +24,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='render_engine',  # Required
-    version='2020.7.09',  # Required
+    version='2020.7.11',  # Required
     description='Static Page Generation with Flask-like simplicity and flair ✨',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
@@ -75,6 +75,7 @@ setup(
     'jinja2',
     'more-itertools',
     'click',
+    'python-slugify',
     ],  # Optional
     extras_require={  # Optional
         'dev': ['check-manifest'],

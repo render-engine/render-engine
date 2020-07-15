@@ -1,4 +1,6 @@
+from slugify import slugify
 import logging
+import more_itertools
 import re
 import typing
 from pathlib import Path
@@ -97,77 +99,69 @@ class Page:
     list_attrs: typing.Optional[typing.Union[str]] = []  # comma-delim listed attrs
     no_index: bool = False  # hides from search index
     matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
+    content_path: typing.Optional[str] = ""
+    content: typing.Optional[str] = ""
+    title: typing.Optional[str] = ""
+    slug: typing.Optional[str] = ""
 
-    def __init__(
-        self,
-        content_path: PathString = None,
-        content: str = "",
-    ):
-        """
-        If a content_path exists, check the associated file, processing the
-        vars at the top and restitching the remaining lines
+    def __init__(self,):
 
-        Parameters:
-            content_path: List[PathString], optional
-                the filepath to load content from.
-            content: str, optional
-                raw text to be processed into HTML
-            matcher: str, optional
-                A compiled regular expression that splits the content.
-                defatul `base_matcher`
-
-        TODOs:
-            - ADD Documentation for attrs/content
-            - Make Slug Conversion Smarter
-
-        """
-
-        if hasattr(self, "content_path"):
+        if self.content_path:
             content = Path(self.content_path).read_text()
 
-        elif content_path:
-            content = Path(content_path).read_text()
+            valid_attrs, self.content = parse_content(
+                    content,
+                    matcher=self.matcher,
+                    )
 
-        valid_attrs, self._content = parse_content(content, matcher=self.matcher)
+            for attr in valid_attrs:
+                name, value = attr.split(": ", maxsplit=1)
 
-        for attr in valid_attrs:
-            name, value = attr.split(": ", maxsplit=1)
+                # comma delimit attributes.
+                if name.lower() in self.list_attrs:
+                    value = [attrval.lower() for attrval in value.split(", ")]
 
-            # comma delimit attributes.
-            if name.lower() in self.list_attrs:
-                value = list(map(lambda x: x.lower(), value.split(", ")))
+                else:
+                    value = value.strip()
 
-            else:
-                value = value.strip()
+                setattr(self, name.lower(), value)
 
-            setattr(self, name.lower(), value)
+        if not self.title:
+            self.title = self.__class__.__name__
 
-        if not hasattr(self, "title"):
-            self.title = getattr(self, "name", None) or self.__class__.__name__
+        if not self.slug:
+            self.slug = self.title or self.__class__.__name__
 
-        if not hasattr(self, "slug"):
-            self.slug = getattr(self, "title", self.__class__.__name__)
-
-        _slug = self.slug.lower().replace(" ", "_")
-        self.slug = re.sub(r"[!\[\]\(\)]", "", _slug)
-
-        logging.debug(f"{self.title}, {self.content}")
-
+        self.slug = slugify(self.slug)
         self.url = f"{self.routes[0]}/{self.slug}"
+
+
+    @classmethod
+    def from_content_path(cls, filepath):
+
+        class NewPage(cls):
+            content_path = filepath
+
+        return NewPage()
 
     def __str__(self):
         return self.slug
 
     @property
     def html(self):
-        """Text from self._content converted to html"""
-        return markdown(self._content, extras=['fenced-code-blocks'])
+        """Text from self.content converted to html"""
+
+        if self.content:
+            return markdown(self.content, extras=['fenced-code-blocks'])
+
+        else:
+            return ''
 
     @property
-    def content(self):
+    def markup(self):
         """html = rendered html (not marked up). Is `None` if `content == None`"""
-        if self._content:
+        if self.html:
             return Markup(self.html)
 
         else:
-            return ""
+            return ''

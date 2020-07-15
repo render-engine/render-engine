@@ -15,13 +15,10 @@ def test_parse_content_splits_text():
             )
 
 
-def test_page_kwargs_become_properties(page_with_content_path):
-    """Custom Parameters can be passed in as Properties"""
-    assert page_with_content_path.custom == "Testing 1,2,3"
-
-def test_page_content_path_defined_in_object_caught_with_new_fake_path(content):
+def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, content):
     """Tests when given a file as the content_path, parse it into data """
-    fake_path = pathlib.Path('tests/fake_path.md')
+
+    fake_path = tmp_path / 'fake_path.md'
     fake_path.write_text(content)
 
     class TestPage(Page):
@@ -29,91 +26,79 @@ def test_page_content_path_defined_in_object_caught_with_new_fake_path(content):
 
     t = TestPage()
 
-    assert t._content == '# Test Header\nTest Paragraph'
+    assert t.content == '# Test Header\nTest Paragraph'
 
-def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, content):
+
+def test_page_slug_is_slugified():
+    class TestPage(Page):
+        slug = 'This is a slugged slug'
+
+    t = TestPage()
+    assert t.slug == 'this-is-a-slugged-slug'
+
+
+def test_page_name_as_str_is_slug():
+    class TestPage(Page):
+        slug = 'test-page'
+
+    t = TestPage()
+    assert str(t) == 'test-page'
+
+
+def test_page_html_with_no_content_is_empty_string():
+    """If there is no content then the html will be None"""
+    class TestPage(Page):
+        pass
+
+    t = TestPage()
+    assert not t.html
+    assert not t.markup
+
+
+def test_page_html_with_content_is_converted_from_markdown():
+    """If there is no content then the html will be None"""
+
+    class TestPage(Page):
+        content = '# Test Title'
+
+    t = TestPage()
+    assert t.html == '<h1>Test Title</h1>\n'
+    assert t.markup == Markup(t.html)
+
+
+def test_page_attrs_from_content_path_(tmp_path, content):
     """Tests when given a file as the content_path, parse it into data """
 
     fake_path = tmp_path / 'fake_path.md'
     fake_path.write_text(content)
 
-    class tp(Page):
+    class TestPage(Page):
         content_path = fake_path
 
-    t = tp()
+    t = TestPage()
 
-    assert t._content == '# Test Header\nTest Paragraph'
+    assert t.title== 'Test Title'
 
-def test_page_content_path_defined_in_object_caught_with_temp_path(content):
+
+def test_page_list_attrs_from_content_path(tmp_path, content):
     """Tests when given a file as the content_path, parse it into data """
 
-    with tempfile.TemporaryDirectory() as temp:
-            fake_path = pathlib.Path(temp) / 'fake_path.md'
-            fake_path.write_text(content)
+    fake_path = tmp_path / 'fake_path.md'
+    fake_path.write_text(content)
 
-            class tp(Page):
-                content_path = fake_path
-            t = tp()
+    class TestPage(Page):
+        content_path = fake_path
+        list_attrs = ['custom']
 
-    assert t._content == '# Test Header\nTest Paragraph'
+    t = TestPage()
 
-def test_page_content_path_defined_in_object_caught(mocker, content):
-    mocker.patch.object(render_engine.page, 'Path')
-    render_engine.page.Path().read_text.return_value = content
-
-    class tp(Page):
-        content_path = 'fake_path.md'
-
-    t = tp()
-    assert t._content == '# Test Header\nTest Paragraph'
+    assert t.custom == ['1', '2', '3']
 
 
-def test_page_as_str_is_slug():
-    class tp(Page):
-        pass
-
-    t = tp()
-    assert str(t) == 'tp'
+def test_page_from_content_path(tmp_path, content):
+    fake_path = tmp_path / 'fake_path.md'
+    fake_path.write_text(content)
 
 
-def test_page_html_with_no_content_is_empty_string():
-    class tp(Page):
-        pass
-
-    t = tp()
-    assert t.html == ''
-
-
-def test_page_content_separated_from_attrs(page_with_content_path):
-    """When given markdown for content convert it to html and return it as markup"""
-    p = page_with_content_path
-    assert (
-        """# Test Header
-Test Paragraph"""
-        == p._content
-    )
-
-
-def test_page_content_converts_to_html(page_with_content_path):
-    """When given markdown for content convert it to html and return it as markup"""
-    assert page_with_content_path.html == \
-        "<h1>Test Header</h1>\n<p>Test Paragraph</p>"
-
-@pytest.mark.parametrize(
-    "attr, value, result",
-    (
-        [None, None, "page"],
-        ["title", "Page has Title", "page_has_title"],
-        ["slug", "page has slug", "page_has_slug"],
-    ),
-)
-def test_page_slug_can_find_slug(attr, value, result):
-    if attr:
-        content= f"""{attr}: {value}
-
-Test Content"""
-        p = Page(content=content)
-
-    else:
-        p = Page()
-    assert p.slug == result
+    t = Page.from_content_path(fake_path)
+    assert t.content_path == fake_path
