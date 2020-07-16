@@ -56,8 +56,6 @@ class Engine:
         """
         if page.template:
             template = self.get_template(page.template)
-            kwargs.update({"content": page.content})
-            kwargs.update(page.__dict__)
 
             return template.render(**kwargs)
 

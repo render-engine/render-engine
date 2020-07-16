@@ -74,6 +74,7 @@ class Collection:
     paginated: bool = False
     items_per_page: int = 10
     title: typing.Optional[str] = ''
+    feeds: typing.List[typing.Optional[RSSFeed]] = []
 
     def __init__(self):
         if not self.title:

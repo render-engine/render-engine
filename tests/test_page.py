@@ -26,7 +26,7 @@ def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, con
 
     t = TestPage()
 
-    assert t.content == '# Test Header\nTest Paragraph'
+    assert t.raw_content == '# Test Header\nTest Paragraph'
 
 
 def test_page_slug_is_slugified():
@@ -64,6 +64,15 @@ def test_page_html_with_content_is_converted_from_markdown():
     t = TestPage()
     assert t.html == '<h1>Test Title</h1>\n'
     assert t.markup == Markup(t.html)
+
+def test_page_content_is_converted_to_markup():
+
+    class TestPage(Page):
+        content = '# Test Title'
+
+    t = TestPage()
+    assert t.html == '<h1>Test Title</h1>\n'
+    assert t.content == Markup(t.html)
 
 
 def test_page_attrs_from_content_path_(tmp_path, content):

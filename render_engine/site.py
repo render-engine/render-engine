@@ -1,3 +1,5 @@
+import itertools
+import inspect
 import logging
 import os
 import shutil
@@ -14,10 +16,11 @@ from .engine import Engine
 from .feeds import RSSFeedEngine
 from .links import Link
 from .page import Page
-
+from .search import Search
 
 def get_subcollections(collection):
-    subcollection_set = set()
+
+    subcollection_set = set() # creates a set to add new subcollections to
 
     for page in collection._pages:
 
@@ -32,6 +35,7 @@ def get_subcollections(collection):
                     subcollection_set.add((subcollection, attr))
 
     return subcollection_set
+
 
 
 class Site:
@@ -68,20 +72,21 @@ class Site:
             Relative and Absolute URLS
     """
 
-    routes: typing.List[str] = []
+    routes: typing.List[Page] = []
     output_path: Path = Path("output")
     static_path: Path = Path("static")
     SITE_TITLE: str = "Untitled Site"
     SITE_LINK: str = "https://example.com"
     SITE_URL: str = "https://example.com"
+    strict: bool = False
+    default_engine: typing.Type[Engine] = Engine()
+    rss_engine: typing.Type[Engine] = RSSFeedEngine()
+    search: typing.Optional[typing.Type[Search]] = None
+    search_index_filename: str = 'search.json'
+    search_keys: typing.List[str] = []
+    timezone: str=''
 
-    def __init__(
-            self,
-            strict: bool = False,
-            search=None,
-            search_keys=[],
-            timezone: str='',
-            ):
+    def __init__(self):
         """
         Clean Directory and Prepare Output Directory
 
@@ -106,12 +111,16 @@ class Site:
         self.output_path = Path(self.output_path)
 
         # strict deletes the directory and rebuilds it from scratch
-        if strict and self.output_path.is_dir():
+        if self.output_path.exists() and not self.output_path.is_dir():
+            raise ValueError('output path cannot point to an existing file')
+
+        if self.strict and self.output_path.exists():
             shutil.rmtree(self.output_path)
+
+        self.output_path.mkdir(exist_ok=True)
 
         # copy a defined static path into output path
         if Path(self.static_path).is_dir():
-            self.output_path.mkdir(exist_ok=True)
             shutil.copytree(
                 self.static_path,
                 self.output_path.joinpath(self.static_path),
@@ -120,23 +129,7 @@ class Site:
 
         # sets the timezone environment variable to the local timezone if not present
 
-        os.environ['render_engine_timezone'] = more_itertools.first_true(
-                [
-                    getattr(self, 'timezone', None),
-                    timezone,
-                    pendulum.local_timezone().name
-                    ]
-                )
-
-
-        self.engines: typing.Dict[str, typing.Type[Engine]] = {
-            "default_engine": Engine(),
-            "rss_engine": RSSFeedEngine(),
-        }
-
-        self.search = search
-        self.search_keys = search_keys
-        self.search_index_filename = "search.json"
+        os.environ['render_engine_timezone'] = self.timezone or pendulum.local_timezone().name
 
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
@@ -163,7 +156,6 @@ class Site:
         setattr(self, collection.title, collection)
 
         for page in collection._pages:
-            logging.warning(page)
             self.route(cls=page)
 
         if collection.has_archive:
@@ -185,13 +177,13 @@ class Site:
             for archive_page in subcollection.archive:
                 self.route(archive_page)
 
-        if hasattr(collection, "feeds"):
+        if collection.feeds:
             for feed in collection.feeds:
                 self.register_feed(feed=feed, collection=collection)
 
 
     def register_feed(self, feed, collection: Collection) -> None:
-        extension = self.engines["rss_engine"].extension
+        extension = self.rss_engine.extension
         _feed = feed()
         _feed.slug = collection.__class__.__name__.lower()
         _feed.items = [page.rss_feed_item for page in collection._pages]
@@ -213,25 +205,27 @@ class Site:
     def render(self, dry_run: bool = False) -> None:
 
         for page in self.routes:
-            engine = self.engines.get(page.engine, self.engines["default_engine"])
-            content = engine.render(page, content=page.content, **vars(self))
+            engine = page.engine or self.default_engine
+            logging.debug(f'{engine=}')
+
+            filtered_page_attrs = itertools.filterfalse(lambda x:
+                    x[0].startswith('__'), inspect.getmembers(page))
+
+            template_attrs = {key: attr for key, attr in filtered_page_attrs}
+
+            content = engine.render(page, **template_attrs, **vars(self))
 
             for route in page.routes:
-                logging.info(f"starting on {route=}")
+                logging.warning(f"starting on {route=}")
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)
                 filename = Path(page.slug).with_suffix(engine.extension)
                 filepath = route.joinpath(filename)
-
-                if not dry_run:
-                    filepath.write_text(content)
-
-                else:
-                    print(f"{content} writes to {filepath}")
+                filepath.write_text(content)
 
         if self.search:
             search_pages = filter(lambda x: x.no_index == False, self.routes)
-            search_index = self.search.build_index(
+            self.search.build_index(
                 pages=search_pages,
                 keys=self.search_keys,
                 filepath=self.output_path.joinpath(self.search_index_filename),

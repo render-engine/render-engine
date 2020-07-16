@@ -163,7 +163,19 @@ def test_archives_length_is_one_if_paginated_is_False():
     assert len(t.archive) == 1
 
 
-
 @pytest.mark.skip()
 def test_pages_are_sorted_before_being_returned():
     pass
+
+
+def tests_subcollect_shown():
+    class TestPage(Page):
+        foo = 'bar'
+
+    class TestCollection(Collection):
+        content_items = [TestPage()]
+        subcollections = ['foo']
+
+
+    t = TestCollection()
+    assert t.subcollection('foo') == ['bar']

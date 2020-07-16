@@ -132,6 +132,9 @@ class Page:
         if not self.slug:
             self.slug = self.title or self.__class__.__name__
 
+        self.raw_content = self.content
+        self.content = self.markup
+
         self.slug = slugify(self.slug)
         self.url = f"{self.routes[0]}/{self.slug}"
 
@@ -152,7 +155,7 @@ class Page:
         """Text from self.content converted to html"""
 
         if self.content:
-            return markdown(self.content, extras=['fenced-code-blocks'])
+            return markdown(self.raw_content, extras=['fenced-code-blocks'])
 
         else:
             return ''
