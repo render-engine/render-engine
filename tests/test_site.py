@@ -6,6 +6,7 @@ from render_engine.engine import Engine
 from render_engine.search import Fuse
 
 import os
+import shutil
 import pytest
 from pathlib import Path
 
@@ -33,10 +34,6 @@ def test_register_route():
 
     assert t.routes[0].title == 'TestPage'
 
-
-@pytest.mark.skip()
-def test_register_feed():
-    pass
 
 def test_site_registers_each_archive_page():
     pass
@@ -103,6 +100,10 @@ def test_static_path_copied_into_output_path():
     t = TestSite()
 
     assert test_path.joinpath('static/test_file').is_file()
+
+    # Cleanup
+    shutil.rmtree('./tests/test_folder')
+
 
 def test_register_collection_adds_collection_to_site_collections_dict():
     class TestSite(Site):
@@ -249,3 +250,5 @@ def test_site_search_builds_index():
     t.render()
 
     assert Path('./tests/test_output/search.json').is_file()
+    shutil.rmtree('./tests/test_output')
+
