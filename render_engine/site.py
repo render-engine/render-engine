@@ -37,7 +37,6 @@ def get_subcollections(collection):
     return subcollection_set
 
 
-
 class Site:
     """
     The site stores your pages and collections to be rendered.
@@ -203,20 +202,22 @@ class Site:
 
 
     def render(self, dry_run: bool = False) -> None:
-
         for page in self.routes:
-            engine = page.engine or self.default_engine
+
+            if page.engine:
+                engine = page.engine
+
+            else:
+                engine = self.default_engine
+
             logging.debug(f'{engine=}')
 
-            filtered_page_attrs = itertools.filterfalse(lambda x:
-                    x[0].startswith('__'), inspect.getmembers(page))
+            template_attrs = self.get_public_attributes(page)
 
-            template_attrs = {key: attr for key, attr in filtered_page_attrs}
-
-            content = engine.render(page, **template_attrs, **vars(self))
+            content = engine.render(page, **template_attrs)
 
             for route in page.routes:
-                logging.warning(f"starting on {route=}")
+                logging.debug(f"starting on {route=}")
                 route = self.output_path.joinpath(route.strip("/"))
                 route.mkdir(exist_ok=True)
                 filename = Path(page.slug).with_suffix(engine.extension)
@@ -230,3 +231,16 @@ class Site:
                 keys=self.search_keys,
                 filepath=self.output_path.joinpath(self.search_index_filename),
             )
+
+
+    def get_public_attributes(self, cls):
+        site_filtered_attrs = itertools.filterfalse(lambda x:
+                x[0].startswith('__'), inspect.getmembers(self))
+        site_dict = {x: y for x, y in site_filtered_attrs}
+
+        cls_filtered_attrs = itertools.filterfalse(lambda x:
+                x[0].startswith('__'), inspect.getmembers(cls))
+
+        cls_dict = {x: y for x, y in cls_filtered_attrs}
+
+        return {**site_dict, **cls_dict}

@@ -18,6 +18,15 @@ from more_itertools import first_true
 from .engine import Engine
 from .page import Page
 
+class RSSFeedEngine(Engine):
+    """The Engine that Processes RSS Feed"""
+
+    extension = ".rss.xml"
+    environment = jinja2.Environment(
+        loader=PackageLoader("render_engine", "rss"),
+        autoescape=select_autoescape(),
+        trim_blocks=True,
+    )
 
 class RSSFeedItem:
     """
@@ -72,7 +81,7 @@ class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
 
     template = "rss2.0.rss"
-    engine = "rss_engine"
+    engine = RSSFeedEngine()
     title = "RSS Feed"
     link = ""
     slug = ""
@@ -82,12 +91,3 @@ class RSSFeed(Page):
         self.no_index = True
 
 
-class RSSFeedEngine(Engine):
-    """The Engine that Processes RSS Feed"""
-
-    extension = ".rss.xml"
-    environment = jinja2.Environment(
-        loader=PackageLoader("render_engine", "rss"),
-        autoescape=select_autoescape(),
-        trim_blocks=True,
-    )

@@ -6,6 +6,41 @@ that should be grouped together.
 
 Collection attributes will be applied to each page in the collection.
 
+### content_items
+
+`content_items: typing.List[Page] = []`
+
+If you have a group of [Page]-like items that you would like to be bundled into a
+collection.
+
+This is good for building a collection of objects of a DIFFERENT [content_type].
+
+### content_path
+
+`content_path: str = ""`
+
+Builds items of the same [content_type].
+
+Used for content files in a folder that you would like to have the same
+content_type, template, routes.
+
+`content_path`
+
+
+### Combining `content_items` and `content_path`
+
+It is possible to define both `content_items` and a `content_path` in a
+collection. This could lead to unexpected consequences when rendering your
+site. You could potentially overwrite files. Make sure all objects are
+unique.
+
+### content_type
+
+content_type: typing.Type[Page] = Page
+
+
+
+### page_template
 Not So Safe Attributes
 ====
 
@@ -32,3 +67,5 @@ The page's Engine of the is responsible for generating content for your
 webpage. In most cases this will be provided by the site and should not be
 changed.
 
+[content_type]: #content-type
+[Page]: /page.html

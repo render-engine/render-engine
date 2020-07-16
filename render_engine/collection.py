@@ -58,10 +58,10 @@ class Collection:
 
     """
 
-    engine: typing.Optional[str] = ""
+    engine: typing.Optional[str] = None
     content_items: typing.List[Page] = []
     content_path: str = ""
-    page_content_type: typing.Type[Page] = Page
+    content_type: typing.Type[Page] = Page
     template: str = "page.html"
     includes: typing.List[str] = ["*.md", "*.html"]
     routes: typing.List[str] = [""]

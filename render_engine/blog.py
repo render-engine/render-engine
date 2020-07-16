@@ -86,7 +86,7 @@ class Blog(Collection):
         - Rename the archive items so they are not private
     """
 
-    page_content_type: typing.Type[BlogPost] = BlogPost
+    content_type: typing.Type[BlogPost] = BlogPost
     archive_reverse: bool = True
     has_archive: bool = True
     feeds = [RSSFeed]

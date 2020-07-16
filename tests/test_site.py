@@ -252,3 +252,24 @@ def test_site_search_builds_index():
     assert Path('./tests/test_output/search.json').is_file()
     shutil.rmtree('./tests/test_output')
 
+
+def test_site_render_page_attrs_are_clean(tmp_path):
+    """When two items in a collection"""
+
+    temp_content = tmp_path.joinpath('content')
+    temp_content.mkdir()
+
+    temp_page_1 = temp_content.joinpath('page1.md')
+    temp_page_1.write_text('title: Test Page1\nfoo: bar This is Test Page 1')
+
+    temp_page_2 = temp_content.joinpath('page2.md')
+    temp_page_2.write_text('title: Test Page2\nbiz: baz This is Test Page 2')
+
+    class TestMultipleAttrsCollection(Collection):
+        content_path = temp_content
+
+    c = TestMultipleAttrsCollection()
+
+    for page in c._pages:
+        assert page.foo
+        assert page.biz
