@@ -34,13 +34,44 @@ collection. This could lead to unexpected consequences when rendering your
 site. You could potentially overwrite files. Make sure all objects are
 unique.
 
+
 ### content_type
 
 content_type: typing.Type[Page] = Page
 
+Sets the `content_type` for each item in the `[content_path]`.
 
 
-### page_template
+### template
+
+template: str = "page.html"
+
+Sets the template the for each item in the `[content_path]`.
+
+
+### includes
+
+`includes: typing.List[str] = [".md", "*.html"]`
+
+The type of files that will be looked at in the `[content_path]`.
+
+Any files in [content_path] with extensions not listed in `includes` will be
+skipped.
+
+
+### routes
+
+`routes: typing.List[str] = [""]`
+
+
+
+### subcollections
+
+`subcollections: typing.List[str] = []`
+
+
+
+
 Not So Safe Attributes
 ====
 
@@ -68,4 +99,4 @@ webpage. In most cases this will be provided by the site and should not be
 changed.
 
 [content_type]: #content-type
-[Page]: /page.html
+[Page]: page.html
