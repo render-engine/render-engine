@@ -68,8 +68,6 @@ class Collection:
     subcollections: typing.List[str] = []
     has_archive: bool = False
     archive_template: str = "archive.html"
-    archive_slug: str = "all_posts"
-    archive_content_type: Page = Page
     archive_reverse: bool = False
     paginated: bool = False
     items_per_page: int = 10
@@ -130,30 +128,26 @@ class Collection:
     @property
     def archive(self):
         """Create a `Page` object for the pages in the collection"""
-        archive_page = self.archive_content_type()
-        archive_page.no_index = True
-        archive_page.template = self.archive_template
-        archive_page.slug = self.archive_slug
-        archive_page.engine = ""
-        archive_page.routes = [self.routes[0]]
-        archive_page.pages = self.pages
-        archive_page.title = self.title
 
-        if self.paginated:
-            archive_pages = []
+        class Archive(Page):
+            no_index = True
+            template = self.archive_template
+            routes = [self.routes[0]]
+            title = self.title
 
-            for index, page in enumerate(self.pages):
-                archive_page = self.archive_content_type()
-                archive_page.no_index = True
-                archive_page.template = self.archive_template
-                archive_page.slug = f"{self.archive_slug}_{index}"
-                archive_page.engine = ""
-                archive_page.routes = [self.routes[0]]
-                archive_page.pages = self.pages[index]
-                archive_page.title = self.title
-                archive_page.page_index = index
+        archive_pages = []
+
+        for index, page in enumerate(self.pages):
+            archive_page =  Archive()
+            archive_page.routes = [self.routes[0]]
+            archive_page.pages = self.pages[index]
+            archive_page.title = self.title
+            archive_page.page_index = index
+
+            if paginated:
+                archive_page.slug = f'{archive_page.slug}_{index}'
+            else
                 archive_pages.append(archive_page)
-
 
             return archive_pages
 

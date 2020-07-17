@@ -69,7 +69,39 @@ skipped.
 
 `subcollections: typing.List[str] = []`
 
+Subcollections are a filtered group of items in the collections. Subcollections 
+are created by specifying the attribute to check against.
 
+```
+class TestPage1(Page):
+		foo = 'bar'
+
+class TestPage2(Page):
+		foo = 'biz'
+
+
+class MyCollection(Collection):
+		subcollections = ['foo']
+
+
+# This would yield two subcollections
+bar(Collection):
+		content_items = [TestPage1]
+
+biz(Collection):
+		content_items = [TestPage2]
+
+```
+
+Subcollections have [archives][Archive].
+
+## Archive
+
+`has_archive: bool = False`
+
+An archive is a collection of pages with references to the page items.
+
+The number of pages
 
 
 Not So Safe Attributes
@@ -100,3 +132,4 @@ changed.
 
 [content_type]: #content-type
 [Page]: page.html
+[Archive]: #archive
