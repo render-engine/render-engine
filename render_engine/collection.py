@@ -1,3 +1,4 @@
+from slugify import slugify
 import itertools
 import logging
 import operator
@@ -47,11 +48,11 @@ class Collection:
     has_archive: Bool
         if `True`, create an archive page with all of the processed pages saved
         as `pages`. default `False`
-    _archive_template: str, optional
+    template: str, optional
         template filename that will be used if `has_archive==True` default: archive.html"
-    _archive_slug: str, optional
+    slug: str, optional
         slug for rendered page if `has_archive == True` default: all_posts
-    _archive_content_type: Type[Page], optional
+    content_type: Type[Page], optional
         content_type for the rendered archive page
     _archive_reverse: Bool, optional
         should the sorted `pages` be listed in reverse order. default: False
@@ -69,6 +70,7 @@ class Collection:
     has_archive: bool = False
     archive_template: str = "archive.html"
     archive_reverse: bool = False
+    archive_sort: typing.Tuple[str] = ('title')
     paginated: bool = False
     items_per_page: int = 10
     title: typing.Optional[str] = ''
@@ -77,11 +79,6 @@ class Collection:
     def __init__(self):
         if not self.title:
             self.title = self.__class__.__name__
-
-    @staticmethod
-    def archive_default_sort(cls):
-        """attribute pulled from a rendered Page to sort `pages`"""
-        return cls.slug
 
     @property
     def _pages(self) -> typing.List[Page]:
@@ -100,34 +97,28 @@ class Collection:
             for pattern in self.includes:
 
                 for filepath in Path(self.content_path).glob(pattern):
-                    page = self.page_content_type.from_content_path(filepath)
+                    page = self.content_type.from_content_path(filepath)
                     page.routes = self.routes
                     page.template = self.template
                     _pages.append(page)
 
         return _pages
 
-
     @property
-    def pages(self) -> typing.List[typing.Union[Page, typing.List]]:
-        """Iterate through set of pages and generate a `Page`-like object for each."""
+    def archive(self):
+        """Create a `Page` object for the pages in the collection"""
 
         sorted_pages = sorted(
             self._pages,
-            key=lambda p: self.archive_default_sort(p),
+            key=lambda p: getattr(p, self.archive_sort),
             reverse=self.archive_reverse,
         )
 
         if self.paginated:
-            return list(more_itertools.chunked(sorted_pages, self.items_per_page))
+            pages = list(more_itertools.chunked(sorted_pages, self.items_per_page))
 
         else:
-            return sorted_pages
-
-
-    @property
-    def archive(self):
-        """Create a `Page` object for the pages in the collection"""
+            pages = [sorted_pages]
 
         class Archive(Page):
             no_index = True
@@ -137,48 +128,29 @@ class Collection:
 
         archive_pages = []
 
-        for index, page in enumerate(self.pages):
+        for index, page in enumerate(pages):
             archive_page =  Archive()
             archive_page.routes = [self.routes[0]]
-            archive_page.pages = self.pages[index]
+            archive_page.pages = pages[index]
             archive_page.title = self.title
             archive_page.page_index = index
 
-            if paginated:
-                archive_page.slug = f'{archive_page.slug}_{index}'
-            else
-                archive_pages.append(archive_page)
+            if self.paginated:
+                archive_page.slug = f'{archive_page.slug}-{index}'
 
-            return archive_pages
+            archive_pages.append(archive_page)
 
-        else:
-            archive_page = self.archive_content_type()
-            archive_page.no_index = True
-            archive_page.template = self.archive_template
-            archive_page.slug = f"{self.archive_slug}"
-            archive_page.engine = ""
-            archive_page.routes = [self.routes[0]]
-            archive_page.pages = self.pages
-            archive_page.title = self.title
-            archive_page.page_index = 0
-            return [archive_page]
+        return archive_pages
 
 
     @classmethod
-    def from_subcollection(cls, collection, attr, attrval):
-        sub_content_items = []
-
-        for page in collection._pages:
-
-            if attrval in getattr(page, attr, []):
-                sub_content_items.append(page)
-
+    def from_subcollection(cls, collection, attrval):
         class SubCollection(Collection):
             archive_template = collection.archive_template
-            archive_slug = collection.archive_slug
-            archive_content_type = collection.archive_content_type
+            slug = slugify(attrval)
+            content_type = collection.content_type
             archive_reverse = collection.archive_reverse
-            content_items = sub_content_items
+            content_items = []
             has_archive = True
             routes = [attrval]
             title = attrval

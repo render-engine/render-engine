@@ -90,17 +90,4 @@ class Blog(Collection):
     archive_reverse: bool = True
     has_archive: bool = True
     feeds = [RSSFeed]
-
-    @staticmethod
-    def archive_default_sort(cls):
-        """
-        How to sort pages
-
-        Attributes:
-            _archive_default_sort : Any
-                default BlogPost.date
-
-        Todos:
-            - Rename the archive items so they are not private
-        """
-        return cls.date
+    archive_sort = 'date'

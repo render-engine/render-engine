@@ -18,25 +18,6 @@ from .links import Link
 from .page import Page
 from .search import Search
 
-def get_subcollections(collection):
-
-    subcollection_set = set() # creates a set to add new subcollections to
-
-    for page in collection._pages:
-
-        for subcollection in collection.subcollections:
-
-            if attr := getattr(page, subcollection, None):
-                if isinstance(attr, list):
-                    for subattr in attr:
-                        subcollection_set.add((subcollection, subattr))
-
-                else:
-                    subcollection_set.add((subcollection, attr))
-
-    return subcollection_set
-
-
 class Site:
     """
     The site stores your pages and collections to be rendered.
@@ -151,30 +132,44 @@ class Site:
                 Collection to parse
         """
         collection = collection_cls()
-        self.collections.update({collection.__class__.__name__: collection})
-        setattr(self, collection.title, collection)
+        self.collections.update({collection.title: collection})
 
         for page in collection._pages:
+            logging.info(page.title)
             self.route(cls=page)
+
+            for attribute in collection.subcollections:
+                if attrval:=getattr(page, attribute, None):
+                    if isinstance(attrval, str):
+                        attr = [attrval]
+                    else:
+                        attr = attrval
+
+                    for attribute_value in attr:
+
+                        if not attribute in self.subcollections:
+                            logging.info(f'{attribute} does not exist. \
+                            Creating {attribute}')
+                            subcollection = Collection.from_subcollection(
+                                    collection,
+                                    attribute_value,
+                                    )
+                            self.subcollections[attribute] = [subcollection]
+
+                        if not attribute_value in [x.title for x in self.subcollections[attribute]]:
+                            self.subcollections[attribute].append(
+                                    Collection.from_subcollection(collection,
+                                        attribute_value)
+                                    )
+
+                        attribute_subcollection = [x for x in
+                                self.subcollections[attribute] if x.title ==
+                                attribute_value][0]
+                        attribute_subcollection.content_items.append(page)
 
         if collection.has_archive:
             for archive in collection.archive:
                 self.route(cls=archive)
-
-        subcollections = get_subcollections(collection)
-
-        for attr, attrval in subcollections:
-            subcollection = Collection.from_subcollection(collection, attr, attrval,)
-            self.collections[attrval] = subcollection
-
-            if attr in self.subcollections.keys():
-                self.subcollections[attr].append(subcollection)
-
-            else:
-                self.subcollections[attr] = [subcollection]
-
-            for archive_page in subcollection.archive:
-                self.route(archive_page)
 
         if collection.feeds:
             for feed in collection.feeds:
@@ -202,6 +197,15 @@ class Site:
 
 
     def render(self, dry_run: bool = False) -> None:
+        for _, subcollection_group in self.subcollections.items():
+
+            for subcollection in subcollection_group:
+                self.collections[subcollection.title] = subcollection
+
+                for archive_pages in [x.archive for x in subcollection_group]:
+                    for page in archive_pages:
+                        self.route(page)
+
         for page in self.routes:
 
             if page.engine:
@@ -216,13 +220,20 @@ class Site:
 
             content = engine.render(page, **template_attrs)
 
-            for route in page.routes:
-                logging.debug(f"starting on {route=}")
-                route = self.output_path.joinpath(route.strip("/"))
-                route.mkdir(exist_ok=True)
-                filename = Path(page.slug).with_suffix(engine.extension)
-                filepath = route.joinpath(filename)
-                filepath.write_text(content)
+            route = self.output_path.joinpath(page.routes[0].strip("/"))
+            route.mkdir(exist_ok=True)
+            filename = Path(page.slug).with_suffix(engine.extension)
+            filepath = route.joinpath(filename)
+            filepath.write_text(content)
+            logging.warning(f'{filepath=} written!')
+
+            if len(page.routes) > 1:
+                for new_route in page.routes[1:]:
+                    new_route = self.output_path.joinpath(new_route.strip("/"))
+                    new_route.mkdir(exist_ok=True)
+                    new_filepath = new_route.joinpath(filename)
+                    shutil.copy(filepath, new_filepath)
+                    logging.warning(f'{new_filepath=} written!')
 
         if self.search:
             search_pages = filter(lambda x: x.no_index == False, self.routes)

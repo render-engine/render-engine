@@ -147,8 +147,6 @@ class Page:
 
         return NewPage()
 
-    def __str__(self):
-        return self.slug
 
     @property
     def html(self):

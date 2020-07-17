@@ -39,12 +39,17 @@ def test_collection():
 
 def test_collection_content_items_equals_pages_if_nothing_else_exists(test_collection):
     """Test that the collections content_items are visible in pages"""
-    assert test_collection.content_items == test_collection.pages
+    assert test_collection.content_items == test_collection._pages
 
 
 def test_collection_archive_page_pages_sorted_by_default_sort(test_collection):
-    """By default the sort uses the slug"""
+    """By default the sort uses the title"""
+    print(f'{test_collection.archive[0].title=}')
     assert test_collection.archive[0].pages[0].slug ==  'page1'
+
+
+def test_archive_pulls_from_collection(test_collection):
+    assert test_collection.archive[0].slug ==  'testcollection'
 
 
 def test_collection_raises_warning_if_content_path_is_root(mocker):
@@ -54,7 +59,7 @@ def test_collection_raises_warning_if_content_path_is_root(mocker):
     mocker.patch.object(render_engine.collection, 'logging')
 
     dc = DangerousCollection()
-    dc.pages
+    dc._pages
     render_engine.collection.logging.warning.assert_called_with(
             "self.content_path='/'! Accessing Root Directory is Dangerous..."
             )
@@ -70,7 +75,7 @@ def test_collection_page_content_type_is_passed_to_content_path_items():
                 content_path = tmpdirname
 
             test_collection = TestCollection()
-            assert isinstance(test_collection.pages[0], Page)
+            assert isinstance(test_collection._pages[0], Page)
 
 def test_collection_from_subcollection_does_not_include_bad_items(test_collection):
     a = copy.copy(test_collection)
@@ -109,24 +114,7 @@ def test_collection_pages_are_list_of_page_objects_if_paginated_is_False():
 
     t = TestCollection()
 
-    assert t.pages == not_paginated
-
-def test_collection_pages_are_nested_list_of_page_objects_if_paginated_is_True(test_collection):
-    """If a collection.paginated is True, then collection.pages should be a
-    nested list"""
-
-    page_1 = page_2 = page_3 = page_4 = page_5 = Page()
-    not_paginated = [page_1, page_2, page_3, page_4, page_5]
-    paginated = [[page_1, page_2, page_3], [page_4, page_5]]
-
-    class TestCollection(Collection):
-        paginated = True
-        items_per_page = 3
-        content_items = not_paginated
-
-    t = TestCollection()
-
-    assert t.pages == paginated
+    assert t._pages == not_paginated
 
 def test_archives_length_greater_than_one_if_paginated_is_True():
     """Tests if collection.paginated = True, then archives will be the length
