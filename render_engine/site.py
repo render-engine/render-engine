@@ -1,3 +1,4 @@
+from progress.bar import Bar
 import itertools
 import inspect
 import logging
@@ -134,44 +135,17 @@ class Site:
         collection = collection_cls()
         self.collections.update({collection.title: collection})
 
-        for page in collection._pages:
+        for page in collection.pages:
             logging.info(page.title)
             self.route(cls=page)
 
-            for attribute in collection.subcollections:
-                if attrval:=getattr(page, attribute, None):
-                    if isinstance(attrval, str):
-                        attr = [attrval]
-                    else:
-                        attr = attrval
-
-                    for attribute_value in attr:
-
-                        if not attribute in self.subcollections:
-                            logging.info(f'{attribute} does not exist. \
-                            Creating {attribute}')
-                            subcollection = Collection.from_subcollection(
-                                    collection,
-                                    attribute_value,
-                                    )
-                            self.subcollections[attribute] = [subcollection]
-
-                        if not attribute_value in [x.title for x in self.subcollections[attribute]]:
-                            self.subcollections[attribute].append(
-                                    Collection.from_subcollection(collection,
-                                        attribute_value)
-                                    )
-
-                        attribute_subcollection = [x for x in
-                                self.subcollections[attribute] if x.title ==
-                                attribute_value][0]
-                        attribute_subcollection.content_items.append(page)
-
         if collection.has_archive:
+
             for archive in collection.archive:
                 self.route(cls=archive)
 
         if collection.feeds:
+
             for feed in collection.feeds:
                 self.register_feed(feed=feed, collection=collection)
 
@@ -180,7 +154,7 @@ class Site:
         extension = self.rss_engine.extension
         _feed = feed()
         _feed.slug = collection.__class__.__name__.lower()
-        _feed.items = [page.rss_feed_item for page in collection._pages]
+        _feed.items = [page.rss_feed_item for page in collection.pages]
         _feed.title = f"{self.SITE_TITLE} - {_feed.title}"
         _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
 
@@ -197,43 +171,54 @@ class Site:
 
 
     def render(self, dry_run: bool = False) -> None:
-        for _, subcollection_group in self.subcollections.items():
-
-            for subcollection in subcollection_group:
-                self.collections[subcollection.title] = subcollection
-
-                for archive_pages in [x.archive for x in subcollection_group]:
-                    for page in archive_pages:
+        for _, collection in self.collections.items():
+            for _, subcollection in collection.get_subcollections():
+                for name, content_items in subcollection.items():
+                    subc = collection.from_subcollection(
+                            name,
+                            content_items,
+                            )
+                    for page in subc.archive:
                         self.route(page)
 
-        for page in self.routes:
+        route_count = len(self.routes)
 
-            if page.engine:
-                engine = page.engine
+        with Bar(
+                f'Rendering {route_count} Pages',
+                max=route_count,
+                suffix='%(percent).1f%% - %(elapsed_td)s') as bar:
+            for page in self.routes:
+                suffix='%(percent).1f%% - %(elapsed_td)s'
+                bar.suffix = suffix + f' ({page.title})'
 
-            else:
-                engine = self.default_engine
+                if page.engine:
+                    engine = page.engine
 
-            logging.debug(f'{engine=}')
+                else:
+                    engine = self.default_engine
 
-            template_attrs = self.get_public_attributes(page)
+                logging.debug(f'{engine=}')
 
-            content = engine.render(page, **template_attrs)
+                template_attrs = self.get_public_attributes(page)
 
-            route = self.output_path.joinpath(page.routes[0].strip("/"))
-            route.mkdir(exist_ok=True)
-            filename = Path(page.slug).with_suffix(engine.extension)
-            filepath = route.joinpath(filename)
-            filepath.write_text(content)
-            logging.warning(f'{filepath=} written!')
+                content = engine.render(page, **template_attrs)
 
-            if len(page.routes) > 1:
-                for new_route in page.routes[1:]:
-                    new_route = self.output_path.joinpath(new_route.strip("/"))
-                    new_route.mkdir(exist_ok=True)
-                    new_filepath = new_route.joinpath(filename)
-                    shutil.copy(filepath, new_filepath)
-                    logging.warning(f'{new_filepath=} written!')
+                route = self.output_path.joinpath(page.routes[0].strip("/"))
+                route.mkdir(exist_ok=True)
+                filename = Path(page.slug).with_suffix(engine.extension)
+                filepath = route.joinpath(filename)
+                filepath.write_text(content)
+                logging.info(f'{filepath=} written!')
+
+                if len(page.routes) > 1:
+                    for new_route in page.routes[1:]:
+                        new_route = self.output_path.joinpath(new_route.strip("/"))
+                        new_route.mkdir(exist_ok=True)
+                        new_filepath = new_route.joinpath(filename)
+                        shutil.copy(filepath, new_filepath)
+                        logging.info(f'{new_filepath=} written!')
+
+                bar.next()
 
         if self.search:
             search_pages = filter(lambda x: x.no_index == False, self.routes)

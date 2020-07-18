@@ -72,6 +72,7 @@ setup(
     'pendulum',
     'pygments',
     'markdown2',
+    'progress',
     'jinja2',
     'more-itertools',
     'click',

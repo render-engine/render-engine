@@ -1,3 +1,4 @@
+import collections
 from slugify import slugify
 import itertools
 import logging
@@ -81,7 +82,7 @@ class Collection:
             self.title = self.__class__.__name__
 
     @property
-    def _pages(self) -> typing.List[Page]:
+    def pages(self) -> typing.List[Page]:
         _pages = []
 
         if self.content_items:
@@ -109,7 +110,7 @@ class Collection:
         """Create a `Page` object for the pages in the collection"""
 
         sorted_pages = sorted(
-            self._pages,
+            self.pages,
             key=lambda p: getattr(p, self.archive_sort),
             reverse=self.archive_reverse,
         )
@@ -130,10 +131,11 @@ class Collection:
 
         for index, page in enumerate(pages):
             archive_page =  Archive()
+            archive_page.collection = self
             archive_page.routes = [self.routes[0]]
             archive_page.pages = pages[index]
             archive_page.title = self.title
-            archive_page.page_index = index
+            archive_page.page_index = (index, len(pages))
 
             if self.paginated:
                 archive_page.slug = f'{archive_page.slug}-{index}'
@@ -144,26 +146,32 @@ class Collection:
 
 
     @classmethod
-    def from_subcollection(cls, collection, attrval):
+    def from_subcollection(cls, attrval, c_items):
         class SubCollection(Collection):
-            archive_template = collection.archive_template
             slug = slugify(attrval)
-            content_type = collection.content_type
-            archive_reverse = collection.archive_reverse
-            content_items = []
+            content_items = c_items
             has_archive = True
-            routes = [attrval]
+            routes = [""]
             title = attrval
 
         return SubCollection()
 
+    def get_subcollections(self):
+        subcollections = []
 
-    def subcollection(self, attr):
-        """Returns a list of all of the values in a subcollection"""
-        attrvals = []
+        # get all the values for each of the subcollections
+        for subcollection in self.subcollections:
+            subc = collections.defaultdict(list)
 
-        for page in self._pages:
-            if hasattr(page, attr):
-                attrvals.append(getattr(page, attr))
+            for page in self.pages:
+                if attr:=getattr(page, subcollection, None):
+                    if isinstance(attr, list):
+                        for a in attr:
+                            subc[a].append(page)
+                    else:
+                        subc[attr].append(page)
 
-        return attrvals
+            subcollections.append((subcollection, subc))
+
+        return subcollections
+
