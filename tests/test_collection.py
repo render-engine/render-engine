@@ -156,14 +156,18 @@ def test_pages_are_sorted_before_being_returned():
     pass
 
 
-def tests_subcollect_shown():
+def tests_subcollect_from_string():
     class TestPage(Page):
         foo = 'bar'
 
+    class SecondTestPage(Page):
+        foo = 'biz'
+
     class TestCollection(Collection):
-        content_items = [TestPage()]
+        content_items = [TestPage(), SecondTestPage()]
         subcollections = ['foo']
 
-
     t = TestCollection()
-    assert t.subcollection('foo') == ['bar']
+
+    assert t.Subcollection_from_string('foo') == ['bar']
+

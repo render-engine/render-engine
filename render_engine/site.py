@@ -1,3 +1,4 @@
+from copy import copy
 from progress.bar import Bar
 import itertools
 import inspect
@@ -7,6 +8,7 @@ import shutil
 import typing
 import pendulum
 from pathlib import Path
+from slugify import slugify
 
 
 import more_itertools
@@ -172,14 +174,21 @@ class Site:
 
     def render(self, dry_run: bool = False) -> None:
         for _, collection in self.collections.items():
-            for _, subcollection in collection.get_subcollections():
-                for name, content_items in subcollection.items():
-                    subc = collection.from_subcollection(
-                            name,
-                            content_items,
-                            )
-                    for page in subc.archive:
-                        self.route(page)
+
+            if collection.subcollections:
+
+                for subcollection in collection.get_subcollections():
+
+                    for page_title, page_objects in subcollection[1].items():
+
+                        NewCollection = copy(collection)
+                        NewCollection.content_items = page_objects
+                        NewCollection.title = page_title
+                        NewCollection.slug = slugify(page_title)
+
+                        for archive in NewCollection.archive:
+                            self.register_route(archive)
+
 
         route_count = len(self.routes)
 

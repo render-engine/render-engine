@@ -144,18 +144,6 @@ class Collection:
 
         return archive_pages
 
-
-    @classmethod
-    def from_subcollection(cls, attrval, c_items):
-        class SubCollection(Collection):
-            slug = slugify(attrval)
-            content_items = c_items
-            has_archive = True
-            routes = [""]
-            title = attrval
-
-        return SubCollection()
-
     def get_subcollections(self):
         subcollections = []
 
