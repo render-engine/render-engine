@@ -1,7 +1,7 @@
+from render_engine.content_parser import parse_content
 from slugify import slugify
 import logging
 import more_itertools
-import re
 import typing
 from pathlib import Path
 from typing import List
@@ -14,24 +14,6 @@ from ._type_hint_helpers import PathString
 # some attributes will need to be protected from manipulation
 
 
-def parse_content(content: str, matcher: str):
-    """
-    split content into attributes and content text
-
-    Parameters:
-        content : str
-            The content to be parsed
-        matcher : str, optional
-            A compiled regular expression that splits the content.
-            default `base_matcher`
-    """
-
-    matchmaker = re.compile(matcher, flags=re.M)
-    parsed_content = re.split(matchmaker, content)
-    content = parsed_content.pop().strip()
-
-    attrs = list(filter(lambda x: x.strip(), parsed_content))
-    return attrs, content
 
 
 class Page:
@@ -103,6 +85,7 @@ class Page:
     content: typing.Optional[str] = ""
     title: typing.Optional[str] = ""
     slug: typing.Optional[str] = ""
+    markdown_extras = ['fenced-code-blocks', 'footnotes']
 
     def __init__(self,):
 
@@ -153,7 +136,7 @@ class Page:
         """Text from self.content converted to html"""
 
         if self.content:
-            return markdown(self.raw_content, extras=['fenced-code-blocks'])
+            return markdown(self.raw_content, extras=markdown_extras)
 
         else:
             return ''

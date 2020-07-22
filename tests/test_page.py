@@ -7,14 +7,6 @@ from render_engine import Page
 from render_engine.page import parse_content
 
 
-def test_parse_content_splits_text():
-    content = 'title: Some Title\n\nThis is the content.'
-    assert parse_content(content, r"(^\w+: \b.+$)") == (
-            ['title: Some Title'],
-            'This is the content.',
-            )
-
-
 def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, content):
     """Tests when given a file as the content_path, parse it into data """
 
@@ -27,7 +19,6 @@ def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, con
     t = TestPage()
 
     assert t.raw_content == '# Test Header\nTest Paragraph'
-
 
 def test_page_slug_is_slugified():
     class TestPage(Page):
