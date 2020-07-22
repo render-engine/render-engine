@@ -121,14 +121,28 @@ You can generate archives by calling the `Archive` attribute. EVEN IF
 
 ## Archive Values
 
-Even though Archive objects are [Page]
+Even though Archive objects are [Page] objects, we have a few attributes in the
+Collection that will be passed into the page when `Collection.archive` is
+called.
 
-## archive_template
+### archive_template
 
 `archive_template: str = "archive.html"`
 
 Template that will be used with `[Collection.archive](#archive)`
 
+### archive_sort
+
+`archive_sort: typing.Tuple[str] = ('title')`
+
+The name of the attribute that will be checked against when sorting the
+collection.pages.
+
+### archive_reverse
+
+`archive_reverse: bool = False`
+
+Sorts `archive.pages` in reverse order by the archive_sort.
 
 
 Not So Safe Attributes
