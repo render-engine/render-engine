@@ -93,16 +93,37 @@ biz(Collection):
 
 ```
 
-Subcollections have [archives][Archive].
+Subcollections have [archives][Archive]. Each subcollection inherits from its
+parent and therefore gives you the ability to pull attributes that it's parent
+also has (by default). This is great for mirroring functionality between the
+collection and subcollection.
 
-## Archive
+Subcollections are not added to a site until the site is rendered. Note that
+due to this, You may see extended processing times based on the number of
+subcollections your site has.
+
+## archive
 
 `has_archive: bool = False`
 
-An archive is a collection of pages with references to the page items.
+An archive is a list of pages with references to the page items.
 
-The number of pages
+If [paginated](#paginated) is False, the list will only contain a single
+Archive [Page] object.
 
+If [paginated](#paginated) is True, the list will be segmented by the
+[items_per_page](#items_per_page) value.
+
+Instruct the [Site] to generate archives with the [has_archive] flag.
+
+You can generate archives by calling the `Archive` attribute. EVEN IF
+`has_archive` is set to `False`
+
+## archive_template
+
+`archive_template: str = "archive.html"`
+
+Template that will be used with `[Collection.archive](#archive)`
 
 Not So Safe Attributes
 ====
@@ -133,3 +154,4 @@ changed.
 [content_type]: #content-type
 [Page]: page.html
 [Archive]: #archive
+[Site]: site.html

@@ -145,21 +145,33 @@ class Collection:
         return archive_pages
 
     def get_subcollections(self):
-        subcollections = []
+        subcollections = {}
 
         # get all the values for each of the subcollections
-        for subcollection in self.subcollections:
-            subc = collections.defaultdict(list)
+        for _subcollection in self.subcollections:
+            subcollection_lists = collections.defaultdict(list)
+            subcollections[_subcollection] = []
 
             for page in self.pages:
-                if attr:=getattr(page, subcollection, None):
-                    if isinstance(attr, list):
-                        for a in attr:
-                            subc[a].append(page)
-                    else:
-                        subc[attr].append(page)
 
-            subcollections.append((subcollection, subc))
+                if attr:=getattr(page, _subcollection, None):
+
+                    if isinstance(attr, list):
+
+                        for attribute_item in attr:
+                            subcollection_lists[attribute_item].append(page)
+
+                    else:
+                        subcollection_lists[attr].append(page)
+
+            for attr, subcollection in subcollection_lists.items():
+
+                class SubCollection(self.__class__):
+                    content_path = None
+                    content_items = subcollection
+                    title = attr
+                    slug = slugify(attr)
+
+                subcollections[_subcollection].append(SubCollection())
 
         return subcollections
-

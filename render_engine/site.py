@@ -177,17 +177,24 @@ class Site:
 
             if collection.subcollections:
 
-                for subcollection in collection.get_subcollections():
+                for subcollection_group in collection.get_subcollections():
+                    logging.info(f'{subcollection_group=}')
 
-                    for page_title, page_objects in subcollection[1].items():
+                    _subcollection_group = collection.get_subcollections()[subcollection_group]
+                    sorted_group = sorted(
+                            _subcollection_group,
+                            key=lambda x:(len(x.pages), x.title),
+                            reverse=True,
+                            )
 
-                        NewCollection = copy(collection)
-                        NewCollection.content_items = page_objects
-                        NewCollection.title = page_title
-                        NewCollection.slug = slugify(page_title)
 
-                        for archive in NewCollection.archive:
-                            self.register_route(archive)
+                    for subcollection in sorted_group:
+
+                        self.subcollections[subcollection_group] = sorted_group
+
+                        for archive in subcollection.archive:
+                            self.route(archive)
+
 
 
         route_count = len(self.routes)
@@ -210,6 +217,8 @@ class Site:
 
                 template_attrs = self.get_public_attributes(page)
 
+                # breakpoint()
+
                 content = engine.render(page, **template_attrs)
 
                 route = self.output_path.joinpath(page.routes[0].strip("/"))
@@ -220,6 +229,7 @@ class Site:
                 logging.info(f'{filepath=} written!')
 
                 if len(page.routes) > 1:
+
                     for new_route in page.routes[1:]:
                         new_route = self.output_path.joinpath(new_route.strip("/"))
                         new_route.mkdir(exist_ok=True)
