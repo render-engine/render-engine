@@ -119,11 +119,17 @@ Instruct the [Site] to generate archives with the [has_archive] flag.
 You can generate archives by calling the `Archive` attribute. EVEN IF
 `has_archive` is set to `False`
 
+## Archive Values
+
+Even though Archive objects are [Page]
+
 ## archive_template
 
 `archive_template: str = "archive.html"`
 
 Template that will be used with `[Collection.archive](#archive)`
+
+
 
 Not So Safe Attributes
 ====
@@ -152,6 +158,6 @@ webpage. In most cases this will be provided by the site and should not be
 changed.
 
 [content_type]: #content-type
-[Page]: page.html
+[Page]: /page.html
 [Archive]: #archive
-[Site]: site.html
+[Site]: /site.html
