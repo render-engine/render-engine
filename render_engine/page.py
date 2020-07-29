@@ -14,8 +14,6 @@ from ._type_hint_helpers import PathString
 # some attributes will need to be protected from manipulation
 
 
-
-
 class Page:
     """
     Base component used to make web pages.
@@ -82,7 +80,7 @@ class Page:
     no_index: bool = False  # hides from search index
     matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
     content_path: typing.Optional[str] = ""
-    content: typing.Optional[str] = ""
+    base_content: typing.Optional[str] = ""
     title: typing.Optional[str] = ""
     slug: typing.Optional[str] = ""
     markdown_extras = ['fenced-code-blocks', 'footnotes']
@@ -92,7 +90,7 @@ class Page:
         if self.content_path:
             content = Path(self.content_path).read_text()
 
-            valid_attrs, self.content = parse_content(
+            valid_attrs, self.base_content = parse_content(
                     content,
                     matcher=self.matcher,
                     )
@@ -115,28 +113,35 @@ class Page:
         if not self.slug:
             self.slug = self.title or self.__class__.__name__
 
-        self.raw_content = self.content
-        self.content = self.markup
-
         self.slug = slugify(self.slug)
         self.url = f"{self.routes[0]}/{self.slug}"
 
 
     @classmethod
-    def from_content_path(cls, filepath):
+    def from_content_path(cls, filepath, **kwargs):
 
         class NewPage(cls):
             content_path = filepath
 
-        return NewPage()
+            def __init__(self, markdown_extras: typing.List[str]=[]):
+                for extra in markdown_extras:
+                    if extra not in self.markdown_extras:
+                        self.markdown_extras.append(extra)
+
+                super().__init__()
+
+
+        newpage = NewPage(**kwargs)
+
+        return newpage
 
 
     @property
     def html(self):
         """Text from self.content converted to html"""
 
-        if self.content:
-            return markdown(self.raw_content, extras=markdown_extras)
+        if self.base_content:
+            return markdown(self.base_content, extras=self.markdown_extras)
 
         else:
             return ''
@@ -149,3 +154,7 @@ class Page:
 
         else:
             return ''
+
+    @property
+    def content(self):
+        return self.markup

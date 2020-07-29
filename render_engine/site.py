@@ -138,7 +138,6 @@ class Site:
         self.collections.update({collection.title: collection})
 
         for page in collection.pages:
-            logging.info(page.title)
             self.route(cls=page)
 
         if collection.has_archive:

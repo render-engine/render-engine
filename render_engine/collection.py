@@ -76,6 +76,7 @@ class Collection:
     items_per_page: int = 10
     title: typing.Optional[str] = ''
     feeds: typing.List[typing.Optional[RSSFeed]] = []
+    markdown_extras = ['fenced-code-blocks', 'footnotes']
 
     def __init__(self):
         if not self.title:
@@ -98,7 +99,10 @@ class Collection:
             for pattern in self.includes:
 
                 for filepath in Path(self.content_path).glob(pattern):
-                    page = self.content_type.from_content_path(filepath)
+                    page = self.content_type.from_content_path(
+                            filepath,
+                            markdown_extras = self.markdown_extras,
+                            )
                     page.routes = self.routes
                     page.template = self.template
                     _pages.append(page)
