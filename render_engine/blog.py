@@ -94,7 +94,7 @@ class Blog(Collection):
     content_type: typing.Type[BlogPost] = BlogPost
     archive_reverse: bool = True
     has_archive: bool = True
-    archive_sort = "date"
+    archive_sort = "date_published"
 
     @property
     def feeds(self):
