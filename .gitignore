@@ -411,3 +411,4 @@ dmypy.json
 .coverage
 .mypy_cache
 wily-report.html
+.DS_Store
