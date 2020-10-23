@@ -15,7 +15,7 @@ import hashlib
 
 def _id_hash(page, *id_fields):
     """Generate a Hash from the provided fields"""
-    raw_msg = ''.join([getattr(page,x,"") for x in id_fields]).encode('utf-8')
+    raw_msg = "".join([getattr(page, x, "") for x in id_fields]).encode("utf-8")
     return hashlib.sha1(raw_msg).hexdigest()
 
 
@@ -26,11 +26,11 @@ def _build_index(pages, id_field="_id", **search_params):
     for page in pages:
         page_dict = {}
 
-        for key, key_params in search_params['fields'].items():
+        for key, key_params in search_params["fields"].items():
 
             if field_value := getattr(page, key, None):
 
-                if key_params['type'] == "date":
+                if key_params["type"] == "date":
                     page_dict[key] = field_value.to_rfc3339_string()
 
                 else:
@@ -52,11 +52,11 @@ def fuse(search: typing.Dict, filepath: str):
 
 
 def elasticsearch(
-        _, # called inside a class
-        search_client: elasticsearch.Elasticsearch,
-        pages,
-        **search_params,
-        ):
+    _,  # called inside a class
+    search_client: elasticsearch.Elasticsearch,
+    pages,
+    **search_params,
+):
     """Upload the pages to an elasticsearch index
 
     Parameters
@@ -71,18 +71,18 @@ def elasticsearch(
     bulk operation
         the bulk command sent to your elasticsearch instance"""
     return bulk(
-            client=search_client,
-            index=search_params['index'],
-            actions=(x for x in _build_index(pages=pages, **search_params)),
-            )
+        client=search_client,
+        index=search_params["index"],
+        actions=(x for x in _build_index(pages=pages, **search_params)),
+    )
 
 
 def elastic_app_search(
     _,
-    search_client, 
+    search_client,
     pages,
     **search_params,
-    ):
+):
     """Upload the pages to an enterprise app search engine
 
     Parameters
@@ -101,8 +101,8 @@ def elastic_app_search(
     id_fields: the fields to use in generating the id (to prevent duplicate entries)
     """
 
-    documents=[x for x in _build_index(pages=pages, id_field='id', **search_params)]
+    documents = [x for x in _build_index(pages=pages, id_field="id", **search_params)]
     return search_client.index_documents(
-        engine_name=search_params['engine'],
+        engine_name=search_params["engine"],
         documents=documents,
     )

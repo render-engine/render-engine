@@ -47,24 +47,33 @@ class BlogPost(Page):
 
         super().__init__(**kwargs)
 
-        date_published = more_itertools.first_true((
+        date_published = more_itertools.first_true(
+            (
                 getattr(self, "date_published", None),
                 getattr(self, "publish_date", None),
                 getattr(self, "date", None),
-                ))
+            )
+        )
 
-        self.date_published = pendulum.parse(date_published, strict=False).set(tz=pendulum.local_timezone())
+        self.date_published = pendulum.parse(date_published, strict=False).set(
+            tz=pendulum.local_timezone()
+        )
 
-        date_modified = more_itertools.first_true((
+        date_modified = more_itertools.first_true(
+            (
                 getattr(self, "date_modified", None),
                 getattr(self, "modified_date", None),
-                ), default=None)
+            ),
+            default=None,
+        )
 
         if not date_modified:
             self.date_modified = self.date_published
 
         else:
-            self.date_modified = pendulum.parse(date_modified, strict=False).set(tz=pendulum.local_timezone())
+            self.date_modified = pendulum.parse(date_modified, strict=False).set(
+                tz=pendulum.local_timezone()
+            )
 
         self.date_friendly = self.date_modified.format("MMM DD, YYYY HH:mm A")
 

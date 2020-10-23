@@ -226,42 +226,41 @@ class Site:
 
                 self._render_output(page)
 
-
                 bar.next()
 
         if self.search:
             search_fields = {
-                    "title": {
-                        "type":"text",
-                        },
-                    "content": {
-                        "type": "text",
-                        },
-                    "slug": {
-                        "type": "text",
-                        },
-                    "date_published": {
-                        "type": "date",
-                        },
-                    "date_modified": {
-                        "type": "date",
-                        },
-                    "tags": {
-                        "type": "text",
-                        "default": [''],
-                        },
-                    "category": {
-                        "type": 'keyword',
-                        },
-                    }
+                "title": {
+                    "type": "text",
+                },
+                "content": {
+                    "type": "text",
+                },
+                "slug": {
+                    "type": "text",
+                },
+                "date_published": {
+                    "type": "date",
+                },
+                "date_modified": {
+                    "type": "date",
+                },
+                "tags": {
+                    "type": "text",
+                    "default": [""],
+                },
+                "category": {
+                    "type": "keyword",
+                },
+            }
             self.search_params["id_fields"] = ["slug", "date_created"]
-            self.search_params['fields'] = search_fields
-            filtered_routes = itertools.filterfalse(lambda x:x.no_index, self.routes)
+            self.search_params["fields"] = search_fields
+            filtered_routes = itertools.filterfalse(lambda x: x.no_index, self.routes)
             self.search(
-                    search_client=self.search_client,
-                    pages=filtered_routes,
-                    **self.search_params,
-                    )
+                search_client=self.search_client,
+                pages=filtered_routes,
+                **self.search_params,
+            )
 
     def get_public_attributes(self, cls):
         site_filtered_attrs = itertools.filterfalse(
