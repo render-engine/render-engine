@@ -408,3 +408,6 @@ dmypy.json
 .pytype/
 .nova/Configuration.json
 .nova
+.coverage
+.mypy_cache
+wily-report.html
