@@ -2,6 +2,8 @@ jinja2
 markdown2
 click
 pendulum
+progress
 pytest
 pytest-cov
 pytest-mock
+python-slugify

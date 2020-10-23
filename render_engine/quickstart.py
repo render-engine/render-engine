@@ -62,7 +62,10 @@ def create_templates_directory(
     help="files for templates-directory",
 )
 @click.option(
-    "--blog", is_flag=True, default=True, help="Add a Blog Object",
+    "--blog",
+    is_flag=True,
+    default=True,
+    help="Add a Blog Object",
 )
 @click.option("--microblog", is_flag=True, default=False)
 @click.option(
@@ -99,7 +102,9 @@ def quickstart(
         logging.warning(f"{static_dir=} already exists. Skipping.")
 
     if content_path and not (content_dir := Path(content_directory)).exists():
-        content_dir.mkdir(parents=True,)
+        content_dir.mkdir(
+            parents=True,
+        )
 
     else:
         logging.warning(f"{content_dir=} already exists. Skipping.")

@@ -9,7 +9,6 @@ import more_itertools
 from .collection import Collection
 from .feeds import RSSFeed, RSSFeedEngine, RSSFeedItem
 from .page import Page
-from .site import Site
 
 
 class BlogPost(Page):
@@ -47,30 +46,27 @@ class BlogPost(Page):
         """
 
         super().__init__(**kwargs)
-        # Add some flexibility to date detection
-        date = more_itertools.first_true(
-            [
-                getattr(self, "date_modified", None),
-                getattr(self, "modified_date", None),
+
+        date_published = more_itertools.first_true((
                 getattr(self, "date_published", None),
                 getattr(self, "publish_date", None),
                 getattr(self, "date", None),
-            ]
-        )
+                ))
 
-        if date == None:
-            raise ValueError(f"{self.content_path=} has no Date!")
+        self.date_published = pendulum.parse(date_published, strict=False).set(tz=pendulum.local_timezone())
 
-        parsed_date = pendulum.parse(date, strict=False)
+        date_modified = more_itertools.first_true((
+                getattr(self, "date_modified", None),
+                getattr(self, "modified_date", None),
+                ), default=None)
 
-        # Set Timezone with environment_variable 'render_engine_timezone'
-        tz = os.environ.get(
-                'render_engine_timezone',
-                pendulum.local_timezone(),
-                )
-        self.date = parsed_date.set(tz=tz)
-        self.date_published = self.date.to_rfc2822_string()
-        self.date_friendly = self.date.format("MMM DD, YYYY HH:mm A")
+        if not date_modified:
+            self.date_modified = self.date_published
+
+        else:
+            self.date_modified = pendulum.parse(date_modified, strict=False).set(tz=pendulum.local_timezone())
+
+        self.date_friendly = self.date_modified.format("MMM DD, YYYY HH:mm A")
 
     @property
     def rss_feed_item(self):
@@ -89,5 +85,8 @@ class Blog(Collection):
     content_type: typing.Type[BlogPost] = BlogPost
     archive_reverse: bool = True
     has_archive: bool = True
-    feeds = [RSSFeed]
-    archive_sort = 'date'
+    archive_sort = "date"
+
+    @property
+    def feeds(self):
+        return [RSSFeed(collection=self, title=self.title)]

@@ -10,7 +10,7 @@ class Link:
     Attributes
     ----------
     name : str
-        the content of the link. 
+        the content of the link.
 
     url : str
         the href that points to a webpage

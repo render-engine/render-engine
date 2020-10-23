@@ -18,6 +18,7 @@ from more_itertools import first_true
 from .engine import Engine
 from .page import Page
 
+
 class RSSFeedEngine(Engine):
     """The Engine that Processes RSS Feed"""
 
@@ -27,6 +28,7 @@ class RSSFeedEngine(Engine):
         autoescape=select_autoescape(),
         trim_blocks=True,
     )
+
 
 class RSSFeedItem:
     """
@@ -49,7 +51,7 @@ class RSSFeedItem:
        <https://cyber.harvard.edu/rss/rss.html>
     """
 
-    def __init__(self, cls, site_url=""):
+    def __init__(self, cls):
         """
         Parse information from the given class object.
 
@@ -72,9 +74,8 @@ class RSSFeedItem:
 
         self.guid = getattr(cls, "guid", cls.slug)
         logging.debug(vars(cls))
-        route = cls.routes[0]
-        self.link = f"{route}/{cls.slug}"
-        self.pub_date = cls.date_published
+        self.link = cls.url
+        self.pub_date = cls.date_published.to_rfc2822_string()
 
 
 class RSSFeed(Page):
@@ -82,12 +83,11 @@ class RSSFeed(Page):
 
     template = "rss2.0.rss"
     engine = RSSFeedEngine()
-    title = "RSS Feed"
     link = ""
     slug = ""
 
-    def __init__(self):
+    def __init__(self, title, collection):
         super().__init__()
         self.no_index = True
-
-
+        self.title = title
+        self.items = [item.rss_feed_item for item in collection.pages]

@@ -71,16 +71,20 @@ class Collection:
     has_archive: bool = False
     archive_template: str = "archive.html"
     archive_reverse: bool = False
-    archive_sort: typing.Tuple[str] = ('title')
+    archive_sort: typing.Tuple[str] = "title"
     paginated: bool = False
     items_per_page: int = 10
-    title: typing.Optional[str] = ''
+    title: typing.Optional[str] = ""
     feeds: typing.List[typing.Optional[RSSFeed]] = []
-    markdown_extras = ['fenced-code-blocks', 'footnotes']
+    markdown_extras = ["fenced-code-blocks", "footnotes"]
 
     def __init__(self):
         if not self.title:
             self.title = self.__class__.__name__
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
     @property
     def pages(self) -> typing.List[Page]:
@@ -100,9 +104,9 @@ class Collection:
 
                 for filepath in Path(self.content_path).glob(pattern):
                     page = self.content_type.from_content_path(
-                            filepath,
-                            markdown_extras = self.markdown_extras,
-                            )
+                        filepath,
+                        markdown_extras=self.markdown_extras,
+                    )
                     page.routes = self.routes
                     page.template = self.template
                     _pages.append(page)
@@ -134,7 +138,7 @@ class Collection:
         archive_pages = []
 
         for index, page in enumerate(pages):
-            archive_page =  Archive()
+            archive_page = Archive()
             archive_page.collection = self
             archive_page.routes = [self.routes[0]]
             archive_page.pages = pages[index]
@@ -142,7 +146,7 @@ class Collection:
             archive_page.page_index = (index, len(pages))
 
             if self.paginated:
-                archive_page.slug = f'{archive_page.slug}-{index}'
+                archive_page.slug = f"{archive_page.slug}-{index}"
 
             archive_pages.append(archive_page)
 
@@ -158,7 +162,7 @@ class Collection:
 
             for page in self.pages:
 
-                if attr:=getattr(page, _subcollection, None):
+                if attr := getattr(page, _subcollection, None):
 
                     if isinstance(attr, list):
 
