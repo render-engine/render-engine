@@ -19,8 +19,10 @@ def _build_index(pages: typing.Sequence[Page], id_field: str="_id", **search_par
         for key, key_params in search_params["fields"].items():
 
             if field_value := getattr(page, key, None):
+                if key == "slug":
+                    page_dict['slug'] = f"{search_params['site_url']}/{field_value}"
 
-                if key_params["type"] == "date":
+                elif key_params["type"] == "date":
                     page_dict[key] = field_value.to_rfc3339_string()
 
                 else:

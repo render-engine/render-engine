@@ -255,6 +255,7 @@ class Site:
             }
             self.search_params["id_fields"] = ["slug", "date_created"]
             self.search_params["fields"] = search_fields
+            self.search_params['site_url'] = self.SITE_URL
             filtered_routes = itertools.filterfalse(lambda x: x.no_index, self.routes)
             self.search(
                 search_client=self.search_client,
