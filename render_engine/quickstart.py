@@ -13,8 +13,7 @@ def create_templates_directory(
     templates_dir: str = "templates",
     include_template_files: bool = True,
 ):
-    """
-    Create Base Folders for your
+    """Create Base Folders for your
     output_dir, static_dir, content_path, and templates_path
     """
 

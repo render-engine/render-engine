@@ -20,7 +20,7 @@ class BlogPost(Page):
             the default template that the site will look for
         rss_feed_item : RSSFeedItem
             the content in an rss format
-        date : pendulum.datetime
+U       date : pendulum.datetime
             date parsed in datetime format. usesul for sorting and things
         date_published : str
             date formated for `RSSFeed`

@@ -22,11 +22,11 @@ from .page import Page
 
 
 class Site:
-    """
-    The site stores your pages and collections to be rendered.
+    """The site stores your pages and collections to be rendered.
 
-    Pages are stored and created with `site.render()`.
-    Collections are stored to be used for future use.
+    Pages are stored in `routes` and created with `site.render()`.
+    Collections and subcollections are stored to be used for future use.
+
     Sites also contain global variables that can be applied in templates.
 
     Attributes:
@@ -221,7 +221,7 @@ class Site:
 
             for page in self.routes:
                 suffix = "%(percent).1f%% - %(elapsed_td)s"
-                bar.suffix = suffix + f" ({page.title})"
+                bar.suffix = suffix # add to show + f" ({page.title})"
 
                 self._render_output(page)
 

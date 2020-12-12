@@ -1,6 +1,6 @@
 import logging
+import typing
 from pathlib import Path
-from typing import Optional, Sequence, Type
 
 import jinja2
 from jinja2 import FileSystemLoader, select_autoescape
@@ -10,16 +10,13 @@ from .page import Page
 
 class Engine:
     """
-    This is the engine that is builds your static site.
+    This is the jinja2 engine that is builds your static site.
     Use `Engine.run()` to output the files to the designated output path.
 
     Attributes:
         extension : str
             the extension to use in the rendered files
             default '.html'
-        environment : Any
-            the environment renderer that you want to use. You can use any environment that you like. Environments
-            should support a `get_template` and `render`
 
     Todos:
         * Create default template
@@ -31,32 +28,49 @@ class Engine:
 
     @property
     def environment(self):
+        """The jinja2 environment class that controls which templates should be called and applied."""
+
         return jinja2.Environment(
             autoescape=select_autoescape(), loader=FileSystemLoader(self.template_path)
         )
 
     def get_template(self, template: str):
-        """
-        fetches the requested template from the environment. Purely a
+        """fetches the requested template from the environment. Purely a
         convenience method
 
         Parameters:
             template : str
-                the template file to look for
+                the name of the file to look for
         """
         return self.environment.get_template(template)
 
-    def render(self, page: Type[Page], **kwargs):
-        """
-        generates the rendered HTML from from environment
+    def render(
+        self,
+        page: typing.Type[Page],
+        template: typing.Optional[str] = None,
+        **kwargs,
+    ):
+        """generate rendered HTML from from the called template
+
+        This is what builds the pages into HTML.
+
+        If a template attribute is defined or passed in then load the template and return the output. Otherwise return the content as HTML.
+
+        TODO:
+            Test to ensure that output from content is HTML and not markdown
+            Test template passed in takes priority of template defined in page
 
         Parameters:
             page : Page
                 the page object to render into html
+            template :
+                the name of a template to render
+            kwargs : any
+                values that would be passed into the called template. If no template value
         """
-        if page.template:
-            template = self.get_template(page.template)
 
+        if (_template := template or page.template) :
+            template = self.get_template(_template)
             return template.render(**kwargs)
 
         else:
