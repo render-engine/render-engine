@@ -18,7 +18,8 @@ from .links import Link
 from .page import Page
 
 
-def hash_content(route: Page):
+def hash_content(route: Page) -> str:
+    """create a sha1 hash of a pages basecontent"""
     m = hashlib.sha1()
     m.update(getattr(route, 'base_content', '').encode('utf-8'))
     return m.hexdigest()+'\n'
@@ -32,28 +33,51 @@ class Site:
     Sites also contain global variables that can be applied in templates.
     """
 
-    routes: typing.List[Page] = []
     output_path: Path = Path("output")
+    """Path to write rendered content."""
+
     static_path: Path = Path("static")
+    """Top Level Directory for static files.
+
+    **ALL** files in this path will be copied into the ``output_path``.
+    """
+
     SITE_TITLE: str = "Untitled Site"
+    """Title for the site. To be used in templates"""
+
     SITE_URL: str = "https://example.com"
+    """Title for the site. To be used in templates"""
+
     strict: bool = False
+    """Force all pages to be rebuilt"""
+
     default_engine: typing.Type[Engine] = Engine()
-    rss_engine: typing.Type[Engine] = RSSFeedEngine()
+    """``Engine`` to generate web pages"""
+
+    rss_engine: typing.Type[RSSFeedEngine] = RSSFeedEngine()
+    """``Engine`` to generate RSS Feeds"""
+
     timezone: str = ""
+    """Timezone value for all date-like attributes"""
+
     cache_file: Path = Path(".routes_cache")
+    """File that ``hash_content`` will be stored.
+
+    The ``cache_file`` is checked for values to determine if new pages should be written
+    """
 
     def __init__(self):
         """Clean Directory and Prepare Output Directory"""
 
-        self.collections = {}
-        self.subcollections = {}
-        self.output_path = Path(self.output_path)
+        self.routes: typing.List[str] = []
+        self.collections: typing.Dict[str, typing.List[str]] = {}
+        self.subcollections: typing.Dict[str, typing.List[str]] = {}
+        self.output_path: Path = Path(self.output_path)
 
         if self.cache_file.exists():
-            self.hashes = set(self.cache_file.read_text().splitlines(True))
+            self.hashes: typing.Set[str] = set(self.cache_file.read_text().splitlines(True))
         else:
-            self.hashes = set()
+            self.hashes: typing.Set[str] = set()
 
         # sets the timezone environment variable to the local timezone if not present
         os.environ["render_engine_timezone"] = (

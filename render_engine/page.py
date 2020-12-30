@@ -93,7 +93,7 @@ class Page:
                 # the path for this page would be https://example.com/mypage
     """
 
-    routes: typing.List[str] = [""]  # create page at each route
+    routes: typing.List[str] = [""]
     """Routes the file should be created at.
 
     Example a route of "pages" for a ``Page`` object with the ``slug`` "foo" would generate ``https://example.com/**pages**/foo``.
@@ -149,7 +149,8 @@ class Page:
         self.slug = slugify(self.slug)
 
     @property
-    def url(self):
+    def url(self) -> str:
+        """The first route and the slug of the page."""
         return f"{self.routes[0]}/{self.slug}"
 
     @classmethod
@@ -169,7 +170,7 @@ class Page:
         return newpage
 
     @property
-    def html(self):
+    def html(self) -> str:
         """Text from self.content converted to html"""
 
         if content:=getattr(self, 'base_content', None):
@@ -179,7 +180,7 @@ class Page:
             return ""
 
     @property
-    def markup(self):
+    def markup(self) -> str:
         """html = rendered HTML (not marked up). Is `None` if `content == None`"""
         if self.html:
             return Markup(self.html)
@@ -188,5 +189,5 @@ class Page:
             return ""
 
     @property
-    def content(self):
+    def content(self) -> str:
         return self.markup
