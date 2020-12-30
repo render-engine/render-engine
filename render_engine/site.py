@@ -21,6 +21,11 @@ from .links import Link
 from .page import Page
 
 
+def _is_unique(filepath: Path, content: str) -> bool:
+    """returns if the content matches the existing path"""
+    return all([filepath.exists(), filepath.read_text() == content])
+
+
 class Site:
     """The site stores your pages and collections to be rendered.
 
@@ -144,8 +149,8 @@ class Site:
         if self.output_path.exists():
             return shutil.rmtree(self.output_path)
 
-    def _render_output(self, page):
-        """Writes the page to a file"""
+    def _render_output(self, page: Page) -> None:
+        """Writes page markup to file"""
         engine = page.engine if getattr(page, 'engine', None) else self.default_engine
         template_attrs = self.get_public_attributes(page)
         content = engine.render(page, **template_attrs)
@@ -153,17 +158,21 @@ class Site:
         route.mkdir(exist_ok=True)
         filename = Path(page.slug).with_suffix(engine.extension)
         filepath = route.joinpath(filename)
-        filepath.write_text(content)
-        route_count = len(page.routes)
 
-        if route_count > 1:
+        if not _is_unique(filepath, content):
+            filepath.write_text(content)
 
-            # create a directory and path for each alternate route
-            for new_route in page.routes[1:]:
-                new_route = self.output_path.joinpath(new_route.strip("/"))
-                new_route.mkdir(exist_ok=True)
-                new_filepath = new_route.joinpath(filename)
-                shutil.copy(filepath, new_filepath)
+            try:
+                for new_route in page.routes[1:]:
+                    new_route = self.output_path.joinpath(new_route.strip("/"))
+                    new_route.mkdir(exist_ok=True)
+                    new_filepath = new_route.joinpath(filename)
+                    shutil.copy(filepath, new_filepath)
+            except:
+                pass
+            return f"{filename} written"
+        else:
+            return f"{filename} skipped"
 
     def _render_subcollections(self):
         """Generate subcollection pages to be added to routes"""
@@ -188,7 +197,11 @@ class Site:
                         for archive in subcollection.archive:
                             self.routes.append(archive)
 
-    def render(self, dry_run: bool = False, strict: bool = False) -> None:
+    def render(self, verbose: bool = False, dry_run: bool = False, strict: bool = False) -> None:
+        if dry_run:
+            strict = False
+            verbose = True
+
         # removes the output path is strict is set
         if self.strict or strict:
             self._remove_output_path
@@ -206,21 +219,23 @@ class Site:
 
         # render registered subcollections
         self._render_subcollections()
-        page_count = len(self.routes)
 
-        with Bar(
-            f"Rendering {page_count} Pages",
-            max=page_count,
-            suffix="%(percent).1f%% - %(elapsed_td)s",
-        ) as bar:
+        if verbose:
+            page_count = len(self.routes)
+            with Bar(
+                f"Rendering {page_count} Pages",
+                max=page_count,
+                suffix="%(percent).1f%% - %(elapsed_td)s",
+            ) as bar:
 
+                for page in self.routes:
+                    suffix = "%(percent).1f%% - %(elapsed_td)s "
+                    msg = self._render_output(page)
+                    bar.suffix = suffix + msg
+                    bar.next()
+        else:
             for page in self.routes:
-                suffix = "%(percent).1f%% - %(elapsed_td)s"
-                bar.suffix = suffix # add to show + f" ({page.title})"
-
                 self._render_output(page)
-
-                bar.next()
 
     def get_public_attributes(self, cls):
         site_filtered_attrs = itertools.filterfalse(
