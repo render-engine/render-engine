@@ -17,10 +17,6 @@ class Engine:
         extension : str
             the extension to use in the rendered files
             default '.html'
-
-    Todos:
-        * Create default template
-        * Method to build template directory
     """
 
     extension: str = ".html"
@@ -55,10 +51,6 @@ class Engine:
         This is what builds the pages into HTML.
 
         If a template attribute is defined or passed in then load the template and return the output. Otherwise return the content as HTML.
-
-        TODO:
-            Test to ensure that output from content is HTML and not markdown
-            Test template passed in takes priority of template defined in page
 
         Parameters:
             page : Page
