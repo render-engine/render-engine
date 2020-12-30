@@ -4,7 +4,6 @@ from jinja2 import Markup
 from slugify import slugify
 from markdown2 import markdown
 
-from cached_property import cached_property
 from pathlib import Path
 import more_itertools
 import typing
@@ -188,6 +187,6 @@ class Page:
         else:
             return ""
 
-    @cached_property
+    @property
     def content(self):
         return self.markup
