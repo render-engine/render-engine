@@ -4,7 +4,7 @@ from jinja2 import Markup
 from slugify import slugify
 from markdown2 import markdown
 
-from functools import lru_cache
+from cached_property import cached_property
 from pathlib import Path
 import more_itertools
 import typing
@@ -115,8 +115,8 @@ class Page:
 
     For more information on available extras or creating your own, see the `Markdown2 <https://pypi.org/project/markdown2/>`_ documentation 
     """
+    always_refresh: bool = False # Ignore cache and always regenerate
 
-    @lru_cache
     def __init__(
         self,
     ):
@@ -173,8 +173,8 @@ class Page:
     def html(self):
         """Text from self.content converted to html"""
 
-        if self.base_content:
-            return markdown(self.base_content, extras=self.markdown_extras)
+        if content:=getattr(self, 'base_content', None):
+            return markdown(content, extras=self.markdown_extras)
 
         else:
             return ""
@@ -188,6 +188,6 @@ class Page:
         else:
             return ""
 
-    @property
+    @cached_property
     def content(self):
         return self.markup

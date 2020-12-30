@@ -23,41 +23,13 @@ class Collection:
     content type.
 
 
-    Example
-    -------
-    from render_engine import Collection
+    Example::
 
-    @site.register_collection()
-    class BasicCollection(Collection):
-        pass
+        from render_engine import Collection
 
-
-    Attributes
-    ----------
-    engine: str, optional
-        The engine that the collection will pass to each page. Site's default
-        engine
-    template: str
-        The template that each page will use to render
-    routes: List[str]
-        all routes that the file should be created at. default []
-    content_path: List[PathString], optional
-        the filepath to load content from.
-    includes: List[str], optional
-        the types of files in the content path that will be processed
-        default ["*.md", "*.html"]
-    has_archive: Bool
-        if `True`, create an archive page with all of the processed pages saved
-        as `pages`. default `False`
-    template: str, optional
-        template filename that will be used if `has_archive==True` default: archive.html"
-    slug: str, optional
-        slug for rendered page if `has_archive == True` default: all_posts
-    content_type: Type[Page], optional
-        content_type for the rendered archive page
-    _archive_reverse: Bool, optional
-        should the sorted `pages` be listed in reverse order. default: False
-
+        @site.register_collection()
+        class BasicCollection(Collection):
+            pass
     """
 
     engine: typing.Optional[str] = None
@@ -134,6 +106,7 @@ class Collection:
             template = self.archive_template
             routes = [self.routes[0]]
             title = self.title
+            always_refresh = True
 
         archive_pages = []
 

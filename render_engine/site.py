@@ -3,7 +3,7 @@ from progress.bar import Bar
 import hashlib
 import itertools
 import inspect
-import logging
+import more_itertools
 import os
 import shutil
 import typing
@@ -11,10 +11,6 @@ import pendulum
 from pathlib import Path
 from slugify import slugify
 
-
-import more_itertools
-
-from ._type_hint_helpers import PathString
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
@@ -22,12 +18,10 @@ from .links import Link
 from .page import Page
 
 
-def _is_unique(filepath: Path, content: str) -> bool:
-    """returns if the content matches the existing path"""
-    unique = all([filepath.exists(), filepath.read_text() == content])
-    
-    return unique
-
+def hash_content(route: Page):
+    m = hashlib.sha1()
+    m.update(getattr(route, 'base_content', '').encode('utf-8'))
+    return m.hexdigest()+'\n'
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -71,10 +65,8 @@ class Site:
     strict: bool = False
     default_engine: typing.Type[Engine] = Engine()
     rss_engine: typing.Type[Engine] = RSSFeedEngine()
-    search: typing.Optional[str] = None
-    search_params: typing.List[str] = {}
-    search_client = None
     timezone: str = ""
+    cache_file: Path = Path(".routes_cache")
 
     def __init__(self):
         """Clean Directory and Prepare Output Directory"""
@@ -83,9 +75,10 @@ class Site:
         self.subcollections = {}
         self.output_path = Path(self.output_path)
 
-        # strict deletes the directory and rebuilds it from scratch
-        if self.output_path.exists() and not self.output_path.is_dir():
-            raise ValueError("output path cannot point to an existing file")
+        if self.cache_file.exists():
+            self.hashes = set(self.cache_file.read_text().splitlines(True))
+        else:
+            self.hashes = set()
 
         # sets the timezone environment variable to the local timezone if not present
         os.environ["render_engine_timezone"] = (
@@ -94,23 +87,18 @@ class Site:
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """
-        Add a class to your `self.collections`
-        iterate through a classes `content_path` and create a classes
-        `Page`-like objects, adding each one to `routes`.
+        Add a class to your ``self.collections``
+        iterate through a classes ``content_path`` and create a classes
+        ``Page``-like objects, adding each one to ``routes``.
 
         Use a decorator for your defined classes.
 
-        Examples:
-            ```
+        Examples::
             @register_collection
             class Foo(Collection):
                 pass
-            ```
-
-        Args:
-            collection_cls (Collection):
-                Collection to parse
         """
+
         collection = collection_cls()
         self.collections.update({collection.title: collection})
 
@@ -127,15 +115,18 @@ class Site:
             for feed in collection.feeds:
                 self.register_feed(feed=feed, collection=collection)
 
-    def register_feed(self, feed, collection: Collection) -> None:
-        """Create a Page object that is an RSS feed and add it to self.routes
+    def _is_unique(self, filepath: Path, page: Page) -> bool:
+        """returns if the content matches the existing path"""
+        if page.always_refresh:
+            return True
 
-        Args:
-            feed: RSSFeedEngine
-                the type of feed to generate
-            collection: Collection
-                the collection to
-        """
+        if not filepath.exists():
+            return True
+
+        return hash_content(page) not in self.hashes
+
+    def register_feed(self, feed: RSSFeedEngine, collection: Collection) -> None:
+        """Create a Page object that is an RSS feed and add it to self.routes"""
 
         extension = self.rss_engine.extension
         _feed = feed
@@ -144,25 +135,26 @@ class Site:
         _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
         self.routes.append(_feed)
 
-    def register_route(self, cls) -> None:
+    def register_route(self, cls: Page) -> None:
+        """Create a Page object and add it to self.routes"""
         route = cls()
         self.routes.append(route)
-
-    def _remove_output_path(self):
-        if self.output_path.exists():
-            return shutil.rmtree(self.output_path)
 
     def _render_output(self, page: Page) -> None:
         """Writes page markup to file"""
         engine = page.engine if getattr(page, 'engine', None) else self.default_engine
-        template_attrs = self.get_public_attributes(page)
-        content = engine.render(page, **template_attrs)
         route = self.output_path.joinpath(page.routes[0].strip("/"))
         route.mkdir(exist_ok=True)
         filename = Path(page.slug).with_suffix(engine.extension)
         filepath = route.joinpath(filename)
+        unique_file = self._is_unique(filepath, page)
 
-        if not _is_unique(filepath, content):
+        if unique_file:
+            template_attrs = self.get_public_attributes(page)
+            content = engine.render(page, **template_attrs)
+
+            if not page.always_refresh:
+                self.hashes.add(hash_content(page))
             filepath.write_text(content)
 
             if len(page.routes) > 1:
@@ -206,7 +198,10 @@ class Site:
 
         # removes the output path is strict is set
         if self.strict or strict:
-            self._remove_output_path
+
+            if self.output_path.exists():
+                shutil.rmtree(self.output_path)
+            self.hashes = set()
 
         # create an output_path if it doesn't exist
         self.output_path.mkdir(exist_ok=True)
@@ -238,6 +233,9 @@ class Site:
         else:
             for page in self.routes:
                 self._render_output(page)
+
+        with open(self.cache_file, 'w') as f:
+            f.write(''.join([x for x in self.hashes]))
 
     def get_public_attributes(self, cls):
         site_filtered_attrs = itertools.filterfalse(
