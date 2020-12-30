@@ -12,22 +12,7 @@ from .page import Page
 
 
 class BlogPost(Page):
-    """
-    Page Like object with slight modifications to work with BlogPosts.
-
-    Attributes:
-        template : str
-            the default template that the site will look for
-        rss_feed_item : RSSFeedItem
-            the content in an rss format
-U       date : pendulum.datetime
-            date parsed in datetime format. usesul for sorting and things
-        date_published : str
-            date formated for `RSSFeed`
-        date_friendly : str
-            an easy to read string version of the date
-
-    """
+    """Page Like object with slight modifications to work with BlogPosts."""
 
     template = "blog_post.html"
     list_attrs = ["tags"]

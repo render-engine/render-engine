@@ -30,31 +30,6 @@ class Site:
     Collections and subcollections are stored to be used for future use.
 
     Sites also contain global variables that can be applied in templates.
-
-    Attributes:
-        routes (list):
-            storage of registered_routes
-        collections (dict):
-            storage of registered collections
-        output_path (str or pathlib.Path):
-            the path to directory which all rendered html pages will be stored.
-            default `./output`
-        static_path (str or pathlib.Path):
-            the path to directory for static content. This will be copied over
-            into the `output_path`
-        SITE_TITLE (str):
-            configuration variable title of the site. This is only used in your
-            environment template variables. While Optional you will be warned
-            if you do not supply a new variable. default: 'Untitled Site'
-        SITE_URL (str):
-            configuration variable url of the of the site. While Optional you will be
-            warned if you do not supply a new variable. default: 'Untitled Site'
-            default 'https://example.com'
-
-    Todo:
-        - remove SITE_LINK
-        - make SITE_URL accesible as a Page variable and allow for switch for
-            Relative and Absolute URLS
     """
 
     routes: typing.List[Page] = []
@@ -86,14 +61,14 @@ class Site:
         )
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
-        """
-        Add a class to your ``self.collections``
-        iterate through a classes ``content_path`` and create a classes
-        ``Page``-like objects, adding each one to ``routes``.
+        """Add a class to your ``self.collections``
+        iterate through a classes ``content_path`` and create a classes ``Page``-like
+        objects, adding each one to ``routes``.
 
         Use a decorator for your defined classes.
 
         Examples::
+
             @register_collection
             class Foo(Collection):
                 pass
