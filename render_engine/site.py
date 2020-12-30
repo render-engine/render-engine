@@ -1,5 +1,6 @@
 from copy import copy
 from progress.bar import Bar
+import hashlib
 import itertools
 import inspect
 import logging
@@ -23,7 +24,9 @@ from .page import Page
 
 def _is_unique(filepath: Path, content: str) -> bool:
     """returns if the content matches the existing path"""
-    return all([filepath.exists(), filepath.read_text() == content])
+    unique = all([filepath.exists(), filepath.read_text() == content])
+    
+    return unique
 
 
 class Site:
@@ -162,15 +165,14 @@ class Site:
         if not _is_unique(filepath, content):
             filepath.write_text(content)
 
-            try:
+            if len(page.routes) > 1:
                 for new_route in page.routes[1:]:
                     new_route = self.output_path.joinpath(new_route.strip("/"))
                     new_route.mkdir(exist_ok=True)
                     new_filepath = new_route.joinpath(filename)
                     shutil.copy(filepath, new_filepath)
-            except:
-                pass
             return f"{filename} written"
+
         else:
             return f"{filename} skipped"
 
