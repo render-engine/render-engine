@@ -122,16 +122,11 @@ class Site:
     def register_feed(self, feed, collection: Collection) -> None:
         """Create a Page object that is an RSS feed and add it to self.routes
 
-        Parameters
-        ----------
-        feed: RSSFeedEngine
-            the type of feed to generate
-        collection: Collection
-            the collection to
-
-        Returns
-        -------
-        None
+        Args:
+            feed: RSSFeedEngine
+                the type of feed to generate
+            collection: Collection
+                the collection to
         """
 
         extension = self.rss_engine.extension
@@ -151,7 +146,7 @@ class Site:
 
     def _render_output(self, page):
         """Writes the page to a file"""
-        engine = page.engine if page.engine else self.default_engine
+        engine = page.engine if getattr(page, 'engine', None) else self.default_engine
         template_attrs = self.get_public_attributes(page)
         content = engine.render(page, **template_attrs)
         route = self.output_path.joinpath(page.routes[0].strip("/"))

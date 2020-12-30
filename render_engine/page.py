@@ -4,6 +4,7 @@ from jinja2 import Markup
 from slugify import slugify
 from markdown2 import markdown
 
+from functools import lru_cache
 from pathlib import Path
 import more_itertools
 import typing
@@ -48,16 +49,49 @@ class Page:
         class InheritingPage(BasicPage):
             # template will be inherited from the BasicPage
             title = 'Inherited Page'
-"""
 
-    engine: typing.Optional[str] = None  # inherits from Site
-    """The engine the `Site` should use to generate markup.
-    By default this is `Jinja2 <https://palletsprojects.com/p/jinja/>`_.
-    """
+    Attributes:
+        title (typing.Optional[str]): title of the page object
+        engine (typing.Optional[str]): inherits from Site
+            The engine the `Site` should use to generate markup. By default this is `Jinja2 <https://palletsprojects.com/p/jinja/>`_.
+        template (typing.Optional[str]): template filename for `Site.engine` to look for.
+            If defined, it must be a valid file.
+        content_path (typing.Optional[str]): The filepath to load content from.
+            If a supplied path is not valid, then an ValueError will be raised.
 
-    template: typing.Optional[str] = None
-    """template filename for `Site.engine` to look for.
-    If defined, it must be a valid file.
+            For more information about content paths, markdown and content_path rendering see TODO.
+        base_content (typing.Optional[str]): Pre-rendered markdown or HTML to be converted to Markup.
+
+            Uses the `Markdown2 <https://pypi.org/project/markdown2/>`_ generator.
+
+            If ``content_path`` is provided the content section of the file will be stored as the `base_content`
+        list_attrs (typing.Optional[typing.List[str]]): list of attributes whose string values should be converted
+            to a comma-delimited list
+
+            This is primarily for converting a comma-separated list of values provided in your ``content_path``
+
+            Example::
+
+                >>> class myPage(Page):
+                    list_attrs = ["foo"]
+
+                # calling myPage will convert the string value of `foo` to a list of values
+
+                >>> myPage(foo='my, values, here')
+                >>> myPage.foo
+                ["my", "values", "here"]
+
+        slug (typing.Optional[str]): The rendered pages filename
+
+            A slug passed in will be `slugified <https://github.com/un33k/python-slugify>`_
+            to ensure a valid path is given. ``eg. slug="my cool slug" == "my-cool-slug"``
+
+            If no slug is provided the class name will be used as the slug.::
+
+                class MyPage(Page):
+                    pass
+
+                # the path for this page would be https://example.com/mypage
     """
 
     routes: typing.List[str] = [""]  # create page at each route
@@ -68,12 +102,6 @@ class Page:
     An empty string will apply the route at the root `https://example.com/foo`
     """
 
-    content_path: typing.Optional[str] = None
-    """The filepath to load content from. If a supplied path is not valid, then an ValueError will be raised.
-
-    For more information about content paths, markdown and content_path rendering see TODO.
-    """
-
     matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
     """Regular expression string to match key/value pairs at the beginning of a content_path. 
 
@@ -82,53 +110,18 @@ class Page:
     *In most cases this should not be changed*
     """
 
-    base_content: typing.Optional[str] = None
-    """Pre-rendered markdown or HTML to be converted to Markup.
-
-    Uses the `Markdown2 <https://pypi.org/project/markdown2/>`_ generator.
-
-    If ``content_path`` is provided the content section of the file will be stored as the `base_content`
-    """
-
-    list_attrs: typing.Optional[typing.List[str]] = None
-    """list of attributes whose string values should be converted to a comma-delimited list
-
-    This is primarily for converting a comma-separated list of values provided in your ``content_path``
-
-    Example::
-
-        >>> class myPage(Page):
-            list_attrs = ["foo"]
-
-        # calling myPage will convert the string value of `foo` to a list of values
-
-        >>> myPage(foo='my, values, here')
-        >>> myPage.foo
-        ["my", "values", "here"]
-    """
-
-    slug: typing.Optional[str] = None
-    """The engine's route. A slug passed in will be `slugified 
-    <https://github.com/un33k/python-slugify>`_ to ensure a valid path is given. ``eg. slug="my cool slug" == "my-cool-slug"``
-
-    If no slug is provided the class name will be used as the slug.::
-
-        class MyPage(Page):
-            pass
-
-        # the path for this page would be https://example.com/mypage
-    """
     markdown_extras: typing.List[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins to be included when generating HTML from your ``base_content``. Defaults to ``["fenced-code-blocks", "footnotes"]``
 
     For more information on available extras or creating your own, see the `Markdown2 <https://pypi.org/project/markdown2/>`_ documentation 
     """
 
+    @lru_cache
     def __init__(
         self,
     ):
 
-        if self.content_path:
+        if hasattr(self, 'content_path'):
             content = Path(self.content_path).read_text()
 
             valid_attrs, self.base_content = parse_content(
@@ -140,7 +133,7 @@ class Page:
                 name, value = attr.split(": ", maxsplit=1)
 
                 # comma delimit attributes.
-                if name.lower() in self.list_attrs:
+                if name.lower() in getattr(self, 'list_attrs', []):
                     value = [attrval.lower() for attrval in value.split(", ")]
 
                 else:
@@ -148,10 +141,10 @@ class Page:
 
                 setattr(self, name.lower(), value)
 
-        if not self.title:
+        if not hasattr(self, 'title'):
             self.title = self.__class__.__name__
 
-        if not self.slug:
+        if not hasattr(self, 'slug'):
             self.slug = self.title or self.__class__.__name__
 
         self.slug = slugify(self.slug)
