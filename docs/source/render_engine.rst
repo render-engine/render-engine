@@ -20,14 +20,6 @@ render\_engine.collection module
    :undoc-members:
    :show-inheritance:
 
-render\_engine.content\_parser module
--------------------------------------
-
-.. automodule:: render_engine.content_parser
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 render\_engine.engine module
 ----------------------------
 

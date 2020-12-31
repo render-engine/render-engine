@@ -235,6 +235,8 @@ class Site:
         with open(self.cache_file, 'w') as f:
             f.write(''.join([x for x in self.hashes]))
 
+    
+
     def get_public_attributes(self, cls):
         site_filtered_attrs = itertools.filterfalse(
             lambda x: x[0].startswith("__"), inspect.getmembers(self)
