@@ -18,7 +18,7 @@ from .links import Link
 from .page import Page
 
 
-def hash_content(route: Page) -> str:
+def _hash_content(route: Page) -> str:
     """create a sha1 hash of a pages basecontent"""
     m = hashlib.sha1()
     m.update(getattr(route, 'base_content', '').encode('utf-8'))
@@ -57,11 +57,8 @@ class Site:
     rss_engine: typing.Type[RSSFeedEngine] = RSSFeedEngine()
     """``Engine`` to generate RSS Feeds"""
 
-    timezone: str = ""
-    """Timezone value for all date-like attributes"""
-
     cache_file: Path = Path(".routes_cache")
-    """File that ``hash_content`` will be stored.
+    """File that hash id's will be stored.
 
     The ``cache_file`` is checked for values to determine if new pages should be written
     """
@@ -80,9 +77,7 @@ class Site:
             self.hashes: typing.Set[str] = set()
 
         # sets the timezone environment variable to the local timezone if not present
-        os.environ["render_engine_timezone"] = (
-            self.timezone or pendulum.local_timezone().name
-        )
+        os.environ["render_engine_timezone"] = self.timezone or pendulum.local_timezone().name
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """Add a class to your ``self.collections``
@@ -115,14 +110,14 @@ class Site:
                 self.register_feed(feed=feed, collection=collection)
 
     def _is_unique(self, filepath: Path, page: Page) -> bool:
-        """returns if the content matches the existing path"""
+        """Checks content if changes are present"""
         if page.always_refresh:
             return True
 
         if not filepath.exists():
             return True
 
-        return hash_content(page) not in self.hashes
+        return _hash_content(page) not in self.hashes
 
     def register_feed(self, feed: RSSFeedEngine, collection: Collection) -> None:
         """Create a Page object that is an RSS feed and add it to self.routes"""
@@ -153,7 +148,7 @@ class Site:
             content = engine.render(page, **template_attrs)
 
             if not page.always_refresh:
-                self.hashes.add(hash_content(page))
+                self.hashes.add(_hash_content(page))
             filepath.write_text(content)
 
             if len(page.routes) > 1:
