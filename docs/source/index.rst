@@ -7,13 +7,12 @@ Render Engine!
 =========================================
 
 .. toctree::
-   :caption: Contents:
-   :maxdepth: 2
+    :caption: Contents:
+    :maxdepth: 2
 
-       Installation <installation.rst>
-       Render Engine <modules.rst>
-
-
+    Installation <installation.rst>
+    Creating a Page <creating_a_page.rst>
+    Modules <modules.rst>
 
 
 Indices and tables

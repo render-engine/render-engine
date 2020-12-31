@@ -46,53 +46,29 @@ class Page:
 
     Page objects can be used to extend existing page objects.
 
-    Examples:: 
-
-        # Basic Page from Template with No Template Variables
-        @site.register_route('basic_page.html')
-        class BasicPage(Page):
-            template = 'template_file.html' # user provided template
-
-
-        # Basic Page with Variables
-        @site.register_route('page_with_vars')
-        class PageWithVars(Page):
-            title = 'Site Title'
-
-
-        # Page Loading from File
-        @site.register_route('page_from_file')
-        class PageFromFile(Page):
-            content_path = 'index.md' # loaded from content path can be '.md' or '.html'
-
-
-        # Page Inherited from Other Page
-        @site.register_route('basic_page.html')
-        class BasicPage(Page):
-            template = 'template_file.html' # user provided template
-            title = 'Base Page'
-
-
-        @site.register_route('other_page.html')
-        class InheritingPage(BasicPage):
-            # template will be inherited from the BasicPage
-            title = 'Inherited Page'
 
     .. note::
         Not all attributes are defined by default (those that are marked *optional*) but will be checked for in other areas of the code.
 
     Attributes:
 
-        title (str, optional): title of the page object
-        engine (str, optional): inherits from Site
-            The engine the `Site` should use to generate markup. By default this is `Jinja2 <https://palletsprojects.com/p/jinja/>`_.
-        template (str, optional): template filename for `Site.engine` to look for.
+        title (str): **[Optional]** title of the :class:`Page <.Page>` object
+        engine (str): **[Optional]** 
+            The engine the :class:`Site <.site.Site>` should use to generate markup. By default this is `Jinja2 <https://palletsprojects.com/p/jinja/>`_.
+        template (str): **[Optional]** template filename for the :attr:`engine <.site.Site.engine>` to look for.
             If defined, it must be a valid file.
-        content_path (str, optional): The filepath to load content from.
-            If a supplied path is not valid, then an ValueError will be raised.
 
-            For more information about content paths, markdown and content_path rendering see TODO.
-        base_content (typing.Optional[str]): Pre-rendered markdown or HTML to be converted to Markup.
+        content_path (str): **[Optional]** The filepath to load content from.
+
+            The `content_path` will be checked for additional attributes and :attr:`base_content <Page.base_content>`.
+
+            Raises:
+                FileNotFoundError: 
+                    If a `content_path` was supplied path that points to a path that does not exist.
+
+
+            For more information about content paths, markdown and content_path rendering see ``:ref:<page_from_content_path.rst>``
+        base_content (str):  **[Optional]** Pre-rendered markdown or HTML to be converted to Markup.
 
             Uses the `Markdown2 <https://pypi.org/project/markdown2/>`_ generator.
 
@@ -113,7 +89,7 @@ class Page:
                 >>> myPage.foo
                 ["my", "values", "here"]
 
-        slug (typing.Optional[str]): The rendered pages filename
+        slug (str): **[Optional]** The rendered pages filename
 
             A slug passed in will be `slugified <https://github.com/un33k/python-slugify>`_
             to ensure a valid path is given. ``eg. slug="my cool slug" == "my-cool-slug"``
@@ -124,6 +100,7 @@ class Page:
                     pass
 
                 # the path for this page would be https://example.com/mypage
+
     """
 
     routes: typing.List[str] = [""]
