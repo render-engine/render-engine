@@ -119,11 +119,11 @@ class Page:
     """
 
     routes: typing.List[str] = [""]
-    """Routes the file should be created at.
+    """the directory in the :attr:`output_path <.site.Site.output_path>` that the :class:`Page <.page.Page>` should be created at.
 
-    Example a route of "pages" for a ``Page`` object with the ``slug`` "foo" would generate ``https://example.com/**pages**/foo``.
+            Example a route of "pages" for a :py:class `render_engine.Page`: object with the :py:attr `Page.slug`: "foo" would generate *https://example.com/**pages**/foo*.
 
-    An empty string will apply the route at the root `https://example.com/foo`
+            An empty string will apply the route at the root `https://example.com/foo`
     """
 
     matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
