@@ -19,7 +19,7 @@ from .page import Page
 
 
 def _hash_content(route: Page) -> str:
-    """create a sha1 hash of a pages basecontent"""
+    """create a ``hashlib.sha1`` hash of a pages ``base_content``"""
     m = hashlib.sha1()
     m.update(getattr(route, 'base_content', '').encode('utf-8'))
     return m.hexdigest()+'\n'
@@ -27,10 +27,14 @@ def _hash_content(route: Page) -> str:
 class Site:
     """The site stores your pages and collections to be rendered.
 
-    Pages are stored in `routes` and created with `site.render()`.
+    Pages are stored in :py:attr:`routes` and created with `site.render()`.
     Collections and subcollections are stored to be used for future use.
 
     Sites also contain global variables that can be applied in templates.
+
+    Attributes:
+        routes: typing.List[typing.Type[Page]]
+            routes are stored prior to being caled with :py:meth:`site.render()`.
     """
 
     output_path: Path = Path("output")
