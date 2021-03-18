@@ -184,7 +184,11 @@ class Site:
 
                     for subcollection in sorted_group:
 
-                        self.subcollections[subcollection_group] = sorted_group
+                        # Check for subcollection_min
+                        subc_min = getattr(self, 'SUBCOLLECTION_MIN', 2)
+
+                        if len(subcollection.pages) < subc_min:
+                            continue
 
                         for archive in subcollection.archive:
                             self.routes.append(archive)
