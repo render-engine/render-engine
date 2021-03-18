@@ -46,7 +46,6 @@ class Page:
 
     Page objects can be used to extend existing page objects.
 
-
     .. note::
         Not all attributes are defined by default (those that are marked *optional*) but will be checked for in other areas of the code.
 
