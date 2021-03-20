@@ -3,6 +3,7 @@ markdown2
 click
 pendulum
 progress
+more-itertools
 pytest
 pytest-cov
 pytest-mock
