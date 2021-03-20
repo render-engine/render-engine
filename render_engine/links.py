@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import typing
+from dataclasses import dataclass
 
 
 @dataclass
@@ -24,7 +24,7 @@ class Link:
 
     name: str
     url: str
-    links: typing.Optional[typing.List[typing.Any]] = None 
+    links: typing.Optional[typing.List[typing.Any]] = None
     image: str = ""
     icon: str = ""
     alt: str = ""

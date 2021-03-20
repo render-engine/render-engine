@@ -1,10 +1,6 @@
-import logging
 import typing
 
-import pendulum
-
 from .blog import Blog, BlogPost
-from .feeds import RSSFeedEngine, RSSFeedItem
 
 
 class MicroBlogPost(BlogPost):

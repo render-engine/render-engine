@@ -4,6 +4,7 @@ import more_itertools
 import pendulum
 
 from .collection import Collection
+from .feeds import RSSFeed, RSSFeedItem
 from .page import Page
 
 

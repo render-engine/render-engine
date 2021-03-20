@@ -1,10 +1,6 @@
-import tempfile
-import pytest
-import pathlib
 from jinja2 import Markup
-import render_engine
+
 from render_engine import Page
-from render_engine.page import parse_content
 
 
 def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, content):
@@ -18,7 +14,8 @@ def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, con
 
     t = TestPage()
 
-    assert t.raw_content == '# Test Header\nTest Paragraph'
+    assert t.base_content == '# Test Header\nTest Paragraph'
+
 
 def test_page_slug_is_slugified():
     class TestPage(Page):
@@ -50,16 +47,17 @@ def test_page_html_with_content_is_converted_from_markdown():
     """If there is no content then the html will be None"""
 
     class TestPage(Page):
-        content = '# Test Title'
+        base_content = '# Test Title'
 
     t = TestPage()
     assert t.html == '<h1>Test Title</h1>\n'
     assert t.markup == Markup(t.html)
 
+
 def test_page_content_is_converted_to_markup():
 
     class TestPage(Page):
-        content = '# Test Title'
+        base_content = '# Test Title'
 
     t = TestPage()
     assert t.html == '<h1>Test Title</h1>\n'

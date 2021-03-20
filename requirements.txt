@@ -10,6 +10,10 @@ click==7.1.2
     # via -r requirements.in
 coverage==5.5
     # via pytest-cov
+darglint==1.7.0
+    # via -r requirements.in
+feedparser==6.0.2
+    # via -r requirements.in
 iniconfig==1.1.1
     # via pytest
 jinja2==2.11.3
@@ -47,6 +51,8 @@ python-slugify==4.0.1
     # via -r requirements.in
 pytzdata==2020.1
     # via pendulum
+sgmllib3k==1.0.0
+    # via feedparser
 six==1.15.0
     # via python-dateutil
 text-unidecode==1.3

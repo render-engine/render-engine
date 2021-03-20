@@ -1,28 +1,19 @@
-from copy import copy
-from progress.bar import Bar
-import hashlib
-import itertools
 import inspect
-import more_itertools
+import itertools
 import os
 import shutil
 import typing
-import pendulum
 from pathlib import Path
-from slugify import slugify
+
+import pendulum
+from progress.bar import Bar
 
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
-from .links import Link
 from .page import Page
+from .parsers._content_hash import _hash_content
 
-
-def _hash_content(route: Page) -> str:
-    """create a ``hashlib.sha1`` hash of a pages ``base_content``"""
-    m = hashlib.sha1()
-    m.update(getattr(route, 'base_content', '').encode('utf-8'))
-    return m.hexdigest()+'\n'
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -76,12 +67,11 @@ class Site:
         self.output_path: Path = Path(self.output_path)
 
         if self.cache_file.exists():
-            self.hashes: typing.Set[str] = set(self.cache_file.read_text().splitlines(True))
+            self.hashes: typing.Set[str] = set(
+                self.cache_file.read_text().splitlines(True)
+            )
         else:
             self.hashes: typing.Set[str] = set()
-
-        # sets the timezone environment variable to the local timezone if not present
-        os.environ["render_engine_timezone"] = self.timezone or pendulum.local_timezone().name
 
     def register_collection(self, collection_cls: typing.Type[Collection]) -> None:
         """Add a class to your ``self.collections``
@@ -140,7 +130,7 @@ class Site:
 
     def _render_output(self, page: Page) -> None:
         """Writes page markup to file"""
-        engine = page.engine if getattr(page, 'engine', None) else self.default_engine
+        engine = page.engine if getattr(page, "engine", None) else self.default_engine
         route = self.output_path.joinpath(page.routes[0].strip("/"))
         route.mkdir(exist_ok=True)
         filename = Path(page.slug).with_suffix(engine.extension)
@@ -185,7 +175,7 @@ class Site:
                     for subcollection in sorted_group:
 
                         # Check for subcollection_min
-                        subc_min = getattr(self, 'SUBCOLLECTION_MIN', 2)
+                        subc_min = getattr(self, "SUBCOLLECTION_MIN", 2)
 
                         if len(subcollection.pages) < subc_min:
                             continue
@@ -193,7 +183,9 @@ class Site:
                         for archive in subcollection.archive:
                             self.routes.append(archive)
 
-    def render(self, verbose: bool = False, dry_run: bool = False, strict: bool = False) -> None:
+    def render(
+        self, verbose: bool = False, dry_run: bool = False, strict: bool = False
+    ) -> None:
         if dry_run:
             strict = False
             verbose = True
@@ -236,10 +228,8 @@ class Site:
             for page in self.routes:
                 self._render_output(page)
 
-        with open(self.cache_file, 'w') as f:
-            f.write(''.join([x for x in self.hashes]))
-
-    
+        with open(self.cache_file, "w") as f:
+            f.write("".join([x for x in self.hashes]))
 
     def get_public_attributes(self, cls):
         site_filtered_attrs = itertools.filterfalse(

@@ -8,3 +8,5 @@ pytest
 pytest-cov
 pytest-mock
 python-slugify
+darglint
+feedparser

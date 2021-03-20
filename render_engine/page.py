@@ -23,15 +23,12 @@ class Page:
         will be checked for in other areas of the code.
 
     Attributes:
-
         title (str): **[Optional]** title of the :class:`Page <.Page>` object
         engine (str): **[Optional]**
             The engine the :class:`Site <.site.Site>` should use to generate markup. By
             default this is `Jinja2 <https://palletsprojects.com/p/jinja/>`_.
         template (str): **[Optional]** template filename for the :attr:`engine
-        <.site.Site.engine>` to look for.
-            If defined, it must be a valid file.
-
+            <.site.Site.engine>` to look for. If defined, it must be a valid file.
         content_path (str): **[Optional]** The filepath to load content from.
 
             The `content_path` will be checked for additional attributes
@@ -40,7 +37,6 @@ class Page:
             Raises:
                 FileNotFoundError:
                     If a `content_path` was supplied path that points to a path that does not exist.
-
 
             For more information about content paths, markdown and content_path rendering
             see ``:ref:<page_from_content_path.rst>``
@@ -111,11 +107,9 @@ class Page:
     """
     always_refresh: bool = False  # Ignore cache and always regenerate
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
 
-        if hasattr(self, 'content_path'):
+        if hasattr(self, "content_path"):
             content = Path(self.content_path).read_text()
             valid_attrs, self.base_content = _parse_content(
                 content,
@@ -126,7 +120,7 @@ class Page:
                 name, value = attr.split(": ", maxsplit=1)
 
                 # comma delimit attributes.
-                if name.lower() in getattr(self, 'list_attrs', []):
+                if name.lower() in getattr(self, "list_attrs", []):
                     value = [attrval.lower() for attrval in value.split(", ")]
 
                 else:
@@ -134,17 +128,18 @@ class Page:
 
                 setattr(self, name.lower(), value)
 
-        if not hasattr(self, 'title'):
+        if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
-        if not hasattr(self, 'slug'):
+        if not hasattr(self, "slug"):
             self.slug = self.title or self.__class__.__name__
 
         self.slug = slugify(self.slug)
 
     @property
     def url(self) -> str:
-        """The first route and the slug of the page."""
+        """The first route and the slug of the page.
+        """
         return f"{self.routes[0]}/{self.slug}"
 
     @classmethod
@@ -167,11 +162,8 @@ class Page:
     def html(self) -> str:
         """Text from self.content converted to html"""
 
-        if content := getattr(self, 'base_content', None):
+        if content := getattr(self, "base_content", None):
             return markdown(content, extras=self.markdown_extras)
-
-        else:
-            return ""
 
     @property
     def markup(self) -> str:
@@ -185,3 +177,6 @@ class Page:
     @property
     def content(self) -> str:
         return self.markup
+
+    def __str__(self):
+        return self.slug
