@@ -1,11 +1,20 @@
 import typing
 from pathlib import Path
 
+import frontmatter
 from jinja2 import Markup
 from markdown2 import markdown
 from slugify import slugify
 
-from .parsers._content_parser import _parse_content
+from .parsers import _content_parser
+
+
+def _convert_to_frontmatter(content): # TODO: Move this to a helper script.
+    """if not formatted for frontmatter, add lines"""
+    if not content.startswith("---"):
+        content = f"---\n{content}"
+        content = content.replace("\n\n", "\n---\n\n", 1)
+    return content
 
 
 class Page:
@@ -111,23 +120,48 @@ class Page:
 
         if hasattr(self, "content_path"):
             content = Path(self.content_path).read_text()
-            valid_attrs, self.base_content = _parse_content(
-                content,
-                matcher=self.matcher,
-            )
+            
+            try:
+                post = frontmatter.loads(_convert_to_frontmatter(content)) # TODO: Refactor this
+                valid_attrs, self.base_content = post.metadata, post.content
+            
+                for name, value in valid_attrs.items():
+                    # comma delimit attributes.
+                    if name.lower() in getattr(self, "list_attrs", []):
+                        value = [attrval.lower() for attrval in value.split(", ")]
+    
+                    else:
+                        # value = value.strip()
+                        pass
+    
+                    setattr(self, name.lower(), value)
 
-            for attr in valid_attrs:
-                name, value = attr.split(": ", maxsplit=1)
+            except:
+                post = _content_parser._parse_content(content, self.matcher)            
+                valid_attrs, self.base_content = post['metadata'], post['content']
+                post = frontmatter.loads(self.base_content)
+                
+                for attr in valid_attrs:
+                    if attr.strip() not in ["", "---"]:
+                        print(attr)
+                        name, value = attr.split(": ", maxsplit=1) # name, value = "title: foo"
+                    
+                        # comma delimit attributes.
+                        try:
+                            value = value.strip()
+                        except:
+                            pass
+                        setattr(self, name.lower(), value)
+                        post.metadata[name.lower()] = value
+                        Path(self.content_path).write_text(frontmatter.dumps(post))
 
-                # comma delimit attributes.
-                if name.lower() in getattr(self, "list_attrs", []):
-                    value = [attrval.lower() for attrval in value.split(", ")]
+        #                 if name.lower() in self.list_attrs:
+        #                     value = [attrval.lower() for attrval in value.split(", ")]
+        # 
+        #                 else:
+        #                     value = value.strip()
 
-                else:
-                    value = value.strip()
-
-                setattr(self, name.lower(), value)
-
+            
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 

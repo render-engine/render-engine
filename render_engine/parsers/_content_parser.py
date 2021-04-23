@@ -26,4 +26,4 @@ def _parse_content(content: str, matcher: str):
     content = base_content.strip()
 
     attrs = list(filter(lambda x: x.strip(), parsed_attrs))
-    return attrs, content
+    return {"metadata": attrs, "content": content}

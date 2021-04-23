@@ -1,3 +1,5 @@
+import datetime
+import logging
 import typing
 
 import more_itertools
@@ -36,10 +38,15 @@ class BlogPost(Page):
                 getattr(self, "date", None),
             )
         )
-
-        self.date_published = pendulum.parse(date_published, strict=False).set(
-            tz=pendulum.local_timezone()
-        )
+             
+        if isinstance(date_published, datetime.datetime):
+            self.date_published = pendulum.instance(date_published).set(
+                tz=pendulum.local_timezone()
+            ) # TODO: fixes issue with datetimes parsed by frontmatter being converted to datetimes instead of str
+        else:
+            self.date_published = pendulum.parse(date_published, strict=False).set(
+                tz=pendulum.local_timezone()
+            )
 
         date_modified = more_itertools.first_true(
             (

@@ -10,3 +10,4 @@ pytest-mock
 python-slugify
 darglint
 feedparser
+python-frontmatter

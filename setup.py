@@ -4,9 +4,11 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
 from os import path
+
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
+
 # io.open is needed for projects that support Python 2.7
 # It ensures open() defaults to text mode with universal newlines,
 # and accepts an argument to specify the text encoding
@@ -24,7 +26,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='render_engine',  # Required
-    version='2021.3.0',  # Required
+    version='2021.4.0',  # Required
     description='Static Page Generation with Flask-like simplicity and flair ✨',  # Optional
     long_description=long_description,  # Optional
     long_description_content_type='text/markdown',  # Optional (see note above)
@@ -77,6 +79,7 @@ setup(
     'more-itertools',
     'click',
     'python-slugify',
+    'python-frontmatter',
     ],  # Optional
     extras_require={  # Optional
         'dev': ['check-manifest', 'elasticsearch', 'elastic_app_search'],
