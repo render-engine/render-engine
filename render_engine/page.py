@@ -6,16 +6,6 @@ from jinja2 import Markup
 from markdown2 import markdown
 from slugify import slugify
 
-from .parsers import _content_parser
-
-
-def _convert_to_frontmatter(content): # TODO: Move this to a helper script.
-    """if not formatted for frontmatter, add lines"""
-    if not content.startswith("---"):
-        content = f"---\n{content}"
-        content = content.replace("\n\n", "\n---\n\n", 1)
-    return content
-
 
 class Page:
     """Base component used to make web pages.
@@ -52,6 +42,7 @@ class Page:
         base_content (str):  **[Optional]** Pre-rendered markdown or HTML to be converted to Markup.
 
             Uses the `Markdown2 <https://pypi.org/project/markdown2/>`_ generator.
+
 
             If ``content_path`` is provided the content section of the file will be stored
             as the `base_content`
@@ -108,65 +99,32 @@ class Page:
     """
 
     markdown_extras: typing.List[str] = ["fenced-code-blocks", "footnotes"]
-    """Plugins to be included when generating HTML from your ``base_content``. Defaults to
-    ``["fenced-code-blocks", "footnotes"]``
+    """Plugins to be included when generating HTML from your ``base_content``.
 
     For more information on available extras or creating your own, see the `Markdown2
     <https://pypi.org/project/markdown2/>`_ documentation
     """
-    always_refresh: bool = False  # Ignore cache and always regenerate
+    always_refresh: bool = False  # Ignore cache and always regenerate pages
 
     def __init__(self):
 
         if hasattr(self, "content_path"):
-            content = Path(self.content_path).read_text()
-            
-            try:
-                post = frontmatter.loads(_convert_to_frontmatter(content)) # TODO: Refactor this
-                valid_attrs, self.base_content = post.metadata, post.content
-            
-                for name, value in valid_attrs.items():
-                    # comma delimit attributes.
-                    if name.lower() in getattr(self, "list_attrs", []):
-                        value = [attrval.lower() for attrval in value.split(", ")]
-    
-                    else:
-                        # value = value.strip()
-                        pass
-    
-                    setattr(self, name.lower(), value)
+            post = frontmatter.load(self.content_path)
+            valid_attrs, self.base_content = post.metadata, post.content
 
-            except:
-                post = _content_parser._parse_content(content, self.matcher)            
-                valid_attrs, self.base_content = post['metadata'], post['content']
-                post = frontmatter.loads(self.base_content)
-                
-                for attr in valid_attrs:
-                    if attr.strip() not in ["", "---"]:
-                        print(attr)
-                        name, value = attr.split(": ", maxsplit=1) # name, value = "title: foo"
-                    
-                        # comma delimit attributes.
-                        try:
-                            value = value.strip()
-                        except:
-                            pass
-                        setattr(self, name.lower(), value)
-                        post.metadata[name.lower()] = value
-                        Path(self.content_path).write_text(frontmatter.dumps(post))
+            for name, value in valid_attrs.items():
+                # comma delimit attributes.
+                if name.lower() in getattr(self, "list_attrs", []):
+                    value = [attrval.lower() for attrval in value.split(", ")]
 
-        #                 if name.lower() in self.list_attrs:
-        #                     value = [attrval.lower() for attrval in value.split(", ")]
-        # 
-        #                 else:
-        #                     value = value.strip()
+                setattr(self, name.lower(), value)
 
-            
+
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
         if not hasattr(self, "slug"):
-            self.slug = self.title or self.__class__.__name__
+            self.slug = self.title or self.__class__.__name__ # Will Slugify in Next Step
 
         self.slug = slugify(self.slug)
 
