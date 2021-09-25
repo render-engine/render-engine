@@ -5,8 +5,6 @@ from pathlib import Path
 import jinja2
 from jinja2 import FileSystemLoader, select_autoescape
 
-from .page import Page
-
 
 class Engine:
     """
@@ -36,7 +34,7 @@ class Engine:
 
     def render(
         self,
-        page: typing.Type[Page],
+        page,
         template: typing.Optional[str] = None,
         **kwargs,
     ):

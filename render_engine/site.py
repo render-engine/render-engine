@@ -1,5 +1,6 @@
 import inspect
 import itertools
+from more_itertools import grouper
 import os
 import shutil
 import typing
@@ -11,9 +12,9 @@ from progress.bar import Bar
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
+from .sitemap import _render_sitemap
 from .page import Page
 from .parsers._content_hash import _hash_content
-
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -182,10 +183,12 @@ class Site:
 
                         for archive in subcollection.archive:
                             self.routes.append(archive)
-
+                
     def render(
         self, verbose: bool = False, dry_run: bool = False, strict: bool = False
     ) -> None:
+        """ Generates HTML Files from `self.routes`"""
+    
         if dry_run:
             strict = False
             verbose = True
@@ -207,8 +210,7 @@ class Site:
                 self.output_path.joinpath(self.static_path),
                 dirs_exist_ok=True,
             )
-
-        # render registered subcollections
+        
         self._render_subcollections()
 
         if verbose:
@@ -224,10 +226,20 @@ class Site:
                     msg = self._render_output(page)
                     bar.suffix = suffix + msg
                     bar.next()
+        
         else:
             for page in self.routes:
                 self._render_output(page)
 
+        if verbose:
+            print("Rendering Site Map")
+        
+        _render_sitemap(
+            self.routes,
+            output_path = self.output_path,
+            SITE_URL=self.SITE_URL,
+        )
+        
         with open(self.cache_file, "w") as f:
             f.write("".join([x for x in self.hashes]))
 

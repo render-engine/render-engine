@@ -1,0 +1,23 @@
+<item>
+{% if item.title %}<title>{{item.title}}</title>{% endif %}
+{% if item.description %}
+  <description><![CDATA[{{item.description}}]]></description>
+{% endif %}
+
+{% if item.enclosure %}
+  <enclosure url="{{item.enclosure}}" length="{{item.enclosure.length}}" type="{{item.enclosure.mime_type}}" />
+{% endif %}
+{% if item.category %}
+  {% if item.category['domain'] %}
+    <category domain="{{item.category['domain']}}">{{item.category}}</category>
+  {% else %}
+    <category>{{item.category}}</category>
+  {% endif %}
+{% endif %}
+    <link>{{SITE_URL}}{{item.link}}</link>
+{% if item.pub_date %}<pubDate>{{item.pub_date}}</pubDate>{% endif %}
+{% if item.guid %}<guid isPermaLink="false">{{item.guid}}</guid>{% endif %}
+{% if item.author %}{{item.author}}{% endif %}
+{% if item.comments %}{{item.comments}}{% endif %}
+{% if item.source %}<source url="{{item.source.url}}">{{item.source}}</source>{% endif %}
+</item>

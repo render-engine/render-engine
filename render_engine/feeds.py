@@ -20,11 +20,11 @@ from .page import Page
 
 
 class RSSFeedEngine(Engine):
-    """The Engine that Processes RSS Feed"""
+    """The Jinja2 Loader that Processes RSS Feed"""
 
     extension = ".rss.xml"
     environment = jinja2.Environment(
-        loader=PackageLoader("render_engine", "rss"),
+        loader=PackageLoader("render_engine", "xml"),
         autoescape=select_autoescape(),
         trim_blocks=True,
     )
@@ -54,9 +54,6 @@ class RSSFeedItem:
     def __init__(self, cls):
         """
         Parse information from the given class object.
-
-        Raises:
-            AttributeError:
         """
 
         self.title = getattr(cls, "title", "")
