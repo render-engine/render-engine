@@ -78,7 +78,7 @@ class RSSFeedItem:
 class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
 
-    template = "rss2.0.rss"
+    template = "rss2.0.rss.xml"
     engine = RSSFeedEngine()
     link = ""
     slug = ""

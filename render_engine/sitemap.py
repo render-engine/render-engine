@@ -11,7 +11,7 @@ import logging
 import jinja2
 import pendulum
 from jinja2 import PackageLoader, select_autoescape
-from more_itertools import grouper
+from more_itertools import chunked
 from pathlib import Path
 
 from .engine import Engine
@@ -58,7 +58,8 @@ def gen_site_map_item(cls):
 
 def _render_sitemap(segments, output_path, SITE_URL) -> None:
 	map_items = [gen_site_map_item(x) for x in segments]
-	_segments = list(grouper(map_items, 500000))
+	_segments = list(chunked(map_items, 500000))
+	
 	
 	for i, segment in enumerate(_segments):
 		_map = SiteMapEngine().get_template('sitemap.xml')
