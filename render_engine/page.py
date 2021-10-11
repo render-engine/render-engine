@@ -78,7 +78,7 @@ class Page:
 
     """
 
-    routes: typing.List[str] = [""]
+    routes: list[str] = [""]
     """the directory in the :attr:`output_path <.site.Site.output_path>` that
     the :class:`Page <.page.Page>` should be created at.
 
@@ -88,17 +88,8 @@ class Page:
             An empty string will apply the route at the root `https://example.com/foo`
     """
 
-    matcher: str = r"(^\w+: \b.+$)"  # expression to find attrs/vals
-    """Regular expression string to match key/value pairs at the beginning of a
-    content_path.
-
-    By default ``content_path`` markdown is set to detect markdown metadata format (key:
-    value) with each key/value pair on it's own line.
-
-    *In most cases this should not be changed*
-    """
-
-    markdown_extras: typing.List[str] = ["fenced-code-blocks", "footnotes"]
+   
+    markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins to be included when generating HTML from your ``base_content``.
 
     For more information on available extras or creating your own, see the `Markdown2
