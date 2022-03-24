@@ -3,9 +3,8 @@ import shutil
 from pathlib import Path
 
 import click
-from jinja2 import Environment, PackageLoader
-
 import render_engine
+from jinja2 import Environment, PackageLoader
 
 
 def create_templates_directory(

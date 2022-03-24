@@ -7,12 +7,12 @@ http://www.sitemaps.org/schemas/sitemap/0.9
 """
 
 import logging
+from pathlib import Path
 
 import jinja2
 import pendulum
 from jinja2 import PackageLoader, select_autoescape
 from more_itertools import chunked
-from pathlib import Path
 
 from .engine import Engine
 from .page import Page

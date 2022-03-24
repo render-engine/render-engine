@@ -1,5 +1,4 @@
-from render_engine import Site, Page, Collection, Blog
-
+from render_engine import Blog, Collection, Page, Site
 
 site = Site()
 
