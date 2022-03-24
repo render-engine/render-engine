@@ -1,20 +1,19 @@
 import inspect
 import itertools
-from more_itertools import grouper
 import os
 import shutil
 import typing
 from pathlib import Path
 
-import pendulum
+from more_itertools import grouper
 from progress.bar import Bar
 
 from .collection import Collection
 from .engine import Engine
 from .feeds import RSSFeedEngine
-from .sitemap import _render_sitemap
 from .page import Page
 from .parsers._content_hash import _hash_content
+from .sitemap import _render_sitemap
 
 
 class Site:
