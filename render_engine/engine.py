@@ -53,7 +53,7 @@ class Engine:
                 values that would be passed into the called template. If no template value
         """
 
-        if (_template := template or page.template) :
+        if _template := template or page.template:
             template = self.get_template(_template)
             return template.render(**kwargs)
 

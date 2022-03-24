@@ -88,7 +88,6 @@ class Page:
             An empty string will apply the route at the root `https://example.com/foo`
     """
 
-   
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins to be included when generating HTML from your ``base_content``.
 
@@ -110,19 +109,19 @@ class Page:
 
                 setattr(self, name.lower(), value)
 
-
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
         if not hasattr(self, "slug"):
-            self.slug = self.title or self.__class__.__name__ # Will Slugify in Next Step
+            self.slug = (
+                self.title or self.__class__.__name__
+            )  # Will Slugify in Next Step
 
         self.slug = slugify(self.slug)
 
     @property
     def url(self) -> str:
-        """The first route and the slug of the page.
-        """
+        """The first route and the slug of the page."""
         return f"{self.routes[0]}/{self.slug}"
 
     @classmethod

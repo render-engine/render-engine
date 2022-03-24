@@ -38,11 +38,11 @@ class BlogPost(Page):
                 getattr(self, "date", None),
             )
         )
-             
+
         if isinstance(date_published, datetime.datetime):
             self.date_published = pendulum.instance(date_published).set(
                 tz=pendulum.local_timezone()
-            ) # TODO: fixes issue with datetimes parsed by frontmatter being converted to datetimes instead of str
+            )  # TODO: fixes issue with datetimes parsed by frontmatter being converted to datetimes instead of str
         else:
             self.date_published = pendulum.parse(date_published, strict=False).set(
                 tz=pendulum.local_timezone()
