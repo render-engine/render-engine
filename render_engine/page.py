@@ -2,7 +2,7 @@ import typing
 from pathlib import Path
 
 import frontmatter
-from jinja2 import Markup
+import jinja2
 from markdown2 import markdown
 from slugify import slugify
 
@@ -87,16 +87,14 @@ class Page:
 
             An empty string will apply the route at the root `https://example.com/foo`
     """
-
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins to be included when generating HTML from your ``base_content``.
 
     For more information on available extras or creating your own, see the `Markdown2
     <https://pypi.org/project/markdown2/>`_ documentation
     """
-    always_refresh: bool = False  # Ignore cache and always regenerate pages
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         if hasattr(self, "content_path"):
             post = frontmatter.load(self.content_path)
@@ -148,17 +146,13 @@ class Page:
             return markdown(content, extras=self.markdown_extras)
 
     @property
-    def markup(self) -> str:
+    def content(self) -> str:
         """html = rendered HTML (not marked up). Is `None` if `content == None`"""
         if self.html:
-            return Markup(self.html)
+            return jinja2.Markup(self.html)
 
         else:
-            return ""
-
-    @property
-    def content(self) -> str:
-        return self.markup
+            return
 
     def __str__(self):
         return self.slug

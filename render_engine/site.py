@@ -106,8 +106,6 @@ class Site:
 
     def _is_unique(self, filepath: Path, page: Page) -> bool:
         """Checks content if changes are present"""
-        if page.always_refresh:
-            return True
 
         if not filepath.exists():
             return True
