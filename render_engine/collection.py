@@ -12,6 +12,31 @@ from .feeds import RSSFeed
 from .page import Page
 
 
+class Archive(Page):
+    """Custom Page object used to make archive pages"""
+
+    template: str = "archive.html"
+    no_index: bool = True
+    sort_by: typing.Tuple[str] = "title"
+
+
+    def __init__(
+            self, /, title:str, pages: list, reverse: bool = False
+        ) -> None:
+        """Create a `Page` object for the pages in the collection"""
+        super.__init__()
+
+        sorted_pages = sorted(
+            pages,
+            key=lambda p: getattr(p, self.sort_by),
+            reverse=reverse,
+        )
+
+        self.pages = [sorted_pages]
+
+        archive_pages = []
+
+
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
@@ -33,26 +58,34 @@ class Collection:
     """
 
     engine: typing.Optional[str] = None
-    content_items: typing.List[Page] = []
-    content_path: str = ""
-    content_type: typing.Type[Page] = Page
+    content_items: list[Page] = list
+    content_path: str = "./content"
+    content_type: Page = Page
     template: str = "page.html"
-    includes: typing.List[str] = ["*.md", "*.html"]
-    routes: typing.List[str] = [""]
-    subcollections: typing.List[str] = []
+    includes: list[str] = ["*.md", "*.html"]
+    routes: list[str] = list
+    subcollections: list[str] = list
     has_archive: bool = False
-    archive_template: str = "archive.html"
-    archive_reverse: bool = False
-    archive_sort: typing.Tuple[str] = "title"
+    feeds: list[typing.Optional[RSSFeed]] = list
+    markdown_extras = ["fenced-code-blocks", "footnotes"]
     paginated: bool = False
     items_per_page: int = 10
-    title: typing.Optional[str] = ""
-    feeds: typing.List[typing.Optional[RSSFeed]] = []
-    markdown_extras = ["fenced-code-blocks", "footnotes"]
 
     def __init__(self):
-        if not self.title:
+        if not hasattr(self, 'title'):
             self.title = self.__class__.__name__
+
+        for index, page in enumerate(pages):
+
+            archive_page = Archive()
+            archive_page.collection = self
+            archive_page.routes = [self.routes[0]]
+            archive_page.pages = pages[index]
+            archive_page.title = self.title
+            archive_page.page_index = (index, len(pages))
+
+        if self.paginated:
+            pages = list(more_itertools.chunked(sorted_pages, self.items_per_page))
 
     @property
     def slug(self):
@@ -85,46 +118,14 @@ class Collection:
 
         return _pages
 
-    @property
-    def archive(self):
-        """Create a `Page` object for the pages in the collection"""
+#            if self.paginated:
+#                archive_page.slug = f"{archive_page.slug}-{index}"
+#
+#            archive_pages.append(archive_page)
+#
+#        return archive_pages
 
-        sorted_pages = sorted(
-            self.pages,
-            key=lambda p: getattr(p, self.archive_sort),
-            reverse=self.archive_reverse,
-        )
-
-        if self.paginated:
-            pages = list(more_itertools.chunked(sorted_pages, self.items_per_page))
-
-        else:
-            pages = [sorted_pages]
-
-        class Archive(Page):
-            no_index = True
-            template = self.archive_template
-            routes = [self.routes[0]]
-            title = self.title
-            always_refresh = True
-
-        archive_pages = []
-
-        for index, page in enumerate(pages):
-            archive_page = Archive()
-            archive_page.collection = self
-            archive_page.routes = [self.routes[0]]
-            archive_page.pages = pages[index]
-            archive_page.title = self.title
-            archive_page.page_index = (index, len(pages))
-
-            if self.paginated:
-                archive_page.slug = f"{archive_page.slug}-{index}"
-
-            archive_pages.append(archive_page)
-
-        return archive_pages
-
+    
     def get_subcollections(self):
         subcollections = {}
 

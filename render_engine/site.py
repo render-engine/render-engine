@@ -157,7 +157,7 @@ class Site:
 
     def _render_subcollections(self):
         """Generate subcollection pages to be added to routes"""
-        for _, collection in self.collections.items():
+        for collection in self.collections.values():
 
             if collection.subcollections:
 

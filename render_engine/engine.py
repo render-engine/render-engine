@@ -26,7 +26,7 @@ class Engine:
             autoescape=select_autoescape(), loader=FileSystemLoader(self.template_path)
         )
 
-    def get_template(self, template: str):
+    def get_template(self, template: str) -> jinja2.Template:
         """fetches the requested template from the environment. Purely a
         convenience method
         """
@@ -37,7 +37,7 @@ class Engine:
         page,
         template: typing.Optional[str] = None,
         **kwargs,
-    ):
+    ) -> str:
         """generate rendered HTML from from the called template
 
         This is what builds the pages into HTML.

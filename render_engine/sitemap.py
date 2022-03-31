@@ -10,7 +10,6 @@ import logging
 from pathlib import Path
 
 import jinja2
-import pendulum
 from jinja2 import PackageLoader, select_autoescape
 from more_itertools import chunked
 
@@ -61,7 +60,7 @@ def gen_site_map_item(cls):
 
 def _render_sitemap(segments, output_path, SITE_URL) -> None:
     map_items = [gen_site_map_item(x) for x in segments]
-    _segments = list(chunked(map_items, 500000))
+    _segments = list(chunked(map_items, 500000)) #sitemap limitations
 
     for i, segment in enumerate(_segments):
         _map = SiteMapEngine().get_template("sitemap.xml")
@@ -70,6 +69,7 @@ def _render_sitemap(segments, output_path, SITE_URL) -> None:
 
         if len(_segments) > 1:
             filename = f"{filename}_{i}.xml"
+        
         else:
             filename = f"{filename}.xml"
 
