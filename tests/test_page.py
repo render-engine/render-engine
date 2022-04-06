@@ -1,102 +1,73 @@
-from jinja2 import Markup
-
+from markupsafe import Markup
+from markdown2 import markdown
 from render_engine import Page
+import logging
 
 
-def test_page_content_path_defined_in_object_caught_with_fake_path(tmp_path, content):
-    """Tests when given a file as the content_path, parse it into data """
-
-    fake_path = tmp_path / 'fake_path.md'
-    fake_path.write_text(content)
-
-    class TestPage(Page):
-        content_path = fake_path
-
-    t = TestPage()
-
-    assert t.base_content == '# Test Header\nTest Paragraph'
+logger = logging.getLogger('Test Logger')
+logger.setLevel(logging.INFO)
 
 
-def test_page_slug_is_slugified():
-    class TestPage(Page):
-        slug = 'This is a slugged slug'
+class TestPageWithContentPath:
+    def test_page_defines_attrs_and_content_from_frontmatter(self, page_with_content_path):
+        """
+        Tests when given a file as the content_path, parse it into data.
+        This is done using fronmatter and should pass as long as frontmatter is parser
+        """
 
-    t = TestPage()
-    assert t.slug == 'this-is-a-slugged-slug'
+        assert page_with_content_path.markdown =="""# Test Header
+
+Test Paragraph
+
+`<p>Raw HTML</p>`"""
+
+        assert page_with_content_path.title == 'Test Title'
+
+    def test_page_html_converts_markdown_to_html(self, page_with_content_path):
+        """Tests that `Page.html` is converted to html"""
+
+        assert page_with_content_path.html == """<h1>Test Header</h1>
+        
+<p>Test Paragraph</p>
+
+<code>&lt;p&gt;Raw HTML&lt;/p&gt;</code>"""
+
+    def test_page_content_is_markup_safe(self, page_with_content_path):
+
+        # TODO: Write Test with Markup data 
+        assert page_with_content_path.content == Markup(page_with_content_path.html)
+
+    def test_page_with_content_path(self, page_with_content_path):
+        assert page_with_content_path.custom_list == ['foo', 'bar', 'biz']
 
 
-def test_page_name_as_str_is_slug():
-    class TestPage(Page):
-        slug = 'test-page'
+class TestPageWithAttrs:
+    def test_page_with_attrs_gets_attrs_from_class(self, page_with_attrs):
+        assert page_with_attrs.title == "Page with Attrs"
 
-    t = TestPage()
-    assert str(t) == 'test-page'
+    def test_page_slug_is_slugified(page_with_attrs):
+        """Test page text is slugified"""
+        assert page_with_attrs.slug == 'page-slug-with-attrs'
 
 
-def test_page_html_with_no_content_is_empty_string():
+def test_base_page_is_slug(base_page):
+    """Tests if a slug is not provided then the slug will be a slugified
+    version of the the class name"""
+    assert base_page.slug == 'basepage'
+
+
+def test_page_html_with_no_content_is_empty_string(base_page):
     """If there is no content then the html will be None"""
-    class TestPage(Page):
-        pass
-
-    t = TestPage()
-    assert not t.html
-    assert not t.markup
+    
+    assert not base_page.html == ""
+    assert not base_page.content == ""
 
 
-def test_page_html_with_content_is_converted_from_markdown():
+def test_base_page_html_with_content_is_converted_from_markdown(page_with_attrs):
     """If there is no content then the html will be None"""
 
-    class TestPage(Page):
-        base_content = '# Test Title'
-
-    t = TestPage()
-    assert t.html == '<h1>Test Title</h1>\n'
-    assert t.markup == Markup(t.html)
+    assert page_with_attrs.html == markdown('#Test Header\nTest Paragraph')
+    assert page_with_attrs.content == Markup(page_with_attrs.html)
 
 
-def test_page_content_is_converted_to_markup():
 
-    class TestPage(Page):
-        base_content = '# Test Title'
-
-    t = TestPage()
-    assert t.html == '<h1>Test Title</h1>\n'
-    assert t.content == Markup(t.html)
-
-
-def test_page_attrs_from_content_path_(tmp_path, content):
-    """Tests when given a file as the content_path, parse it into data """
-
-    fake_path = tmp_path / 'fake_path.md'
-    fake_path.write_text(content)
-
-    class TestPage(Page):
-        content_path = fake_path
-
-    t = TestPage()
-
-    assert t.title== 'Test Title'
-
-
-def test_page_list_attrs_from_content_path(tmp_path, content):
-    """Tests when given a file as the content_path, parse it into data """
-
-    fake_path = tmp_path / 'fake_path.md'
-    fake_path.write_text(content)
-
-    class TestPage(Page):
-        content_path = fake_path
-        list_attrs = ['custom']
-
-    t = TestPage()
-
-    assert t.custom == ['1', '2', '3']
-
-
-def test_page_from_content_path(tmp_path, content):
-    fake_path = tmp_path / 'fake_path.md'
-    fake_path.write_text(content)
-
-
-    t = Page.from_content_path(fake_path)
-    assert t.content_path == fake_path

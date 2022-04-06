@@ -3,7 +3,6 @@ from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.feeds import RSSFeed
 from render_engine.engine import Engine
-from render_engine.search import Fuse
 
 import os
 import shutil
@@ -237,20 +236,6 @@ def test_site_render_pulls_site_engine_if_not_found(tmp_path):
     assert len([x for x in tmp_path.iterdir()]) == 2
     assert tmp_path.joinpath('testpagewithengine.html').read_text() == 'My Test Engine'
     assert tmp_path.joinpath('testpagenoengine.html').read_text() == ''
-
-
-def test_site_search_builds_index():
-    class TestSiteSearch(Site):
-        search = Fuse
-        output_path = './tests/test_output/'
-        strict = True
-
-
-    t = TestSiteSearch()
-    t.render()
-
-    assert Path('./tests/test_output/search.json').is_file()
-    shutil.rmtree('./tests/test_output')
 
 
 def test_site_render_page_attrs_are_clean(tmp_path):
