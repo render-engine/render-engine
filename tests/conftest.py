@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 from render_engine import Page
+from jinja2 import Template
 
 @pytest.fixture()
 def content():
@@ -54,3 +55,17 @@ def page_with_content_path(tmp_path, content):
         list_attrs = 'custom_list'
 
     return PageWithContentPath()
+
+
+@pytest.fixture()
+def render_page_no_template(tmp_path, page_with_attrs):
+        page_with_attrs.render(output_path = tmp_path)
+        check_path =  Path(tmp_path / f"{page_with_attrs.slug}{page_with_attrs.extension}")
+        return check_path
+    
+
+@pytest.fixture()
+def render_page_template(tmp_path, page_with_attrs):
+        page_with_attrs.render(output_path = tmp_path, template=Template('foo{{content}}'))
+        check_path =  Path(tmp_path / f"{page_with_attrs.slug}{page_with_attrs.extension}")
+        return check_path

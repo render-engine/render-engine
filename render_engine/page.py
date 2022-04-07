@@ -1,11 +1,14 @@
 import typing
+import logging
 from pathlib import Path
 
+
 import frontmatter
-import jinja2
+from jinja2 import Template
+from markupsafe import Markup, escape
 from markdown2 import markdown
 from slugify import slugify
-
+from typing import Optional
 
 class Page:
     """Base component used to make web pages.
@@ -78,7 +81,7 @@ class Page:
 
     """
 
-    routes: list[str] = [""]
+    routes: list[str] = [Path("./")]
     """the directory in the :attr:`output_path <.site.Site.output_path>` that
     the :class:`Page <.page.Page>` should be created at.
 
@@ -94,65 +97,72 @@ class Page:
     <https://pypi.org/project/markdown2/>`_ documentation
     """
 
-    def __init__(self) -> None:
+    markdown: Optional[str] = None
+    extension: str = "html"
 
-        if hasattr(self, "content_path"):
+    def __init__(self) -> None:
+        if self.markdown and hasattr(self, "content_path"):
+            logging.warning("both `Page.markdown` and `content_path` selected. the content from `content_path` will be used.")
+
+        if hasattr(self, "content_path") and not self.markdown:
             post = frontmatter.load(self.content_path)
-            valid_attrs, self.base_content = post.metadata, post.content
+            valid_attrs, self.markdown = post.metadata, post.content
+            logging.info(f"content_path found! {valid_attrs=}, {self.markdown=}")
 
             for name, value in valid_attrs.items():
                 # comma delimit attributes.
                 if name.lower() in getattr(self, "list_attrs", []):
                     value = [attrval.lower() for attrval in value.split(", ")]
 
-                setattr(self, name.lower(), value)
+                setattr(self, name.lower(), value)        
 
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
+            logging.info(f"No Title. Assigning {self.title=}")
 
         if not hasattr(self, "slug"):
+            logging.info(f"No slug. Will slugify {self.title=}")
             self.slug = (
-                self.title or self.__class__.__name__
+                self.title
             )  # Will Slugify in Next Step
 
         self.slug = slugify(self.slug)
+
 
     @property
     def url(self) -> str:
         """The first route and the slug of the page."""
         return f"{self.routes[0]}/{self.slug}"
 
-    @classmethod
-    def from_content_path(cls, filepath, **kwargs):
-        class NewPage(cls):
-            content_path = filepath
-
-            def __init__(self, markdown_extras: typing.List[str] = []):
-                for extra in markdown_extras:
-                    if extra not in self.markdown_extras:
-                        self.markdown_extras.append(extra)
-
-                super().__init__()
-
-        newpage = NewPage(**kwargs)
-
-        return newpage
-
-    @property
-    def html(self) -> str:
-        """Text from self.content converted to html"""
-
-        if content := getattr(self, "base_content", None):
-            return markdown(content, extras=self.markdown_extras)
-
     @property
     def content(self) -> str:
-        """html = rendered HTML (not marked up). Is `None` if `content == None`"""
-        if self.html:
-            return jinja2.Markup(self.html)
+        """html = rendered HTML (not marked up).
+        Is `None` if `content == None`
+        This is referred to as `content` because it is intended to be applied in the jinja template as {{content}}.
+        When referring to the raw content in the Page object use `markdown`.
+        """
 
-        else:
-            return
+        if not self.markdown:
+            raise ValueError(f'{self.__repr__()} is empty and cannot be called.')
+        return markdown(
+            getattr(self, 'markdown', ''), extras=self.markdown_extras
+            )
 
     def __str__(self):
         return self.slug
+
+
+    def __repr__(self) -> str:
+        return f"<Page {self.title}>"
+
+
+    def render(self, output_path, template: Optional[Template]=None, **kwargs) -> Path:
+        """Build the page based on content instructions"""
+        
+        if template:
+            markup = template.render(content=self.content, **kwargs)
+        
+        else:
+            markup = self.content
+        
+        return Path(output_path / f"{self.slug}{self.extension}").write_text(markup)
