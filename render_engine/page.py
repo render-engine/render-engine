@@ -1,4 +1,3 @@
-import typing
 import logging
 from pathlib import Path
 
@@ -100,7 +99,10 @@ class Page:
     markdown: Optional[str] = None
     extension: str = "html"
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
         if self.markdown and hasattr(self, "content_path"):
             logging.warning("both `Page.markdown` and `content_path` selected. the content from `content_path` will be used.")
 
@@ -127,7 +129,6 @@ class Page:
             )  # Will Slugify in Next Step
 
         self.slug = slugify(self.slug)
-
 
     @property
     def url(self) -> str:
@@ -165,4 +166,4 @@ class Page:
         else:
             markup = self.content
         
-        return Path(output_path / f"{self.slug}{self.extension}").write_text(markup)
+        return Path(output_path / f"{self.url}{self.extension}").write_text(markup)

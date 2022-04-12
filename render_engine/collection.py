@@ -1,12 +1,10 @@
 import collections
-import itertools
 import logging
-import operator
 import typing
 from pathlib import Path
 
-import more_itertools
-from slugify import slugify
+import itertools
+from more_itertools import chunked
 
 from .feeds import RSSFeed
 from .page import Page
@@ -16,26 +14,14 @@ class Archive(Page):
     """Custom Page object used to make archive pages"""
 
     template: str = "archive.html"
-    no_index: bool = True
-    sort_by: typing.Tuple[str] = "title"
-
 
     def __init__(
-            self, /, title:str, pages: list, reverse: bool = False
+            self, /, pages: list, **kwargs
         ) -> None:
         """Create a `Page` object for the pages in the collection"""
-        super.__init__()
-
-        sorted_pages = sorted(
-            pages,
-            key=lambda p: getattr(p, self.sort_by),
-            reverse=reverse,
-        )
-
-        self.pages = [sorted_pages]
-
-        archive_pages = []
-
+        super().__init__(**kwargs)
+        self.pages = pages
+ 
 
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
@@ -58,102 +44,62 @@ class Collection:
     """
 
     engine: typing.Optional[str] = None
-    content_items: list[Page] = list
-    content_path: str = "./content"
+    content_path: Path
     content_type: Page = Page
-    template: str = "page.html"
+    template: typing.Optional[str] = None
     includes: list[str] = ["*.md", "*.html"]
     routes: list[str] = list
     subcollections: list[str] = list
-    has_archive: bool = False
     feeds: list[typing.Optional[RSSFeed]] = list
     markdown_extras = ["fenced-code-blocks", "footnotes"]
-    paginated: bool = False
-    items_per_page: int = 10
-
-    def __init__(self):
-        if not hasattr(self, 'title'):
-            self.title = self.__class__.__name__
-
-        for index, page in enumerate(pages):
-
-            archive_page = Archive()
-            archive_page.collection = self
-            archive_page.routes = [self.routes[0]]
-            archive_page.pages = pages[index]
-            archive_page.title = self.title
-            archive_page.page_index = (index, len(pages))
-
-        if self.paginated:
-            pages = list(more_itertools.chunked(sorted_pages, self.items_per_page))
-
-    @property
-    def slug(self):
-        return slugify(self.title)
-
-    @property
-    def pages(self) -> typing.List[Page]:
-        _pages = []
-
-        if self.content_items:
-            _pages = self.content_items
-
-        if self.content_path:
-
-            if Path(self.content_path).samefile("/"):
-                logging.warning(
-                    f"{self.content_path=}! Accessing Root Directory is Dangerous..."
-                )
-
-            for pattern in self.includes:
-
-                for filepath in Path(self.content_path).glob(pattern):
-                    page = self.content_type.from_content_path(
-                        filepath,
-                        markdown_extras=self.markdown_extras,
-                    )
-                    page.routes = self.routes
-                    page.template = self.template
-                    _pages.append(page)
-
-        return _pages
-
-#            if self.paginated:
-#                archive_page.slug = f"{archive_page.slug}-{index}"
-#
-#            archive_pages.append(archive_page)
-#
-#        return archive_pages
+    items_per_page: typing.Optional[int] = None
+    sort_by: str = 'title'
+    sort_reverse: bool = False
 
     
-    def get_subcollections(self):
-        subcollections = {}
+    def __init__(self, **kwargs):
+        for key, val in kwargs.items():
+            setattr(self, key, val)
 
-        # get all the values for each of the subcollections
-        for _subcollection in self.subcollections:
-            subcollection_lists = collections.defaultdict(list)
-            subcollections[_subcollection] = []
+        if not hasattr(self, 'title'):
+            self.title = self.__class__.__name__
+        
 
-            for page in self.pages:
+    @property
+    def collection_vars(self):
+        return {f'collection_{key}': val for key, val in vars(self).items()}
 
-                if attr := getattr(page, _subcollection, None):
+    @property
+    def pages(self):
+        if Path(self.content_path).is_dir():
+            page_groups = map(lambda pattern:Path(self.content_path).glob(pattern), self.includes)
+            return {
+                    page_path: Page(content_path=page_path, **self.collection_vars) 
+                            for page_path in itertools.chain.from_iterable(page_groups)
+                    }
+        else:
+            raise ValueError(f'invalid {Path=}')
 
-                    if isinstance(attr, list):
+    def render_pages(self, / , output_path, filenames: typing.Optional[typing.Sequence[Path]]=None):
+        if filenames:
+            return [page.render(output_path=output_path) for path, page in self.pages.items() if path in filenames]
 
-                        for attribute_item in attr:
-                            subcollection_lists[attribute_item].append(page)
+        else:
+            return [page.render(output_path=output_path) for page in self.pages.values()] 
 
-                    else:
-                        subcollection_lists[attr].append(page)
+    @property
+    def sorted_pages(self):
+        return sorted(self.pages.values(), key=lambda page: getattr(page, self.sort_by))
 
-            for attr, subcollection in subcollection_lists.items():
+    @property
+    def archives(self) -> list[Archive]:
+        """Returns a list of Archive pages containing the pages of data for each archive."""
+        if not self.items_per_page:
+            return [Archive(pages=self.sorted_pages, title=self.title)]
 
-                class SubCollection(self.__class__):
-                    content_path = None
-                    content_items = subcollection
-                    title = attr
-                    slug = slugify(attr)
+        page_chunks = enumerate(chunked(self.sorted_pages, self.items_per_page))
+        return [Archive(pages=pages, title=f"{self.title}_{i}") for i, pages in page_chunks]
 
-                subcollections[_subcollection].append(SubCollection())
-
-        return subcollections
+    def render_archives(self, /, output_path: Path) -> list[Archive]:
+        for archive in self.archives:
+            archive.render(output_path=output_path)

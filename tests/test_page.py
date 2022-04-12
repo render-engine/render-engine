@@ -8,7 +8,6 @@ import pytest
 logger = logging.getLogger('Test Logger')
 logger.setLevel(logging.INFO)
 
-
 class TestPageWithContentPath:
     def test_page_defines_attrs_and_content_from_frontmatter(self, with_path):
         """
@@ -16,7 +15,7 @@ class TestPageWithContentPath:
         This is done using fronmatter and should pass as long as frontmatter is parser
         """
 
-        assert with_path.markdown =="""# Test Header
+        assert with_path.markdown =="""# Test Header 
 
 Test Paragraph
 
@@ -37,6 +36,15 @@ Test Paragraph
     def test_with_path(self, with_path):
         assert with_path.custom_list == ['foo', 'bar', 'biz']
 
+    def test_path_and_content(self, caplog):
+        """tests a logging warning is raised if you supply both a markdown attr and a content_path """
+        class TestPage(Page):
+            markdown='foo'
+            content_path='bar'
+
+        TestPage()
+        assert caplog.record_tuples[0][1] == logging.WARNING
+
 
 class TestPageWithAttrs():
     def test_page_with_attrs_gets_attrs_from_class(self, p_attrs):
@@ -45,7 +53,6 @@ class TestPageWithAttrs():
     def test_page_slug_is_slugified(self, p_attrs):
         """Test page text is slugified"""
         assert p_attrs.slug == 'page-slug-with-attrs'
-
 
     def test_base_page_html_with_content_is_converted_from_markdown(self, p_attrs):
         """If there is no content then the html will be None"""
@@ -61,7 +68,6 @@ class TestBasePage:
         assert str(page) == 'basepage'
         assert page.url == './basepage'
 
-
     def test_page_html_with_no_content_is_empty_string(self, page):
         """If there is no content then the html will be None"""
         
@@ -70,7 +76,10 @@ class TestBasePage:
         with pytest.raises(ValueError) as e:
             page.content
 
+def test_custom_page_accepts_vars_in_init():
+    page = Page(foo='bar')
 
+    assert page.foo == 'bar'
 
 class TestPageWritesToFile():
     
