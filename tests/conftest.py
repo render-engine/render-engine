@@ -1,27 +1,43 @@
 from pathlib import Path
 import pytest
-from render_engine import Page
+from render_engine.page import Page
+from render_engine.collection import Collection
 from jinja2 import Template
+import typing
 
 @pytest.fixture(scope='session')
 def content():
-   yield """
+    yield gen_content()
+
+def gen_content(n: typing.Optional[int]= None):
+    if not n:
+        n = ""
+    return f"""
 ---   
-title: Test Title
+title: Test Title {n}
 custom_list: foo, bar, biz
 custom_attr: this is an attribute
 ---
 
-# Test Header
+# Test Header {n}
 
 Test Paragraph
 
 `<p>Raw HTML</p>`"""
 
-
 @pytest.fixture(scope='session')
 def temp_dir(tmpdir_factory):
     yield tmpdir_factory.mktemp('test_dir')
+
+@pytest.fixture(scope='session')
+def temp_dir_collection(tmpdir_factory):
+    tpd = tmpdir_factory.mktemp('test_collection')
+    for n in range(5):
+        fake_path =  tpd / f'fake_path_{n}.md'
+        fake_path.write_text(gen_content(n), encoding='utf-8')
+    
+    yield tpd
+
 
 @pytest.fixture(scope='class', name='page')
 def base_page():
@@ -56,6 +72,25 @@ def page_with_content_path(temp_dir, content):
         list_attrs = 'custom_list'
 
     yield PageWithContentPath()
+    
+@pytest.fixture(scope='session')
+def base_collection(temp_dir_collection):
+    class MyCollection(Collection):
+        content_path = temp_dir_collection
+        list_attrs = 'custom_list'
+
+    yield MyCollection()
+
+
+@pytest.fixture(scope='session')
+def custom_collection(temp_dir_collection):
+    class CustomCollection(Collection):
+        content_path = temp_dir_collection
+        title = "My Custom Title"
+        foo = "bar"
+        items_per_page = 2
+
+    yield CustomCollection()
 
 
 @pytest.fixture(scope='class', name='no_template')
