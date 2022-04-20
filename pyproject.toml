@@ -17,6 +17,7 @@ darglint = "^1.8.1"
 feedparser = "^6.0.8"
 python-frontmatter = "^1.0.0"
 click = "8.0.4"
+python-dateutil = "^2.8.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"

@@ -9,12 +9,10 @@ def test_paginated_archive_name_from_collection(custom_collection):
     assert custom_collection.archives[0].title == f'{custom_collection.title}_0'
 
 
-def tests_archive_is_single_page_listing_if_items_per_page_is_falsy(base_collection):
-    pages = base_collection.archives
-    assert len(pages) == 1
-    assert len(pages[0].pages) == 5
-
-def tests_archive_is_paginated_if_items_per_page(custom_collection):
-    pages = custom_collection.archives
-    assert len(pages) == 3
-    assert len(pages[0].pages) == 2
+def tests_archive_page_listings_based_on_items_per_page_is(base_collection, custom_collection):
+    collections = [(base_collection, 1, 5), (custom_collection, 3, 2)]
+    
+    for collection, page_length, page_count in collections:
+        pages = collection.archives
+        assert len(pages) == page_length
+        assert len(pages[0].pages) == page_count

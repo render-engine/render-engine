@@ -12,15 +12,13 @@ from .page import Page
 
 class Archive(Page):
     """Custom Page object used to make archive pages"""
-
-    template: str = "archive.html"
-
     def __init__(
-            self, /, pages: list, **kwargs
+            self, /, pages: list, template: str, **kwargs
         ) -> None:
         """Create a `Page` object for the pages in the collection"""
         super().__init__(**kwargs)
         self.pages = pages
+        self.template = template
  
 
 class Collection:
@@ -48,13 +46,14 @@ class Collection:
     content_type: Page = Page
     template: typing.Optional[str] = None
     includes: list[str] = ["*.md", "*.html"]
-    routes: list[str] = list
+    routes: Path = Path
     subcollections: list[str] = list
-    feeds: list[typing.Optional[RSSFeed]] = list
     markdown_extras = ["fenced-code-blocks", "footnotes"]
     items_per_page: typing.Optional[int] = None
     sort_by: str = 'title'
     sort_reverse: bool = False
+    has_archive: bool = False
+    archive_template: typing.Optional[str] = None
 
     
     def __init__(self, **kwargs):
@@ -64,6 +63,8 @@ class Collection:
         if not hasattr(self, 'title'):
             self.title = self.__class__.__name__
         
+        if any([self.items_per_page, self.archive_template]):
+            self.has_archive == True
 
     @property
     def collection_vars(self):
@@ -73,19 +74,13 @@ class Collection:
     def pages(self):
         if Path(self.content_path).is_dir():
             page_groups = map(lambda pattern:Path(self.content_path).glob(pattern), self.includes)
-            return {
-                    page_path: Page(content_path=page_path, **self.collection_vars) 
+            pages = {
+                    page_path: self.content_type(content_path=page_path, template=self.template, **self.collection_vars)
                             for page_path in itertools.chain.from_iterable(page_groups)
                     }
+            return pages
         else:
             raise ValueError(f'invalid {Path=}')
-
-    def render_pages(self, / , output_path, filenames: typing.Optional[typing.Sequence[Path]]=None):
-        if filenames:
-            return [page.render(output_path=output_path) for path, page in self.pages.items() if path in filenames]
-
-        else:
-            return [page.render(output_path=output_path) for page in self.pages.values()] 
 
     @property
     def sorted_pages(self):
@@ -95,10 +90,10 @@ class Collection:
     def archives(self) -> list[Archive]:
         """Returns a list of Archive pages containing the pages of data for each archive."""
         if not self.items_per_page:
-            return [Archive(pages=self.sorted_pages, title=self.title)]
+            return [Archive(pages=self.sorted_pages, template=self.archive_template, title=self.title)]
 
         page_chunks = enumerate(chunked(self.sorted_pages, self.items_per_page))
-        return [Archive(pages=pages, title=f"{self.title}_{i}") for i, pages in page_chunks]
+        return [Archive(pages=pages, template=self.archive_template, title=f"{self.title}_{i}") for i, pages in page_chunks]
 
     def render_archives(self, /, output_path: Path) -> list[Archive]:
         for archive in self.archives:

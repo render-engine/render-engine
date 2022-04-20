@@ -3,7 +3,6 @@ from pathlib import Path
 
 
 import frontmatter
-from jinja2 import Template
 from markupsafe import Markup, escape
 from markdown2 import markdown
 from slugify import slugify
@@ -80,7 +79,7 @@ class Page:
 
     """
 
-    routes: list[str] = [Path("./")]
+    route: Path = Path("./")
     """the directory in the :attr:`output_path <.site.Site.output_path>` that
     the :class:`Page <.page.Page>` should be created at.
 
@@ -97,12 +96,12 @@ class Page:
     """
 
     markdown: Optional[str] = None
-    extension: str = "html"
+    extension: str = ".html"
 
     def __init__(self, **kwargs) -> None:
         for key, val in kwargs.items():
             setattr(self, key, val)
-
+        
         if self.markdown and hasattr(self, "content_path"):
             logging.warning("both `Page.markdown` and `content_path` selected. the content from `content_path` will be used.")
 
@@ -129,11 +128,11 @@ class Page:
             )  # Will Slugify in Next Step
 
         self.slug = slugify(self.slug)
-
+        
     @property
     def url(self) -> str:
         """The first route and the slug of the page."""
-        return f"{self.routes[0]}/{self.slug}"
+        return f"{self.route}/{self.slug}"
 
     @property
     def content(self) -> str:
@@ -142,13 +141,13 @@ class Page:
         This is referred to as `content` because it is intended to be applied in the jinja template as {{content}}.
         When referring to the raw content in the Page object use `markdown`.
         """
+ 
+        if markup:= getattr(self, 'markdown', ''):
 
-        if not self.markdown:
-            raise ValueError(f'{self.__repr__()} is empty and cannot be called.')
-        return markdown(
-            getattr(self, 'markdown', ''), extras=self.markdown_extras
+            return markdown(
+                markup, extras=self.markdown_extras
             )
-
+        
     def __str__(self):
         return self.slug
 
@@ -157,13 +156,17 @@ class Page:
         return f"<Page {self.title}>"
 
 
-    def render(self, output_path, template: Optional[Template]=None, **kwargs) -> Path:
+    def render(self, engine, * , path, **kwargs) -> Path:
         """Build the page based on content instructions"""
         
-        if template:
-            markup = template.render(content=self.content, **kwargs)
+        if _template:= getattr(self, 'template', None):
+            logging.warning(f"{self}{_template=}")
+            template = engine.get_template(_template)
         
+            markup = template.render(content=self.content, **{**vars(self), **kwargs})
+            
         else:
+            logging.info(f"{self} No Template")
             markup = self.content
-        
-        return Path(output_path / f"{self.url}{self.extension}").write_text(markup)
+
+        return Path(path / f"{self.url}{self.extension}").write_text(markup)

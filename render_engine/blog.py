@@ -13,7 +13,6 @@ from .page import Page
 class BlogPost(Page):
     """Page Like object with slight modifications to work with BlogPosts."""
 
-    template = "blog_post.html"
     list_attrs = ["tags"]
 
     def __init__(self, **kwargs):
@@ -30,6 +29,7 @@ class BlogPost(Page):
         """
 
         super().__init__(**kwargs)
+        self.template = kwargs.get('collection_template', None)
 
         date_published = more_itertools.first_true(
             (
@@ -81,9 +81,10 @@ class Blog(Collection):
     """
 
     content_type: typing.Type[BlogPost] = BlogPost
-    archive_reverse: bool = True
-    has_archive: bool = True
-    archive_sort = "date_published"
+    sort_reverse: bool = True
+    sort_by = "date_published"
+    feeds: list[typing.Optional[RSSFeed]] = list
+
 
     @property
     def feeds(self):
