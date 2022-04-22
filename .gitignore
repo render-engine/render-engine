@@ -1,5 +1,6 @@
 .vscode
 tests/test_path
+tests/fakepath
 .envrc
 
 # Byte-compiled / optimized / DLL files
