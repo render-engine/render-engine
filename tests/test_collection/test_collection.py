@@ -21,3 +21,21 @@ def test_collection_pages_are_content_type(temp_dir_collection):
         content_type = CustomPage
         content_path = temp_dir_collection
     assert isinstance(MyCollection().pages[Path(temp_dir_collection/'fake_path_0.md')], CustomPage)
+    
+def test_collection_inherits_custom_attrs_from_init():
+    assert Collection(foo="bar").foo == "bar"
+
+
+def test_collection_with_bad_path_raises_error():
+    class BadPathCollection(Collection):
+        content_path = Path('bad_path')
+
+    with pytest.raises(ValueError) as e:
+        BadPathCollection().pages()
+
+
+def test_collection_render_archives_loaded(temp_dir_collection, base_collection):
+    base_collection.render_archives(path=temp_dir_collection)
+    archive = temp_dir_collection.joinpath('mycollection.html')
+    assert archive.exists()
+    assert archive.read_text() == "Foo"

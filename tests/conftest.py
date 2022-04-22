@@ -1,7 +1,6 @@
 from pathlib import Path
 import pytest
 from render_engine.page import Page
-from render_engine.collection import Collection
 from jinja2 import Template
 import typing
 
@@ -9,11 +8,19 @@ import typing
 def content():
     yield gen_content()
 
+
+def base_content():
+    return """<h1>Test Header</h1>
+
+<p>Test Paragraph</p>
+
+<p><code>&lt;p&gt;Raw HTML&lt;/p&gt;</code></p>
+"""
+
 def gen_content(n: typing.Optional[int]= None):
     if not n:
         n = ""
-    return f"""
----   
+    return f"""---   
 title: Test Title {n}
 custom_list: foo, bar, biz
 custom_attr: this is an attribute
@@ -26,18 +33,8 @@ Test Paragraph
 `<p>Raw HTML</p>`"""
 
 @pytest.fixture(scope='session')
-def temp_dir(tmpdir_factory):
-    yield tmpdir_factory.mktemp('test_dir')
-
-@pytest.fixture(scope='session')
-def temp_dir_collection(tmpdir_factory):
-    tpd = tmpdir_factory.mktemp('test_collection')
-    for n in range(5):
-        fake_path =  tpd / f'fake_path_{n}.md'
-        fake_path.write_text(gen_content(n), encoding='utf-8')
-    
-    yield tpd
-
+def temp_path(tmp_path_factory):
+    yield tmp_path_factory.mktemp('test_dir')
 
 @pytest.fixture(scope='class', name='page')
 def base_page():
@@ -63,8 +60,8 @@ Test Paragraph"""
 
 
 @pytest.fixture(scope='class', name='with_path')
-def page_with_content_path(temp_dir, content):
-    fake_path = Path(temp_dir / 'fake_path.md')
+def page_with_content_path(temp_path, content):
+    fake_path = Path(temp_path / 'fake_path.md')
     fake_path.write_text(content)
 
     class PageWithContentPath(Page):
@@ -72,36 +69,16 @@ def page_with_content_path(temp_dir, content):
         list_attrs = 'custom_list'
 
     yield PageWithContentPath()
-    
-@pytest.fixture(scope='session')
-def base_collection(temp_dir_collection):
-    class MyCollection(Collection):
-        content_path = temp_dir_collection
-        list_attrs = 'custom_list'
-
-    yield MyCollection()
-
-
-@pytest.fixture(scope='session')
-def custom_collection(temp_dir_collection):
-    class CustomCollection(Collection):
-        content_path = temp_dir_collection
-        title = "My Custom Title"
-        foo = "bar"
-        items_per_page = 2
-
-    yield CustomCollection()
-
 
 @pytest.fixture(scope='class', name='no_template')
-def render_page_no_template(temp_dir, p_attrs):
-        p_attrs.render(output_path = temp_dir)
-        check_path =  Path(temp_dir / f"{p_attrs.slug}{p_attrs.extension}")
-        yield check_path
-    
+def render_page_no_template(temp_path, p_attrs):
+    p_attrs.render(path=temp_path)
+    check_path =   Path(temp_path / f"{p_attrs.slug}{p_attrs.extension}")
+    yield check_path
+
 
 @pytest.fixture(scope='class', name='with_template')
-def render_page_template(temp_dir, p_attrs):
-        p_attrs.render(output_path = temp_dir, template=Template('foo{{content}}'))
-        check_path =  Path(temp_dir / f"{p_attrs.slug}{p_attrs.extension}")
-        yield check_path
+def render_page_template(temp_path, p_attrs):
+    p_attrs.render(path = temp_path, template=Template('foo{{content}}'))
+    check_path =  Path(temp_path / f"{p_attrs.slug}{p_attrs._extension}")
+    yield check_path

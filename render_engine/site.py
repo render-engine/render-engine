@@ -1,13 +1,16 @@
 from collections import defaultdict
 import typing
 from pathlib import Path
+import shutil
+import pdb
 
 from .collection import Collection
 from .feeds import RSSFeedEngine
 from .page import Page
 from .sitemap import _render_sitemap
 from jinja2 import Environment, FileSystemLoader
-
+import logging
+import inspect
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -22,41 +25,31 @@ class Site:
             routes are stored prior to being caled with :py:meth:`site.render()`.
     """
 
-    output_path: Path = Path("output")
+    path: Path = Path("output")
     """Path to write rendered content."""
 
-    static_path: Path = Path("static")
-    """Top Level Directory for static files.
+    # Vars that will be passed into the render functions
+    site_vars: dict = {
+        "SITE_TITLE": "Untitled Site",
+        "SITE_URL": "https://example.com"
+    }
 
-    **ALL** files in this path will be copied into the ``output_path``.
-    """
-
-    SITE_TITLE: str = "Untitled Site"
-    """Title for the site. To be used in templates"""
-
-    SITE_URL: str = "https://example.com"
-    """Title for the site. To be used in templates"""
-
-
+    
     engine: typing.Type[Environment] = Environment(loader=FileSystemLoader('templates'))
     """``Engine`` to generate web pages"""
 
     rss_engine: typing.Type[RSSFeedEngine] = RSSFeedEngine()
     """``Engine`` to generate RSS Feeds"""
 
-    cache_file: Path = Path(".routes_cache")
-    """File that hash id's will be stored.
-
-    The ``cache_file`` is checked for values to determine if new pages should be written
-    """
-
-    def __init__(self):
-        """Clean Directory and Prepare Output Directory"""
-        self.output_path:Path = Path(self.output_path)
-        self.routes = defaultdict(list)
+    def __init__(self, static: typing.Optional[str]=None, **kwargs):
+        self.path.mkdir(exist_ok=True)
+        self.site_vars.update(kwargs)
+        
+        if static:
+            self.render_static(static)
 
 
-    def add_collection(self, collection: typing.Type[Collection]) -> None:
+    def render_collection(self, collection: typing.Type[Collection]) -> None:
         """Add a class to your ``self.collections``
         iterate through a classes ``content_path`` and create a classes ``Page``-like
         objects, adding each one to ``routes``.
@@ -70,15 +63,26 @@ class Site:
                 pass
         """
         _collection = collection()
-        for page in _collection.pages.values():
-            self._build_route(page)
+        collection_path = self.path.joinpath(getattr(_collection, 'output_path', ''))
+        collection_path.mkdir(exist_ok=True, parents=True)
+
+        for page in _collection.pages:
+            page.render(
+                path=collection_path,
+                **self.site_vars,
+                **_collection.collection_vars,
+                )
         
         if _collection.has_archive:
-            for archive in _collection.archives:
-                self._build_route(archive)
+            _collection.render_archives(
+                path=collection_path,
+                **self.site_vars,
+                **_collection.collection_vars,
+                )
 
+        return _collection.sorted_pages
 
-    def add_feed(self, feed: RSSFeedEngine, collection: Collection) -> None:
+    def render_feed(self, feed: RSSFeedEngine, collection: Collection) -> None:
         """Create a Page object that is an RSS feed and add it to self.routes"""
 
         extension = self.rss_engine.extension
@@ -88,49 +92,14 @@ class Site:
         _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
         self.add_routes(feed)
 
-    def add_route(self, page: Page) -> None:
+    def render_page(self, page) -> None:
         """Create a Page object and add it to self.routes"""
         _page = page()
-        self._build_route(_page)
-        
-    def _build_route(self, _page: Page) -> None:
-        self.routes[_page.route].append(_page)
+        _page.render(path=self.path, **self.site_vars, **page.__dict__)
 
-    def render(self) -> None:
-        """Writes page markup to file"""
-        for page_route, pages in self.routes.items():
-            output_path = self.output_path / page_route
-            output_path.mkdir(exist_ok=True)
 
-            for page in pages:
-                page.render(engine=self.engine, path=output_path, **{**vars(page), **vars(self)})
-            
+    def render_static(self, directory) -> None:
+        """Copies a Static Directory to the output folder"""
+        return shutil.copytree(directory, self.path / directory, dirs_exist_ok=True)
+
 #        _render_sitemap(self.routes, output_path=self.output_path, SITE_URL=self.SITE_URL,)
-
-
-    def _render_subcollections(self):
-        """Generate subcollection pages to be added to routes"""
-        for collection in self.collections.values():
-
-            if collection.subcollections:
-
-                for subcollection_group in collection.get_subcollections():
-                    _subcollection_group = collection.get_subcollections()[
-                        subcollection_group
-                    ]
-                    sorted_group = sorted(
-                        _subcollection_group,
-                        key=lambda x: (len(x.pages), x.title),
-                        reverse=True,
-                    )
-
-                    for subcollection in sorted_group:
-
-                        # Check for subcollection_min
-                        subc_min = getattr(self, "SUBCOLLECTION_MIN", 2)
-
-                        if len(subcollection.pages) < subc_min:
-                            continue
-
-                        for archive in subcollection.archive:
-                            self.routes.append(archive)

@@ -68,21 +68,19 @@ class TestBasePage:
         assert str(page) == 'basepage'
         assert page.url == './basepage'
 
-    def test_page_html_with_no_content_is_empty_string(self, page):
+    def test_page_html_with_no_content_or_template_is_none(self, page):
         """If there is no content then the html will be None"""
         
         assert page.markdown == None
+        assert hasattr(page, 'template') == False
+        assert page.content == None
         
-        with pytest.raises(ValueError) as e:
-            page.content
-
 def test_custom_page_accepts_vars_in_init():
     page = Page(foo='bar')
 
     assert page.foo == 'bar'
 
 class TestPageWritesToFile():
-    
     def test_page_writes_to_file(self, no_template):
         """Given a Path with """
         assert no_template.exists()
@@ -91,4 +89,4 @@ class TestPageWritesToFile():
         assert no_template.read_text() == p_attrs.content
 
     def test_page_with_tempate_is_rendered(self, with_template, p_attrs):
-        assert with_template.read_text() == f'foo{p_attrs.content}'
+        assert with_template.read_text() == f'{p_attrs.content}'

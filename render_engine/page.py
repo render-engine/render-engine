@@ -1,12 +1,11 @@
 import logging
 from pathlib import Path
 
-
 import frontmatter
-from markupsafe import Markup, escape
 from markdown2 import markdown
 from slugify import slugify
-from typing import Optional
+from typing import Any, Optional
+from jinja2 import Environment, FileSystemLoader, Template
 
 class Page:
     """Base component used to make web pages.
@@ -97,6 +96,7 @@ class Page:
 
     markdown: Optional[str] = None
     extension: str = ".html"
+    engine: Environment = Environment(loader=FileSystemLoader('templates'))
 
     def __init__(self, **kwargs) -> None:
         for key, val in kwargs.items():
@@ -132,21 +132,35 @@ class Page:
     @property
     def url(self) -> str:
         """The first route and the slug of the page."""
-        return f"{self.route}/{self.slug}"
+        return f"{self.route}/{self.slug}{self._extension}"
 
     @property
-    def content(self) -> str:
+    def _extension(self) -> str:
+        """Ensures consistency on extension"""
+        if not self.extension.startswith('.'):
+            return f".{self.extension}"
+        else:
+            return self.extension
+
+    @property
+    def content(self) -> Optional[str]:
         """html = rendered HTML (not marked up).
         Is `None` if `content == None`
         This is referred to as `content` because it is intended to be applied in the jinja template as {{content}}.
         When referring to the raw content in the Page object use `markdown`.
         """
  
-        if markup:= getattr(self, 'markdown', ''):
+        if not self.markdown:
+            return None
 
-            return markdown(
-                markup, extras=self.markdown_extras
+        return markdown(
+                self.markdown, extras=self.markdown_extras
             )
+
+    @property
+    def _template(self) -> Optional[Template]:
+        if template:= getattr(self, 'template', None):
+            return self.engine.get_template(template)
         
     def __str__(self):
         return self.slug
@@ -155,18 +169,26 @@ class Page:
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
+    def _render_content(self, **kwargs) -> str:
+        template = self._template
 
-    def render(self, engine, * , path, **kwargs) -> Path:
-        """Build the page based on content instructions"""
+        if template:
+            if self.content:
+                return template.render(content=self.content, **{**self.__dict__, **kwargs})
+
+            else:
+                return template.render(**{**self.__dict__, **kwargs})
         
-        if _template:= getattr(self, 'template', None):
-            logging.warning(f"{self}{_template=}")
-            template = engine.get_template(_template)
-        
-            markup = template.render(content=self.content, **{**vars(self), **kwargs})
-            
+        elif self.content:
+            return self.content
+         
         else:
-            logging.info(f"{self} No Template")
-            markup = self.content
+            raise ValueError(f'{self=} must have either content or template')
 
-        return Path(path / f"{self.url}{self.extension}").write_text(markup)
+
+    def render(self, **kwargs) -> Path:
+        """Build the page based on content instructions"""
+
+        markup = self._render_content(**kwargs)
+        path = Path(kwargs.get('path', '')).joinpath(f"{self.slug}{self._extension}")
+        return path.write_text(markup)

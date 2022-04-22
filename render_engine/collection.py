@@ -2,6 +2,7 @@ import collections
 import logging
 import typing
 from pathlib import Path
+import pdb
 
 import itertools
 from more_itertools import chunked
@@ -46,7 +47,6 @@ class Collection:
     content_type: Page = Page
     template: typing.Optional[str] = None
     includes: list[str] = ["*.md", "*.html"]
-    routes: Path = Path
     subcollections: list[str] = list
     markdown_extras = ["fenced-code-blocks", "footnotes"]
     items_per_page: typing.Optional[int] = None
@@ -74,17 +74,18 @@ class Collection:
     def pages(self):
         if Path(self.content_path).is_dir():
             page_groups = map(lambda pattern:Path(self.content_path).glob(pattern), self.includes)
-            pages = {
-                    page_path: self.content_type(content_path=page_path, template=self.template, **self.collection_vars)
+            # pdb.set_trace()
+            pages = [self.content_type(content_path=page_path, template=self.template, **self.collection_vars)
                             for page_path in itertools.chain.from_iterable(page_groups)
-                    }
+            ]
+        
             return pages
         else:
             raise ValueError(f'invalid {Path=}')
 
     @property
     def sorted_pages(self):
-        return sorted(self.pages.values(), key=lambda page: getattr(page, self.sort_by))
+        return sorted(self.pages, key=lambda page: getattr(page, self.sort_by), reverse=self.sort_reverse)
 
     @property
     def archives(self) -> list[Archive]:
@@ -95,6 +96,5 @@ class Collection:
         page_chunks = enumerate(chunked(self.sorted_pages, self.items_per_page))
         return [Archive(pages=pages, template=self.archive_template, title=f"{self.title}_{i}") for i, pages in page_chunks]
 
-    def render_archives(self, /, output_path: Path) -> list[Archive]:
-        for archive in self.archives:
-            archive.render(output_path=output_path)
+    def render_archives(self, **kwargs) -> list[Archive]:
+        return [archive.render(pages=archive.pages, **kwargs) for archive in self.archives]

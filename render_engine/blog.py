@@ -29,8 +29,6 @@ class BlogPost(Page):
         """
 
         super().__init__(**kwargs)
-        self.template = kwargs.get('collection_template', None)
-
         date_published = more_itertools.first_true(
             (
                 getattr(self, "date_published", None),
