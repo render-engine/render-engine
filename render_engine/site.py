@@ -1,16 +1,9 @@
-from collections import defaultdict
 import typing
 from pathlib import Path
 import shutil
-import pdb
 
 from .collection import Collection
-from .feeds import RSSFeedEngine
-from .page import Page
-from .sitemap import _render_sitemap
 from jinja2 import Environment, FileSystemLoader
-import logging
-import inspect
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -37,9 +30,6 @@ class Site:
     
     engine: typing.Type[Environment] = Environment(loader=FileSystemLoader('templates'))
     """``Engine`` to generate web pages"""
-
-    rss_engine: typing.Type[RSSFeedEngine] = RSSFeedEngine()
-    """``Engine`` to generate RSS Feeds"""
 
     def __init__(self, static: typing.Optional[str]=None, **kwargs):
         self.path.mkdir(exist_ok=True)
@@ -82,16 +72,6 @@ class Site:
 
         return _collection.sorted_pages
 
-    def render_feed(self, feed: RSSFeedEngine, collection: Collection) -> None:
-        """Create a Page object that is an RSS feed and add it to self.routes"""
-
-        extension = self.rss_engine.extension
-        _feed = feed
-        _feed.slug = collection.slug
-        _feed.title = f"{self.SITE_TITLE} - {_feed.title}"
-        _feed.link = f"{self.SITE_URL}/{_feed.slug}{extension}"
-        self.add_routes(feed)
-
     def render_page(self, page) -> None:
         """Create a Page object and add it to self.routes"""
         _page = page()
@@ -101,5 +81,3 @@ class Site:
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
         return shutil.copytree(directory, self.path / directory, dirs_exist_ok=True)
-
-#        _render_sitemap(self.routes, output_path=self.output_path, SITE_URL=self.SITE_URL,)

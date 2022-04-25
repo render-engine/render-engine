@@ -1,12 +1,10 @@
 import datetime
-import logging
 import typing
 
 import more_itertools
 import pendulum
 
 from .collection import Collection
-from .feeds import RSSFeed, RSSFeedItem
 from .page import Page
 
 
@@ -64,10 +62,6 @@ class BlogPost(Page):
 
         self.date_friendly = self.date_modified.format("MMM DD, YYYY HH:mm A")
 
-    @property
-    def rss_feed_item(self):
-        return RSSFeedItem(self)
-
 
 class Blog(Collection):
     """
@@ -81,9 +75,3 @@ class Blog(Collection):
     content_type: typing.Type[BlogPost] = BlogPost
     sort_reverse: bool = True
     sort_by = "date_published"
-    feeds: list[typing.Optional[RSSFeed]] = list
-
-
-    @property
-    def feeds(self):
-        return [RSSFeed(collection=self, title=self.title)]

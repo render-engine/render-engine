@@ -1,13 +1,9 @@
-import collections
-import logging
 import typing
 from pathlib import Path
-import pdb
 
 import itertools
 from more_itertools import chunked
 
-from .feeds import RSSFeed
 from .page import Page
 
 
@@ -94,7 +90,7 @@ class Collection:
             return [Archive(pages=self.sorted_pages, template=self.archive_template, title=self.title)]
 
         page_chunks = enumerate(chunked(self.sorted_pages, self.items_per_page))
-        return [Archive(pages=pages, template=self.archive_template, title=f"{self.title}_{i}") for i, pages in page_chunks]
+        return [Archive(pages=pages, template=self.archive_template, slug=f"{self.title}_{i}", title=self.title) for i, pages in page_chunks]
 
     def render_archives(self, **kwargs) -> list[Archive]:
         return [archive.render(pages=archive.pages, **kwargs) for archive in self.archives]
