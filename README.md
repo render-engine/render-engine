@@ -3,77 +3,126 @@
 The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.
 
 Render Engine was built out of frustration with existing tools.
-Larger frameworks are too vast.
-Dynamic Services like _Flask_ required overhead of a server where in many cases were not necessary.
-Extensions to Flask that provided a static component added even more unnecessary complexity and updates have been inconsistent.
-Other static-site generators like _Pelican_ were built without modern architectures and design practices in mind.
+
+## This is in Beta!
+
+That Means:
+- Things can (and will change)
+- Things may break
+
 
 ## The _3 layer_ Architecture 
 
 * **[Page](render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
 * **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
-* **[Site](render_engine/site.html)** - The container that holds all Pages and Collections and gives access to global configurations and settings.
+* **[Site](render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
 
-Your site will have an [Engine](render_engine/engine.html) that can _render_ your html (and other things), hence the name.
+### The 4th Layer
+Your site will have an _Engine_ as well. This is your templating engine and is Jinja2 by default. You can of course supply your own engine if you like.
 
 You can expand any of these areas to customize your engine to your liking.
 
-**Things you can do in with Render Engine:**
-
-- Create **Custom Page Objects** (Like Blog or MicroBlog Posts)
-- Create all types of Page Objects, not just 'html' pages
-- Run Multiple Engines for subdomains or multiple template systems or Multiple Sites!
-- Dynamically create content at runtime to include into your static sites
-
 ## As simple/complex as required
 
-- Render Engine uses [Jinja2] as the defaul engine to bring the power of templates to your page. You can create your own custom engines if you have a specific need.
-- Content can be markdown/html/or RAW DATA to give you the content you need.
+- Create your own templates to design the site your way (or don't and still get HTML)
+- Content can be markdown/html to give you the content you need. You can also specify markdown extensions to expand how your content renders.
 
-# Installing Render Engine
+# Getting Started
+## Installing Render Engine
+Use pip - `pip install render-engine`
 
-## Dependencies:
-- [Python3.8](https://python.org) or later.
+### Dependencies:
+- Developed on [Python 3.10](https://python.org).
 
-### Other Dependencies that install with render-engine
+#### Other Dependencies that install with render-engine
 - [Jinja2] - for template things
 - [Pendulum] - for datetime things
-- [Click] - for some commandline goodness
 - [more-itertools] - for iteration things
-- [markdown] - for markdown things
+- [markdown2] - for markdown things
 
-### Using pip
-`pip install render-engine`
 
-# Get Started Quickly
+## Steps to Working Site
+### Import Site and Page
+`from render_engine import Site, Page`
 
-### The Quick Way
+### Create Site Class
 
-`render-engine-quickstart`
+```python
+class MySite(Site):
+    site_vars = {
+      SITE_TITLE: "My Website",
+      SITE_URL: "https://example.com",
+      "some_template_variable": "Pass this to every page",
+    }
 
-![render-engine-quickstart](https://s3-us-west-2.amazonaws.com/kjaymiller/images/Render%20Engine%20Quickstart.gif)
-
-This will create your essential files and a `run.py` that you can use to build
-your output file using `python run.py`
-
-Render Engine DOESN'T Need the following but this model can quickly get you on your way.
-
-```
-content/ # store content for collections here
-run.py # use `python run.py` to build your site.
-templates/
-  - page.html # default template for Page objects. Modify this file to fit your design
-  - all_posts.html # default template for Collection objects. Modify this file to fit your design
-static/ # will be copied into your generated output. great for storing css/.js/image files
+mysite = MySite(static="static") # copies static files to your output
 ```
 
-## Sponsors
+### Create a Page and let the site render it
+```python
+@mysite.render()
+class Index(Page):
+  title="Welcome to my Page!"
+  
+```
+
+
+### Create some Collections
+You don't have to render all the pages individually. You can create a collection of pages using **frontmatter** and markdown.
+
+With frontmatter you can set your own variables to add to your jinja template. 
+
+```markdown
+---
+title: This is another page
+hero: spiderman
+---
+
+> With great power comes great responsibility -- Uncle Ben
+
+```
+
+Then store all of your markdown files in a folder and render them as a collection. You can set parameters around your collection like if you want an archive and how you want that archive sorted.
+
+```python
+@mysite.render_collection
+class Heroes(Collection):
+    has_archive: True
+    sort_by: hero
+    sort_reverse: true
+    archive_template: "heroes.html"
+    content_path: './content'
+```
+
+There is also a custom blog collection that has many of the features needed to get your blog off the ground.
+
+```python
+from render_engine import Blog
+
+@mysite.render_collection
+class Blog(Blog):
+    content_path: './blog' # archive and sorting setup by default
+```
+
+Finally execute your python file.
+
+
+---
+
+### Featuers still in development:
+- RSS Feeds
+- SubCollections (Tags, Categories, Etc)
+- Sitemap generation
+- Visual Reporting
+
+---
+
+# Sponsors
 This and much of the work that I do is made possible by those that sponsor me
 on github. 
 
 ### Sponsors at the $20/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
-- [Anthony Shaw](https://github.com/tonybaloney)
 - [Carol Willing](https://github.com/willingc)
 
 Thank you to them and all of those that continue to support this project!
@@ -82,5 +131,5 @@ Thank you to them and all of those that continue to support this project!
 [Pendulum]: https://pendulum.eustace.io
 [Click]: https://click.palletsprojects.com/en/latest
 [more-itertools]: https://more-itertools.readthedocs.io/en/stable/
-[markdown]: https://python-markdown.github.io
+[markdown2]: https://pypi.org/project/markdown2/
 
