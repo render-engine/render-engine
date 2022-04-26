@@ -74,7 +74,7 @@ With frontmatter you can set your own variables to add to your jinja template.
 
 ```markdown
 ---
-title: This is another page
+title: Spiderman Quotes
 hero: spiderman
 ---
 
