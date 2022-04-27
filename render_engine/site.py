@@ -70,7 +70,7 @@ class Site:
                 **_collection.collection_vars,
                 )
 
-        return _collection.sorted_pages
+        return _collection
 
     def render_page(self, page) -> None:
         """Create a Page object and add it to self.routes"""

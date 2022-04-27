@@ -1,6 +1,14 @@
 render\_engine package
 ======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   render_engine.parsers
+
 Submodules
 ----------
 
@@ -20,34 +28,10 @@ render\_engine.collection module
    :undoc-members:
    :show-inheritance:
 
-render\_engine.engine module
-----------------------------
-
-.. automodule:: render_engine.engine
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-render\_engine.feeds module
----------------------------
-
-.. automodule:: render_engine.feeds
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 render\_engine.links module
 ---------------------------
 
 .. automodule:: render_engine.links
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-render\_engine.microblog module
--------------------------------
-
-.. automodule:: render_engine.microblog
    :members:
    :undoc-members:
    :show-inheritance:
@@ -60,18 +44,18 @@ render\_engine.page module
    :undoc-members:
    :show-inheritance:
 
-render\_engine.quickstart module
---------------------------------
-
-.. automodule:: render_engine.quickstart
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 render\_engine.site module
 --------------------------
 
 .. automodule:: render_engine.site
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+render\_engine.test\_vars module
+--------------------------------
+
+.. automodule:: render_engine.test_vars
    :members:
    :undoc-members:
    :show-inheritance:
