@@ -1,29 +1,31 @@
 import pytest
-from render_engine.collection import Collection
-from tests.conftest import gen_content
 from jinja2 import Template
 
+from render_engine.collection import Collection
+from tests.conftest import gen_content
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def temp_dir_collection(tmp_path_factory):
-    tpd = tmp_path_factory.mktemp('test_collection')
+    tpd = tmp_path_factory.mktemp("test_collection")
     for n in range(5):
-        fake_path =  tpd / f'fake_path_{n}.md'
-        fake_path.write_text(gen_content(n), encoding='utf-8')
-    
+        fake_path = tpd / f"fake_path_{n}.md"
+        fake_path.write_text(gen_content(n), encoding="utf-8")
+
     yield tpd
 
-@pytest.fixture(scope='session')
+
+@pytest.fixture(scope="session")
 def base_collection(temp_dir_collection):
     class MyCollection(Collection):
         content_path = temp_dir_collection
-        list_attrs = 'custom_list'
-        archive_template = Template('Foo')
+        list_attrs = "custom_list"
+        archive_template = Template("Foo")
+
     yield MyCollection()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def custom_collection(temp_dir_collection):
     class CustomCollection(Collection):
         content_path = temp_dir_collection

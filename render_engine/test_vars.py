@@ -1,12 +1,11 @@
 class TestClass:
-    foo = 'bar'
+    foo = "bar"
 
     def __init__(self):
-        self.bar = 'biz'
+        self.bar = "biz"
 
 
 test = TestClass()
 test.biz = "bash"
 print(f"{vars(test)=}")
 print(f"{test.__dict__=}")
-

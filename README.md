@@ -63,14 +63,14 @@ mysite = MySite(static="static") # copies static files to your output
 @mysite.render()
 class Index(Page):
   title="Welcome to my Page!"
-  
+
 ```
 
 
 ### Create some Collections
 You don't have to render all the pages individually. You can create a collection of pages using **frontmatter** and markdown.
 
-With frontmatter you can set your own variables to add to your jinja template. 
+With frontmatter you can set your own variables to add to your jinja template.
 
 ```markdown
 ---
@@ -119,7 +119,7 @@ Finally execute your python file.
 
 # Sponsors
 This and much of the work that I do is made possible by those that sponsor me
-on github. 
+on github.
 
 ### Sponsors at the $20/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
@@ -132,4 +132,3 @@ Thank you to them and all of those that continue to support this project!
 [Click]: https://click.palletsprojects.com/en/latest
 [more-itertools]: https://more-itertools.readthedocs.io/en/stable/
 [markdown2]: https://pypi.org/project/markdown2/
-

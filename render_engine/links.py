@@ -26,19 +26,19 @@ class Link:
     text: str = field(kw_only=True, default_factory=str)
     url: str = field(kw_only=True, default="#")
     meta: dict[str, str] = field(default_factory=dict)
-    
+
     def __str__(self):
-        """href is the common """
+        """href is the common"""
 
         if self.meta:
-            attrs = " ".join([f'{k}="{v}"' for k,v in self.meta.items()])
+            attrs = " ".join([f'{k}="{v}"' for k, v in self.meta.items()])
             starting_path = f'<a href="{self.url}" {attrs}>'
-        
+
         else:
             starting_path = f'<a href="{self.url}">'
 
-        return f'{starting_path}{self.text}</a>'
-        
+        return f"{starting_path}{self.text}</a>"
+
 
 @dataclass
 class Image(Link):
@@ -65,8 +65,8 @@ class Image(Link):
         """prints the image point"""
 
         if self.meta:
-            attrs = " ".join([f'{k}="{v}"' for k,v in self.meta.items()])
+            attrs = " ".join([f'{k}="{v}"' for k, v in self.meta.items()])
             return f'<img src="{self.url}" alt="{self.text}" {attrs} />'
-        
+
         else:
             return f'<img src="{self.url}" alt="{self.text}" />'

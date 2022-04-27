@@ -1,9 +1,11 @@
+import shutil
 import typing
 from pathlib import Path
-import shutil
+
+from jinja2 import Environment, FileSystemLoader
 
 from .collection import Collection
-from jinja2 import Environment, FileSystemLoader
+
 
 class Site:
     """The site stores your pages and collections to be rendered.
@@ -22,22 +24,17 @@ class Site:
     """Path to write rendered content."""
 
     # Vars that will be passed into the render functions
-    site_vars: dict = {
-        "SITE_TITLE": "Untitled Site",
-        "SITE_URL": "https://example.com"
-    }
+    site_vars: dict = {"SITE_TITLE": "Untitled Site", "SITE_URL": "https://example.com"}
 
-    
-    engine: typing.Type[Environment] = Environment(loader=FileSystemLoader('templates'))
+    engine: typing.Type[Environment] = Environment(loader=FileSystemLoader("templates"))
     """``Engine`` to generate web pages"""
 
-    def __init__(self, static: typing.Optional[str]=None, **kwargs):
+    def __init__(self, static: typing.Optional[str] = None, **kwargs):
         self.path.mkdir(exist_ok=True)
         self.site_vars.update(kwargs)
-        
+
         if static:
             self.render_static(static)
-
 
     def render_collection(self, collection: typing.Type[Collection]) -> None:
         """Add a class to your ``self.collections``
@@ -53,7 +50,7 @@ class Site:
                 pass
         """
         _collection = collection()
-        collection_path = self.path.joinpath(getattr(_collection, 'output_path', ''))
+        collection_path = self.path.joinpath(getattr(_collection, "output_path", ""))
         collection_path.mkdir(exist_ok=True, parents=True)
 
         for page in _collection.pages:
@@ -61,14 +58,14 @@ class Site:
                 path=collection_path,
                 **self.site_vars,
                 **_collection.collection_vars,
-                )
-        
+            )
+
         if _collection.has_archive:
             _collection.render_archives(
                 path=collection_path,
                 **self.site_vars,
                 **_collection.collection_vars,
-                )
+            )
 
         return _collection
 
@@ -76,7 +73,6 @@ class Site:
         """Create a Page object and add it to self.routes"""
         _page = page()
         _page.render(path=self.path, **self.site_vars, **page.__dict__)
-
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""

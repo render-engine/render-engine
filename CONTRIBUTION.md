@@ -35,18 +35,13 @@ Render Engine uses two modules to style code.
 Code should follow the stylings from isort and black before merged. This can be
 done by executing the following command (with both modules installed).
 
-`$render_engine> isort render_engine && black render_engine`
+`$render_engine> noisort render_engine --profile=black && black render_engine`
 
 ## Contributing to Documentation
 Render Engine uses [readthedocs](https://readthedocs.org) in combination with
-[MkDocs](). The primary objects (Page, Collection, Site, and Engine) have their
-own documentation page. There are also a page for included Collection classes (Blog,
-Microblog) and a page for helper objects (Links, Images).
+[Sphinx, Autodoc and Napoleon]().
 
-When adding documentation of a feature, please include the attribute to utilize
-the feature. A description of the feature and how it is implemented and a code
-example. Lastly, include any situations that would return an error or would
-make the code not work as intended.
+Document modules using Google Doc Format
 
 Example:
 
