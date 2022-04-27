@@ -12,6 +12,7 @@
 #
 import os
 import sys
+import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath('../../../render_engine'))
 
@@ -31,7 +32,9 @@ release = '2020.12'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.napoleon',
+    'sphinx_rtd_theme',]
 
 
 
