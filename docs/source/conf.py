@@ -20,11 +20,11 @@ sys.path.insert(0, os.path.abspath('../../../render_engine'))
 # -- Project information -----------------------------------------------------
 
 project = 'Render Engine'
-copyright = '2020, Jay Miller'
+copyright = '2022, Jay Miller'
 author = 'Jay Miller'
 
 # The full version, including alpha/beta/rc tags
-release = '2020.12'
+release = '2022.04.01 beta'
 
 
 # -- General configuration ---------------------------------------------------

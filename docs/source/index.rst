@@ -11,7 +11,6 @@ Render Engine!
     :maxdepth: 2
 
     Installation <installation.rst>
-    Creating a Page <creating_a_page.rst>
     Modules <modules.rst>
 
 
