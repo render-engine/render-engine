@@ -2,6 +2,8 @@
 {% if item.title %}<title>{{item.title}}</title>{% endif %}
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
+{% else %}
+  <description><![CDATA[{{item.content}}]]></description>
 {% endif %}
 
 {% if item.enclosure %}
