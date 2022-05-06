@@ -8,7 +8,6 @@ JSON: https://jsonfeed.org/version/1
 
 from collections import namedtuple
 from datetime import datetime
-from typing import Iterable
 
 import jinja2
 from jinja2 import PackageLoader, Template, select_autoescape
@@ -25,7 +24,7 @@ def to_pub_date(value: datetime):
 
 rss_feed_engine = jinja2.Environment(
     loader=PackageLoader("render_engine", "templates"),
-    autoescape=select_autoescape(),
+    autoescape=select_autoescape(enabled_extensions=("rss")),
     trim_blocks=True,
 )
 rss_feed_engine.filters["to_pub_date"] = to_pub_date
