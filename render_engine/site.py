@@ -1,10 +1,12 @@
 import shutil
 import typing
+from curses import wrapper
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
 from .collection import Collection
+from .feeds import RSSFeed
 
 
 class Site:
@@ -57,8 +59,15 @@ class Site:
             page.render(
                 path=collection_path,
                 **self.site_vars,
-                **_collection.collection_vars,
             )
+
+        if hasattr(_collection, "feed"):
+            feed = _collection.feed(
+                title=f"{self.site_vars['SITE_TITLE']} - {_collection.title}",
+                link=self.site_vars["SITE_URL"],
+                pages=_collection.pages,
+            )
+            feed.render(path=self.path, **self.site_vars)
 
         if _collection.has_archive:
             _collection.render_archives(
@@ -71,8 +80,8 @@ class Site:
 
     def render_page(self, page) -> None:
         """Create a Page object and add it to self.routes"""
-        _page = page()
-        _page.render(path=self.path, **self.site_vars, **page.__dict__)
+        _page = page(**self.site_vars)
+        _page.render(path=self.path, **page.__dict__)
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""

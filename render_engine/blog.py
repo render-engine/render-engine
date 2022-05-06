@@ -65,7 +65,7 @@ class BlogPost(Page):
 
 class Blog(Collection):
     """
-    Custom Collection Class with Archiving Enabled and the RSS Feed
+    Custom :py:class:`collection.Collection` class with archiving enabled, sort by `date_published` by default.
 
     Todos:
         - Add Support for JSON Feeds

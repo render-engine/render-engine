@@ -12,23 +12,6 @@ logger.setLevel(logging.INFO)
 
 
 class TestPageWithContentPath:
-    def test_page_defines_attrs_and_content_from_frontmatter(self, with_path):
-        """
-        Tests when given a file as the content_path, parse it into data.
-        This is done using fronmatter and should pass as long as frontmatter is parser
-        """
-
-        assert (
-            with_path.markdown
-            == """# Test Header
-
-Test Paragraph
-
-`<p>Raw HTML</p>`"""
-        )
-
-        assert with_path.title == "Test Title"
-
     def test_page_content_converts_markdown_to_html(self, with_path):
         """Tests that `Page.html` is converted to html"""
 

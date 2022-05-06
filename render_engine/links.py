@@ -1,35 +1,32 @@
-import typing
 from dataclasses import dataclass, field
 
 
 @dataclass
 class Link:
     """
-    An opinionated format to reference links. Great for creating headers
+    An opinionated format to reference links. Great for creating links that you will pass into multiple page objects.
 
-    Look at the example::
+    Jinja will pass the string representation of the link to the template.
 
-        myImage = Link(
-            name="Render Engine",
-            url="https://render-engine.site"
-            alt="example image"
-            )
+    .. code-block:: python
 
+        link = Link(
+                name="Render Engine",
+                url="https://render-engine.site",
+                meta={"class"="link-class", "id"="custom-link-id"}
+                )
 
-    In this case the name and url give you enough information that you can supply to your template::
+        # When rendered in a template, this will be:
 
-        <a href="{{myImage.url}}">{{myImage.text}}</a>
-
-    Any attribute could be applied but here are some that you can supply on initialization.
+        <a href="https://render-engine.site" class="link-class" id="custom-link-id">Render Engine</a>
     """
 
     text: str = field(kw_only=True, default_factory=str)
     url: str = field(kw_only=True, default="#")
     meta: dict[str, str] = field(default_factory=dict)
+    """Meta variables translate to attributes on the html element"""
 
     def __str__(self):
-        """href is the common"""
-
         if self.meta:
             attrs = " ".join([f'{k}="{v}"' for k, v in self.meta.items()])
             starting_path = f'<a href="{self.url}" {attrs}>'
@@ -45,20 +42,17 @@ class Image(Link):
     """
     Link object formatted as an image
 
-    Look at the example::
+    .. code-block:: python
 
         myImage = Link(
-            name="Render Engine",
-            url="https://render-engine.site"
-            alt="example image"
+            text="Render Engine",
+            url="https://render-engine.site",
+            meta={"class"="link-class", "id"="custom-link-id"}
             )
 
+        # When rendered in a template
 
-    In this case the name and url give you enough information that you can supply to your template::
-
-        <a href="{{myImage.url}}">{{myImage.text}}</a>
-
-    Any attribute could be applied but here are some that you can supply on initialization.
+        <img src="https://render-engine.site" alt="example image" id="custom-link-id" class="link-class" />
     """
 
     def __str__(self):

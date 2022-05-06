@@ -4,6 +4,7 @@ from pathlib import Path
 
 from more_itertools import chunked
 
+from .feeds import RSSFeed
 from .page import Page
 
 
@@ -67,22 +68,27 @@ class Collection:
     @property
     def pages(self):
         if Path(self.content_path).is_dir():
-            page_groups = map(
-                lambda pattern: Path(self.content_path).glob(pattern), self.includes
-            )
-            # pdb.set_trace()
-            pages = [
-                self.content_type(
-                    content_path=page_path,
-                    template=self.template,
-                    **self.collection_vars,
-                )
-                for page_path in itertools.chain.from_iterable(page_groups)
-            ]
+
+            pages = self._pages(self.content_type)
 
             return pages
         else:
             raise ValueError(f"invalid {Path=}")
+
+    def _pages(self, content_type: Page, **kwargs) -> list[Page]:
+        page_groups = map(
+            lambda pattern: Path(self.content_path).glob(pattern), self.includes
+        )
+
+        return [
+            content_type(
+                content_path=page_path,
+                template=self.template,
+                **self.collection_vars,
+                **kwargs,
+            )
+            for page_path in itertools.chain.from_iterable(page_groups)
+        ]
 
     @property
     def sorted_pages(self):
@@ -119,3 +125,6 @@ class Collection:
         return [
             archive.render(pages=archive.pages, **kwargs) for archive in self.archives
         ]
+
+    def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
+        return RSSFeed(pages=self.pages, **kwargs)

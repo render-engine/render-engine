@@ -23,6 +23,9 @@ def test_images():
     tests that class and id don't need to be included.
     """
 
+    image_no_options = Image()
+    assert str(image_no_options) == '<img src="#" alt="" />'
+
     image_with_meta = Image(text="test item", meta={"foo": "bar"})
 
     assert str(image_with_meta) == '<img src="#" alt="test item" foo="bar" />'
