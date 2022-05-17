@@ -62,8 +62,9 @@ class Site:
                 **self.site_vars,
             )
 
-        if hasattr(_collection, "feed"):
-            feed = _collection.feed(
+        print(f"{hasattr(collection, 'feed')=}")
+        if hasattr(collection, "feed"):
+            feed = collection.feed(
                 title=f"{self.site_vars['SITE_TITLE']} - {_collection.title}",
                 link=self.site_vars["SITE_URL"],
                 pages=_collection.pages,
