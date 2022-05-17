@@ -19,7 +19,6 @@ class Page:
     """
 
     route: str = "./"
-
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with Markdown2"""
 

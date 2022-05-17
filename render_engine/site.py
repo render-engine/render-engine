@@ -2,11 +2,16 @@ import shutil
 import typing
 from curses import wrapper
 from pathlib import Path
+from re import sub
 
 from jinja2 import Environment, FileSystemLoader
 
-from .collection import Collection
+from .collection import Archive, Collection
 from .feeds import RSSFeed
+
+
+def render_archives(archive, **kwargs) -> list[Archive]:
+    return [archive.render(pages=archive.pages, **kwargs) for archive in archive]
 
 
 class Site:
@@ -16,10 +21,6 @@ class Site:
     Collections and subcollections are stored to be used for future use.
 
     Sites also contain global variables that can be applied in templates.
-
-    Attributes:
-        routes: typing.List[typing.Type[Page]]
-            routes are stored prior to being caled with :py:meth:`site.render()`.
     """
 
     path: Path = Path("output")
@@ -70,11 +71,24 @@ class Site:
             feed.render(path=self.path, **self.site_vars)
 
         if _collection.has_archive:
-            _collection.render_archives(
+            render_archives(
                 path=collection_path,
+                archive=_collection.archives,
                 **self.site_vars,
                 **_collection.collection_vars,
             )
+
+        if hasattr(_collection, "subcollections"):
+            for subcollection in _collection.subcollections:
+                for subgroup in _collection._gen_subpages(subcollection):
+                    subpath = collection_path / subcollection.key
+                    subpath.mkdir(exist_ok=True, parents=True)
+                    render_archives(
+                        path=subpath,
+                        archive=subgroup,
+                        **self.site_vars,
+                        **_collection.collection_vars,
+                    )
 
         return _collection
 

@@ -5,6 +5,7 @@ import more_itertools
 import pendulum
 
 from .collection import Collection
+from .feeds import RSSFeed
 from .page import Page
 
 
@@ -12,6 +13,7 @@ class BlogPost(Page):
     """Page Like object with slight modifications to work with BlogPosts."""
 
     list_attrs = ["tags"]
+    feed = RSSFeed
 
     def __init__(self, **kwargs):
         """

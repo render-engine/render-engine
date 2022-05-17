@@ -1,0 +1,12 @@
+<url>
+	<loc>{{SITE_URL}}{{item.url}}</loc>
+	{% if item.lastmod %}
+	<lastmod>{{item.lastmod}}</lastmod>
+	{% endif %}
+	{% if item.changefreq %}
+	<schangefreq>{{item.changefreq}}</changefreq>
+	{% endif %}
+	{% if item.priority %}
+	<priority>{{item.priority}}</priority>
+	{% endif %}
+</url>

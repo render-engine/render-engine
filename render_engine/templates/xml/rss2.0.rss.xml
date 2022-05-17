@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{title}}</title>
+    <link>{{link}}</link>
+    <description>{{description}}</description>
+    <atom:link href="{{link}}" rel="self" type="application/rss+xml" />
+
+{% if language %}<language>{{language}}</language>{% endif %}
+{% if copyright %}<copyright>{{copyright}}</copyright>{% endif %}
+{% if managing_editor %}<managingEditor>{{managing_editor}}</managingEditor>{% endif %}
+{% if web_master %}<webMaster>{{web_master}}</webMaster>{% endif %}
+{% if pub_date %}<pubDate>{{pub_date}}</pubDate>{% endif %}
+{% if last_build_date %}<lastBuildDate>{{last_build_date}}</lastBuildDate>{% endif %}
+{% if categories %}
+{% for category in categories %}
+{% if category['domain'] %}
+<category domain="{{category['domain']}}">{{category}}</category>
+{% else %}
+<category>{{category}}</category>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if generator %}<generator>{{generator}}</generator>{% endif %}
+{% if docs %}<docs>{{docs}}</docs>{% endif %}
+{% if cloud %}
+<cloud domain="{{cloud.domain}}" port={{cloud.port}} path="{{cloud.path}}" registerProcedure="{{cloud.register_procedure}}" protocol="{{cloud.protocol}}" />
+{% endif %}
+{% if ttl %}<ttl>{{ttl}}</ttl>{% endif %}
+{% if image %}<image>{{image}}</image>{% endif %}
+{% if comments %}{{comments}}{% endif %}
+{% for item in items %}
+{% include 'rss2.0_items.xml' %}
+{% endfor %}
+</channel>
+</rss>
