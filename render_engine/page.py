@@ -18,8 +18,7 @@ class Page:
     When you create a page, you can specify variables that will be passed into rendering template.
     """
 
-    route: str = "./"
-
+    route: str = "/"
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with Markdown2"""
 

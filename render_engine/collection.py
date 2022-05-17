@@ -1,8 +1,11 @@
 import itertools
+import pdb
 import typing
+from collections import defaultdict, namedtuple
 from pathlib import Path
 
-from more_itertools import chunked
+import jinja2
+from more_itertools import bucket, chunked
 
 from .feeds import RSSFeed
 from .page import Page
@@ -18,6 +21,35 @@ class Archive(Page):
         self.template = template
 
 
+def gen_collection(
+    pages: typing.Iterable[Page],
+    template: jinja2.Template,
+    title: str,
+    items_per_page: typing.Optional[int] = None,
+) -> list[Archive]:
+    """Returns a list of Archive pages containing the pages of data for each archive."""
+
+    if not items_per_page:
+        return [
+            Archive(
+                pages=pages,
+                template=template,
+                title=title,
+                **kwargs,
+            )
+        ]
+
+    page_chunks = chunked(pages, items_per_page)
+
+    return [
+        Archive(pages=pages, template=template, slug=f"{title}_{i}", title=title)
+        for i, pages in enumerate(page_chunks)
+    ]
+
+
+SubCollection = namedtuple("subcollection", ["key", "default"])
+
+
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
@@ -28,22 +60,19 @@ class Collection:
     Currently, collections must come from a content_path and all be the same
     content type.
 
-
     Example::
 
         from render_engine import Collection
 
-        @site.register_collection()
+        @site.register_collection
         class BasicCollection(Collection):
             pass
     """
 
-    engine: typing.Optional[str] = None
     content_path: Path
     content_type: Page = Page
     template: typing.Optional[str] = None
     includes: list[str] = ["*.md", "*.html"]
-    subcollections: list[str] = list
     markdown_extras = ["fenced-code-blocks", "footnotes"]
     items_per_page: typing.Optional[int] = None
     sort_by: str = "title"
@@ -98,33 +127,50 @@ class Collection:
             reverse=self.sort_reverse,
         )
 
+    def _gen_subpages(self, SubCollection) -> defaultdict[list[Page]]:
+        """given a attribute, bucket all the pages into subcollections"""
+        subpages = defaultdict(list)
+        for page in self.pages:
+            key = getattr(page, SubCollection.key, SubCollection.default)
+
+            if SubCollection.key in getattr(page, "list_attrs", []):
+                for k in getattr(page, SubCollection.key, []):
+                    subpages[k].append(page)
+            else:
+                subpages[key].append(page)
+
+        subcollection = []
+
+        for k, v in subpages.items():
+            subcollection.append(
+                gen_collection(
+                    pages=sorted(
+                        v,
+                        key=lambda page: getattr(page, self.sort_by),
+                        reverse=self.sort_reverse,
+                    ),
+                    template=self.archive_template,
+                    title=k,
+                    items_per_page=self.items_per_page,
+                )
+            )
+        return subcollection
+
     @property
     def archives(self) -> list[Archive]:
         """Returns a list of Archive pages containing the pages of data for each archive."""
-        if not self.items_per_page:
-            return [
-                Archive(
-                    pages=self.sorted_pages,
-                    template=self.archive_template,
-                    title=self.title,
-                )
-            ]
-
-        page_chunks = enumerate(chunked(self.sorted_pages, self.items_per_page))
-        return [
-            Archive(
-                pages=pages,
-                template=self.archive_template,
-                slug=f"{self.title}_{i}",
-                title=self.title,
-            )
-            for i, pages in page_chunks
-        ]
-
-    def render_archives(self, **kwargs) -> list[Archive]:
-        return [
-            archive.render(pages=archive.pages, **kwargs) for archive in self.archives
-        ]
+        return gen_collection(
+            pages=self.sorted_pages,
+            template=self.archive_template,
+            title=self.title,
+            items_per_page=self.items_per_page,
+        )
 
     def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
         return RSSFeed(pages=self.pages, **kwargs)
+
+    def __repr__(self):
+        return f"{self}: {__class__.__name__}"
+
+    def __str__(self):
+        return f"{self}: {__class__.__name__}"
