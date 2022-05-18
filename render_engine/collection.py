@@ -26,7 +26,6 @@ def gen_collection(
     template: jinja2.Template,
     title: str,
     items_per_page: typing.Optional[int] = None,
-    **kwargs,
 ) -> list[Archive]:
     """Returns a list of Archive pages containing the pages of data for each archive."""
 
@@ -36,16 +35,16 @@ def gen_collection(
                 pages=pages,
                 template=template,
                 title=title,
-                **kwargs,
             )
         ]
 
     page_chunks = chunked(pages, items_per_page)
 
-    return [
+    pages = [
         Archive(pages=pages, template=template, slug=f"{title}_{i}", title=title)
         for i, pages in enumerate(page_chunks)
     ]
+    return pages
 
 
 SubCollection = namedtuple("subcollection", ["key", "default"])
@@ -93,7 +92,7 @@ class Collection:
 
     @property
     def collection_vars(self):
-        return {f"collection_{key}": val for key, val in vars(self).items()}
+        return {f"collection_{key}".upper(): val for key, val in vars(self).items()}
 
     @property
     def pages(self):
@@ -135,19 +134,24 @@ class Collection:
             key = getattr(page, SubCollection.key, SubCollection.default)
 
             if SubCollection.key in getattr(page, "list_attrs", []):
-                for key in getattr(page, SubCollection.key, []):
-                    subpages[key].append(page)
+                for k in getattr(page, SubCollection.key, []):
+                    subpages[k].append(page)
             else:
-                subpages[
-                    getattr(page, SubCollection.key, SubCollection.default)
-                ].append(page)
+                subpages[key].append(page)
 
         subcollection = []
 
         for k, v in subpages.items():
             subcollection.append(
                 gen_collection(
-                    v, self.archive_template, k, self.items_per_page, route=k
+                    pages=sorted(
+                        v,
+                        key=lambda page: getattr(page, self.sort_by),
+                        reverse=self.sort_reverse,
+                    ),
+                    template=self.archive_template,
+                    title=k,
+                    items_per_page=self.items_per_page,
                 )
             )
         return subcollection
@@ -162,5 +166,11 @@ class Collection:
             items_per_page=self.items_per_page,
         )
 
-    def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
-        return RSSFeed(pages=self.pages, **kwargs)
+    # def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
+    #     return feed_type(pages=self.pages, **kwargs)
+
+    def __repr__(self):
+        return f"{self}: {__class__.__name__}"
+
+    def __str__(self):
+        return f"{self}: {__class__.__name__}"

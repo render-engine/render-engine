@@ -1,4 +1,5 @@
 import logging
+import pdb
 from pathlib import Path
 from typing import Any, Optional
 
@@ -18,7 +19,6 @@ class Page:
     When you create a page, you can specify variables that will be passed into rendering template.
     """
 
-    route: str = "./"
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with Markdown2"""
 
@@ -71,7 +71,11 @@ class Page:
     @property
     def url(self) -> str:
         """The first route and the slug of the page."""
-        return f"{self.route}{self.slug}{self._extension}"
+        return (
+            getattr(self, "output_path", Path("./"))
+            / getattr(self, "route", "./")
+            / f"{self.slug}{self._extension}"
+        )
 
     @property
     def _extension(self) -> str:
@@ -127,5 +131,4 @@ class Page:
         """Build the page based on content instructions"""
 
         markup = self._render_content(**kwargs)
-        path = Path(kwargs.get("path", "")).joinpath(f"{self.slug}{self._extension}")
-        return path.write_text(markup)
+        return Path(kwargs.get("path") / self.url).write_text(markup)

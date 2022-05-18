@@ -74,6 +74,7 @@ class Blog(Collection):
         - Rename the archive items so they are not private
     """
 
+    feed = RSSFeed
     content_type: typing.Type[BlogPost] = BlogPost
     sort_reverse: bool = True
     sort_by = "date_published"
