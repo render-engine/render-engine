@@ -21,8 +21,8 @@ class Link:
         <a href="https://render-engine.site" class="link-class" id="custom-link-id">Render Engine</a>
     """
 
-    text: str = field(kw_only=True, default_factory=str)
-    url: str = field(kw_only=True, default="#")
+    text: str = field(default_factory=str)
+    url: str = field(default="#")
     meta: dict[str, str] = field(default_factory=dict)
     """Meta variables translate to attributes on the html element"""
 

@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "render_engine"
-version = "2022.05.03"
+version = "2022.7.1"
 description = "Static Site Generator with a Flask-like flair"
 authors = ["Jay Miller <kjaymiller@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.10.4"
+python = "^3.9.7"
 Jinja2 = "^3.1.0"
 markdown2 = "^2.4.2"
 pendulum = "^2.1.2"
