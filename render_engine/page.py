@@ -31,12 +31,6 @@ class Page:
     extension: str = ".html"
     """Extension to use for the rendered page output."""
 
-    engine: Environment = Environment(loader=FileSystemLoader("templates"))
-    """The engine to generate web pages. This is a jinja2 engine by default.
-
-    .. Note: You can provide a custom engine by setting the this attribute, but render engine expects the template to be called with `get_template`.
-    """
-
     def __init__(self, **kwargs) -> None:
         for key, val in kwargs.items():
             setattr(self, key, val)
@@ -98,20 +92,16 @@ class Page:
 
         return markdown(self.markdown, extras=self.markdown_extras)
 
-    @property
-    def _template(self) -> Optional[Template]:
-        if template := getattr(self, "template", None):
-            return self.engine.get_template(template)
-
     def __str__(self):
         return self.slug
 
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
-    def _render_content(self, **kwargs) -> str:
-        template = self._template
-
+    def _render_content(self, *, engine:Environment=None, **kwargs) -> str:
+        # template = self._template
+        template = engine.get_template(self.template)
+        
         if template:
             if self.content:
                 return template.render(
@@ -127,8 +117,7 @@ class Page:
         else:
             raise ValueError(f"{self=} must have either content or template")
 
-    def render(self, **kwargs) -> Path:
+    def render(self,*, engine=None, **kwargs) -> Path:
         """Build the page based on content instructions"""
-
-        markup = self._render_content(**kwargs)
+        markup = self._render_content(engine=engine, **kwargs)
         return Path(kwargs.get("path") / self.url).write_text(markup)
