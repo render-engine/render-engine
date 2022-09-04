@@ -15,6 +15,7 @@ def test_collections_accept_custom_vars(custom_collection):
     assert custom_collection.foo == "bar"
 
 
+@pytest.mark.xfail(strict=True)
 def test_collection_passes_vars_to_page(base_collection, temp_dir_collection):
     assert base_collection.pages[0].collection_title == "MyCollection"
 
@@ -42,6 +43,7 @@ def test_collection_with_bad_path_raises_error():
         BadPathCollection().pages()
 
 
+@pytest.mark.xfail(strict=True)
 def test_collection_render_archives_loaded(temp_dir_collection, base_collection):
     base_collection.render_archives(path=temp_dir_collection)
     archive = temp_dir_collection.joinpath("mycollection.html")
