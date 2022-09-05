@@ -2,7 +2,7 @@ import typing
 from pathlib import Path
 
 import pytest
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader, Template
 
 from render_engine.page import Page
 
@@ -63,6 +63,7 @@ def page_with_attrs():
 Test Paragraph"""
         custom_list = ["foo", "bar", "biz"]
         custom_attr = "this is an attribute"
+        template = Template("{{content}}")
 
     yield PageWithAttrs()
 
@@ -81,13 +82,15 @@ def page_with_content_path(temp_path, content):
 
 @pytest.fixture(scope="class", name="no_template")
 def render_page_no_template(temp_path, p_attrs):
-    p_attrs.render(path=temp_path)
+    engine = Environment(loader=FileSystemLoader(["templates"]))
+    p_attrs.render(engine=engine, path=temp_path)
     check_path = Path(temp_path / f"{p_attrs.slug}{p_attrs.extension}")
     yield check_path
 
 
 @pytest.fixture(scope="class", name="with_template")
 def render_page_template(temp_path, p_attrs):
-    p_attrs.render(path=temp_path, template=Template("foo{{content}}"))
+    engine = Environment(loader=FileSystemLoader(["templates"]))
+    p_attrs.render(engine=engine, path=temp_path)
     check_path = Path(temp_path / f"{p_attrs.slug}{p_attrs._extension}")
     yield check_path
