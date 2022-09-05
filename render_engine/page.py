@@ -63,7 +63,7 @@ class Page:
         self.slug = slugify(self.slug)
 
     @property
-    def url(self) -> str:
+    def url(self) -> Path:
         """The first route and the slug of the page."""
         return (
             getattr(self, "output_path", Path("./"))
@@ -101,7 +101,7 @@ class Page:
     def _render_content(self, *, engine:Environment=None, **kwargs) -> str:
         # template = self._template
         template = engine.get_template(self.template)
-        
+
         if template:
             if self.content:
                 return template.render(

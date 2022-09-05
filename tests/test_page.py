@@ -54,13 +54,12 @@ class TestPageWithAttrs:
 
 
 class TestBasePage:
-    @pytest.mark.xfail(strict=True)
     def test_base_page_is_slug(self, page):
         """Tests if a slug is not provided then the slug will be a slugified
         version of the the class name"""
         assert page.slug == "basepage"
         assert str(page) == "basepage"
-        assert page.url == "./basepage.html"
+        assert page.url == Path("./basepage.html")
 
     def test_page_html_with_no_content_or_template_is_none(self, page):
         """If there is no content then the html will be None"""
