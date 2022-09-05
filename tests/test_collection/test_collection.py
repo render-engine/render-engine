@@ -15,9 +15,8 @@ def test_collections_accept_custom_vars(custom_collection):
     assert custom_collection.foo == "bar"
 
 
-@pytest.mark.xfail(strict=True)
 def test_collection_passes_vars_to_page(base_collection, temp_dir_collection):
-    assert base_collection.pages[0].collection_title == "MyCollection"
+    assert base_collection.pages[0].COLLECTION_TITLE == "MyCollection"
 
 
 def test_collection_pages_are_content_type(temp_dir_collection):
