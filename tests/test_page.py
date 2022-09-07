@@ -54,13 +54,12 @@ class TestPageWithAttrs:
 
 
 class TestBasePage:
-    @pytest.mark.xfail(strict=True)
     def test_base_page_is_slug(self, page):
         """Tests if a slug is not provided then the slug will be a slugified
         version of the the class name"""
         assert page.slug == "basepage"
         assert str(page) == "basepage"
-        assert page.url == "./basepage.html"
+        assert page.url == Path("./basepage.html")
 
     def test_page_html_with_no_content_or_template_is_none(self, page):
         """If there is no content then the html will be None"""
@@ -77,15 +76,12 @@ def test_custom_page_accepts_vars_in_init():
 
 
 class TestPageWritesToFile:
-    @pytest.mark.xfail(strict=True)
     def test_page_writes_to_file(self, no_template):
         """Given a Path with"""
         assert no_template.exists()
 
-    @pytest.mark.xfail(strict=True)
     def test_page_content_no_template_is_html(self, no_template, p_attrs):
         assert no_template.read_text() == p_attrs.content
 
-    @pytest.mark.xfail(strict=True)
     def test_page_with_tempate_is_rendered(self, with_template, p_attrs):
         assert with_template.read_text() == f"{p_attrs.content}"
