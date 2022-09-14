@@ -156,6 +156,7 @@ class Site:
                 for subgroup in subgroups:
                     render_archives(
                         path=subcollection_path,
+                        engine=self.engine,
                         archive=subgroup,
                         **self.site_vars,
                         **collection_vars,
