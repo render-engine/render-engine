@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "render_engine"
-version = "2022.8.1"
+version = "2022.9.1"
 description = "Static Site Generator with a Flask-like flair"
 authors = ["Jay Miller <kjaymiller@gmail.com>"]
 license = "MIT"
