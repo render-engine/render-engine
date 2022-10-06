@@ -14,8 +14,11 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install poetry
-        run: pip install pytest
+      - name: Install requirements
+        run: pip install requirements.txt
+      
+      - name: Install tests
+        run: pip install pytest pytest-mock pytest-cov
 
       - name: Run tests
         run: python -m pytest
