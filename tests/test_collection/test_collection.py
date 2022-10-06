@@ -4,7 +4,7 @@ import pytest
 
 from jinja2 import Environment, FileSystemLoader
 
-from render_engine.collection import Collection, gen_collection
+from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import render_archives
 

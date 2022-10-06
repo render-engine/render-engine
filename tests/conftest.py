@@ -8,10 +8,11 @@ from render_engine.page import Page
 
 
 @pytest.fixture(scope="session")
-def content():
-    yield gen_content()
+def content(gen_content):
+    return gen_content
 
 
+@pytest.fixture(scope="session")
 def base_content():
     return """<h1>Test Header</h1>
 
@@ -20,7 +21,7 @@ def base_content():
 <p><code>&lt;p&gt;Raw HTML&lt;/p&gt;</code></p>
 """
 
-
+@pytest.fixture(scope="session")
 def gen_content(n: typing.Optional[int] = None):
     if not n:
         n = ""
@@ -69,9 +70,9 @@ Test Paragraph"""
 
 
 @pytest.fixture(scope="class", name="with_path")
-def page_with_content_path(temp_path, content):
+def page_with_content_path(temp_path, gen_content):
     fake_path = Path(temp_path / "fake_path.md")
-    fake_path.write_text(content)
+    fake_path.write_text(gen_content)
 
     class PageWithContentPath(Page):
         content_path = fake_path

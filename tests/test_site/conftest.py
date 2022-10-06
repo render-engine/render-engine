@@ -1,8 +1,6 @@
 import pytest
 
 from render_engine.site import Site
-from tests.conftest import gen_content
-
 
 @pytest.fixture(
     scope="session",
