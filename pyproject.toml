@@ -1,29 +1,41 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "render_engine"
 version = "2022.9.1"
 description = "Static Site Generator with a Flask-like flair"
 authors = ["Jay Miller <kjaymiller@gmail.com>"]
-license = "MIT"
+readme = "README.md"
+requires = ">=3.9"
+license = {text = "MIT License"}
+dependencies = [
+    "Jinja2",
+    "markdown2",
+    "pendulum",
+    "more-itertools",
+    "python-slugify",
+    "python-frontmatter",
+    "rich",
+    ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9.7"
-Jinja2 = "^3.1.0"
-markdown2 = "^2.4.2"
-pendulum = "^2.1.2"
-more-itertools = "^8.12.0"
-python-slugify = "^6.1.1"
-python-frontmatter = "^1.0.0"
-rich = "^12.4.0"
-tox = "^3.26.0"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.1"
-pytest-cov = "^3.0.0"
-pytest-mock = "^3.7.0"
-perflint = "^0.7.1"
-pre-commit = "^2.19.0"
-Sphinx = "^4.5.0"
-sphinx-rtd-theme = "^1.0.0"
+
+[project.optional-dependencies]
+dev=[
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "perflint",
+    "pre-commit",
+    "tox"
+    ]
+docs=["Sphinx", "sphinx-rtd-theme"]
+
 
 [tool.isort]
 profile = "black"
@@ -51,7 +63,3 @@ commands = pytest --cov src/render_engine tests
 [tox:.package]
 basepython = python3
 """
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
