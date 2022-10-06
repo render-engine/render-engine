@@ -3,6 +3,7 @@ from jinja2 import Template
 
 from render_engine.collection import Collection
 
+
 @pytest.fixture(scope="session")
 def temp_dir_collection(gen_content, tmp_path_factory):
     tpd = tmp_path_factory.mktemp("test_collection")

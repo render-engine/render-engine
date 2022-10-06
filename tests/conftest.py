@@ -21,6 +21,7 @@ def base_content():
 <p><code>&lt;p&gt;Raw HTML&lt;/p&gt;</code></p>
 """
 
+
 @pytest.fixture(scope="session")
 def gen_content(n: typing.Optional[int] = None):
     if not n:

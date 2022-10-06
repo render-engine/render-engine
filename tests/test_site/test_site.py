@@ -1,5 +1,4 @@
 import pytest
-
 from jinja2 import Template
 
 from render_engine.collection import Collection
@@ -15,6 +14,7 @@ def test_site_default_values(base_site):
 
 def test_site_rendered_page_has_access_to_site_vars(base_site, temp_path):
     """Testing that site_var values are passed into page templates"""
+
     @base_site.render_page
     class CustomPageFromSiteWithVars(Page):
         template = Template("{{SITE_TITLE}}")
@@ -24,7 +24,9 @@ def test_site_rendered_page_has_access_to_site_vars(base_site, temp_path):
     assert test_path.read_text() == base_site.site_vars["SITE_TITLE"]
 
 
-def test_site_rendered_collection_extends_path(base_site, temp_path, base_content, gen_content):
+def test_site_rendered_collection_extends_path(
+    base_site, temp_path, base_content, gen_content
+):
     """Tests that output paths can be pushed beyond the root directory"""
     content_test_path = temp_path.joinpath("content")
     content_test_path.mkdir()
