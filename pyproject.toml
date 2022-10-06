@@ -1,41 +1,26 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
 version = "2022.9.1"
-description = "Static Site Generator with a Flask-like flair"
-authors = ["Jay Miller <kjaymiller@gmail.com>"]
+description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
-requires = ">=3.9"
-license = {text = "MIT License"}
+
 dependencies = [
     "Jinja2",
     "markdown2",
     "pendulum",
     "more-itertools",
-    "python-slugify",
     "python-frontmatter",
+    "python-slugify",
     "rich",
-    ]
-classifiers = [
-    "Programming Language :: Python :: 3",
 ]
 
-
-
 [project.optional-dependencies]
-dev=[
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "perflint",
-    "pre-commit",
-    "tox"
-    ]
-docs=["Sphinx", "sphinx-rtd-theme"]
-
+docs = ["mkdocs", "mkdocs-material"]
+dev = ["pytest", "pytest-cov", "tox"]
 
 [tool.isort]
 profile = "black"
