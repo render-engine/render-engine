@@ -1,7 +1,7 @@
 site_name: Render Engine
 site_url: https://render-engine.readthedocs.io
 theme:
-  name: material 
-nav: 
+  name: material
+nav:
   - Home: README.md
-  
+

@@ -16,7 +16,7 @@ jobs:
 
       - name: Install requirements
         run: pip install requirements.txt
-      
+
       - name: Install tests
         run: pip install pytest pytest-mock pytest-cov
 
