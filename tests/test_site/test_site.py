@@ -1,9 +1,9 @@
+import pytest
 from jinja2 import Template
 
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
-from tests.conftest import base_content
 
 
 def test_site_default_values(base_site):
@@ -13,6 +13,8 @@ def test_site_default_values(base_site):
 
 
 def test_site_rendered_page_has_access_to_site_vars(base_site, temp_path):
+    """Testing that site_var values are passed into page templates"""
+
     @base_site.render_page
     class CustomPageFromSiteWithVars(Page):
         template = Template("{{SITE_TITLE}}")
@@ -22,21 +24,23 @@ def test_site_rendered_page_has_access_to_site_vars(base_site, temp_path):
     assert test_path.read_text() == base_site.site_vars["SITE_TITLE"]
 
 
-def test_site_rendered_collection_extends_path(base_site, temp_path, content):
-
+def test_site_rendered_collection_extends_path(
+    base_site, temp_path, base_content, gen_content
+):
+    """Tests that output paths can be pushed beyond the root directory"""
     content_test_path = temp_path.joinpath("content")
     content_test_path.mkdir()
-    content_test_path.joinpath("foo.md").write_text(content)
+    content_test_path.joinpath("foo.md").write_text(gen_content)
     output_test_path = "output/collection"
 
     @base_site.render_collection
     class CustomCollection(Collection):
         output_path = output_test_path
         content_path = content_test_path
-        template = Template("Foo{{content}}")
+        template = Template("Foo")
 
     test_path = temp_path.joinpath(output_test_path)
     assert test_path.exists()
     assert [x.name for x in test_path.iterdir()] == ["test-title.html"]
     check_file = temp_path / output_test_path / "test-title.html"
-    assert check_file.read_text() == f"Foo{base_content()}"
+    assert check_file.read_text() == f"Foo"

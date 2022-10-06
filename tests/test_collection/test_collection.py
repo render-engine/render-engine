@@ -1,10 +1,9 @@
 from pathlib import Path
 
 import pytest
-
 from jinja2 import Environment, FileSystemLoader
 
-from render_engine.collection import Collection, gen_collection
+from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import render_archives
 
@@ -47,7 +46,9 @@ def test_collection_with_bad_path_raises_error():
 
 def test_collection_render_archives_loaded(temp_dir_collection, base_collection):
     engine = Environment(loader=FileSystemLoader(["templates"]))
-    render_archives(archive=base_collection.archives, engine=engine, path=temp_dir_collection)
+    render_archives(
+        archive=base_collection.archives, engine=engine, path=temp_dir_collection
+    )
     archive = temp_dir_collection.joinpath("mycollection.html")
     assert archive.exists()
     assert archive.read_text() == "Foo"

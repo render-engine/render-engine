@@ -2,15 +2,14 @@ import pytest
 from jinja2 import Template
 
 from render_engine.collection import Collection
-from tests.conftest import gen_content
 
 
 @pytest.fixture(scope="session")
-def temp_dir_collection(tmp_path_factory):
+def temp_dir_collection(gen_content, tmp_path_factory):
     tpd = tmp_path_factory.mktemp("test_collection")
     for n in range(5):
         fake_path = tpd / f"fake_path_{n}.md"
-        fake_path.write_text(gen_content(n), encoding="utf-8")
+        fake_path.write_text(f"{gen_content} {n}", encoding="utf-8")
 
     yield tpd
 

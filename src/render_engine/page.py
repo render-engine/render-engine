@@ -98,7 +98,7 @@ class Page:
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
-    def _render_content(self, *, engine:Environment=None, **kwargs) -> str:
+    def _render_content(self, *, engine: Environment = None, **kwargs) -> str:
         # template = self._template
         template = engine.get_template(self.template)
 
@@ -117,7 +117,7 @@ class Page:
         else:
             raise ValueError(f"{self=} must have either content or template")
 
-    def render(self,*, engine=None, **kwargs) -> Path:
+    def render(self, *, engine=None, **kwargs) -> Path:
         """Build the page based on content instructions"""
         markup = self._render_content(engine=engine, **kwargs)
         return Path(kwargs.get("path") / self.url).write_text(markup)

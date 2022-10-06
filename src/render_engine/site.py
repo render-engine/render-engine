@@ -45,7 +45,6 @@ class Site:
     # Vars that will be passed into the render functions
     site_vars: dict = {"SITE_TITLE": "Untitled Site", "SITE_URL": "https://example.com"}
 
-
     engine: typing.Type[Environment] = Environment(loader=FileSystemLoader("templates"))
     """``Engine`` to generate web pages"""
 
@@ -113,7 +112,9 @@ class Site:
                 link=self.site_vars["SITE_URL"],
                 pages=_collection.pages,
             )
-            feed.render(path=self.path, engine=self.engine, **self.site_vars, **collection_vars)
+            feed.render(
+                path=self.path, engine=self.engine, **self.site_vars, **collection_vars
+            )
             p.update(create_feed, completed=1)
 
         p.update(build_collection, advance=1)
@@ -170,10 +171,12 @@ class Site:
     def render_page(self, page) -> None:
         """Create a Page object and add it to self.routes"""
         with p:
-            
+
             _page = page(**self.site_vars)
             _page.render(path=self.path, engine=self.engine, **page.__dict__)
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
-        return shutil.copytree(directory, self.path / Path(directory).name, dirs_exist_ok=True)
+        return shutil.copytree(
+            directory, self.path / Path(directory).name, dirs_exist_ok=True
+        )
