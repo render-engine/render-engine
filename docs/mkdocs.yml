@@ -4,9 +4,7 @@ theme:
   name: material
 nav:
   - Home: index.md
-  - Getting Started:
-    - Installation: getting-started/installation.md
-    - Quick Start: getting-started/quick-start.md
+  - Getting Started: getting-started.md
   - Objects:
     - Page: page.md
     - Collection: collection.md
