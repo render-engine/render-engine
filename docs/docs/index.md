@@ -17,11 +17,6 @@ That Means:
 * **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
 * **[Site](render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
 
-### The 4th Layer
-Your site will have an _Engine_ as well. This is your templating engine and is Jinja2 by default. You can of course supply your own engine if you like.
-
-You can expand any of these areas to customize your engine to your liking.
-
 ## As simple/complex as required
 
 - Create your own templates to design the site your way (or don't and still get HTML)
@@ -66,7 +61,6 @@ class Index(Page):
 
 ```
 
-
 ### Create some Collections
 You don't have to render all the pages individually. You can create a collection of pages using **frontmatter** and markdown.
 
@@ -109,7 +103,7 @@ Finally execute your python file.
 
 ---
 
-### Featuers still in development:
+### Features still in development:
 - RSS Feeds
 - SubCollections (Tags, Categories, Etc)
 - Sitemap generation

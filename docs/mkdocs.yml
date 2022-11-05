@@ -1,0 +1,16 @@
+site_name: Render Engine
+site_url: https://render-engine.readthedocs.io
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+  - Objects:
+    - Page: page.md
+    - Collection: collection.md
+    - Site: site.md
+markdown-extensions:
+  toc:
+    permalink: True

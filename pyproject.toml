@@ -19,8 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-docs = ["mkdocs", "mkdocs-material"]
-dev = ["pytest", "pytest-cov", "tox"]
+dev = ["pytest", "pytest-cov", "tox", "mkdocs", "mkdocs-material"]
 
 [tool.isort]
 profile = "black"
