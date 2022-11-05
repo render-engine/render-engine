@@ -11,6 +11,8 @@ nav:
     - Page: page.md
     - Collection: collection.md
     - Site: site.md
-markdown-extensions:
+markdown_extensions:
   toc:
     permalink: True
+  codehilite:
+    guess_lang: False

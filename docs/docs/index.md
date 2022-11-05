@@ -1,4 +1,4 @@
-## What is RenderEngine
+## What is Render Engine
 
 The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.
 
@@ -24,10 +24,14 @@ That Means:
 
 # Getting Started
 ## Installing Render Engine
-Use pip - `pip install render-engine`
+Use pip
+
+```bash
+pip install render-engine
+```
 
 ### Dependencies:
-- Developed on [Python 3.10](https://python.org).
+- Available for [Python 3.9+](https://python.org).
 
 #### Other Dependencies that install with render-engine
 - [Jinja2] - for template things
