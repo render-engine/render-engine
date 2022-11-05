@@ -1,12 +1,12 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.3.0
     hooks:
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.10.0
     hooks:
     -   id: black
 -   repo: https://github.com/PyCQA/isort
@@ -14,3 +14,13 @@ repos:
     hooks:
     -   id: isort
         args: ["--profile", "black"]
+# Add pip-compile to pre-commit hooks
+-   repo: https://github.com/jazzband/pip-tools
+    rev: 6.9.0
+    hooks:
+    -   id: pip-compile
+        name: pip-compile
+        args: ["--extra=dev", "--upgrade", "pyproject.toml"]
+    -   id: pip-compile
+        name: pip-compile
+        args: ["--extra=docs", "--upgrade", "pyproject.toml", "-o", "docs/requirements.txt"]
