@@ -20,7 +20,4 @@ repos:
     hooks:
     -   id: pip-compile
         name: pip-compile
-        args: ["--upgrade", "pyproject.toml"]
-    -   id: pip-compile
-        name: pip-compile
-        args: ["--extra=dev", "--upgrade", "--output-file", "requirements-dev.txt", "pyproject.toml"]
+        args: [["--extra=dev", "--upgrade", "pyproject.toml"]
