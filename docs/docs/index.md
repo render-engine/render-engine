@@ -19,8 +19,12 @@ pip install render-engine
 ```
 
 ## Getting Started
+<<<<<<< HEAD
 Check out the [Getting Started](/getting-started.html).
 
 ## Sponsors
 This and much of the work that I do is made possible by those that sponsor me
 on github.
+=======
+Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/page.md) Section in the [Documentation](https://render-engine.readthedocs.io)
+>>>>>>> 79684ab (clean up readme)

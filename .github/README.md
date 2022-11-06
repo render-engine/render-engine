@@ -1,117 +1,27 @@
 ## What is RenderEngine
-
-The idea of Render Engine is that you have the flexibility of dynamic webpages with the performance of static sites.
-
-Render Engine was built out of frustration with existing tools.
-
-## This is in Beta!
-
-That Means:
-- Things can (and will change)
-- Things may break
-
-
 ## The _3 layer_ Architecture 
 
 * **[Page](render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
 * **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
 * **[Site](render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
 
-## As simple/complex as required
-
-- Create your own templates to design the site your way (or don't and still get HTML)
-- Content can be markdown/html to give you the content you need. You can also specify markdown extensions to expand how your content renders.
-
-# Getting Started
 ## Installing Render Engine
-Use pip - `pip install render-engine`
 
-### Dependencies:
-- Developed on [Python 3.10](https://python.org).
+In order to use render engine, you must have python 3.9+ installed. You can download python from [python.org](https://python.org).
 
-#### Other Dependencies that install with render-engine
-- [Jinja2] - for template things
-- [Pendulum] - for datetime things
-- [more-itertools] - for iteration things
-- [markdown2] - for markdown things
+- Linux/MacOS: [python.org](https://python.org)
+- Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
 
+Render Engine is available in PyPI and can be installed using pip:
 
-## Steps to Working Site
-### Import Site and Page
-`from render_engine import Site, Page`
-
-### Create Site Class
-
-```python
-class MySite(Site):
-    site_vars = {
-      SITE_TITLE: "My Website",
-      SITE_URL: "https://example.com",
-      "some_template_variable": "Pass this to every page",
-    }
-
-mysite = MySite(static="static") # copies static files to your output
+```bash
+pip install render-engine
 ```
 
-### Create a Page and let the site render it
-```python
-@mysite.render()
-class Index(Page):
-  title="Welcome to my Page!"
+## Getting Started
+Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/page.md) Section in the [Documentation](https://render-engine.readthedocs.io)
 
-```
-
-### Create some Collections
-You don't have to render all the pages individually. You can create a collection of pages using **frontmatter** and markdown.
-
-With frontmatter you can set your own variables to add to your jinja template.
-
-```markdown
----
-title: Spiderman Quotes
-hero: spiderman
----
-
-> With great power comes great responsibility -- Uncle Ben
-
-```
-
-Then store all of your markdown files in a folder and render them as a collection. You can set parameters around your collection like if you want an archive and how you want that archive sorted.
-
-```python
-@mysite.render_collection
-class Heroes(Collection):
-    has_archive: True
-    sort_by: hero
-    sort_reverse: true
-    archive_template: "heroes.html"
-    content_path: './content'
-```
-
-There is also a custom blog collection that has many of the features needed to get your blog off the ground.
-
-```python
-from render_engine import Blog
-
-@mysite.render_collection
-class Blog(Blog):
-    content_path: './blog' # archive and sorting setup by default
-```
-
-Finally execute your python file.
-
-
----
-
-### Features still in development:
-- RSS Feeds
-- SubCollections (Tags, Categories, Etc)
-- Sitemap generation
-- Visual Reporting
-
----
-
-# Sponsors
+## Sponsors
 This and much of the work that I do is made possible by those that sponsor me
 on github.
 
