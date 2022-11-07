@@ -12,7 +12,8 @@ from slugify import slugify
 class Page:
     """Base component used to make web pages. Pages can be rendered directly from a template or generated from a file. Page objects can be used to extend existing page objects.
 
-    .. note::
+    !!! note
+
         Not all attributes are defined by default (those that are marked *optional*) but
         will be checked for in other areas of the code.
 
@@ -25,7 +26,9 @@ class Page:
     markdown: Optional[str] = None
     """This is base markdown that will be used to render the page.
 
-    .. warning:: this will be overwritten if a content_path is provided.
+    !!! warning
+
+        This will be overwritten if a `content_path` is provided.
     """
 
     extension: str = ".html"
