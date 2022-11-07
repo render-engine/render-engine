@@ -20,7 +20,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov"]
-docs = ["mkdocs", "mkdocs-material"]
+docs = ["mkdocs", "mkdocs-material", "mkdocstrings"]
 
 [tool.isort]
 profile = "black"

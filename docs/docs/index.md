@@ -1,9 +1,9 @@
 ## What is RenderEngine
 ## The _3 layer_ Architecture 
 
-* **[Page](render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
-* **[Collection](render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
-* **[Site](render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
+* **[Page](page.md)** - A single webpage item built from content, a template, raw data, or a combination of those things.
+* **[Collection](collection.md)** - A group of webpages built from the same template, organized in a single directory
+* **[Site](site.md)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
 
 ## Installing Render Engine
 
