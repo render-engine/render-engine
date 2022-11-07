@@ -13,7 +13,12 @@ class Page:
     """The base object used to make web pages.
     Pages can be rendered directly from a template or generated from a file.
 
-    Custom attributes can be added to the page by adding them to the frontmatter of the file or by adding them to the page object directly. These attributes will be available to the template.
+    !!! note
+
+        Not all attributes are defined by default (those that are marked *optional*) but
+        will be checked for in other areas of the code.
+
+    When you create a page, you can specify variables that will be passed into rendering template.
     """
 
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
@@ -24,13 +29,9 @@ class Page:
     markdown: Optional[str] = None
     """This is base markdown that will be used to render the page.
 
-    > WARNING: This will be overwritten if a content_path is provided.
-    """
+    !!! warning
 
-    content_path: Path | str | None = None
-    """The path to the file that will be used to generate the page.
-
-    If this is provided, the content will be parsed from the file and the markdown attribute will be ignored.
+        This will be overwritten if a `content_path` is provided.
     """
 
     extension: str = ".html"
