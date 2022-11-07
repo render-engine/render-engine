@@ -28,14 +28,16 @@ class TestPageWithContentPath:
     def test_with_path(self, with_path):
         assert with_path.custom_list == ["foo", "bar", "biz"]
 
-    def test_path_and_content(self, caplog):
+    def test_path_and_content(self, temp_path, caplog):
         """tests a logging warning is raised if you supply both a markdown attr and a content_path"""
+        fake_path = Path(temp_path / "fake_path.md")
+        fake_path.write_text("")
 
-        class TestPage(Page):
-            markdown = "foo"
-            content_path = "bar"
+        class HasBothContentPaths(Page):
+            content_path = fake_path
+            markdown = "This is some text"
 
-        TestPage()
+        HasBothContentPaths()
         assert caplog.record_tuples[0][1] == logging.WARNING
 
 
@@ -44,7 +46,7 @@ class TestPageWithAttrs:
         assert p_attrs.title == "Page with Attrs"
 
     def test_page_slug_is_slugified(self, p_attrs):
-        """Test page text is slugified"""
+        """Test basic_page text is slugified"""
         assert p_attrs.slug == "page-slug-with-attrs"
 
     def test_base_page_html_with_content_is_converted_from_markdown(self, p_attrs):
@@ -54,25 +56,25 @@ class TestPageWithAttrs:
 
 
 class TestBasePage:
-    def test_base_page_is_slug(self, page):
+    def test_base_page_name_is_slug(self, basic_page):
         """Tests if a slug is not provided then the slug will be a slugified
         version of the the class name"""
-        assert page.slug == "basepage"
-        assert str(page) == "basepage"
-        assert page.url == Path("./basepage.html")
+        assert basic_page.slug == "basepage"  # basic_page._slug
+        assert str(basic_page) == "basepage"
+        assert basic_page.url == Path("./basepage.html")
 
-    def test_page_html_with_no_content_or_template_is_none(self, page):
+    def test_page_html_with_no_content_or_template_is_none(self, basic_page):
         """If there is no content then the html will be None"""
 
-        assert page.markdown == None
-        assert hasattr(page, "template") == False
-        assert page.content == None
+        assert basic_page.markdown == None
+        assert hasattr(basic_page, "template") == False
+        assert basic_page.content == None
 
 
 def test_custom_page_accepts_vars_in_init():
-    page = Page(foo="bar")
+    basic_page = Page(foo="bar")
 
-    assert page.foo == "bar"
+    assert basic_page.foo == "bar"
 
 
 class TestPageWritesToFile:

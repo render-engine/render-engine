@@ -44,7 +44,7 @@ def temp_path(tmp_path_factory):
     yield tmp_path_factory.mktemp("test_dir")
 
 
-@pytest.fixture(scope="class", name="page")
+@pytest.fixture(scope="class", name="basic_page")
 def base_page():
     """Tests can a simple Page be created given no Parameters"""
 

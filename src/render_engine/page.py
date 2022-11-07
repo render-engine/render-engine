@@ -10,22 +10,27 @@ from slugify import slugify
 
 
 class Page:
-    """Base component used to make web pages. Pages can be rendered directly from a template or generated from a file. Page objects can be used to extend existing page objects.
+    """The base object used to make web pages.
+    Pages can be rendered directly from a template or generated from a file.
 
-    .. note::
-        Not all attributes are defined by default (those that are marked *optional*) but
-        will be checked for in other areas of the code.
-
-    When you create a page, you can specify variables that will be passed into rendering template.
+    Custom attributes can be added to the page by adding them to the frontmatter of the file or by adding them to the page object directly. These attributes will be available to the template.
     """
 
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
-    """Plugins that will be used with Markdown2"""
+    """Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
+
+     You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras)."""
 
     markdown: Optional[str] = None
     """This is base markdown that will be used to render the page.
 
-    .. warning:: this will be overwritten if a content_path is provided.
+    > WARNING: This will be overwritten if a content_path is provided.
+    """
+
+    content_path: Path | str | None = None
+    """The path to the file that will be used to generate the page.
+
+    If this is provided, the content will be parsed from the file and the markdown attribute will be ignored.
     """
 
     extension: str = ".html"
@@ -35,13 +40,13 @@ class Page:
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-        if self.markdown and hasattr(self, "content_path"):
+        if self.markdown and self.content_path != None:
             logging.warning(
                 "both `Page.markdown` and `content_path` selected. the content from `content_path` will be used."
             )
 
-        if hasattr(self, "content_path") and not self.markdown:
-            post = frontmatter.load(self.content_path)
+        if self.content_path:
+            post = frontmatter.load(Path(self.content_path))
             valid_attrs, self.markdown = post.metadata, post.content
             logging.info(f"content_path found! {valid_attrs=}, {self.markdown=}")
 

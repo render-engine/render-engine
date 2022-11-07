@@ -28,7 +28,7 @@ profile = "black"
 [tool.pytest.ini_options]
 addopts = "-ra --cov"
 testpaths = [
-    "tests"
+    "src/tests"
 ]
 pythonpath = ['src']
 
@@ -43,7 +43,7 @@ deps =
     pytest
     pytest-cov
     pytest-mock
-commands = pytest --cov src/render_engine tests
+commands = pytest --cov src/render_engine src/tests
 
 [tox:.package]
 basepython = python3
