@@ -14,3 +14,6 @@ markdown_extensions:
     permalink: True
   codehilite:
     guess_lang: False
+
+plugins:
+  - mkdocstrings
