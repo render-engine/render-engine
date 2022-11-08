@@ -24,7 +24,10 @@ class Page:
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
 
-     You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras)."""
+     You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
+
+     The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
+     """
 
     markdown: str | None = None
     """This is base markdown that will be used to render the page.
