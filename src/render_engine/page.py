@@ -26,13 +26,15 @@ class Page:
 
      You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras)."""
 
-    markdown: Optional[str] = None
+    markdown: str | None = None
     """This is base markdown that will be used to render the page.
 
     !!! warning
 
         This will be overwritten if a `content_path` is provided.
     """
+
+    content_path: Path | str | None = None
 
     extension: str = ".html"
     """Extension to use for the rendered page output."""
