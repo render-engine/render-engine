@@ -38,6 +38,13 @@ class Page:
     """
 
     content_path: Path | str | None = None
+    """
+    The path to the file that will be used to generate the page.
+
+    !!! note
+
+        This overrides the `markdown` attribute.
+    """
 
     extension: str = ".html"
     """Extension to use for the rendered page output."""
