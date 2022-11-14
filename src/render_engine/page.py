@@ -1,11 +1,11 @@
 import logging
-import pdb
 from pathlib import Path
-from typing import Any, Optional
+from typing import Generator, Optional
 
 import frontmatter
-from jinja2 import Environment, FileSystemLoader, Template
+import jinja2
 from markdown2 import markdown
+from route import Route
 from slugify import slugify
 
 
@@ -49,7 +49,14 @@ class Page:
     extension: str = ".html"
     """Extension to use for the rendered page output."""
 
-    def __init__(self, **kwargs) -> None:
+    reference: str = "slug"
+
+    routes: list[Path | str] = ["/"]
+
+    template: str | None = None
+
+    def __init__(self, engine: jinja2.Environment, **kwargs) -> None:
+        self.engine = engine
         for key, val in kwargs.items():
             setattr(self, key, val)
 
@@ -116,9 +123,11 @@ class Page:
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
-    def _render_content(self, *, engine: Environment = None, **kwargs) -> str:
-        # template = self._template
-        template = engine.get_template(self.template)
+    def _render_content(self, **kwargs) -> str:
+        template = None
+
+        if self.template:
+            template = self.engine.get_template(self.template)
 
         if template:
             if self.content:
@@ -135,7 +144,17 @@ class Page:
         else:
             raise ValueError(f"{self=} must have either content or template")
 
-    def render(self, *, engine=None, **kwargs) -> Path:
-        """Build the page based on content instructions"""
+    def __iter__(self):
+        """Good for getting the route objects"""
+        yield from self.render()
+
+    def render(self, *, engine=None, **kwargs) -> Generator[Route, None, None]:
+        """Build the route based on content instructions"""
         markup = self._render_content(engine=engine, **kwargs)
-        return Path(kwargs.get("path") / self.url).write_text(markup)
+
+        for route in self.routes:
+            yield Route(
+                filepath=Path(route / self.url),
+                markup=markup,
+                reference=getattr(self, "reference"),
+            )

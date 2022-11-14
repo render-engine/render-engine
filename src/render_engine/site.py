@@ -1,117 +1,67 @@
 import shutil
-import typing
 from pathlib import Path
+from typing import Callable
 
 from jinja2 import Environment, FileSystemLoader
 
-from .collection import Archive, Collection
-
-
-def render_archives(archive, **kwargs) -> list[Archive]:
-    return [archive.render(pages=archive.pages, **kwargs) for archive in archive]
+from .collection import Collection
+from .page import Page
+from .route import Route
 
 
 class Site:
-    """The site stores your pages and collections to be rendered.
-
-    Pages are stored in :py:attr:`routes` and created with `site.render()`.
-    Collections and subcollections are stored to be used for future use.
-
-    Sites also contain global variables that can be applied in templates.
-    """
+    """The site stores your pages and collections to be rendered."""
 
     path: Path = Path("output")
     """Path to write rendered content."""
 
+    static: str | Path = Path("static")
+
     # Vars that will be passed into the render functions
     site_vars: dict = {"SITE_TITLE": "Untitled Site", "SITE_URL": "https://example.com"}
 
-    engine: typing.Type[Environment] = Environment(loader=FileSystemLoader("templates"))
+    engine: Environment = Environment(loader=FileSystemLoader("templates"))
     """``Engine`` to generate web pages"""
 
-    def __init__(self, static: typing.Optional[str] = None, **kwargs):
+    plugins: list[Callable] | None = None
+
+    def __init__(
+        self, static: str | None = None, plugins: list[Callable] = [], **kwargs
+    ) -> None:
         self.site_vars.update(kwargs)
+        self.route_list: list[Route] = []
 
-        if static:
-            self.render_static(directory=static)
+        if plugins and not self.plugin:
+            self.plugins = plugins
 
-    def render_collection(self, collection: typing.Type[Collection]) -> None:
-        """Add a class to your ``self.collections``
-        iterate through a classes ``content_path`` and create a classes ``Page``-like
-        objects, adding each one to ``routes``.
+        elif plugins:
 
-        Use a decorator for your defined classes.
+            for plugin in self.plugins:
+                setattr(self, plugin.__name__, plugin)
 
-        Examples::
+    def collection(self, collection: Collection):
+        """Create the pages in the collection including the archive"""
+        _collection = collection(self.engine, **self.site_vars)
+        for page in _collection:
+            self.route_list.append(page)
 
-            @register_collection
-            class Foo(Collection):
-                pass
-        """
+        if hasattr(_collection, "archive"):
+            for archive in _collection.archive:
+                self.route_list.append(archive)
 
-        _collection = collection()
-        collection_path = self.path / _collection.output_path
-        collection_path.mkdir(exist_ok=True, parents=True)
-
-        page_count = len(_collection.pages)
-        collection_vars = {
-            f"collection_{key}".upper(): val for key, val in vars(collection).items()
-        }
-
-        for page in _collection.pages:
-            page.render(
-                path=collection_path,
-                engine=self.engine,
-                **self.site_vars,
-            )
-
-        if hasattr(_collection, "feed"):
-            feed = _collection.feed(
-                title=f"{self.site_vars['SITE_TITLE']} - {_collection.title}",
-                link=self.site_vars["SITE_URL"],
-                pages=_collection.pages,
-            )
-            feed.render(
-                path=self.path, engine=self.engine, **self.site_vars, **collection_vars
-            )
-
-        if _collection.has_archive:
-            create_archives = p.add_task(
-                f"[orange3]- creating {_collection.archives[0].__class__.__name__}",
-                total=1,
-            )
-            render_archives(
-                path=collection_path,
-                engine=self.engine,
-                archive=_collection.archives,
-                **self.site_vars,
-            )
-
-        if hasattr(_collection, "subcollections"):
-            for subcollection in _collection.subcollections:
-                subcollection_path = collection_path / subcollection.key
-                subcollection_path.mkdir(exist_ok=True, parents=True)
-
-                subgroups = _collection._gen_subpages(subcollection)
-
-                for subgroup in subgroups:
-                    render_archives(
-                        path=subcollection_path,
-                        engine=self.engine,
-                        archive=subgroup,
-                        **self.site_vars,
-                        **collection_vars,
-                    )
-
-        return _collection
-
-    def render_page(self, page) -> None:
+    def page(self, page: Page) -> None:
         """Create a Page object and add it to self.routes"""
-        _page = page(**self.site_vars)
-        _page.render(path=self.path, engine=self.engine, **page.__dict__)
+        _page = page(self.engine, **self.site_vars)
+        for page in _page:
+            self.route_list(_page)
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
         return shutil.copytree(
             directory, self.path / Path(directory).name, dirs_exist_ok=True
         )
+
+    def render(self) -> None:
+        """Render all pages and collections"""
+        for route in self.route_list:
+            path = self.path / route.filepath.write_text(route.markup)
