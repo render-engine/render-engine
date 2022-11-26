@@ -111,6 +111,7 @@ class Collection:
 
         return [
             content_type(
+                engine=self.engine,
                 content_path=page_path,
                 template=self.template,
                 **self.collection_vars,
@@ -175,6 +176,9 @@ class Collection:
     def __str__(self):
         return f"{self}: {__class__.__name__}"
 
+    def __iter__(self):
+        return iter(self.pages)
+
 
 def collection(self, collection: typing.Type[Collection]) -> None:
     """Add a class to your ``self.collections``
@@ -199,7 +203,7 @@ def collection(self, collection: typing.Type[Collection]) -> None:
         f"collection_{key}".upper(): val for key, val in vars(collection).items()
     }
 
-    for page in _collection.pages:
+    for pages in _collection.pages:
         page.render(
             path=collection_path,
             engine=self.engine,
@@ -217,10 +221,6 @@ def collection(self, collection: typing.Type[Collection]) -> None:
         )
 
     if _collection.has_archive:
-        create_archives = p.add_task(
-            f"[orange3]- creating {_collection.archives[0].__class__.__name__}",
-            total=1,
-        )
         render_archives(
             path=collection_path,
             engine=self.engine,

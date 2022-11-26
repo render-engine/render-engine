@@ -5,8 +5,9 @@ from typing import Generator, Optional
 import frontmatter
 import jinja2
 from markdown2 import markdown
-from route import Route
 from slugify import slugify
+
+from .route import Route
 
 
 class Page:
@@ -51,7 +52,7 @@ class Page:
 
     reference: str = "slug"
 
-    routes: list[Path | str] = ["/"]
+    routes: list[Path | str] = [""]
 
     template: str | None = None
 
@@ -154,7 +155,7 @@ class Page:
 
         for route in self.routes:
             yield Route(
-                filepath=Path(route / self.url),
+                filepath=Path(route) / self.url,
                 markup=markup,
                 reference=getattr(self, "reference"),
             )

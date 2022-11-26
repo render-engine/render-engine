@@ -39,11 +39,14 @@ class Site:
             for plugin in self.plugins:
                 setattr(self, plugin.__name__, plugin)
 
+        self.path.mkdir(exist_ok=True)
+
     def collection(self, collection: Collection):
         """Create the pages in the collection including the archive"""
-        _collection = collection(self.engine, **self.site_vars)
-        for page in _collection:
-            self.route_list.append(page)
+        _collection = collection(engine=self.engine, **self.site_vars)
+        for page_obj in _collection:
+            for page_routes in page_obj:
+                self.route_list.append(page_routes)
 
         if hasattr(_collection, "archive"):
             for archive in _collection.archive:
@@ -52,8 +55,8 @@ class Site:
     def page(self, page: Page) -> None:
         """Create a Page object and add it to self.routes"""
         _page = page(self.engine, **self.site_vars)
-        for page in _page:
-            self.route_list(_page)
+        for page_route in _page.render():
+            self.route_list.append(page_route)
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
@@ -63,5 +66,12 @@ class Site:
 
     def render(self) -> None:
         """Render all pages and collections"""
+
         for route in self.route_list:
-            path = self.path / route.filepath.write_text(route.markup)
+            path = self.path / route.filepath
+            print(f"------\n\n{path}------")
+
+            path.write_text(route.markup)
+
+        if self.static:
+            self.render_static(self.static)
