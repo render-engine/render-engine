@@ -26,22 +26,32 @@ def gen_collection(
     template: jinja2.Template,
     title: str,
     items_per_page: typing.Optional[int] = None,
+    routes: list[Path | str] = [],
 ) -> list[Archive]:
     """Returns a list of Archive pages containing the pages of data for each archive."""
 
     if not items_per_page:
         return [
             Archive(
+                engine=template.environment,
                 pages=pages,
                 template=template,
                 title=title,
+                routes=routes,
             )
         ]
 
     page_chunks = chunked(pages, items_per_page)
 
     pages = [
-        Archive(pages=pages, template=template, slug=f"{title}_{i}", title=title)
+        Archive(
+            engine=template.environment,
+            pages=pages,
+            template=template,
+            slug=f"{title}_{i}",
+            title=title,
+            routes=routes,
+        )
         for i, pages in enumerate(page_chunks)
     ]
     return pages
@@ -89,6 +99,9 @@ class Collection:
 
         if any([self.items_per_page, self.archive_template]):
             self.has_archive == True
+            self.archive_template = self.engine.get_template(self.archive_template)
+
+        self.routes = [Path(route) for route in self.routes]
 
     @property
     def collection_vars(self):
@@ -98,7 +111,7 @@ class Collection:
     def pages(self):
         if Path(self.content_path).is_dir():
 
-            pages = self._pages(self.content_type)
+            pages = self._pages(self.content_type, routes=self.routes)
 
             return pages
         else:
@@ -153,6 +166,7 @@ class Collection:
                     template=self.archive_template,
                     title=k,
                     items_per_page=self.items_per_page,
+                    routes=self.routes,
                 )
             )
         return subcollection
@@ -160,12 +174,15 @@ class Collection:
     @property
     def archives(self) -> list[Archive]:
         """Returns a list of Archive pages containing the pages of data for each archive."""
-        return gen_collection(
-            pages=self.sorted_pages,
-            template=self.archive_template,
-            title=self.title,
-            items_per_page=self.items_per_page,
-        )
+        if self.has_archive:
+            return gen_collection(
+                pages=self.sorted_pages,
+                template=self.archive_template,
+                title=self.title,
+                items_per_page=self.items_per_page,
+                routes=self.routes,
+            )
+        return ()
 
     # def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
     #     return feed_type(pages=self.pages, **kwargs)
@@ -220,6 +237,7 @@ def collection(self, collection: typing.Type[Collection]) -> None:
             path=self.path, engine=self.engine, **self.site_vars, **collection_vars
         )
 
+    """
     if _collection.has_archive:
         render_archives(
             path=collection_path,
@@ -243,6 +261,7 @@ def collection(self, collection: typing.Type[Collection]) -> None:
                     **self.site_vars,
                     **collection_vars,
                 )
+    """
 
     return _collection
 

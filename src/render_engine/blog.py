@@ -78,3 +78,4 @@ class Blog(Collection):
     content_type: typing.Type[BlogPost] = BlogPost
     sort_reverse: bool = True
     sort_by = "date_published"
+    has_archive = True

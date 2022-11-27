@@ -1,3 +1,4 @@
+import logging
 import shutil
 from pathlib import Path
 from typing import Callable
@@ -16,6 +17,7 @@ class Site:
     """Path to write rendered content."""
 
     static: str | Path = Path("static")
+    """Output Path for the static folder. This will get copied to the output folder"""
 
     # Vars that will be passed into the render functions
     site_vars: dict = {"SITE_TITLE": "Untitled Site", "SITE_URL": "https://example.com"}
@@ -39,18 +41,17 @@ class Site:
             for plugin in self.plugins:
                 setattr(self, plugin.__name__, plugin)
 
-        self.path.mkdir(exist_ok=True)
-
     def collection(self, collection: Collection):
         """Create the pages in the collection including the archive"""
         _collection = collection(engine=self.engine, **self.site_vars)
+        logging.warning("Adding Collection: %s", _collection.__class__.__name__)
         for page_obj in _collection:
             for page_routes in page_obj:
                 self.route_list.append(page_routes)
 
-        if hasattr(_collection, "archive"):
-            for archive in _collection.archive:
-                self.route_list.append(archive)
+        for archive in _collection.archives:
+            for page_routes in archive:
+                self.route_list.append(page_routes)
 
     def page(self, page: Page) -> None:
         """Create a Page object and add it to self.routes"""
@@ -64,13 +65,14 @@ class Site:
             directory, self.path / Path(directory).name, dirs_exist_ok=True
         )
 
-    def render(self) -> None:
+    def render(self, clean=False) -> None:
         """Render all pages and collections"""
+        if clean:
+            shutil.rmtree(self.path, ignore_errors=True)
 
         for route in self.route_list:
             path = self.path / route.filepath
-            print(f"------\n\n{path}------")
-
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(route.markup)
 
         if self.static:
