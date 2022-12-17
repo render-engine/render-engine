@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Optional
 
@@ -7,7 +8,7 @@ import jinja2
 from markdown2 import markdown
 from slugify import slugify
 
-from .route import Route
+_route = Path | str
 
 
 class Page:
@@ -38,7 +39,7 @@ class Page:
         This will be overwritten if a `content_path` is provided.
     """
 
-    content_path: Path | str | None = None
+    content_path: _route | None = None
     """
     The path to the file that will be used to generate the page.
 
@@ -52,7 +53,7 @@ class Page:
 
     reference: str = "slug"
 
-    routes: list[Path | str] = [""]
+    routes: list[_route] = ["./"]
 
     template: str | None = None
 
@@ -86,16 +87,15 @@ class Page:
             logging.info(f"No slug. Will slugify {self.title=}")
             self.slug = self.title  # Will Slugify in Next Step
 
+        if not self.routes:
+            self.routes = []
+
         self.slug = slugify(self.slug)
 
     @property
     def url(self) -> Path:
         """The first route and the slug of the page."""
-        return (
-            getattr(self, "output_path", Path("./"))
-            / getattr(self, "route", "./")
-            / f"{self.slug}{self._extension}"
-        )
+        return f"{self.slug}{self._extension}"
 
     @property
     def _extension(self) -> str:
@@ -117,6 +117,11 @@ class Page:
             return None
 
         return markdown(self.markdown, extras=self.markdown_extras)
+
+    @property
+    def url_for(self):
+        """Returns the url for the page"""
+        return self.slug
 
     def __str__(self):
         return self.slug
@@ -149,13 +154,10 @@ class Page:
         """Good for getting the route objects"""
         yield from self.render()
 
-    def render(self, *, engine=None, **kwargs) -> Generator[Route, None, None]:
+    def render(
+        self, *, engine=None, **kwargs
+    ) -> Generator[dict[_route, "Page"], None, None]:
         """Build the route based on content instructions"""
-        markup = self._render_content(engine=engine, **kwargs)
 
         for route in self.routes:
-            yield Route(
-                filepath=Path(route) / self.url,
-                markup=markup,
-                reference=getattr(self, "reference"),
-            )
+            yield {str("Path(_route) / self.url"): self}
