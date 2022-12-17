@@ -43,8 +43,6 @@ class Site:
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
-        if getattr(page, "subcollections", None):
-            self.build_subcollections(page)
         self.route_list[page.url_for] = page
 
     def collection(self, collection: Collection):
@@ -80,12 +78,15 @@ class Site:
         if subcollections := getattr(page, "subcollections", []):
             for attr in subcollections:
                 for page_attr in getattr(page, attr, []):
+                    print(page)
                     self.subcollections[page_attr]
+                    self.subcollections[page_attr]["pages"].append(page)
+                    self.subcollections[page_attr]["route"] = attr
+
                     if "template" not in self.subcollections[page_attr]:
                         self.subcollections[page_attr][
                             "template"
                         ] = page.subcollection_template
-                        self.subcollections[page_attr]["pages"].append(page)
 
     def render(self, clean=False) -> None:
         """Render all pages and collections"""
@@ -108,7 +109,9 @@ class Site:
                 template=subcollection["template"],
                 pages=subcollection["pages"],
             )
-            self.render_output(page.routes[0], page)
+            self.render_output(
+                Path(page.routes[0]).joinpath(subcollection["route"]), page
+            )
 
         if self.static:
             self.render_static(self.static)
