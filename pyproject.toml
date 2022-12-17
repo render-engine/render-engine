@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2022.9.1"
+version = "2022.12.1"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -15,15 +15,11 @@ dependencies = [
     "more-itertools",
     "python-frontmatter",
     "python-slugify",
-    "rich",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
-
-[tool.isort]
-profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "-ra --cov"
@@ -35,7 +31,7 @@ pythonpath = ['src']
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = python3.9,python3.10
+envlist = python3.9, python3.10
 isolated_build = True
 
 [testenv]
