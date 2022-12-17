@@ -6,7 +6,8 @@
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.10",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/pre-commit:1": {},
-		"ghcr.io/devcontainers/features/github-cli:1": {}
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/twine": {}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
