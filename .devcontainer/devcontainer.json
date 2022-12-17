@@ -5,7 +5,8 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.10",
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/pre-commit:1": {}
+		"ghcr.io/devcontainers-contrib/features/pre-commit:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
@@ -22,7 +23,11 @@
 		"vscode": {
 			"extensions": [
 				"microsoft.python",
-				"eamodio.Gitlens"
+				"eamodio.Gitlens",
+				"GitHub.vscode-pull-request-github",
+				"GitHub.codespaces",
+				"GitHub.copilot-labs",
+				"bierner.markdown-preview-github-styles"
 			]
 		}
 	}

@@ -1,13 +1,11 @@
 import itertools
-import pdb
 import typing
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from pathlib import Path
 
 import jinja2
-from more_itertools import bucket, chunked
+from more_itertools import chunked
 
-from .feeds import RSSFeed
 from .page import Page
 
 
@@ -57,7 +55,7 @@ def gen_collection(
     return pages
 
 
-SubCollection = namedtuple("subcollection", ["key", "default"])
+SubCollection = {str, list[Page]}
 
 
 class Collection:
@@ -89,6 +87,8 @@ class Collection:
     sort_reverse: bool = False
     has_archive: bool = False
     archive_template: typing.Optional[str] = None
+    subcollections: list[str | list[str]] = None
+    routes = ["./"]
 
     def __init__(self, **kwargs):
         for key, val in kwargs.items():
@@ -98,8 +98,13 @@ class Collection:
             self.title = self.__class__.__name__
 
         if any([self.items_per_page, self.archive_template]):
-            self.has_archive == True
+            self.has_archive is True
             self.archive_template = self.engine.get_template(self.archive_template)
+
+            if hasattr(self, "subcollections") and not getattr(
+                self, "subcollections_template", None
+            ):
+                self.subcollection_template = self.archive_template
 
         self.routes = [Path(route) for route in self.routes]
 
@@ -110,7 +115,6 @@ class Collection:
     @property
     def pages(self):
         if Path(self.content_path).is_dir():
-
             pages = self._pages(self.content_type, routes=self.routes)
 
             return pages
@@ -121,12 +125,13 @@ class Collection:
         page_groups = map(
             lambda pattern: Path(self.content_path).glob(pattern), self.includes
         )
-
         return [
             content_type(
                 engine=self.engine,
                 content_path=page_path,
                 template=self.template,
+                subcollections=getattr(self, "subcollections", []),
+                subcollection_template=getattr(self, "subcollection_template", []),
                 **self.collection_vars,
                 **kwargs,
             )
@@ -140,36 +145,6 @@ class Collection:
             key=lambda page: getattr(page, self.sort_by),
             reverse=self.sort_reverse,
         )
-
-    def _gen_subpages(self, SubCollection) -> defaultdict[list[Page]]:
-        """given a attribute, bucket all the pages into subcollections"""
-        subpages = defaultdict(list)
-        for page in self.pages:
-            key = getattr(page, SubCollection.key, SubCollection.default)
-
-            if SubCollection.key in getattr(page, "list_attrs", []):
-                for k in getattr(page, SubCollection.key, []):
-                    subpages[k].append(page)
-            else:
-                subpages[key].append(page)
-
-        subcollection = []
-
-        for k, v in subpages.items():
-            subcollection.append(
-                gen_collection(
-                    pages=sorted(
-                        v,
-                        key=lambda page: getattr(page, self.sort_by),
-                        reverse=self.sort_reverse,
-                    ),
-                    template=self.archive_template,
-                    title=k,
-                    items_per_page=self.items_per_page,
-                    routes=self.routes,
-                )
-            )
-        return subcollection
 
     @property
     def archives(self) -> list[Archive]:
@@ -195,75 +170,6 @@ class Collection:
 
     def __iter__(self):
         return iter(self.pages)
-
-
-def collection(self, collection: typing.Type[Collection]) -> None:
-    """Add a class to your ``self.collections``
-    iterate through a classes ``content_path`` and create a classes ``Page``-like
-    objects, adding each one to ``routes``.
-
-    Use a decorator for your defined classes.
-
-    Examples::
-
-        @register_collection
-        class Foo(Collection):
-            pass
-    """
-
-    _collection = collection()
-    collection_path = self.path / _collection.output_path
-    collection_path.mkdir(exist_ok=True, parents=True)
-
-    page_count = len(_collection.pages)
-    collection_vars = {
-        f"collection_{key}".upper(): val for key, val in vars(collection).items()
-    }
-
-    for pages in _collection.pages:
-        page.render(
-            path=collection_path,
-            engine=self.engine,
-            **self.site_vars,
-        )
-
-    if hasattr(_collection, "feed"):
-        feed = _collection.feed(
-            title=f"{self.site_vars['SITE_TITLE']} - {_collection.title}",
-            link=self.site_vars["SITE_URL"],
-            pages=_collection.pages,
-        )
-        feed.render(
-            path=self.path, engine=self.engine, **self.site_vars, **collection_vars
-        )
-
-    """
-    if _collection.has_archive:
-        render_archives(
-            path=collection_path,
-            engine=self.engine,
-            archive=_collection.archives,
-            **self.site_vars,
-        )
-
-    if hasattr(_collection, "subcollections"):
-        for subcollection in _collection.subcollections:
-            subcollection_path = collection_path / subcollection.key
-            subcollection_path.mkdir(exist_ok=True, parents=True)
-
-            subgroups = _collection._gen_subpages(subcollection)
-
-            for subgroup in subgroups:
-                render_archives(
-                    path=subcollection_path,
-                    engine=self.engine,
-                    archive=subgroup,
-                    **self.site_vars,
-                    **collection_vars,
-                )
-    """
-
-    return _collection
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:
