@@ -1,5 +1,4 @@
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Optional
 
@@ -21,11 +20,13 @@ class Page:
         will be checked for in other areas of the code.
 
     When you create a page, you can specify variables that will be passed into rendering template.
+
+    Attributes:
+        
     """
 
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
-
      You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
 
      The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
@@ -64,7 +65,7 @@ class Page:
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-        if self.markdown and self.content_path != None:
+        if self.markdown and self.content_path is not None:
             logging.warning(
                 "both `Page.markdown` and `content_path` selected. the content from `content_path` will be used."
             )
