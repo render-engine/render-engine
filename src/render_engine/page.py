@@ -57,8 +57,10 @@ class Page:
 
     template: str | None = None
 
-    def __init__(self, engine: jinja2.Environment, **kwargs) -> None:
-        self.engine = engine
+    def __init__(self, engine: jinja2.Environment | None = None, **kwargs) -> None:
+        if not hasattr(self, "engine"):
+            self.engine = engine
+
         for key, val in kwargs.items():
             setattr(self, key, val)
 
@@ -133,15 +135,27 @@ class Page:
         template = None
 
         if self.template:
+            logging.debug(f"Using %s for %s", self.template, self)
             template = self.engine.get_template(self.template)
 
         if template:
             if self.content:
+                logging.debug(
+                    "content found. rendering with content: %s, %s, %s",
+                    self.content,
+                    self.__dict__,
+                    kwargs,
+                )
                 return template.render(
                     content=self.content, **{**self.__dict__, **kwargs}
                 )
 
             else:
+                logging.debug(
+                    "No content found. rendering with content: %s, %s",
+                    self.__dict__,
+                    kwargs,
+                )
                 return template.render(**{**self.__dict__, **kwargs})
 
         elif self.content:

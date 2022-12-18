@@ -51,10 +51,15 @@ class Site:
         logging.info("Adding Collection: %s", _collection.__class__.__name__)
 
         for page in _collection.pages:
+            logging.debug("Adding Page: %s", page.__class__.__name__)
             self.add_to_route_list(page)
 
         for archive in _collection.archives:
+            logging.debug("Adding Archive: %s", archive.__class__.__name__)
             self.add_to_route_list(archive)
+
+        if feed := (getattr(_collection, "_feed", None)):
+            self.add_to_route_list(feed)
 
     def page(self, page: Page) -> None:
         """Create a Page object and add it to self.routes"""
@@ -70,15 +75,21 @@ class Site:
 
     def render_output(self, route, page):
         """writes the page object to disk"""
+        if page._extension == ".xml":
+            logging.debug("%s, %s", page.content, page.pages)
         path = self.path / route / page.url
         path.parent.mkdir(parents=True, exist_ok=True)
         return path.write_text(page._render_content())
 
     def build_subcollections(self, page) -> None:
         if subcollections := getattr(page, "subcollections", []):
+            logging.debug("Adding subcollections: %s", subcollections)
+
             for attr in subcollections:
+                logging.debug("Adding attr: %s", attr)
+
                 for page_attr in getattr(page, attr, []):
-                    print(page)
+                    logging.debug("Adding page_attr: %s", page_attr)
                     self.subcollections[page_attr]
                     self.subcollections[page_attr]["pages"].append(page)
                     self.subcollections[page_attr]["route"] = attr
