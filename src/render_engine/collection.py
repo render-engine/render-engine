@@ -25,6 +25,7 @@ def gen_collection(
     title: str,
     items_per_page: typing.Optional[int] = None,
     routes: list[Path | str] = [],
+    collection_vars: dict = {},
 ) -> list[Archive]:
     """Returns a list of Archive pages containing the pages of data for each archive."""
 
@@ -36,6 +37,7 @@ def gen_collection(
                 template=template,
                 title=title,
                 routes=routes,
+                **collection_vars,
             )
         ]
 
@@ -49,6 +51,7 @@ def gen_collection(
             slug=f"{title}_{i}",
             title=title,
             routes=routes,
+            **collection_vars,
         )
         for i, pages in enumerate(page_chunks)
     ]
@@ -110,7 +113,10 @@ class Collection:
 
     @property
     def collection_vars(self):
-        return {f"collection_{key}".upper(): val for key, val in vars(self).items()}
+        """
+        Creates Collection Vars to Pass into template.
+        """
+        return {key.upper(): val for key, val in vars(self).items()}
 
     @property
     def pages(self):
@@ -119,7 +125,7 @@ class Collection:
 
             return pages
         else:
-            raise ValueError(f"invalid {Path=}")
+            raise ValueError("invalid Path: %s}" % Path)
 
     def _pages(self, content_type: Page, **kwargs) -> list[Page]:
         page_groups = map(
@@ -156,6 +162,7 @@ class Collection:
                 title=self.title,
                 items_per_page=self.items_per_page,
                 routes=self.routes,
+                collection_vars=self.collection_vars,
             )
         return ()
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2022.12.4"
+version = "2022.12.5"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
