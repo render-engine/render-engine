@@ -23,7 +23,7 @@ def to_pub_date(value: datetime):
 
 
 rss_feed_engine = jinja2.Environment(
-    loader=PackageLoader("render_engine", "templates"),
+    loader=PackageLoader("render_engine"),
     autoescape=select_autoescape(enabled_extensions=("rss")),
     trim_blocks=True,
 )

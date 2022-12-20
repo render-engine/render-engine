@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2022.12.2"
+version = "2022.12.4"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -27,6 +27,9 @@ testpaths = [
     "src/tests"
 ]
 pythonpath = ['src']
+
+[tool.setuptools.package-data]
+"render_engine.templates" = ["*.xml"]
 
 [tool.tox]
 legacy_tox_ini = """
