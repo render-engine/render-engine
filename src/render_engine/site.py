@@ -22,7 +22,11 @@ class Site:
 
     path: Path = Path("output")
     static: str | Path = Path("static")
-    site_vars: dict = {"SITE_TITLE": "Untitled Site", "SITE_URL": "https://example.com"}
+    # TODO: #74 Should this be called from a config file for easier testing?
+    site_vars: dict = {
+        "SITE_TITLE": "Untitled Site",
+        "SITE_URL": "https://example.com",  # TODO: #73 Make this http://localhost:8000
+    }
     engine: Environment = Environment(loader=FileSystemLoader("templates"))
     plugins: dict[str, Page] | None = None
 
