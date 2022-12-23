@@ -10,8 +10,9 @@ from collections import namedtuple
 from datetime import datetime
 
 import jinja2
-from jinja2 import PackageLoader, Template, select_autoescape
+from jinja2 import Template, select_autoescape
 
+from .loaders import render_engine_templates_loader
 from .page import Page
 
 
@@ -23,7 +24,7 @@ def to_pub_date(value: datetime):
 
 
 rss_feed_engine = jinja2.Environment(
-    loader=PackageLoader("render_engine"),
+    loader=render_engine_templates_loader,
     autoescape=select_autoescape(enabled_extensions=("rss")),
     trim_blocks=True,
 )

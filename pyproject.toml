@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2022.12.5"
+version = "2022.12.6"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -15,11 +15,19 @@ dependencies = [
     "more-itertools",
     "python-frontmatter",
     "python-slugify",
+    "rich",
+    "typer",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.setuptools.package-data]
-"render_engine.templates" = ["*.xml"]
+"render_engine.render_engine_templates" = ["*.txt", "*.xml"]
+
+[project.scripts]
+create-app = "cli.create_app:create_app"

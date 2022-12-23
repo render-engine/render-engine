@@ -1,7 +1,7 @@
 import logging
+import pathlib
 import shutil
 from collections import defaultdict
-from pathlib import Path
 from typing import Callable
 
 from jinja2 import Environment, FileSystemLoader
@@ -13,37 +13,36 @@ from .page import Page
 class Site:
     """
     The site stores your pages and collections to be rendered.
+
     Attributes:
-        path: Path to write rendered content.
-        static: Output Path for the static folder. This will get copied to the output folder
+        output_path: str to write rendered content. **Default**: `output`
+        static: Output str Path for the static folder. This will get copied to the output folder. **Default**: `static`
         site_vars: Vars that will be passed into the render functions
-        engine: ``Engine`` to generate web pages
+
+            Default `site_vars`:
+
+            - SITE_TITLE: "Untitled Site"
+            - SITE_URL: "http://example.com"
     """
 
-    path: Path = Path("output")
-    static: str | Path = Path("static")
+    output_path: str = "output"
+    static_path: str = "static"
     # TODO: #74 Should this be called from a config file for easier testing?
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "https://example.com",  # TODO: #73 Make this http://localhost:8000
     }
-    engine: Environment = Environment(loader=FileSystemLoader("templates"))
     plugins: dict[str, Page] | None = None
 
     def __init__(
-        self, static: str | None = None, plugins: list[Callable] = [], **kwargs
+        self,
     ) -> None:
-        self.site_vars.update(kwargs)
         self.route_list: defaultdict = defaultdict(list)
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
 
-        if plugins and not self.plugin:
-            self.plugins = plugins
-
-        elif plugins:
-
-            for plugin in self.plugins:
-                setattr(self, plugin.__name__, plugin)
+    @property
+    def engine(self) -> Environment:
+        return Environment(loader=FileSystemLoader("templates"), globals=self.site_vars)
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
@@ -73,9 +72,6 @@ class Site:
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
-        return shutil.copytree(
-            directory, self.path / Path(directory).name, dirs_exist_ok=True
-        )
 
     def render_output(self, route, page):
         """writes the page object to disk"""
@@ -128,5 +124,5 @@ class Site:
                 Path(page.routes[0]).joinpath(subcollection["route"]), page
             )
 
-        if self.static:
-            self.render_static(self.static)
+        if path := (pathlib.Path(self.static_path)).exists():
+            self.render_static(path)

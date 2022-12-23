@@ -17,6 +17,7 @@ markdown_extensions:
   admonition:
   pymdownx.details:
   pymdownx.superfences:
-
+watch:
+  - ../src/render_engine
 plugins:
   - mkdocstrings
