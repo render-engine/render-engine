@@ -65,10 +65,7 @@ def create_templates_folder(
 
 def update_site_vars(optional_params: dict) -> dict:
     """Remove any optional params that are None"""
-    for key, value in optional_params.items():
-        if not value:
-            del optional_params[key]
-    return optional_params
+    return {key: value for key, value in optional_params.items() if value}
 
 
 def create_site_with_vars(
@@ -89,7 +86,8 @@ def create_site_with_vars(
         "site_description": site_description,
         "collections_path": collection_path,
     }
-    site.site_vars.update(update_site_vars(optional_site_vars_params))
+    site_vars.update(update_site_vars(optional_site_vars_params))
+    site.site_vars = site_vars
     return site
 
 
