@@ -228,6 +228,7 @@ def typer_app(
         environment=environment,
     )
 
+    # Create the collection
     if not skip_collection and collection_path:
         with Progress(SpinnerColumn()) as progress:
             task = progress.add_task("Creating collection", total=1)
