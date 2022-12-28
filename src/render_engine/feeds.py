@@ -23,16 +23,21 @@ def to_pub_date(value: datetime):
 
 
 rss_feed_engine = jinja2.Environment(
-    loader=PackageLoader("render_engine", "templates"),
+    loader=PackageLoader("render_engine"),
     autoescape=select_autoescape(enabled_extensions=("rss")),
     trim_blocks=True,
 )
 rss_feed_engine.filters["to_pub_date"] = to_pub_date
-feed_template = rss_feed_engine.get_template("rss2.0.xml")
 
 
 class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
 
-    template: Template = feed_template
+    engine = rss_feed_engine
+    template = "rss2.0.xml"
     extension: str = "rss"
+
+    def __init__(self, title, pages, **kwargs):
+        self.title = getattr(self, "title", title)
+        self.pages = pages
+        super().__init__(**kwargs)

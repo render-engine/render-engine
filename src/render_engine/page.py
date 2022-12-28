@@ -1,12 +1,13 @@
 import logging
-import pdb
 from pathlib import Path
-from typing import Any, Optional
+from typing import Generator, Optional
 
 import frontmatter
-from jinja2 import Environment, FileSystemLoader, Template
+import jinja2
 from markdown2 import markdown
 from slugify import slugify
+
+_route = Path | str
 
 
 class Page:
@@ -19,11 +20,13 @@ class Page:
         will be checked for in other areas of the code.
 
     When you create a page, you can specify variables that will be passed into rendering template.
+
+    Attributes:
+        
     """
 
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
     """Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
-
      You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
 
      The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
@@ -37,7 +40,7 @@ class Page:
         This will be overwritten if a `content_path` is provided.
     """
 
-    content_path: Path | str | None = None
+    content_path: _route | None = None
     """
     The path to the file that will be used to generate the page.
 
@@ -49,11 +52,20 @@ class Page:
     extension: str = ".html"
     """Extension to use for the rendered page output."""
 
-    def __init__(self, **kwargs) -> None:
+    reference: str = "slug"
+
+    routes: list[_route] = ["./"]
+
+    template: str | None = None
+
+    def __init__(self, engine: jinja2.Environment | None = None, **kwargs) -> None:
+        if not hasattr(self, "engine"):
+            self.engine = engine
+
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-        if self.markdown and self.content_path != None:
+        if self.markdown and self.content_path is not None:
             logging.warning(
                 "both `Page.markdown` and `content_path` selected. the content from `content_path` will be used."
             )
@@ -78,16 +90,15 @@ class Page:
             logging.info(f"No slug. Will slugify {self.title=}")
             self.slug = self.title  # Will Slugify in Next Step
 
+        if not self.routes:
+            self.routes = []
+
         self.slug = slugify(self.slug)
 
     @property
     def url(self) -> Path:
         """The first route and the slug of the page."""
-        return (
-            getattr(self, "output_path", Path("./"))
-            / getattr(self, "route", "./")
-            / f"{self.slug}{self._extension}"
-        )
+        return f"{self.slug}{self._extension}"
 
     @property
     def _extension(self) -> str:
@@ -110,23 +121,42 @@ class Page:
 
         return markdown(self.markdown, extras=self.markdown_extras)
 
+    @property
+    def url_for(self):
+        """Returns the url for the page"""
+        return self.slug
+
     def __str__(self):
         return self.slug
 
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
-    def _render_content(self, *, engine: Environment = None, **kwargs) -> str:
-        # template = self._template
-        template = engine.get_template(self.template)
+    def _render_content(self, **kwargs) -> str:
+        template = None
+
+        if self.template:
+            logging.debug(f"Using %s for %s", self.template, self)
+            template = self.engine.get_template(self.template)
 
         if template:
             if self.content:
+                logging.debug(
+                    "content found. rendering with content: %s, %s, %s",
+                    self.content,
+                    self.__dict__,
+                    kwargs,
+                )
                 return template.render(
                     content=self.content, **{**self.__dict__, **kwargs}
                 )
 
             else:
+                logging.debug(
+                    "No content found. rendering with content: %s, %s",
+                    self.__dict__,
+                    kwargs,
+                )
                 return template.render(**{**self.__dict__, **kwargs})
 
         elif self.content:
@@ -135,7 +165,14 @@ class Page:
         else:
             raise ValueError(f"{self=} must have either content or template")
 
-    def render(self, *, engine=None, **kwargs) -> Path:
-        """Build the page based on content instructions"""
-        markup = self._render_content(engine=engine, **kwargs)
-        return Path(kwargs.get("path") / self.url).write_text(markup)
+    def __iter__(self):
+        """Good for getting the route objects"""
+        yield from self.render()
+
+    def render(
+        self, *, engine=None, **kwargs
+    ) -> Generator[dict[_route, "Page"], None, None]:
+        """Build the route based on content instructions"""
+
+        for route in self.routes:
+            yield {str("Path(_route) / self.url"): self}

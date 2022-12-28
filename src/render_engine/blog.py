@@ -74,7 +74,13 @@ class Blog(Collection):
         - Rename the archive items so they are not private
     """
 
-    feed = RSSFeed
     content_type: typing.Type[BlogPost] = BlogPost
     sort_reverse: bool = True
     sort_by = "date_published"
+    has_archive = True
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._feed = getattr(self, "feed", RSSFeed)(
+            title=f"{self.SITE_TITLE} {self.title}", pages=self.pages
+        )
