@@ -42,7 +42,9 @@ class Site:
 
     @property
     def engine(self) -> Environment:
-        return Environment(loader=FileSystemLoader("templates"), globals=self.site_vars)
+        env = Environment(loader=FileSystemLoader("templates"))
+        env.globals = self.site_vars
+        return env
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
@@ -77,7 +79,11 @@ class Site:
         """writes the page object to disk"""
         if page._extension == ".xml":
             logging.debug("%s, %s", page.content, page.pages)
-        path = self.path / route / page.url
+        path = (
+            pathlib.Path(self.output_path)
+            / pathlib.Path(route)
+            / pathlib.Path(page.url)
+        )
         path.parent.mkdir(parents=True, exist_ok=True)
         return path.write_text(page._render_content())
 

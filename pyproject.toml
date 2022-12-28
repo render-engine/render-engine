@@ -23,11 +23,11 @@ dependencies = [
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
-"render_engine.render_engine_templates" = ["*.txt", "*.xml"]
+"*" = ["*.html", "*.txt", "*.xml", "*.md"]
 
 [project.scripts]
-create-app = "cli.create_app:create_app"
+createapp = "render_engine.create_app:create_app"
