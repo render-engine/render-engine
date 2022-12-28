@@ -229,9 +229,11 @@ def typer_app(
     )
 
     if not skip_collection and collection_path:
-        pathlib.Path(collection_path).joinpath(sample_pages.md).write_text(
-            environment.get_template("base_collection_path.md").render()
-        )
+        with Progress(SpinnerColumn()) as progress:
+            task = progress.add_task("Creating collection", total=1)
+            pathlib.Path(collection_path).joinpath(sample_pages.md).write_text(
+                environment.get_template("base_collection_path.md").render()
+            )
 
     if run_on_complete:
         typer.echo("Running the site")
