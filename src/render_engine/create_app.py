@@ -17,7 +17,9 @@ environment = jinja2.Environment(
 
 def create_folder(*, folder, overwrite: bool) -> pathlib.Path:
     """Create a folder if it doesn't exist or if overwrite is True"""
-    return pathlib.Path(folder).mkdir(parents=True, exist_ok=overwrite)
+    new_folder = pathlib.Path(folder)
+    new_folder.mkdir(parents=True, exist_ok=overwrite)
+    return new_folder
 
 
 path = str | None
@@ -50,18 +52,23 @@ def create_templates_folder(
     environment: jinja2.Environment,
 ) -> str:
     """Create a folder for templates and optionally create an index.html file"""
-    templates_path = pathlib.Path(templates_folder_name)
-    templates_path.mkdir(exist_ok=exists_ok)
+    path = pathlib.Path(templates_folder_name)
+    path.mkdir(
+        exist_ok=exists_ok,
+    )
 
-    for template in templates:
-        content = templates_path.joinpath(template).write_text(
-            environment.get_template(template).render()
+    for path in templates:
+        content = templates_folder_name.joinpath(path).write_text(
+            environment.get_template("create_app_templates").render()
         )
 
 
 def update_site_vars(optional_params: dict) -> dict:
     """Remove any optional params that are None"""
-    return {key: value for key, value in optional_params.items() if value}
+    for key, value in optional_params.items():
+        if not value:
+            del optional_params[key]
+    return optional_params
 
 
 def create_site_with_vars(
@@ -70,7 +77,7 @@ def create_site_with_vars(
     site_description: path,
     site_author: path,
     collection_path: path,
-) -> str:
+) -> Site:
     """Create a new site from a template"""
     site = Site()
     site_vars = {
@@ -191,13 +198,13 @@ def typer_app(
     }
 
     if not static["skip"]:
-        create_folder(folder=static["path"], overwrite=force)
+        static_path = create_folder(folder=static["path"], overwrite=force)
 
         if not static["path"] == "static":
-            site.static = static["path"]
+            site.static = static_path
 
     if not collection["skip"]:
-        create_folder(folder=collection["path"], overwrite=force)
+        collection_path = create_folder(folder=collection["path"], overwrite=force)
 
     # creating the app.py file from the template
     pathlib.Path("app.py").write_text(
@@ -221,6 +228,14 @@ def typer_app(
         environment=environment,
     )
 
+    # Create the collection
+    if not skip_collection and collection_path:
+        with Progress(SpinnerColumn()) as progress:
+            task = progress.add_task("Creating collection", total=1)
+            pathlib.Path(collection_path).joinpath(sample_pages.md).write_text(
+                environment.get_template("base_collection_path.md").render()
+            )
+
     if run_on_complete:
         typer.echo("Running the site")
         create_app()
@@ -228,8 +243,4 @@ def typer_app(
 
 def create_app():
     """This is the console script entry point for 'createapp'"""
-    typer.run(typer_app)
-
-
-if __name__ == "__main__":
     typer.run(typer_app)
