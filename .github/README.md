@@ -1,3 +1,9 @@
+> ***Warning***
+> Render Engine 2022.12.3 introduced a change to the schema where now the following commands were changed. I apologize for any inconvenience.
+> - `render_page` is just `page`
+> - `render_collection` is just `collection`
+> - You will need to now add `site.render()` where `site` is your `Site` instance
+
 ## What is RenderEngine
 ## The _3 layer_ Architecture 
 
