@@ -31,3 +31,6 @@ package-dir = {"" = "src"}
 
 [project.scripts]
 createapp = "render_engine.create_app:create_app"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
