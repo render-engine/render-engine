@@ -1,6 +1,6 @@
 import pytest
 
-from render_engine.site import Page, Site
+from render_engine.site import Collection, Page, Site
 
 
 def test_site_defaults():
@@ -34,15 +34,32 @@ def test_site_site_vars_orrider_defaults_via_class():
     assert site.site_vars["SITE_URL"] == "https://my-site.com"
 
 
-def test_site_in_route_list():
+def test_site_page_in_route_list():
     site = Site()
 
     # assert that the route list is empty
     assert len(site.route_list) == 0
 
-    class page(Page):
+    class CustomPage(Page):
         test_value = "test"
 
-    site.page(page)
+    site.page(CustomPage)
 
-    assert site.route_list["page"].test_value == "test"
+    assert site.route_list["custompage"].test_value == "test"
+
+
+def test_site_collection_in_route_list():
+    site = Site()
+
+    # assert that the route list is empty
+    assert len(site.route_list) == 0
+
+    class CustomPage(Page):
+        test_value = "test"
+
+    class collection(Collection):
+        pages = [CustomPage()]
+
+    site.collection(collection)
+
+    assert site.route_list["custompage"].test_value == "test"
