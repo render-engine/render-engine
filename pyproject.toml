@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "render_engine"
 version = "2022.12.7a2"
 description = "A Flexible Static Site Generator for Python"
-readme = ".github/README.md"
+long_description = ".github/README.md"
 
 dependencies = [
     "Jinja2",
