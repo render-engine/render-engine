@@ -21,12 +21,12 @@ app.site_vars.update(
     {% if site_author %}SITE_AUTHOR={{site_author}},{% endif %}
     )
 
-@app.page()
+@app.page
 class Index(Page):
     template = "index.html"
 
 {% if not skip_collection %}
-@app.collection()
+@app.collection
 class Pages(Collection):
     {% if collection_path %}
     content_path = "{{collection_path}}" # path to content files
