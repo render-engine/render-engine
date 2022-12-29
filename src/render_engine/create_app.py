@@ -50,16 +50,16 @@ def create_templates_folder(
     templates_folder_name: str,
     exists_ok: bool,
     environment: jinja2.Environment,
-) -> str:
+) -> None:
     """Create a folder for templates and optionally create an index.html file"""
     path = pathlib.Path(templates_folder_name)
     path.mkdir(
         exist_ok=exists_ok,
     )
 
-    for path in templates:
-        content = templates_folder_name.joinpath(path).write_text(
-            environment.get_template("create_app_templates").render()
+    for template in templates:
+        content = path.joinpath(template).write_text(
+            environment.get_template(template).render()
         )
 
 
@@ -230,7 +230,7 @@ def typer_app(
     if not skip_collection and collection_path:
         with Progress(SpinnerColumn()) as progress:
             task = progress.add_task("Creating collection", total=1)
-            pathlib.Path(collection_path).joinpath(sample_pages.md).write_text(
+            pathlib.Path(collection_path).joinpath("sample_pages.md").write_text(
                 environment.get_template("base_collection_path.md").render()
             )
 
