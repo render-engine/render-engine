@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "render_engine"
 version = "2022.12.5"
 description = "A Flexible Static Site Generator for Python"
-readme = "README.md"
+readme = ".github/README.md"
 
 dependencies = [
     "Jinja2",
@@ -20,6 +20,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+
+[project.urls]
+homepage = "https://github.com/kjaymiller/render_engine/"
+repository = "https://github.com/kjaymiller/render_engine/"
+documentation = "https://render-engine.readthedocs.io/en/latest/"
 
 [tool.pytest.ini_options]
 addopts = "-ra --cov"
