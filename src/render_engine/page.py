@@ -1,13 +1,20 @@
 import logging
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Generator, Optional, Type
 
 import frontmatter
 import jinja2
 from markdown2 import markdown
+from parsers.base_parsers import BasePageParser
+from parsers.markdown import MarkdownParser
 from slugify import slugify
 
 _route = Path | str
+
+
+def render_content_with_template(engine, template, content, **kwargs):
+    """returns the jinja template with the content"""
+    return
 
 
 class Page:
@@ -22,25 +29,28 @@ class Page:
     When you create a page, you can specify variables that will be passed into rendering template.
 
     Attributes:
-        
+
     """
 
     markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
-    """Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
-     You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
+    """
+    Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
+    You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
 
-     The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
-     """
-
-    markdown: str | None = None
-    """This is base markdown that will be used to render the page.
-
-    !!! warning
-
-        This will be overwritten if a `content_path` is provided.
+    The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
     """
 
-    content_path: _route | None = None
+    # TODO: REMOVE THIS
+    # markdown: str | None = None
+    # """This is base markdown that will be used to render the page.
+
+    # !!! warning
+
+    #     This will be overwritten if a `content_path` is provided.
+    # """
+
+    content: str | None
+    content_path: _route | None
     """
     The path to the file that will be used to generate the page.
 
@@ -51,48 +61,40 @@ class Page:
 
     extension: str = ".html"
     """Extension to use for the rendered page output."""
-
+    engine: jinja2.Environment
     reference: str = "slug"
-
     routes: list[_route] = ["./"]
-
     template: str | None = None
+    Parser: Type[BasePageParser] = MarkdownParser
 
-    def __init__(self, engine: jinja2.Environment | None = None, **kwargs) -> None:
-        if not hasattr(self, "engine"):
-            self.engine = engine
-
-        for key, val in kwargs.items():
-            setattr(self, key, val)
-
-        if self.markdown and self.content_path is not None:
-            logging.warning(
-                "both `Page.markdown` and `content_path` selected. the content from `content_path` will be used."
-            )
+    def __init__(self, engine: jinja2.Environment | None = None) -> None:
+        """Set Attributes that may be passed in from collections"""
+        self._parser = self.Parser(self)
 
         if self.content_path:
-            post = frontmatter.load(Path(self.content_path))
-            valid_attrs, self.markdown = post.metadata, post.content
-            logging.info(f"content_path found! {valid_attrs=}, {self.markdown=}")
+            valid_attrs, self.raw_content = self.Parser.attrs_from_content_path(
+                content_path=self.content_path
+            )
+            logging.debug(f"content_path found! %s %s" % valid_attrs, self.content)
 
             for name, value in valid_attrs.items():
-                # comma delimit attributes.
+                # comma delimit attributes using list_attrs.
                 if name.lower() in getattr(self, "list_attrs", []):
                     value = [attrval.lower() for attrval in value.split(", ")]
 
                 setattr(self, name.lower(), value)
 
         if not hasattr(self, "title"):
+            # If no title is provided, use the class name.
             self.title = self.__class__.__name__
             logging.info(f"No Title. Assigning {self.title=}")
 
         if not hasattr(self, "slug"):
+            # If no slug is provided, use the title.
             logging.info(f"No slug. Will slugify {self.title=}")
             self.slug = self.title  # Will Slugify in Next Step
 
-        if not self.routes:
-            self.routes = []
-
+        # Slugify the slug
         self.slug = slugify(self.slug)
 
     @property
@@ -109,19 +111,6 @@ class Page:
             return self.extension
 
     @property
-    def content(self) -> Optional[str]:
-        """html = rendered HTML (not marked up).
-        Is `None` if `content == None`
-        This is referred to as `content` because it is intended to be applied in the jinja template as {{content}}.
-        When referring to the raw content in the Page object use `markdown`.
-        """
-
-        if not self.markdown:
-            return None
-
-        return markdown(self.markdown, extras=self.markdown_extras)
-
-    @property
     def url_for(self):
         """Returns the url for the page"""
         return self.slug
@@ -133,34 +122,32 @@ class Page:
         return f"<Page {self.title}>"
 
     def _render_content(self, **kwargs) -> str:
-        template = None
+        """Renders the content of the page."""
 
+        # Parsing with a tmeplate
         if self.template:
             logging.debug(f"Using %s for %s", self.template, self)
-            template = self.engine.get_template(self.template)
 
-        if template:
             if self.content:
-                logging.debug(
-                    "content found. rendering with content: %s, %s, %s",
-                    self.content,
-                    self.__dict__,
-                    kwargs,
-                )
-                return template.render(
-                    content=self.content, **{**self.__dict__, **kwargs}
+                return self.engine.get_template(self.template).render(
+                    content=self._parser.parse(self.content),
+                    **{**self.__dict__, **kwargs},
                 )
 
             else:
-                logging.debug(
-                    "No content found. rendering with content: %s, %s",
-                    self.__dict__,
-                    kwargs,
+                return self.engine.get_template(self.template).render(
+                    **{**self.__dict__, **kwargs},
                 )
-                return template.render(**{**self.__dict__, **kwargs})
 
+        # Parsing without a template
         elif self.content:
-            return self.content
+            logging.debug(
+                "content found. rendering with content: %s, %s, %s",
+                self.content,
+                self.__dict__,
+                kwargs,
+            )
+            return self._parser.parse(self.content)
 
         else:
             raise ValueError(f"{self=} must have either content or template")
