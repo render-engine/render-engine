@@ -66,10 +66,10 @@ class Site:
         if feed := (getattr(_collection, "_feed", None)):
             self.add_to_route_list(feed)
 
-    def page(self, page: Page) -> None:
+    def page(self, page: "Page") -> None:
         """Create a Page object and add it to self.routes"""
-        logging.info("Adding Page: %s", page.__class__.__name__)
-        _page = page(self.engine, **self.site_vars)
+        logging.info("Adding Page: %s", page)
+        _page = page()
         self.add_to_route_list(_page)
 
     def render_static(self, directory) -> None:

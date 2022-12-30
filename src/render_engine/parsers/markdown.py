@@ -2,8 +2,9 @@ import pathlib
 from typing import Any
 
 import frontmatter
-from base_parsers import BasePageParser
 from markdown2 import markdown
+
+from .base_parsers import BasePageParser
 
 
 def _attrs_from_content(content) -> tuple[dict[str, Any], str | None]:

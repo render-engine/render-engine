@@ -5,9 +5,10 @@ from typing import Generator, Optional, Type
 import frontmatter
 import jinja2
 from markdown2 import markdown
-from parsers.base_parsers import BasePageParser
-from parsers.markdown import MarkdownParser
 from slugify import slugify
+
+from .parsers.base_parsers import BasePageParser
+from .parsers.markdown import MarkdownParser
 
 _route = Path | str
 
@@ -64,18 +65,18 @@ class Page:
     engine: jinja2.Environment
     reference: str = "slug"
     routes: list[_route] = ["./"]
-    template: str | None = None
+    template: str | None
     Parser: Type[BasePageParser] = MarkdownParser
 
-    def __init__(self, engine: jinja2.Environment | None = None) -> None:
+    def __init__(self) -> None:
         """Set Attributes that may be passed in from collections"""
         self._parser = self.Parser(self)
 
-        if self.content_path:
-            valid_attrs, self.raw_content = self.Parser.attrs_from_content_path(
+        if hasattr(self, "content_path"):
+            valid_attrs, self.content = self.Parser.attrs_from_content_path(
                 content_path=self.content_path
             )
-            logging.debug(f"content_path found! %s %s" % valid_attrs, self.content)
+            logging.debug(f"content_path found! %s %s", valid_attrs, self.content)
 
             for name, value in valid_attrs.items():
                 # comma delimit attributes using list_attrs.
@@ -121,8 +122,12 @@ class Page:
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
-    def _render_content(self, **kwargs) -> str:
+    def _render_content(
+        self, engine: jinja2.Environment | None = None, **kwargs
+    ) -> str:
         """Renders the content of the page."""
+        if self.engine:
+            engine = self.engine
 
         # Parsing with a tmeplate
         if self.template:

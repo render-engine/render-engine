@@ -1,6 +1,8 @@
 import pytest
 
-from render_engine.site import Collection, Page, Site
+from render_engine.collection import Collection
+from render_engine.page import Page
+from render_engine.site import Site
 
 
 def test_site_defaults():
