@@ -52,7 +52,7 @@ class Site:
 
     def collection(self, collection: Collection):
         """Create the pages in the collection including the archive"""
-        _collection = collection(engine=self.engine, **self.site_vars)
+        _collection = collection()
         logging.info("Adding Collection: %s", _collection.__class__.__name__)
 
         for page in _collection.pages:

@@ -1,61 +1,70 @@
 import itertools
-import typing
 from collections import defaultdict
 from pathlib import Path
+from typing import Type
 
 import jinja2
 from more_itertools import chunked
 
-from .page import Page
+from .page import Page, _route
+from .parsers.markdown import MarkdownCollectionParser
 
 
 class Archive(Page):
     """Custom Page object used to make archive pages"""
 
-    def __init__(self, /, pages: list, template: str, **kwargs) -> None:
+    def __init__(
+        self,
+        pages: list[Type[Page]],
+        template: str,
+        routes: list[_route],
+        **kwargs,
+    ) -> None:
         """Create a `Page` object for the pages in the collection"""
-        super().__init__(**kwargs)
+        super().__init__()
         self.pages = pages
         self.template = template
+        self.routes = routes
+        for key, val in kwargs.items():
+            setattr(self, key, val)
 
 
 def gen_collection(
-    pages: typing.Iterable[Page],
-    template: jinja2.Template,
+    pages: list[Type[Page]] | list[Archive],
+    template: str,
     title: str,
-    items_per_page: typing.Optional[int] = None,
-    routes: list[Path | str] = [],
-    collection_vars: dict = {},
+    items_per_page: int | None,
+    routes: list[_route],
+    collection_vars: dict,
 ) -> list[Archive]:
     """Returns a list of Archive pages containing the pages of data for each archive."""
 
-    if not items_per_page:
-        return [
+    if items_per_page:
+        page_chunks = chunked(pages, items_per_page)
+
+        pages = [
             Archive(
-                engine=template.environment,
                 pages=pages,
                 template=template,
+                slug=f"{title}_{i}",
                 title=title,
                 routes=routes,
                 **collection_vars,
             )
+            for i, pages in enumerate(page_chunks)
         ]
 
-    page_chunks = chunked(pages, items_per_page)
+        return pages
 
-    pages = [
+    return [
         Archive(
-            engine=template.environment,
             pages=pages,
             template=template,
-            slug=f"{title}_{i}",
             title=title,
             routes=routes,
             **collection_vars,
         )
-        for i, pages in enumerate(page_chunks)
     ]
-    return pages
 
 
 SubCollection = {str, list[Page]}
@@ -75,41 +84,35 @@ class Collection:
 
         from render_engine import Collection
 
-        @site.register_collection
+        @site.collection
         class BasicCollection(Collection):
             pass
     """
 
     content_path: Path
     content_type: Page = Page
-    template: typing.Optional[str] = None
+    archive_template: str | None
+    template: str | None = None
+    items_per_page: int | None
     includes: list[str] = ["*.md", "*.html"]
-    markdown_extras = ["fenced-code-blocks", "footnotes"]
-    items_per_page: typing.Optional[int] = None
     sort_by: str = "title"
     sort_reverse: bool = False
     has_archive: bool = False
-    archive_template: typing.Optional[str] = None
-    subcollections: list[str | list[str]] = None
-    routes = ["./"]
+    subcollections: list[str | list[str]] | None
+    routes: list[str] = ["./"]
 
-    def __init__(self, **kwargs):
-        for key, val in kwargs.items():
-            setattr(self, key, val)
-
+    def __init__(self):
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
-        if any([self.items_per_page, self.archive_template]):
-            self.has_archive is True
-            self.archive_template = self.engine.get_template(self.archive_template)
+        if hasattr(self, "archive_template"):
+            self.has_archive = True
+            self.archive_template
 
             if hasattr(self, "subcollections") and not getattr(
                 self, "subcollections_template", None
             ):
                 self.subcollection_template = self.archive_template
-
-        self.routes = [Path(route) for route in self.routes]
 
     @property
     def collection_vars(self):
@@ -119,30 +122,8 @@ class Collection:
         return {key.upper(): val for key, val in vars(self).items()}
 
     @property
-    def pages(self):
-        if Path(self.content_path).is_dir():
-            pages = self._pages(self.content_type, routes=self.routes)
-
-            return pages
-        else:
-            raise ValueError("invalid Path: %s}" % Path)
-
-    def _pages(self, content_type: Page, **kwargs) -> list[Page]:
-        page_groups = map(
-            lambda pattern: Path(self.content_path).glob(pattern), self.includes
-        )
-        return [
-            content_type(
-                engine=self.engine,
-                content_path=page_path,
-                template=self.template,
-                subcollections=getattr(self, "subcollections", []),
-                subcollection_template=getattr(self, "subcollection_template", []),
-                **self.collection_vars,
-                **kwargs,
-            )
-            for page_path in itertools.chain.from_iterable(page_groups)
-        ]
+    def pages(self) -> list[Type[Page]]:
+        return self.Parser(self).parse(self)
 
     @property
     def sorted_pages(self):

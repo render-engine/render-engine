@@ -8,7 +8,7 @@ from markdown2 import markdown
 from slugify import slugify
 
 from .parsers.base_parsers import BasePageParser
-from .parsers.markdown import MarkdownParser
+from .parsers.markdown import MarkdownPageParser
 
 _route = Path | str
 
@@ -53,18 +53,17 @@ class Page:
     reference: str = "slug"
     routes: list[_route] = ["./"]
     template: str | None
-    Parser: Type[BasePageParser] = MarkdownParser
+    Parser: Type[BasePageParser] = MarkdownPageParser
 
     def __init__(self) -> None:
         """Set Attributes that may be passed in from collections"""
-        self.parser = self.Parser(self)  # This only pulls the configuration values
         if hasattr(self, "content_path"):
-            valid_attrs, self.content = self.parser.attrs_from_content_path(
+            valid_attrs, self.content = self.Parser.attrs_from_content_path(
                 content_path=self.content_path
             )
 
         elif hasattr(self, "content"):
-            valid_attrs, self.content = self.parser.attrs_from_content(
+            valid_attrs, self.content = self.Parser.attrs_from_content(
                 content=self.content
             )
 
@@ -119,7 +118,7 @@ class Page:
     def markup(self) -> str:
         """Returns the markup of the page"""
         if hasattr(self, "content"):
-            return self.parser.parse(self.content)
+            return self.Parser(self).parse(self.content)
 
     def _render_content(
         self, engine: jinja2.Environment | None = None, **kwargs
@@ -156,3 +155,13 @@ class Page:
 
         else:
             raise ValueError(f"{self=} must have either content or template")
+
+    @classmethod
+    def from_collection_parser(
+        cls,
+        **kwargs,
+    ) -> Generator["Page", None, None]:
+        """Creates a page from a collection."""
+        page = cls()
+        page.routes = collection.routes
+        page.content_path
