@@ -20,11 +20,6 @@ class MarkdownParser(BasePageParser):
         """Returns the configuration values that are used by the parser"""
         return ["markdown_extras"]
 
-    def markup_from_content_path(self, content_path):
-        """Parses the content from the content path"""
-        content = pathlib.Path(content_path).read_text()
-        self.parse(content)
-
     @staticmethod
     def attrs_from_content_path(content_path) -> tuple[dict[str, Any], str | None]:
         """fetches the content"""

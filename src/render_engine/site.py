@@ -66,7 +66,7 @@ class Site:
         if feed := (getattr(_collection, "_feed", None)):
             self.add_to_route_list(feed)
 
-    def page(self, page: "Page") -> None:
+    def page(self, page: type[Page]) -> None:
         """Create a Page object and add it to self.routes"""
         logging.info("Adding Page: %s", page)
         _page = page()
@@ -85,7 +85,7 @@ class Site:
             / pathlib.Path(page.url)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
-        return path.write_text(page._render_content())
+        return path.write_text(page._render_content(engine=self.engine))
 
     def build_subcollections(self, page) -> None:
         if subcollections := getattr(page, "subcollections", []):
@@ -120,12 +120,11 @@ class Site:
 
         # Parse SubCollection
         for tag, subcollection in self.subcollections.items():
-            page = Page(
-                self.engine,
-                title=tag,
-                template=subcollection["template"],
-                pages=subcollection["pages"],
-            )
+            page = Page()
+            page.title = (tag,)
+            page.template = (subcollection["template"],)
+            page.pages = (subcollection["pages"],)
+
             self.render_output(
                 Path(page.routes[0]).joinpath(subcollection["route"]), page
             )

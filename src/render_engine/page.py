@@ -13,11 +13,6 @@ from .parsers.markdown import MarkdownParser
 _route = Path | str
 
 
-def render_content_with_template(engine, template, content, **kwargs):
-    """returns the jinja template with the content"""
-    return
-
-
 class Page:
     """The base object used to make web pages.
     Pages can be rendered directly from a template or generated from a file.
@@ -62,8 +57,6 @@ class Page:
 
     def __init__(self) -> None:
         """Set Attributes that may be passed in from collections"""
-        self._parser = self.Parser(self)
-
         if hasattr(self, "content_path"):
             valid_attrs, self.content = self.Parser.attrs_from_content_path(
                 content_path=self.content_path
@@ -114,49 +107,43 @@ class Page:
     def __repr__(self) -> str:
         return f"<Page {self.title}>"
 
+    @property
+    def markup(self):
+        """Returns the markup of the page"""
+        return self.Parser(self).parse(self.content)
+
     def _render_content(
         self, engine: jinja2.Environment | None = None, **kwargs
     ) -> str:
         """Renders the content of the page."""
-        if self.engine:
-            engine = self.engine
+        engine = getattr(self, "engine", engine)
 
         # Parsing with a tmeplate
-        if self.template:
+        if self.template and engine:
             logging.debug(f"Using %s for %s", self.template, self)
 
-            if self.content:
-                return self.engine.get_template(self.template).render(
-                    content=self._parser.parse(self.content),
-                    **{**self.__dict__, **kwargs},
+            if hasattr(self, "content"):
+                """Content should be converted to before being passed to the template"""
+                return engine.get_template(self.template).render(
+                    **{
+                        **self.__dict__,
+                        **{"content": self.markup},
+                        **kwargs,
+                    },
                 )
 
             else:
-                return self.engine.get_template(self.template).render(
+                return engine.get_template(self.template).render(
                     **{**self.__dict__, **kwargs},
                 )
 
         # Parsing without a template
         elif self.content:
             logging.debug(
-                "content found. rendering with content: %s, %s, %s",
+                "content found. rendering with content: %s",
                 self.content,
-                self.__dict__,
-                kwargs,
             )
-            return self._parser.parse(self.content)
+            return self.markup
 
         else:
             raise ValueError(f"{self=} must have either content or template")
-
-    def __iter__(self):
-        """Good for getting the route objects"""
-        yield from self.render()
-
-    def render(
-        self, *, engine=None, **kwargs
-    ) -> Generator[dict[_route, "Page"], None, None]:
-        """Build the route based on content instructions"""
-
-        for route in self.routes:
-            yield {str("Path(_route) / self.url"): self}
