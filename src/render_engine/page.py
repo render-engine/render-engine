@@ -44,7 +44,7 @@ class Page:
 
     !!! note
 
-        This overrides the `markdown` attribute.
+        This overrides the `content` attribute.
     """
 
     extension: str = ".html"
@@ -53,22 +53,30 @@ class Page:
     reference: str = "slug"
     routes: list[_route] = ["./"]
     template: str | None
-    Parser: "BasePageParser" = MarkdownParser
+    Parser: Type[BasePageParser] = MarkdownParser
 
     def __init__(self) -> None:
         """Set Attributes that may be passed in from collections"""
+        self.parser = self.Parser(self)  # This only pulls the configuration values
         if hasattr(self, "content_path"):
-            valid_attrs, self.content = self.Parser.attrs_from_content_path(
+            valid_attrs, self.content = self.parser.attrs_from_content_path(
                 content_path=self.content_path
             )
-            logging.debug(f"content_path found! %s %s", valid_attrs, self.content)
 
-            for name, value in valid_attrs.items():
-                # comma delimit attributes using list_attrs.
-                if name.lower() in getattr(self, "list_attrs", []):
-                    value = [attrval.lower() for attrval in value.split(", ")]
+        elif hasattr(self, "content"):
+            valid_attrs, self.content = self.parser.attrs_from_content(
+                content=self.content
+            )
 
-                setattr(self, name.lower(), value)
+        else:
+            valid_attrs = {}
+
+        for name, value in valid_attrs.items():
+            # comma delimit attributes using list_attrs.
+            if name.lower() in getattr(self, "list_attrs", []):
+                value = [attrval.lower() for attrval in value.split(", ")]
+
+            setattr(self, name.lower(), value)
 
         if not hasattr(self, "title"):
             # If no title is provided, use the class name.
@@ -84,7 +92,7 @@ class Page:
         self.slug = slugify(self.slug)
 
     @property
-    def url(self) -> Path:
+    def url(self) -> str:
         """The first route and the slug of the page."""
         return f"{self.slug}{self._extension}"
 
@@ -108,9 +116,10 @@ class Page:
         return f"<Page {self.title}>"
 
     @property
-    def markup(self):
+    def markup(self) -> str:
         """Returns the markup of the page"""
-        return self.Parser(self).parse(self.content)
+        if hasattr(self, "content"):
+            return self.parser.parse(self.content)
 
     def _render_content(
         self, engine: jinja2.Environment | None = None, **kwargs
@@ -138,7 +147,7 @@ class Page:
                 )
 
         # Parsing without a template
-        elif self.content:
+        elif hasattr(self, "content"):
             logging.debug(
                 "content found. rendering with content: %s",
                 self.content,

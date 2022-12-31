@@ -12,9 +12,15 @@ class BasePageParser(ABC):
         """The configuration values that the parser needs"""
         pass
 
-    @staticmethod
     @abstractmethod
     def attrs_from_content_path(self, content_path):
+        """
+        Fething content from a content_path and set attributes.
+        """
+        pass
+
+    @abstractmethod
+    def attrs_from_content(self, content_path):
         """
         Fething content from a content_path and set attributes.
         """

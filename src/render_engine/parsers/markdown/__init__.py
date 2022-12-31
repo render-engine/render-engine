@@ -7,7 +7,7 @@ from markdown2 import markdown
 from ..base_parsers import BasePageParser
 
 
-def _attrs_from_content(content) -> tuple[dict[str, Any], str | None]:
+def _attrs_from_content(content):
     """fetches the content"""
     return frontmatter.parse(content)
 
@@ -20,17 +20,15 @@ class MarkdownParser(BasePageParser):
         """Returns the configuration values that are used by the parser"""
         return ["markdown_extras"]
 
-    @staticmethod
-    def attrs_from_content_path(content_path) -> tuple[dict[str, Any], str | None]:
+    def attrs_from_content_path(self, content_path):
         """fetches the content"""
         content = pathlib.Path(content_path).read_text()
         return _attrs_from_content(content)
 
-    @staticmethod
-    def attrs_from_content(content) -> tuple[dict[str, Any], str | None]:
+    def attrs_from_content(self, content):
         """fetches the content"""
         return _attrs_from_content(content)
 
-    def parse(self, content):
+    def parse(self, content) -> str:
         """Parses the content with the parser"""
         return markdown(content, extras=self.markdown_extras or [])
