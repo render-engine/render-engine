@@ -4,7 +4,7 @@ from typing import Any
 import frontmatter
 from markdown2 import markdown
 
-from .base_parsers import BasePageParser
+from ..base_parsers import BasePageParser
 
 
 def _attrs_from_content(content) -> tuple[dict[str, Any], str | None]:
@@ -17,6 +17,7 @@ class MarkdownParser(BasePageParser):
 
     @property
     def configuration_values(self) -> list[str]:
+        """Returns the configuration values that are used by the parser"""
         return ["markdown_extras"]
 
     def markup_from_content_path(self, content_path):

@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Generator, Optional, Type
+from typing import Generator, Type
 
 import frontmatter
 import jinja2
@@ -33,14 +33,6 @@ class Page:
 
     """
 
-    markdown_extras: list[str] = ["fenced-code-blocks", "footnotes"]
-    """
-    Plugins that will be used with the markdown parser (default parser is [Markdown2](https://github.com/trentm/python-markdown2)).
-    You can see a list of all the plugins [here](https://github.com/trentm/python-markdown2/wiki/Extras).
-
-    The default plugins fenced-code-blocks and footnotes provide a way to add code blocks and footnotes to your markdown.
-    """
-
     # TODO: REMOVE THIS
     # markdown: str | None = None
     # """This is base markdown that will be used to render the page.
@@ -66,7 +58,7 @@ class Page:
     reference: str = "slug"
     routes: list[_route] = ["./"]
     template: str | None
-    Parser: Type[BasePageParser] = MarkdownParser
+    Parser: "BasePageParser" = MarkdownParser
 
     def __init__(self) -> None:
         """Set Attributes that may be passed in from collections"""
