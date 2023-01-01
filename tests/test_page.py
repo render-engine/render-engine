@@ -36,26 +36,31 @@ def test_page_custom_attrs_from_file(page_from_file):
 
 def test_page_from_template(tmp_path):
     """Tests that page attributes are set from a template"""
-    page = Page()
-    page.title = "Test Page"
-    page.template = "test.html"
+
+    class CustomPage(Page):
+        template = "test.html"
+        title = "Test Page"
+        template = "test.html"
 
     environment = jinja2.Environment(
         loader=jinja2.DictLoader({"test.html": "{{ title }}"})
     )
 
+    page = CustomPage()
     assert page._render_content(engine=environment) == "Test Page"
 
 
 def test_page_from_template_with_content(tmp_path):
     """Tests that page attributes are set from a template"""
-    page = Page()
-    page.title = "Test Page"
-    page.template = "test.html"
-    page.content = "This is a test page"
+
+    class CustomPage(Page):
+        title = "Test Page"
+        template = "test.html"
+        content = "This is a test page"
 
     environment = jinja2.Environment(
         loader=jinja2.DictLoader({"test.html": "{{ content }}"}),
     )
 
-    assert page._render_content(engine=environment) == "<p>This is a test page</p>\n"
+    page = CustomPage()
+    assert page._render_content(engine=environment) == "This is a test page"

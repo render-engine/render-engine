@@ -1,75 +1,41 @@
-from abc import ABC, abstractmethod
-from typing import Type
+import pathlib
+from typing import Any, Type
+
+import frontmatter
 
 
-class BasePageParser(ABC):
-    def __init__(self, page: "Page", **kwargs):
-        for value in self.configuration_values:
-            setattr(self, value, kwargs.get(value, None))
+def check_for_attrs(page, attrs):
+    missing_attrs = []
+    for attr in attrs:
+        if not getattr(page, attr, None):
+            missing_attrs.append(attr)
+    return missing_attrs
 
-    @property
-    @abstractmethod
-    def configuration_values(self) -> list[str]:
-        """The configuration values that the parser needs"""
-        pass
+
+class BasePageParser:
+    configuration_values: list[str]
+
+    def raise_for_errors(self, page):
+        if missing_attrs := check_for_attrs(
+            page, getattr(self, "configuration_values", [])
+        ):
+            raise ValueError(
+                f"Missing configuration values for {self.__class__.__name__}: {missing_attrs}"
+            )
 
     @staticmethod
-    @abstractmethod
-    def attrs_from_content_path(self, content_path):
+    def parse_content_path(content_path):
         """
         Fething content from a content_path and set attributes.
         """
-        pass
+        return pathlib.Path(content_path).read_text()
 
     @staticmethod
-    @abstractmethod
-    def attrs_from_content(self, content_path):
-        """
-        Fething content from a content_path and set attributes.
-        """
-        pass
+    def parse_content(content: str) -> tuple[dict[str, Any], str]:
+        """Fething content and atttributes from a content_path"""
+        return frontmatter.parse(content)
 
-    @abstractmethod
-    def parse(self, content):
+    @staticmethod
+    def markup(page: Type["Page"], content: str | None):
         """Convert the raw_content into HTML or the finalized format"""
-        pass
-
-
-class BaseCollectionParser(ABC):
-    PageParser: Type[BasePageParser]
-
-    def __init__(self, collection: "Collection"):
-        content_type = kwargs.get("content_type", None)
-        for value in self.configuration_values:
-            if attr := getattr(collection, value, None):
-                setattr(self, attr, collection.value)
-
-        for item, value in collection.collection_vars.items():
-            setattr(self, item, value)
-
-    @property
-    @abstractmethod
-    def configuration_values(self) -> list[str]:
-        """The configuration values that the parser needs"""
-        return ["routes", "collection_vars"]
-
-    @staticmethod
-    @abstractmethod
-    def attrs_from_iter_path(content_path):
-        """
-        Fething content from a content_path and set attributes.
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def attrs_from_content(content_path):
-        """
-        Fething content from a content_path and set attributes.
-        """
-        pass
-
-    @abstractmethod
-    def parse(self, content: str, content_path: str):
-        """Generate Pages from the iter_path or content"""
-        pass
+        return content

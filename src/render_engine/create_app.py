@@ -6,7 +6,7 @@ import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from render_engine import Collection, Page, Site
-from render_engine.loaders import render_engine_templates_loader
+from render_engine.engine import render_engine_templates_loader
 
 environment = jinja2.Environment(
     loader=render_engine_templates_loader,

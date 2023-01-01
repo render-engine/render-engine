@@ -65,3 +65,18 @@ def test_site_collection_in_route_list():
     site.collection(collection)
 
     assert site.route_list["custompage"].test_value == "test"
+
+
+def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
+    site = Site()
+
+    # assert that the route list is empty
+    assert len(site.route_list) == 0
+
+    class CustomPage(Page):
+        test_value = "test"
+        routes = ["customroute", "customroute2"]
+
+    site.page(CustomPage)
+
+    assert len(site.route_list) == 1

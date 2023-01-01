@@ -8,7 +8,6 @@ from markdown2 import markdown
 from slugify import slugify
 
 from .parsers.base_parsers import BasePageParser
-from .parsers.markdown import MarkdownPageParser
 
 _route = Path | str
 
@@ -38,7 +37,7 @@ class Page:
     # """
 
     content: str | None
-    content_path: _route | None
+    content_path: str | None
     """
     The path to the file that will be used to generate the page.
 
@@ -53,42 +52,58 @@ class Page:
     reference: str = "slug"
     routes: list[_route] = ["./"]
     template: str | None
-    Parser: Type[BasePageParser] = MarkdownPageParser
+    invalid_attrs: list[str] = ["slug"]
+    Parser: Type[BasePageParser] = BasePageParser
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        content: str | None = None,
+        content_path: str | None = None,
+    ) -> None:
         """Set Attributes that may be passed in from collections"""
-        if hasattr(self, "content_path"):
-            valid_attrs, self.content = self.Parser.attrs_from_content_path(
-                content_path=self.content_path
-            )
 
-        elif hasattr(self, "content"):
-            valid_attrs, self.content = self.Parser.attrs_from_content(
-                content=self.content
-            )
+        if content_path := (content_path or getattr(self, "content_path", None)):
+            content = self.Parser.parse_content_path(content_path)
+
+        if content := (content or getattr(self, "content", None)):
+            attrs, self.content = self.Parser.parse_content(content)
 
         else:
-            valid_attrs = {}
+            attrs = {}
 
-        for name, value in valid_attrs.items():
+        invalid_attrs = getattr(self, "invalid_attrs") or []
+
+        for name, value in attrs.items():
             # comma delimit attributes using list_attrs.
-            if name.lower() in getattr(self, "list_attrs", []):
+            name = name.lower()
+            if name in invalid_attrs:
+                name = f"_{name}"
+
+            if name in getattr(self, "list_attrs", []):
                 value = [attrval.lower() for attrval in value.split(", ")]
 
-            setattr(self, name.lower(), value)
+            setattr(self, name, value)
 
-        if not hasattr(self, "title"):
-            # If no title is provided, use the class name.
-            self.title = self.__class__.__name__
-            logging.info(f"No Title. Assigning {self.title=}")
+    @property
+    def title(self) -> str:
+        # If no title is provided, use the class name.
+        if not hasattr(self, "_title"):
+            return self.__class__.__name__
+        return self._title
 
-        if not hasattr(self, "slug"):
-            # If no slug is provided, use the title.
-            logging.info(f"No slug. Will slugify {self.title=}")
-            self.slug = self.title  # Will Slugify in Next Step
+    @title.setter
+    def title(self, value: str) -> None:
+        self._title = value
 
-        # Slugify the slug
-        self.slug = slugify(self.slug)
+    @property
+    def slug(self) -> str:
+        if not hasattr(self, "_slug"):
+            self._slug = self.title
+        return slugify(self._slug)  # Will Slugify in Next Step
+
+    @slug.setter
+    def slug(self, value: str) -> None:
+        self._slug = slugify(value)
 
     @property
     def url(self) -> str:
@@ -104,9 +119,14 @@ class Page:
             return self.extension
 
     @property
-    def url_for(self):
-        """Returns the url for the page"""
-        return self.slug
+    def to_dict(self):
+        """Returns a dict of the page's attributes"""
+        return {
+            **vars(self),
+            **getattr(self, "template_vars", {}),
+            "title": self.title,
+            "slug": self.slug,
+        }
 
     def __str__(self):
         return self.slug
@@ -118,7 +138,7 @@ class Page:
     def markup(self) -> str:
         """Returns the markup of the page"""
         if hasattr(self, "content"):
-            return self.Parser(self).parse(self.content)
+            return self.Parser.markup(self, self.content)
 
     def _render_content(
         self, engine: jinja2.Environment | None = None, **kwargs
@@ -126,15 +146,13 @@ class Page:
         """Renders the content of the page."""
         engine = getattr(self, "engine", engine)
 
-        # Parsing with a tmeplate
+        # Parsing with a template
         if self.template and engine:
-            logging.debug(f"Using %s for %s", self.template, self)
-
             if hasattr(self, "content"):
                 """Content should be converted to before being passed to the template"""
                 return engine.get_template(self.template).render(
                     **{
-                        **self.__dict__,
+                        **self.to_dict,
                         **{"content": self.markup},
                         **kwargs,
                     },
@@ -142,7 +160,7 @@ class Page:
 
             else:
                 return engine.get_template(self.template).render(
-                    **{**self.__dict__, **kwargs},
+                    **{**self.to_dict, **kwargs},
                 )
 
         # Parsing without a template
@@ -155,13 +173,3 @@ class Page:
 
         else:
             raise ValueError(f"{self=} must have either content or template")
-
-    @classmethod
-    def from_collection_parser(
-        cls,
-        **kwargs,
-    ) -> Generator["Page", None, None]:
-        """Creates a page from a collection."""
-        page = cls()
-        page.routes = collection.routes
-        page.content_path

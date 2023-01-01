@@ -2,11 +2,13 @@ import logging
 import pathlib
 import shutil
 from collections import defaultdict
+from functools import partial
 from typing import Callable
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import ChoiceLoader, Environment, FileSystemLoader
 
 from .collection import Collection
+from .engine import engine, url_for
 from .page import Page
 
 
@@ -39,18 +41,19 @@ class Site:
     ) -> None:
         self.route_list: defaultdict = defaultdict(list)
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
+        self.engine.filters["url_for"] = partial(url_for, site=self)
 
     @property
     def engine(self) -> Environment:
-        env = Environment(loader=FileSystemLoader("templates"))
-        env.globals = self.site_vars
+        env = engine
+        env.globals.update(self.site_vars)
         return env
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
-        self.route_list[page.url_for] = page
+        self.route_list[page.slug] = page
 
-    def collection(self, collection: Collection):
+    def collection(self, collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
         _collection = collection()
         logging.info("Adding Collection: %s", _collection.__class__.__name__)
@@ -66,14 +69,19 @@ class Site:
         if feed := (getattr(_collection, "_feed", None)):
             self.add_to_route_list(feed)
 
-    def page(self, page: type[Page]) -> None:
+        return _collection
+
+    def page(self, page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        logging.info("Adding Page: %s", page)
         _page = page()
         self.add_to_route_list(_page)
+        return _page
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
+        shutil.copytree(
+            directory, pathlib.Path(self.output_path) / directory, dirs_exist_ok=True
+        )
 
     def render_output(self, route, page):
         """writes the page object to disk"""
@@ -109,7 +117,7 @@ class Site:
         """Render all pages and collections"""
 
         if clean:
-            shutil.rmtree(self.path, ignore_errors=True)
+            shutil.rmtree(self.output_path, ignore_errors=True)
 
         # Parse Route List
         for page in self.route_list.values():
@@ -121,13 +129,13 @@ class Site:
         # Parse SubCollection
         for tag, subcollection in self.subcollections.items():
             page = Page()
-            page.title = (tag,)
-            page.template = (subcollection["template"],)
-            page.pages = (subcollection["pages"],)
+            page.title = tag
+            page.template = subcollection["template"]
+            page.pages = subcollection["pages"]
 
             self.render_output(
-                Path(page.routes[0]).joinpath(subcollection["route"]), page
+                pathlib.Path(page.routes[0]).joinpath(subcollection["route"]), page
             )
 
-        if path := (pathlib.Path(self.static_path)).exists():
-            self.render_static(path)
+        if pathlib.Path(self.static_path).is_dir():
+            self.render_static(pathlib.Path(self.static_path).name)
