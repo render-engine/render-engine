@@ -32,7 +32,7 @@ class Site:
     # TODO: #74 Should this be called from a config file for easier testing?
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
-        "SITE_URL": "http://localhost:8000/",  # TODO: #73 Make this http://localhost:8000
+        "SITE_URL": "http://localhost:8000/",
     }
     plugins: dict[str, Page] | None = None
 
