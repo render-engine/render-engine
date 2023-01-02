@@ -34,6 +34,8 @@ def url_for(site: Type["Site"], value: str):
 engine = Environment(
     loader=render_engine_templates_loader,
     autoescape=select_autoescape(["xml"]),
+    lstrip_blocks=True,
+    trim_blocks=True,
 )
 
 engine.filters["to_pub_date"] = to_pub_date

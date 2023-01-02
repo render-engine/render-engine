@@ -19,4 +19,5 @@ class MarkdownPageParser(BasePageParser):
     @staticmethod
     def markup(page, content) -> str:
         """Parses the content with the parser"""
-        return markdown(content, extras=(page, "markdown_extras", None))
+        markup = markdown(content, extras=(page, "markdown_extras", None))
+        return markup

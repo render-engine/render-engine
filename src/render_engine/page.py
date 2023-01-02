@@ -59,8 +59,12 @@ class Page:
         self,
         content: str | None = None,
         content_path: str | None = None,
+        Parser: Type[BasePageParser] | None = None,
     ) -> None:
         """Set Attributes that may be passed in from collections"""
+
+        if Parser:
+            self.Parser = Parser
 
         if content_path := (content_path or getattr(self, "content_path", None)):
             content = self.Parser.parse_content_path(content_path)
@@ -159,16 +163,14 @@ class Page:
                 )
 
             else:
-                return engine.get_template(self.template).render(
+                template = engine.get_template(self.template)
+                content = template.render(
                     **{**self.to_dict, **kwargs},
                 )
+                return content
 
         # Parsing without a template
         elif hasattr(self, "content"):
-            logging.debug(
-                "content found. rendering with content: %s",
-                self.content,
-            )
             return self.markup
 
         else:

@@ -66,7 +66,7 @@ class Site:
             logging.debug("Adding Archive: %s", archive.__class__.__name__)
             self.add_to_route_list(archive)
 
-        if feed := (getattr(_collection, "_feed", None)):
+        if feed := _collection._feed:
             self.add_to_route_list(feed)
 
         return _collection

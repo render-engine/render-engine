@@ -8,6 +8,8 @@ import pendulum
 from .collection import Collection
 from .feeds import RSSFeed
 from .page import Page
+from .parsers import BasePageParser
+from .parsers.markdown import MarkdownPageParser
 
 
 class BlogPost(Page):
@@ -19,6 +21,7 @@ class BlogPost(Page):
         self,
         content: str | None = None,
         content_path: str | None = None,
+        Parser: typing.Type["BasePageParer"] = MarkdownPageParser,
     ):
         """
         checks published options and accepts the first that is listed
@@ -29,7 +32,7 @@ class BlogPost(Page):
             date_friendly : str
         """
 
-        super().__init__(content=content, content_path=content_path)
+        super().__init__(content=content, content_path=content_path, Parser=Parser)
 
         # protect date_published, modified_date, or date_friendly in the frontmatter
 
@@ -79,14 +82,6 @@ class BlogPost(Page):
 
         return self._date_published
 
-    @classmethod
-    def from_collection_parser(
-        cls,
-        **kwargs,
-    ) -> typing.Type["Page"]:
-        """Creates a page from a collection."""
-        return cls(**kwargs)
-
 
 class Blog(Collection):
     """
@@ -101,3 +96,4 @@ class Blog(Collection):
     sort_reverse: bool = True
     sort_by = "date_published"
     has_archive = True
+    feed = RSSFeed

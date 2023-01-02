@@ -6,6 +6,7 @@ from typing import Callable, Type
 import jinja2
 from more_itertools import chunked, flatten
 
+from .feeds import RSSFeed
 from .page import Page, _route
 from .parsers.markdown import MarkdownPageParser
 
@@ -96,6 +97,8 @@ class Collection:
             pass
     """
 
+    feed: Type[RSSFeed] | None
+    feed_title: str | None
     content_path: pathlib.Path
     content_type: Type[Page] = Page
     archive_template: str | None
@@ -140,8 +143,7 @@ class Collection:
         return {f"COLLECTION_{key.upper()}": val for key, val in vars(self).items()}
 
     def gen_page(self, content):
-        page = self.content_type(content=content)
-        page.Parser = self.PageParser
+        page = self.content_type(content=content, Parser=self.PageParser)
         page.routes = self.routes
         page.subcollections = getattr(self, "subcollections", [])
         page.subcollection_template = getattr(self, "subcollection_template", [])
@@ -187,8 +189,14 @@ class Collection:
             )
         return ()
 
-    # def render_feed(self, feed_type: RSSFeed, **kwargs) -> RSSFeed:
-    #     return feed_type(pages=self.pages, **kwargs)
+    @property
+    def _feed(self):
+        if hasattr(self, "feed"):
+            return self.feed(
+                pages=self.pages,
+                title=getattr(self, "feed_title", f"{self.title}"),
+                slug=f"{self.title}_feed",
+            )
 
     def __repr__(self):
         return f"{self}: {__class__.__name__}"
