@@ -96,18 +96,15 @@ class Page:
         return self._title
 
     @title.setter
-    def title(self, value: str) -> None:
+    def title(self, value: str) -> str:
         self._title = value
+        return self._title
 
     @property
     def slug(self) -> str:
-        if not hasattr(self, "_slug"):
-            self._slug = self.title
-        return slugify(self._slug)  # Will Slugify in Next Step
-
-    @slug.setter
-    def slug(self, value: str) -> None:
-        self._slug = slugify(value)
+        if slug := getattr(self, "_slug", None):
+            return slugify(slug)
+        return slugify(self.title)
 
     @property
     def url(self) -> str:

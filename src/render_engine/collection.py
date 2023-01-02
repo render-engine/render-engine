@@ -97,8 +97,8 @@ class Collection:
             pass
     """
 
-    feed: Type[RSSFeed] | None
-    feed_title: str | None
+    feed: Type[RSSFeed]
+    feed_title: str
     content_path: pathlib.Path
     content_type: Type[Page] = Page
     archive_template: str | None
@@ -157,15 +157,17 @@ class Collection:
     @property
     def pages(self) -> list[Type[Page]]:
         """Returns a list of pages for the collection."""
-        pages = flatten(
-            [
-                pathlib.Path(self.content_path).glob(extension)
-                for extension in self.includes
-            ]
-        )
+        if getattr(self, "content_path", None):
+            pages = flatten(
+                [
+                    pathlib.Path(self.content_path).glob(extension)
+                    for extension in self.includes
+                ]
+            )
 
-        for page_path in pages:
-            yield self.gen_page(page_path.read_text())
+            for page_path in pages:
+                yield self.gen_page(page_path.read_text())
+        return ()
 
     @property
     def sorted_pages(self):
@@ -195,7 +197,7 @@ class Collection:
             return self.feed(
                 pages=self.pages,
                 title=getattr(self, "feed_title", f"{self.title}"),
-                slug=f"{self.title}_feed",
+                slug=f"{self.title}",
             )
 
     def __repr__(self):

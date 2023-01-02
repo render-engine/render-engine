@@ -22,7 +22,7 @@ class RSSFeed(Page):
     template = "rss2.0.xml"
     extension: str = "rss"
 
-    def __init__(self, pages, title: str | None = None, slug: str | None = None):
+    def __init__(self, pages=[], title: str | None = None, slug: str | None = None):
         super().__init__()
         self.pages = list(pages)
         self._title = title
