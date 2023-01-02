@@ -106,6 +106,10 @@ class Page:
             return slugify(slug)
         return slugify(self.title)
 
+    @slug.setter
+    def slug(self, value: str) -> str:
+        self._slug = slugify(value)
+
     @property
     def url(self) -> str:
         """The first route and the slug of the page."""
