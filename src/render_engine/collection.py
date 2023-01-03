@@ -1,7 +1,7 @@
 import itertools
 import pathlib
 from collections import defaultdict
-from typing import Callable, Type
+from typing import Any, Callable, Type
 
 import jinja2
 from more_itertools import chunked, flatten
@@ -109,6 +109,7 @@ class Collection:
     subcollections: list[str | list[str]] | None
     routes: list[str] = ["./"]
     PageParser = MarkdownPageParser
+    parser_extras: dict[str, Any]
     content_path_filter: Callable[[pathlib.Path], bool] | None
     sort_reverse: bool = False
     has_archive: bool = False
@@ -148,6 +149,9 @@ class Collection:
         page.subcollections = getattr(self, "subcollections", [])
         page.subcollection_template = getattr(self, "subcollection_template", [])
         page.template = getattr(self, "template", None)
+
+        for extra, extra_val in getattr(self, "parser_extras", {}).items():
+            setattr(page, extra, extra_val)
 
         for key, val in self.collection_vars.items():
             setattr(page, key, val)
