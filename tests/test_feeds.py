@@ -2,6 +2,7 @@ import pytest
 
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
+from render_engine.parsers.markdown import MarkdownPageParser
 
 
 def test_can_manually_set_slug():
@@ -45,3 +46,14 @@ def test_rss_feed_inherites_from_collection():
 
     assert collection._feed.title == "TestCollection"
     assert collection._feed.url == "testcollection.rss"
+
+
+def test_rss_feed_pages_use_page_parser():
+    """Test that the feed pages use the page parser"""
+
+    class TestCollection(Collection):
+        feed = RSSFeed
+
+    collection = TestCollection()
+
+    assert collection.PageParser == collection._feed.Parser

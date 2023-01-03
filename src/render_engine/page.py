@@ -111,7 +111,20 @@ class Page:
         self._slug = slugify(value)
 
     @property
-    def url(self) -> str:
+    def url_for(self) -> str:
+        """Returns the URL for the page"""
+        if (route := self.routes[0]) == "./":
+            return f"/{self.slug}{self._extension}"
+        else:
+            return f"/{route}/{self.slug}{self._extension}"
+
+    @property
+    def url(self):
+        """Returns the URL for the page"""
+        return f"{self.slug}{self._extension}"
+
+    @property
+    def path(self) -> str:
         """The first route and the slug of the page."""
         return f"{self.slug}{self._extension}"
 

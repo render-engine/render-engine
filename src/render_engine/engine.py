@@ -24,9 +24,9 @@ def to_pub_date(value: datetime):
     return value.to_rfc2822_string()
 
 
-def url_for(site: Type["Site"], value: str):
+def url_for(value: str, site):
     if value in site.route_list:
-        return site.route_list[value]
+        return site.route_list[value].url_for
     else:
         raise ValueError(f"{value} is not a valid route.")
 

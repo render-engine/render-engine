@@ -198,6 +198,8 @@ class Collection:
                 pages=self.pages,
                 title=getattr(self, "feed_title", f"{self.title}"),
                 slug=f"{self.title}",
+                Parser=self.PageParser,
+                collection_vars=self.collection_vars,
             )
 
     def __repr__(self):

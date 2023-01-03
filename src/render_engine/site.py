@@ -3,9 +3,9 @@ import pathlib
 import shutil
 from collections import defaultdict
 from functools import partial
-from typing import Callable
 
-from jinja2 import ChoiceLoader, Environment, FileSystemLoader
+from jinja2 import Environment
+from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine, url_for
@@ -116,26 +116,45 @@ class Site:
     def render(self, clean=False) -> None:
         """Render all pages and collections"""
 
-        if clean:
-            shutil.rmtree(self.output_path, ignore_errors=True)
+        with Progress() as progress:
+            if clean:
+                task = progress.add_task("[red]Cleaning Output Folder", total=1)
+                shutil.rmtree(self.output_path, ignore_errors=True)
 
-        # Parse Route List
-        for page in self.route_list.values():
-            self.build_subcollections(page)
-
-            for route in page.routes:
-                self.render_output(route, page)
-
-        # Parse SubCollection
-        for tag, subcollection in self.subcollections.items():
-            page = Page()
-            page.title = tag
-            page.template = subcollection["template"]
-            page.pages = subcollection["pages"]
-
-            self.render_output(
-                pathlib.Path(page.routes[0]).joinpath(subcollection["route"]), page
+            # Parse Route List
+            task_add_route = progress.add_task(
+                "[blue]Adding Routes", total=len(self.route_list)
             )
+            engine.globals["site"] = self
+            for page in self.route_list.values():
+                progress.update(
+                    task_add_route,
+                    description=f"[blue]Adding[grey]Route: [blue]{page.slug}",
+                )
+                self.build_subcollections(page)
+                progress.update(task_add_route, advance=1)
 
-        if pathlib.Path(self.static_path).is_dir():
-            self.render_static(pathlib.Path(self.static_path).name)
+                for route in page.routes:
+                    self.render_output(route, page)
+
+            # Parse SubCollection
+            task_render_subcollection = progress.add_task(
+                "[blue]Rendering SubCollections", total=len(self.subcollections)
+            )
+            for tag, subcollection in self.subcollections.items():
+                progress.update(
+                    task_render_subcollection,
+                    description=f"[blue]Rendering[grey]SubCollection: [blue]{tag}",
+                )
+                page = Page()
+                page.title = tag
+                page.template = subcollection["template"]
+                page.pages = subcollection["pages"]
+
+                self.render_output(
+                    pathlib.Path(page.routes[0]).joinpath(subcollection["route"]), page
+                )
+
+            if pathlib.Path(self.static_path).is_dir():
+                task = progress.add_task("copying static directory", total=1)
+                self.render_static(pathlib.Path(self.static_path).name)
