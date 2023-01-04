@@ -2,11 +2,13 @@ import logging
 import pathlib
 import shutil
 from collections import defaultdict
-from typing import Callable
+from functools import partial
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment
+from rich.progress import Progress
 
 from .collection import Collection
+from .engine import engine, url_for
 from .page import Page
 
 
@@ -30,7 +32,7 @@ class Site:
     # TODO: #74 Should this be called from a config file for easier testing?
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
-        "SITE_URL": "https://example.com",  # TODO: #73 Make this http://localhost:8000
+        "SITE_URL": "http://localhost:8000/",
     }
     plugins: dict[str, Page] | None = None
 
@@ -39,20 +41,21 @@ class Site:
     ) -> None:
         self.route_list: defaultdict = defaultdict(list)
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
+        self.engine.filters["url_for"] = partial(url_for, site=self)
 
     @property
     def engine(self) -> Environment:
-        env = Environment(loader=FileSystemLoader("templates"))
-        env.globals = self.site_vars
+        env = engine
+        env.globals.update(self.site_vars)
         return env
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
-        self.route_list[page.url_for] = page
+        self.route_list[page.slug] = page
 
-    def collection(self, collection: Collection):
+    def collection(self, collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
-        _collection = collection(engine=self.engine, **self.site_vars)
+        _collection = collection()
         logging.info("Adding Collection: %s", _collection.__class__.__name__)
 
         for page in _collection.pages:
@@ -63,17 +66,22 @@ class Site:
             logging.debug("Adding Archive: %s", archive.__class__.__name__)
             self.add_to_route_list(archive)
 
-        if feed := (getattr(_collection, "_feed", None)):
+        if feed := _collection._feed:
             self.add_to_route_list(feed)
 
-    def page(self, page: Page) -> None:
+        return _collection
+
+    def page(self, page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        logging.info("Adding Page: %s", page.__class__.__name__)
-        _page = page(self.engine, **self.site_vars)
+        _page = page()
         self.add_to_route_list(_page)
+        return _page
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
+        shutil.copytree(
+            directory, pathlib.Path(self.output_path) / directory, dirs_exist_ok=True
+        )
 
     def render_output(self, route, page):
         """writes the page object to disk"""
@@ -85,7 +93,7 @@ class Site:
             / pathlib.Path(page.url)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
-        return path.write_text(page._render_content())
+        return path.write_text(page._render_content(engine=self.engine))
 
     def build_subcollections(self, page) -> None:
         if subcollections := getattr(page, "subcollections", []):
@@ -108,27 +116,45 @@ class Site:
     def render(self, clean=False) -> None:
         """Render all pages and collections"""
 
-        if clean:
-            shutil.rmtree(self.path, ignore_errors=True)
+        with Progress() as progress:
+            if clean:
+                task = progress.add_task("[red]Cleaning Output Folder", total=1)
+                shutil.rmtree(self.output_path, ignore_errors=True)
 
-        # Parse Route List
-        for page in self.route_list.values():
-            self.build_subcollections(page)
-
-            for route in page.routes:
-                self.render_output(route, page)
-
-        # Parse SubCollection
-        for tag, subcollection in self.subcollections.items():
-            page = Page(
-                self.engine,
-                title=tag,
-                template=subcollection["template"],
-                pages=subcollection["pages"],
+            # Parse Route List
+            task_add_route = progress.add_task(
+                "[blue]Adding Routes", total=len(self.route_list)
             )
-            self.render_output(
-                Path(page.routes[0]).joinpath(subcollection["route"]), page
-            )
+            engine.globals["site"] = self
+            for page in self.route_list.values():
+                progress.update(
+                    task_add_route,
+                    description=f"[blue]Adding[grey]Route: [blue]{page.slug}",
+                )
+                self.build_subcollections(page)
+                progress.update(task_add_route, advance=1)
 
-        if path := (pathlib.Path(self.static_path)).exists():
-            self.render_static(path)
+                for route in page.routes:
+                    self.render_output(route, page)
+
+            # Parse SubCollection
+            task_render_subcollection = progress.add_task(
+                "[blue]Rendering SubCollections", total=len(self.subcollections)
+            )
+            for tag, subcollection in self.subcollections.items():
+                progress.update(
+                    task_render_subcollection,
+                    description=f"[blue]Rendering[grey]SubCollection: [blue]{tag}",
+                )
+                page = Page()
+                page.title = tag
+                page.template = subcollection["template"]
+                page.pages = subcollection["pages"]
+
+                self.render_output(
+                    pathlib.Path(page.routes[0]).joinpath(subcollection["route"]), page
+                )
+
+            if pathlib.Path(self.static_path).is_dir():
+                task = progress.add_task("copying static directory", total=1)
+                self.render_static(pathlib.Path(self.static_path).name)

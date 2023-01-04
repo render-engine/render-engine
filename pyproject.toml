@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2022.12.7a1"
+version = "2022.12.7a11"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -26,8 +26,16 @@ docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 [tool.setuptools]
 package-dir = {"" = "src"}
 
+[project.urls]
+homepage = "https://github.com/kjaymiller/render_engine/"
+repository = "https://github.com/kjaymiller/render_engine/"
+documentation = "https://render-engine.readthedocs.io/en/latest/"
+
 [tool.setuptools.package-data]
 "*" = ["*.html", "*.txt", "*.xml", "*.md"]
 
 [project.scripts]
 createapp = "render_engine.create_app:create_app"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

@@ -12,33 +12,26 @@ from datetime import datetime
 import jinja2
 from jinja2 import Template, select_autoescape
 
-from .loaders import render_engine_templates_loader
+from .engine import render_engine_templates_loader
 from .page import Page
-
-
-def to_pub_date(value: datetime):
-    """
-    Parse information from the given class object.
-    """
-    return value.to_rfc2822_string()
-
-
-rss_feed_engine = jinja2.Environment(
-    loader=render_engine_templates_loader,
-    autoescape=select_autoescape(enabled_extensions=("rss")),
-    trim_blocks=True,
-)
-rss_feed_engine.filters["to_pub_date"] = to_pub_date
+from .parsers.markdown import BasePageParser
 
 
 class RSSFeed(Page):
     """The RSS Feed Component of an Archive Object"""
 
-    engine = rss_feed_engine
     template = "rss2.0.xml"
     extension: str = "rss"
 
-    def __init__(self, title, pages, **kwargs):
-        self.title = getattr(self, "title", title)
-        self.pages = pages
-        super().__init__(**kwargs)
+    def __init__(
+        self,
+        pages=[],
+        title: str | None = None,
+        slug: str | None = None,
+        collection_vars: dict = {},
+        Parser: type[BasePageParser] = BasePageParser,
+    ):
+        super().__init__(Parser=Parser)
+        self.pages = list(pages)
+        self._title = title
+        self._slug = slug

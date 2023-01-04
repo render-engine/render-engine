@@ -3,7 +3,8 @@
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
 {% else %}
-  <description><![CDATA[{{item.content}}]]></description>
+  {}
+  <description><![CDATA[{{item.markup|safe }}]]></description>
 {% endif %}
 
 {% if item.enclosure %}
@@ -17,7 +18,7 @@
   {% endif %}
 {% endif %}
     <link>
-      {{SITE_URL}}/{{COLLECTION_OUTPUT_PATH}}/{{item.slug}}{{item.extension}}
+      {{SITE_URL}}{{item.url_for}}
     </link>
 {% if item.date_published %}<pubDate>{{item.date_published | to_pub_date }}</pubDate>{% endif %}
 {% if item.guid %}<guid isPermaLink="false">{{item.guid}}</guid>{% endif %}
