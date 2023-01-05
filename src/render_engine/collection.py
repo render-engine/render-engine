@@ -41,9 +41,9 @@ def gen_collection(
     pages: list[Type[Page]] | list[Archive],
     template: str,
     title: str,
-    items_per_page: int | None,
     routes: list[_route],
     collection_vars: dict,
+    items_per_page: int | None = None,
 ) -> list[Archive]:
     """Returns a list of Archive pages containing the pages of data for each archive."""
 
@@ -189,7 +189,7 @@ class Collection:
                 pages=self.sorted_pages,
                 template=self.archive_template,
                 title=self.title,
-                items_per_page=self.items_per_page,
+                items_per_page=getattr(self, "items_per_page", None),
                 routes=self.routes,
                 collection_vars=self.collection_vars,
             )

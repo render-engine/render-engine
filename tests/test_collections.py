@@ -58,3 +58,16 @@ def test_pages_generate_from_collection_content_path(tmp_path):
     for page in collection.pages:
         # Order is not guaranteed
         assert page.content in content
+
+
+def test_collection_archive_no_items_per_page():
+    """
+    Tests that archive generates a single page if items_per_page is not set
+    """
+
+    class BasicCollection(Collection):
+        pass
+        archive_template = None
+
+    collection = BasicCollection()
+    assert len(list(collection.archives)) == 1
