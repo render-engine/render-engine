@@ -170,7 +170,7 @@ class Collection:
             )
 
             for page_path in pages:
-                yield self.gen_page(page_path.read_text())
+                yield self.gen_page(content=page_path.read_text())
         return ()
 
     @property
