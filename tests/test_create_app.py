@@ -58,9 +58,12 @@ def test_create_app(tmp_path):
         site_url="url",
         site_description="description",
         site_author="author",
-        project_path=d,
+        project_folder=d,
+        force=True,
     )
 
-    print(d.joinpath("app.py").read_text())
-
-    assert False
+    assert d.joinpath("app.py").exists()
+    assert (
+        d.joinpath("app.py").read_text()
+        == pathlib.Path("tests/create_app_check_file.txt").read_text()
+    )

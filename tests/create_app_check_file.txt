@@ -1,0 +1,28 @@
+"""
+This is a simple app setup script created with `render-engine -m createapp`
+"""
+
+from render_engine import Site, Page, Collection
+
+app = Site()
+app.output_path = "output"
+app.static_path = "static"
+
+# Your site_vars will be used throughout your site
+app.site_vars.update(
+    SITE_TITLE="title",
+    SITE_URL="url",
+    SITE_DESCRIPTION="description",
+    SITE_AUTHOR="author",
+    )
+
+@app.page
+class Index(Page):
+    template = "index.html"
+
+@app.collection
+class Pages(Collection):
+    content_path = "pages" # path to content files
+
+if __name__ == "__main__":
+    app.render()

@@ -1,6 +1,7 @@
 import pathlib
 import typing
 
+import dtyper
 import jinja2
 import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -20,12 +21,12 @@ CREATE_APP_PY_TEMPLATE = engine.get_template("create_app_py.txt")
 
 def create_templates_folder(
     *templates,
-    project_path: pathlib.Path,
+    project_folder: pathlib.Path,
     templates_folder_name: pathlib.Path,
     exists_ok: bool,
 ) -> None:
     """Create a folder for templates and optionally create an index.html file"""
-    path = project_path.joinpath(templates_folder_name)
+    path = project_folder.joinpath(templates_folder_name)
     path.mkdir(
         exist_ok=exists_ok,
     )
@@ -58,13 +59,14 @@ def create_site_with_vars(
     optional_site_vars_params = {
         "site_author": site_author,
         "site_description": site_description,
-        "collections_path": collection_path,
+        "collections_path": str(collection_path),
     }
     site_vars.update(update_site_vars(optional_site_vars_params))
     site.site_vars = site_vars
     return site
 
 
+@dtyper.function
 def typer_app(
     site_title: str = typer.Option(
         ...,
@@ -99,18 +101,23 @@ def typer_app(
         help="custom output folder location.",
         rich_help_panel="Optional Attributes",
     ),
-    project_path: pathlib.Path = typer.Option(
+    project_path_name: pathlib.Path = typer.Option(
+        "app.py",
+        help="name of render_engine app name",
+        rich_help_panel="Optional Attributes",
+    ),
+    project_folder: pathlib.Path = typer.Option(
         pathlib.Path("./"),
         help="path to create the project in",
         rich_help_panel="Optional Attributes",
     ),
     static_path: pathlib.Path = typer.Option(
-        "static",
+        pathlib.Path("static"),
         help="custom static folder",
         rich_help_panel="Optional Attributes",
     ),
     collection_path: pathlib.Path = typer.Option(
-        "pages",
+        pathlib.Path("pages"),
         help="create your content folder in a custom location",
         rich_help_panel="Optional Attributes",
     ),
@@ -136,7 +143,7 @@ def typer_app(
         rich_help_panel="Flags",
     ),
     templates_path: pathlib.Path = typer.Option(
-        "templates",
+        pathlib.Path("templates"),
         "--templates-path",
         help="custom templates folder",
     ),
@@ -171,7 +178,7 @@ def typer_app(
         )
 
     # creating the app.py file from the template
-    pathlib.Path(project_path).joinpath("app.py").write_text(
+    pathlib.Path(project_folder).joinpath(project_path_name).write_text(
         CREATE_APP_PY_TEMPLATE.render(
             site_title=site_title,
             site_url=site_url,
@@ -187,8 +194,8 @@ def typer_app(
     templates = ["index.html", "base.html", "content.html"]
     create_templates_folder(
         *templates,
-        project_path=project_path,
-        templates_folder_name="templates",
+        project_folder=project_folder,
+        templates_folder_name=templates_path,
         exists_ok=force,
     )
 
@@ -196,9 +203,11 @@ def typer_app(
     if not skip_collection:
         with Progress(SpinnerColumn()) as progress:
             task = progress.add_task("Creating collection", total=1)
-            pathlib.Path(project_path).joinpath(collection_path).joinpath(
-                "sample_pages.md"
-            ).write_text(engine.get_template("base_collection_path.md").render())
+            _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
+            _collection_path.mkdir(exist_ok=force)
+            _collection_path.joinpath("sample_pages.md").write_text(
+                engine.get_template("base_collection_path.md").render()
+            )
 
 
 def create_app():
