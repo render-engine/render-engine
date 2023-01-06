@@ -59,33 +59,7 @@ def pages(Collection):
     content_path = "content/pages"
 
 if __name__ == "__main__":
-    site.build()
-```
-```
-
-
-The site will need to be called prior to referencing it method. This is where you will also pass in the path to your static folder.
-
-```python
-# app.py
-
-site = MySite(static="static")
-
-```
-
-That path is copied into your generated `output_folder`.
-
-### Creating a Page:
-
-`Page` objects represent a single webpage on your site. They are rendered using the site's `page` decorator. You can pass any variables into the `Page` class that you want to be available in your template. There are also some special variables that are used by Render Engine.
-
-```python
-# app.py
-
-@mysite.page()
-class Index(Page):
-  title="Welcome to my Page!"
-  template="index.html"
+    site.render()
 ```
 
 The page that is created there will generate a file called `index.html` in the output directory. That name comes from the class name but can be defined either in the class itself (using the `slug` attribute) or in an markdown file (defined with the `content_path` attribute).
