@@ -142,13 +142,6 @@ def typer_app(
         help="Force overwrite of existing files",
         rich_help_panel="Flags",
     ),
-    run_on_complete: bool = typer.Option(
-        False,
-        "--run-after",
-        "-x",
-        help="Run the site after creating the quickstart",
-        rich_help_panel="Flags",
-    ),
     skip_static: bool = typer.Option(
         False,
         "--skip-static",
@@ -233,10 +226,6 @@ def typer_app(
             pathlib.Path(collection_path).joinpath("sample_pages.md").write_text(
                 environment.get_template("base_collection_path.md").render()
             )
-
-    if run_on_complete:
-        typer.echo("Running the site")
-        create_app()
 
 
 def create_app():
