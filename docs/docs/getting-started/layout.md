@@ -1,31 +1,14 @@
-# Getting Started
-This document will walk you through the basics of Render Engine.
-
-## Installing Render Engine
-
-In order to use render engine, you must have python 3.9+ installed. You can download python from [python.org](https://python.org).
-
-- Linux/MacOS: [python.org](https://python.org)
-- Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
-
-Render Engine is available in PyPI and can be installed using pip:
-
-```bash
-pip install render-engine
-```
-
-## Creating your site
-
-### Simple Site Layout
-Render Engine has a very simple site layout. You can see the example site layout below. The only required files are `site.py`, but most sites will have `content`, `templates`, and `static` folders.
+## Simple Site Layout
+Render Engine has a very simple site layout. You can see the example site layout below.
 
 ```bash
 .
-├── app.py
-├── content # markdown files for pages/collections
-│  ├── blog
-│  │  └── blog_post.md
-│  └── index.md
+├── app.py # Logic/Configuration for building your site
+├── content
+│  ├── pages # collection of files to build similarly styled pages
+│  │  └── about.md
+│  │  └── contact.md
+│  └── index.md # file to build a single page
 ├── static # static files (images, css, javascript)
 │  ├── img.jpg
 │  └── style.css
@@ -33,6 +16,7 @@ Render Engine has a very simple site layout. You can see the example site layout
    └── index.html
 ```
 
+## Building your Site
 
 Render Engine uses classes to create most of the object. You will need to import the `Site` and `Page`/`Collection` classes you'll need `render_engine`.
 
@@ -42,20 +26,43 @@ Render Engine uses classes to create most of the object. You will need to import
 from render_engine import Site, Page, Collection
 ```
 
-### Creating your Site Object:
-
-The `Site` class is the main class used to render your pages and collections. It also contains the site variables that will be passed to your templates.
+### Creating your Site
+Let's look at the `app.py` file and explore the different components.
 
 ```python
 # app.py
+from render_engine import Site, Page, Collection
+from render_engine.parsers import MarkdownParser
+
 
 class MySite(Site):
     site_vars = {
       "SITE_TITLE": "My Website",
       "SITE_URL": "https://example.com",
-      "NAME": "Peter Parker",
+      "SITE_AUTHOR": "Peter Parker",
     }
+
+site = Site()
+
+@site.page
+def index(Page):
+    Parser = MarkdownParser
+    title = "Welcome to my Site!"
+    template = "index.html"
+    content_path = "content/index.md"
+
+
+@site.collection
+def pages(Collection):
+    PageParser = MarkdownParser
+    template = "page.html"
+    content_path = "content/pages"
+
+if __name__ == "__main__":
+    site.build()
 ```
+```
+
 
 The site will need to be called prior to referencing it method. This is where you will also pass in the path to your static folder.
 
@@ -70,12 +77,12 @@ That path is copied into your generated `output_folder`.
 
 ### Creating a Page:
 
-`Page` objects represent a single webpage on your site. They are rendered using the site's `render_page` decorator. You can pass any variables into the `Page` class that you want to be available in your template. There are also some special variables that are used by Render Engine.
+`Page` objects represent a single webpage on your site. They are rendered using the site's `page` decorator. You can pass any variables into the `Page` class that you want to be available in your template. There are also some special variables that are used by Render Engine.
 
 ```python
 # app.py
 
-@mysite.render_page()
+@mysite.page()
 class Index(Page):
   title="Welcome to my Page!"
   template="index.html"

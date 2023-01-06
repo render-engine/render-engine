@@ -4,8 +4,12 @@ theme:
   name: material
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
-  - Objects:
+  - Getting Started:
+    - getting-started/installation.md
+    - getting-started/create-app.md
+    - getting-started/layout.md
+    - getting-started/creating-a-page.md
+  - Components:
     - Page: page.md
     - Collection: collection.md
     - Site: site.md
