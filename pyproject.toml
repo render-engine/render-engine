@@ -17,6 +17,7 @@ dependencies = [
     "python-slugify",
     "rich",
     "typer",
+    "dtyper",
 ]
 
 [project.optional-dependencies]
