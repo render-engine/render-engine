@@ -6,60 +6,33 @@ import typer
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from render_engine import Collection, Page, Site
-from render_engine.engine import render_engine_templates_loader
-
-environment = jinja2.Environment(
-    loader=render_engine_templates_loader,
-    trim_blocks=True,
-    lstrip_blocks=True,
-)
+from render_engine.engine import engine
 
 
-def create_folder(*, folder, overwrite: bool) -> pathlib.Path:
+def create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     """Create a folder if it doesn't exist or if overwrite is True"""
-    new_folder = pathlib.Path(folder)
-    new_folder.mkdir(parents=True, exist_ok=overwrite)
-    return new_folder
+    folder.mkdir(parents=True, exist_ok=overwrite)
+    return folder
 
 
-path = str | None
-
-
-def create_app_from_template(
-    site_title: str,
-    site_url: str,
-    site_description: path,
-    site_author: path,
-    static_path: path,
-    output_path: path,
-    collection_path: path,
-) -> str:
-    return environment.get_template("create_app_py.txt").render(
-        site_title=site_title,
-        site_url=site_url,
-        site_description=site_description,
-        site_author=site_author,
-        output_path=output_path,
-        static_path=static_path,
-        collection_path=collection_path,
-    )
+CREATE_APP_PY_TEMPLATE = engine.get_template("create_app_py.txt")
 
 
 def create_templates_folder(
     *templates,
-    templates_folder_name: str,
+    project_path: pathlib.Path,
+    templates_folder_name: pathlib.Path,
     exists_ok: bool,
-    environment: jinja2.Environment,
 ) -> None:
     """Create a folder for templates and optionally create an index.html file"""
-    path = pathlib.Path(templates_folder_name)
+    path = project_path.joinpath(templates_folder_name)
     path.mkdir(
         exist_ok=exists_ok,
     )
 
     for template in templates:
         content = path.joinpath(template).write_text(
-            environment.get_template(template).render()
+            engine.get_template(template).render()
         )
 
 
@@ -69,11 +42,12 @@ def update_site_vars(optional_params: dict) -> dict:
 
 
 def create_site_with_vars(
+    *,
     site_title: str,
     site_url: str,
-    site_description: path,
-    site_author: path,
-    collection_path: path,
+    site_description: str | None = None,
+    site_author: str | None = None,
+    collection_path: str | None = None,
 ) -> Site:
     """Create a new site from a template"""
     site = Site()
@@ -82,7 +56,7 @@ def create_site_with_vars(
         "site_url": site_url,
     }
     optional_site_vars_params = {
-        "site_title": site_author,
+        "site_author": site_author,
         "site_description": site_description,
         "collections_path": collection_path,
     }
@@ -120,18 +94,23 @@ def typer_app(
         help="(Optional): Author of the site",
         rich_help_panel="Optional Attributes",
     ),
-    output_path: typing.Optional[str] = typer.Option(
-        None,
+    output_path: pathlib.Path = typer.Option(
+        "output",
         help="custom output folder location.",
         rich_help_panel="Optional Attributes",
     ),
-    static_path: typing.Optional[str] = typer.Option(
-        None,
+    project_path: pathlib.Path = typer.Option(
+        pathlib.Path("./"),
+        help="path to create the project in",
+        rich_help_panel="Optional Attributes",
+    ),
+    static_path: pathlib.Path = typer.Option(
+        "static",
         help="custom static folder",
         rich_help_panel="Optional Attributes",
     ),
-    collection_path: typing.Optional[str] = typer.Option(
-        None,
+    collection_path: pathlib.Path = typer.Option(
+        "pages",
         help="create your content folder in a custom location",
         rich_help_panel="Optional Attributes",
     ),
@@ -156,15 +135,15 @@ def typer_app(
         help="Skip creating the content folder and a collection",
         rich_help_panel="Flags",
     ),
-    templates_path: typing.Optional[str] = typer.Option(
+    templates_path: pathlib.Path = typer.Option(
         "templates",
         "--templates-path",
         help="custom templates folder",
     ),
 ):
     """CLI for creating a new site"""
-    # creating the site object and site_vars
 
+    # creating the site object and site_vars
     site = create_site_with_vars(
         site_title=site_title,
         site_url=site_url,
@@ -177,29 +156,23 @@ def typer_app(
     if output_path:
         site.output_path = output_path
 
-    collection = {
-        "skip": skip_collection,
-        "path": collection_path or "pages",
-    }
-
     # creating folders unless skipped
-    static = {
-        "skip": skip_static,
-        "path": static_path or "static",
-    }
+    if not skip_static:
+        create_folder(
+            folder=static_path,
+            overwrite=force,
+        )
+        site.static_path = static_path
 
-    if not static["skip"]:
-        static_path = create_folder(folder=static["path"], overwrite=force)
-
-        if not static["path"] == "static":
-            site.static = static_path
-
-    if not collection["skip"]:
-        collection_path = create_folder(folder=collection["path"], overwrite=force)
+    if not skip_collection:
+        create_folder(
+            folder=collection_path,
+            overwrite=force,
+        )
 
     # creating the app.py file from the template
-    pathlib.Path("app.py").write_text(
-        create_app_from_template(
+    pathlib.Path(project_path).joinpath("app.py").write_text(
+        CREATE_APP_PY_TEMPLATE.render(
             site_title=site_title,
             site_url=site_url,
             site_description=site_description,
@@ -214,18 +187,18 @@ def typer_app(
     templates = ["index.html", "base.html", "content.html"]
     create_templates_folder(
         *templates,
+        project_path=project_path,
         templates_folder_name="templates",
         exists_ok=force,
-        environment=environment,
     )
 
     # Create the collection
-    if not skip_collection and collection_path:
+    if not skip_collection:
         with Progress(SpinnerColumn()) as progress:
             task = progress.add_task("Creating collection", total=1)
-            pathlib.Path(collection_path).joinpath("sample_pages.md").write_text(
-                environment.get_template("base_collection_path.md").render()
-            )
+            pathlib.Path(project_path).joinpath(collection_path).joinpath(
+                "sample_pages.md"
+            ).write_text(engine.get_template("base_collection_path.md").render())
 
 
 def create_app():
