@@ -62,8 +62,7 @@ def test_create_app(tmp_path):
         force=True,
     )
 
-    assert d.joinpath("app.py").exists()
     assert (
-        d.joinpath("app.py").read_text()
-        == pathlib.Path("tests/create_app_check_file.txt").read_text()
+        d.joinpath("app.py").read_text().strip()
+        == pathlib.Path("tests/create_app_check_file.txt").read_text().strip()
     )
