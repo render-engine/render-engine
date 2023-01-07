@@ -29,6 +29,7 @@ class Site:
 
     output_path: str = "output"
     static_path: str = "static"
+
     # TODO: #74 Should this be called from a config file for easier testing?
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",

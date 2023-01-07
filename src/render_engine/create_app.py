@@ -32,9 +32,7 @@ def create_templates_folder(
     )
 
     for template in templates:
-        content = path.joinpath(template).write_text(
-            engine.get_template(template).render()
-        )
+        path.joinpath(template).write_text(engine.get_template(template).render())
 
 
 def update_site_vars(optional_params: dict) -> dict:
@@ -86,15 +84,17 @@ def typer_app(
         rich_help_panel="Required Attributes",
         show_default=False,
     ),
-    site_description: typing.Optional[str] = typer.Option(
-        None,
-        help="(Optional): Site Description",
+    collection_path: pathlib.Path = typer.Option(
+        pathlib.Path("pages"),
+        help="create your content folder in a custom location",
         rich_help_panel="Optional Attributes",
     ),
-    site_author: typing.Optional[str] = typer.Option(
-        None,
-        help="(Optional): Author of the site",
-        rich_help_panel="Optional Attributes",
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help="Force overwrite of existing files",
+        rich_help_panel="Flags",
     ),
     output_path: pathlib.Path = typer.Option(
         "output",
@@ -111,21 +111,21 @@ def typer_app(
         help="path to create the project in",
         rich_help_panel="Optional Attributes",
     ),
-    static_path: pathlib.Path = typer.Option(
-        pathlib.Path("static"),
-        help="custom static folder",
+    site_author: typing.Optional[str] = typer.Option(
+        None,
+        help="(Optional): Author of the site",
         rich_help_panel="Optional Attributes",
     ),
-    collection_path: pathlib.Path = typer.Option(
-        pathlib.Path("pages"),
-        help="create your content folder in a custom location",
+    site_description: typing.Optional[str] = typer.Option(
+        None,
+        help="(Optional): Site Description",
         rich_help_panel="Optional Attributes",
     ),
-    force: bool = typer.Option(
+    skip_collection: bool = typer.Option(
         False,
-        "--force",
-        "-f",
-        help="Force overwrite of existing files",
+        "--skip-collection",
+        "-C",
+        help="Skip creating the content folder and a collection",
         rich_help_panel="Flags",
     ),
     skip_static: bool = typer.Option(
@@ -135,12 +135,10 @@ def typer_app(
         help="Skip copying static files",
         rich_help_panel="Flags",
     ),
-    skip_collection: bool = typer.Option(
-        False,
-        "--skip-collection",
-        "-C",
-        help="Skip creating the content folder and a collection",
-        rich_help_panel="Flags",
+    static_path: pathlib.Path = typer.Option(
+        pathlib.Path("static"),
+        help="custom static folder",
+        rich_help_panel="Optional Attributes",
     ),
     templates_path: pathlib.Path = typer.Option(
         pathlib.Path("templates"),
@@ -212,4 +210,8 @@ def typer_app(
 
 def create_app():
     """This is the console script entry point for 'createapp'"""
+    typer.run(typer_app)
+
+
+if __name__ == "__main__":
     typer.run(typer_app)
