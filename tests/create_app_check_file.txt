@@ -23,7 +23,8 @@ class Index(Page):
 
 @app.collection
 class Pages(Collection):
+    PageParser = MarkdownPageParser
     content_path = "pages" # path to content files
 
 if __name__ == "__main__":
-    app.render()
+    app.render(
