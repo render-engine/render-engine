@@ -1,16 +1,21 @@
+import importlib
 import pathlib
+import sys
 import typing
 
 import dtyper
 import jinja2
 import typer
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.console import Console
+from rich.theme import Theme
 
 from render_engine import Collection, Page, Site
 from render_engine.engine import engine
 
+app = typer.Typer()
 
-def create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
+
+def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     """Create a folder if it doesn't exist or if overwrite is True"""
     folder.mkdir(parents=True, exist_ok=overwrite)
     return folder
@@ -19,7 +24,7 @@ def create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
 CREATE_APP_PY_TEMPLATE = engine.get_template("create_app_py.txt")
 
 
-def create_templates_folder(
+def _create_templates_folder(
     *templates,
     project_folder: pathlib.Path,
     templates_folder_name: pathlib.Path,
@@ -35,59 +40,35 @@ def create_templates_folder(
         path.joinpath(template).write_text(engine.get_template(template).render())
 
 
-def update_site_vars(optional_params: dict) -> dict:
-    """Remove any optional params that are None"""
-    return {key: value for key, value in optional_params.items() if value}
-
-
-def create_site_with_vars(
+def _create_site_with_vars(
     *,
-    site_title: str,
-    site_url: str,
+    site_title: str | None = None,
+    site_url: str | None = None,
     site_description: str | None = None,
     site_author: str | None = None,
     collection_path: str | None = None,
 ) -> Site:
     """Create a new site from a template"""
     site = Site()
-    site_vars = {
+    potential_site_vars = {
         "site_title": site_title,
         "site_url": site_url,
-    }
-    optional_site_vars_params = {
         "site_author": site_author,
         "site_description": site_description,
         "collections_path": str(collection_path),
     }
-    site_vars.update(update_site_vars(optional_site_vars_params))
-    site.site_vars = site_vars
+    site_vars = {key: value for key, value in potential_site_vars.items() if value}
+    site.site_vars.update(site_vars)
     return site
 
 
 @dtyper.function
-def typer_app(
-    site_title: str = typer.Option(
-        ...,
-        "--title",
-        "-t",
-        help="title of the site",
-        prompt=True,
-        rich_help_panel="Required Attributes",
-        show_default=False,
-    ),
-    site_url: str = typer.Option(
-        ...,
-        "--url",
-        "-u",
-        help="URL for the site",
-        prompt=True,
-        rich_help_panel="Required Attributes",
-        show_default=False,
-    ),
+@app.command()
+def init(
     collection_path: pathlib.Path = typer.Option(
         pathlib.Path("pages"),
         help="create your content folder in a custom location",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Path Options",
     ),
     force: bool = typer.Option(
         False,
@@ -99,27 +80,43 @@ def typer_app(
     output_path: pathlib.Path = typer.Option(
         "output",
         help="custom output folder location.",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Path Attributes",
     ),
     project_path_name: pathlib.Path = typer.Option(
         "app.py",
         help="name of render_engine app name",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Path Attributes",
     ),
     project_folder: pathlib.Path = typer.Option(
         pathlib.Path("./"),
         help="path to create the project in",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Path Attributes",
     ),
     site_author: typing.Optional[str] = typer.Option(
         None,
         help="(Optional): Author of the site",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Site Vars",
     ),
     site_description: typing.Optional[str] = typer.Option(
         None,
         help="(Optional): Site Description",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Site Vars",
+    ),
+    site_title: typing.Optional[str] = typer.Option(
+        None,
+        "--title",
+        "-t",
+        help="title of the site",
+        rich_help_panel="Site Vars",
+        show_default=False,
+    ),
+    site_url: typing.Optional[str] = typer.Option(
+        None,
+        "--url",
+        "-u",
+        help="URL for the site",
+        rich_help_panel="Site Vars",
+        show_default=False,
     ),
     skip_collection: bool = typer.Option(
         False,
@@ -138,7 +135,7 @@ def typer_app(
     static_path: pathlib.Path = typer.Option(
         pathlib.Path("static"),
         help="custom static folder",
-        rich_help_panel="Optional Attributes",
+        rich_help_panel="Path Attributes",
     ),
     templates_path: pathlib.Path = typer.Option(
         pathlib.Path("templates"),
@@ -148,8 +145,13 @@ def typer_app(
 ):
     """CLI for creating a new site"""
 
+    console = Console(theme=Theme({"base": "purple"}))
+    console.status(f'Creating project in [blue]"{project_folder}"', spinner="monkey")
+
     # creating the site object and site_vars
-    site = create_site_with_vars(
+    project_folder_path = pathlib.Path(project_folder)
+    console.print("- Creating Site", style="base")
+    site = _create_site_with_vars(
         site_title=site_title,
         site_url=site_url,
         site_description=site_description,
@@ -163,19 +165,15 @@ def typer_app(
 
     # creating folders unless skipped
     if not skip_static:
-        create_folder(
-            folder=static_path,
-            overwrite=force,
+        console.print(
+            f"- Creating Static Folder: [dark blue bold]{static}", style="base"
         )
+        static = project_folder_path.joinpath(static_path)
+        static.mkdir(exist_ok=force)
         site.static_path = static_path
 
-    if not skip_collection:
-        create_folder(
-            folder=collection_path,
-            overwrite=force,
-        )
-
     # creating the app.py file from the template
+    console.print(f"- Generating app file: [blue]{project_path_name}.py", style="base")
     pathlib.Path(project_folder).joinpath(project_path_name).write_text(
         CREATE_APP_PY_TEMPLATE.render(
             site_title=site_title,
@@ -189,8 +187,9 @@ def typer_app(
     )
 
     # Create the templates folder and the index.html file
+    console.print("- Creating Templates Folder", style="base")
     templates = ["index.html", "base.html", "content.html"]
-    create_templates_folder(
+    _create_templates_folder(
         *templates,
         project_folder=project_folder,
         templates_folder_name=templates_path,
@@ -199,19 +198,29 @@ def typer_app(
 
     # Create the collection
     if not skip_collection:
-        with Progress(SpinnerColumn()) as progress:
-            task = progress.add_task("Creating collection", total=1)
-            _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
-            _collection_path.mkdir(exist_ok=force)
-            _collection_path.joinpath("sample_pages.md").write_text(
-                engine.get_template("base_collection_path.md").render()
-            )
+        console.print("- Creating collection", style="base")
+        _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
+        _collection_path.mkdir(exist_ok=force)
+        _collection_path.joinpath("sample_pages.md").write_text(
+            engine.get_template("base_collection_path.md").render()
+        )
+
+    console.print("[green]Site Created Successfully!")
 
 
-def create_app():
-    """This is the console script entry point for 'createapp'"""
-    typer.run(typer_app)
+@app.command()
+def build(site_module: str):
+    """CLI for creating a new site"""
+    sys.path.insert(0, ".")
+    (
+        import_path,
+        app_name,
+    ) = site_module.split(":", 1)
+    importlib.import_module(import_path)
+
+    app = getattr(sys.modules[import_path], app_name)
+    app.render()
 
 
-if __name__ == "__main__":
-    typer.run(typer_app)
+def cli():
+    app()
