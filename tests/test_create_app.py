@@ -6,19 +6,9 @@ import render_engine.cli as cli
 from render_engine.site import Site
 
 
-def test_create_site_with_default_vars():
-    """Tests that the site can be built with just the required attributes"""
-    site = cli.create_site_with_vars(
-        site_title="title",
-        site_url="url",
-    )
-    assert site.site_vars["site_title"] == "title"
-    assert site.site_vars["site_url"] == "url"
-
-
 def test_create_site_with_vars():
     """Tests the site can be built with optional attributes""" ""
-    site = cli.create_site_with_vars(
+    site = cli._create_site_with_vars(
         site_title="title",
         site_url="url",
         site_description="description",
@@ -36,7 +26,7 @@ def test_create_site_with_vars():
 def test_create_folder(mocker):
     """Tests folder can be created"""
     mocker.patch("render_engine.cli.pathlib.Path.mkdir")
-    app_folder = cli.create_folder(
+    app_folder = cli._create_folder(
         folder=pathlib.Path("mytest_folder"),
         overwrite=True,
     )
