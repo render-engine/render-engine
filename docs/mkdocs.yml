@@ -9,6 +9,7 @@ nav:
     - getting-started/create-app.md
     - getting-started/layout.md
     - getting-started/creating-a-page.md
+    - getting-started/creating-a-collection.md
   - Components:
     - Page: page.md
     - Collection: collection.md

@@ -7,6 +7,7 @@ import dtyper
 import jinja2
 import typer
 from rich.console import Console
+from rich.progress import Progress
 from rich.theme import Theme
 
 from render_engine import Collection, Page, Site
@@ -145,67 +146,88 @@ def init(
 ):
     """CLI for creating a new site"""
 
-    console = Console(theme=Theme({"base": "purple"}))
-    console.status(f'Creating project in [blue]"{project_folder}"', spinner="monkey")
-
     # creating the site object and site_vars
+
     project_folder_path = pathlib.Path(project_folder)
-    console.print("- Creating Site", style="base")
-    site = _create_site_with_vars(
-        site_title=site_title,
-        site_url=site_url,
-        site_description=site_description,
-        site_author=site_author,
-        collection_path=collection_path,
-    )
-
-    # add output path
-    if output_path:
-        site.output_path = output_path
-
-    # creating folders unless skipped
-    if not skip_static:
-        console.print(
-            f"- Creating Static Folder: [dark blue bold]{static}", style="base"
-        )
-        static = project_folder_path.joinpath(static_path)
-        static.mkdir(exist_ok=force)
-        site.static_path = static_path
-
-    # creating the app.py file from the template
-    console.print(f"- Generating app file: [blue]{project_path_name}.py", style="base")
-    pathlib.Path(project_folder).joinpath(project_path_name).write_text(
-        CREATE_APP_PY_TEMPLATE.render(
+    with Progress() as progress:
+        progress.console.rule("[green][bold]Creating Project")
+        task_project = progress.add_task("Creating Site", total=5)
+        site = _create_site_with_vars(
             site_title=site_title,
             site_url=site_url,
             site_description=site_description,
             site_author=site_author,
-            output_path=output_path,
-            static_path=static_path,
             collection_path=collection_path,
         )
-    )
+        progress.update(task_project, advance=1)
 
-    # Create the templates folder and the index.html file
-    console.print("- Creating Templates Folder", style="base")
-    templates = ["index.html", "base.html", "content.html"]
-    _create_templates_folder(
-        *templates,
-        project_folder=project_folder,
-        templates_folder_name=templates_path,
-        exists_ok=force,
-    )
+        # add output path
+        if output_path:
+            site.output_path = str(output_path)
 
-    # Create the collection
-    if not skip_collection:
-        console.print("- Creating collection", style="base")
-        _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
-        _collection_path.mkdir(exist_ok=force)
-        _collection_path.joinpath("sample_pages.md").write_text(
-            engine.get_template("base_collection_path.md").render()
+        # creating folders unless skipped
+        if not skip_static:
+            task_static_folder = progress.add_task(
+                f"Creating Static Folder: [blue]{static_path}",
+                total=1,
+            )
+            static = project_folder_path.joinpath(static_path)
+            static.mkdir(exist_ok=force)
+            site.static_path = str(static_path)
+            progress.update(task_static_folder, advance=1)
+
+        progress.update(task_project, advance=1)
+
+        # creating the app.py file from the template
+        project_config_path = (
+            pathlib.Path(project_folder).joinpath(project_path_name).with_suffix(".py")
+        )
+        task_generate_project_path = progress.add_task(
+            f"Generating App File: [blue]{project_config_path}", total=1
         )
 
-    console.print("[green]Site Created Successfully!")
+        project_config_path.write_text(
+            CREATE_APP_PY_TEMPLATE.render(
+                site_title=site_title,
+                site_url=site_url,
+                site_description=site_description,
+                site_author=site_author,
+                output_path=output_path,
+                static_path=static_path,
+                collection_path=collection_path,
+            )
+        )
+        progress.update(task_generate_project_path, advance=1)
+        progress.update(task_project, advance=1)
+
+        # Create the templates folder and the index.html file
+        task_templates = progress.add_task(
+            f"Creating Templates Folder: [blue]{templates_path}", total=1
+        )
+        templates = ["index.html", "base.html", "content.html"]
+        _create_templates_folder(
+            *templates,
+            project_folder=project_folder,
+            templates_folder_name=templates_path,
+            exists_ok=force,
+        )
+
+        progress.update(task_templates, advance=1)
+        progress.update(task_project, advance=1)
+
+        # Create the collection
+        if not skip_collection:
+            task_create_collection = progress.add_task(
+                f"Creating Collection: [blue]{collection_path}", total=1
+            )
+            _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
+            _collection_path.mkdir(exist_ok=force)
+            _collection_path.joinpath("sample_pages.md").write_text(
+                engine.get_template("base_collection_path.md").render()
+            )
+
+            progress.update(task_create_collection, advance=1)
+        progress.update(task_project, advance=1)
 
 
 @app.command()
