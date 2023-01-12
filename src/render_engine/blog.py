@@ -1,4 +1,5 @@
 import datetime
+import logging
 import typing
 
 import more_itertools
@@ -7,62 +8,79 @@ import pendulum
 from .collection import Collection
 from .feeds import RSSFeed
 from .page import Page
+from .parsers import BasePageParser
+from .parsers.markdown import MarkdownPageParser
 
 
 class BlogPost(Page):
     """Page Like object with slight modifications to work with BlogPosts."""
 
     list_attrs = ["tags"]
-    feed = RSSFeed
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        content: str | None = None,
+        content_path: str | None = None,
+        Parser: typing.Type["BasePageParer"] = MarkdownPageParser,
+    ):
         """
         checks published options and accepts the first that is listed
 
         Attributes:
             date : pendulum.datetime
-                date parsed in datetime format. usesul for sorting and things
             date_published : str
-                date formated for `RSSFeed`
             date_friendly : str
-                an easy to read string version of the date
         """
 
-        super().__init__(**kwargs)
-        date_published = more_itertools.first_true(
-            (
-                getattr(self, "date_published", None),
-                getattr(self, "publish_date", None),
-                getattr(self, "date", None),
-            )
-        )
+        super().__init__(content=content, content_path=content_path, Parser=Parser)
 
-        if isinstance(date_published, datetime.datetime):
-            self.date_published = pendulum.instance(date_published).set(
-                tz=pendulum.local_timezone()
-            )  # TODO: fixes issue with datetimes parsed by frontmatter being converted to datetimes instead of str
-        else:
-            self.date_published = pendulum.parse(date_published, strict=False).set(
-                tz=pendulum.local_timezone()
-            )
+        # protect date_published, modified_date, or date_friendly in the frontmatter
 
+        protected_date_attrs = ["modified_date", "date_published", "date_friendly"]
+        self.date_friendly = self.date_modified.format("MMM DD, YYYY HH:mm A")
+
+    @property
+    def date_modified(self):
         date_modified = more_itertools.first_true(
             (
-                getattr(self, "date_modified", None),
+                getattr(self, "_date_modified", None),
                 getattr(self, "modified_date", None),
             ),
             default=None,
         )
 
         if not date_modified:
-            self.date_modified = self.date_published
+            self._date_modified = self.date_published
 
         else:
-            self.date_modified = pendulum.parse(date_modified, strict=False).set(
+            self._date_modified = pendulum.parse(date_modified, strict=False).set(
                 tz=pendulum.local_timezone()
             )
 
-        self.date_friendly = self.date_modified.format("MMM DD, YYYY HH:mm A")
+        return self._date_modified
+
+    @property
+    def date_published(self):
+        date_published = more_itertools.first_true(
+            (
+                getattr(self, "_date_published", None),
+                getattr(self, "publish_date", None),
+                getattr(self, "date", None),
+            )
+        )
+
+        if isinstance(date_published, datetime.datetime):
+            return pendulum.instance(date_published).set(tz=pendulum.local_timezone())
+
+        elif date_published:
+            return pendulum.parse(date_published, strict=False).set(
+                tz=pendulum.local_timezone()
+            )
+
+        else:
+            raise ValueError("No Date Published Found")
+
+        return self._date_published
 
 
 class Blog(Collection):
@@ -78,9 +96,4 @@ class Blog(Collection):
     sort_reverse: bool = True
     sort_by = "date_published"
     has_archive = True
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._feed = getattr(self, "feed", RSSFeed)(
-            title=f"{self.SITE_TITLE} {self.title}", pages=self.pages
-        )
+    feed = RSSFeed

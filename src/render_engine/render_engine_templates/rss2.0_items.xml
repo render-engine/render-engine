@@ -2,6 +2,9 @@
 {% if item.title %}<title>{{item.title}}</title>{% endif %}
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
+{% else %}
+  {}
+  <description><![CDATA[{{item.markup|safe }}]]></description>
 {% endif %}
 
 {% if item.enclosure %}
@@ -14,8 +17,10 @@
     <category>{{item.category}}</category>
   {% endif %}
 {% endif %}
-    <link>{{SITE_URL}}{{item.link}}</link>
-{% if item.pub_date %}<pubDate>{{item.pub_date}}</pubDate>{% endif %}
+    <link>
+      {{SITE_URL}}{{item.url_for}}
+    </link>
+{% if item.date_published %}<pubDate>{{item.date_published | to_pub_date }}</pubDate>{% endif %}
 {% if item.guid %}<guid isPermaLink="false">{{item.guid}}</guid>{% endif %}
 {% if item.author %}{{item.author}}{% endif %}
 {% if item.comments %}{{item.comments}}{% endif %}

@@ -23,6 +23,6 @@ class page(Page):
     content_path: my-page.md
 
 
-print(page().tags) 
+print(page().tags)
 # >>> ['tag1', 'tag2']
 ```

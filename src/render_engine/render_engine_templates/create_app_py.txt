@@ -1,0 +1,36 @@
+"""
+This is a simple app setup script created with `render-engine init`
+"""
+
+from render_engine import Site, Page, Collection
+from render_engine.parsers import MarkdownPageParser
+
+app = Site()
+app.output_path = "{{output_path}}"
+app.static_path = "{{static_path}}"
+
+# Your site_vars will be used throughout your site
+app.site_vars.update(
+    SITE_TITLE="{{site_title}}",
+    SITE_URL="{{site_url}}",
+    {% if site_description %}
+    SITE_DESCRIPTION="{{site_description}}",
+    {% endif %}
+    {% if site_author %}
+    SITE_AUTHOR="{{site_author}}",
+    {% endif %}
+    )
+
+@app.page
+class Index(Page):
+    template = "index.html"
+
+{% if not skip_collection %}
+@app.collection
+class Pages(Collection):
+    PageParser = MarkdownPageParser
+    content_path = "{{collection_path}}" # path to content files
+{% endif %}
+
+if __name__ == "__main__":
+    app.render()
