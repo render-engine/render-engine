@@ -1,5 +1,5 @@
 """
-This is a simple app setup script created with `render-engine -m createapp`
+This is a simple app setup script created with `render-engine init`
 """
 
 from render_engine import Site, Page, Collection

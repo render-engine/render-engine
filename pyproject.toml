@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2023.1.1b1"
+version = "2023.1.1b2"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -36,7 +36,7 @@ documentation = "https://render-engine.readthedocs.io/en/latest/"
 "*" = ["*.html", "*.txt", "*.xml", "*.md"]
 
 [project.scripts]
-createapp = "render_engine.create_app:create_app"
+render-engine = "render_engine.cli:cli"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

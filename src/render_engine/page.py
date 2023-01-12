@@ -165,7 +165,7 @@ class Page:
         engine = getattr(self, "engine", engine)
 
         # Parsing with a template
-        if self.template and engine:
+        if hasattr(self, "template") and engine:
             if hasattr(self, "content"):
                 """Content should be converted to before being passed to the template"""
                 return engine.get_template(self.template).render(
