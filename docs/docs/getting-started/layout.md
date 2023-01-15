@@ -32,7 +32,7 @@ Let's look at the `app.py` file and explore the different components.
 ```python
 # app.py
 from render_engine import Site, Page, Collection
-from render_engine.parsers import MarkdownParser
+from render_engine.parsers.markdown import MarkdownPageParser
 
 
 class MySite(Site):
@@ -46,7 +46,7 @@ site = Site()
 
 @site.page
 def index(Page):
-    Parser = MarkdownParser
+    Parser = MarkdownPageParser
     title = "Welcome to my Site!"
     template = "index.html"
     content_path = "content/index.md"
@@ -54,7 +54,7 @@ def index(Page):
 
 @site.collection
 def pages(Collection):
-    PageParser = MarkdownParser
+    PageParser = MarkdownPageParser
     template = "page.html"
     content_path = "content/pages"
 
@@ -156,4 +156,4 @@ Once you have your site's build file (in our case app.py), you can generate the 
 python app.py
 ```
 
-Your site will be generated in the `output` folder. You can change the output folder by passing in the `output_folder` attribute to the `Site` class.
+Your site will be generated in the `output` folder. You can change the output folder by passing in the `output_path` attribute to the `Site` class.
