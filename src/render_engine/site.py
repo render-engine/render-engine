@@ -4,12 +4,17 @@ import shutil
 from collections import defaultdict
 from functools import partial
 
+import pluggy
 from jinja2 import Environment
 from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine, url_for
 from .page import Page
+
+PROJECT_NAME = "render_engine"
+
+hook_impl = pluggy.HookimplMarker(project_name=PROJECT_NAME)
 
 
 class Site:
@@ -30,19 +35,33 @@ class Site:
     output_path: str = "output"
     static_path: str = "static"
 
-    # TODO: #74 Should this be called from a config file for easier testing?
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
     }
-    plugins: dict[str, Page] | None = None
+    plugins: list
 
     def __init__(
         self,
+        plugins=None,
     ) -> None:
+        self._pm = pluggy.PluginManager(project_name=PROJECT_NAME)
+        self._pm.add_hookspecs(SiteSpecs)
         self.route_list: defaultdict = defaultdict(list)
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
         self.engine.filters["url_for"] = partial(url_for, site=self)
+
+        if not hasattr(self, plugins):
+            setattr(self, "plugins", [])
+
+        if plugins:
+            self.plugins.extend(plugins)
+
+        self._register_plugins()
+
+    def _register_plugin(self):
+        for hook in self.hooks:
+            self._pm.register(hook)
 
     @property
     def engine(self) -> Environment:
@@ -114,10 +133,13 @@ class Site:
                             "template"
                         ] = page.subcollection_template
 
-    def render(self, clean=False) -> None:
+    def render(self) -> None:
         """Render all pages and collections"""
 
         with Progress() as progress:
+            pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
+            self._pm.hook.pre_build_site(site=self)
+
             if clean:
                 task = progress.add_task("[red]Cleaning Output Folder", total=1)
                 shutil.rmtree(self.output_path, ignore_errors=True)
@@ -159,3 +181,5 @@ class Site:
             if pathlib.Path(self.static_path).is_dir():
                 task = progress.add_task("copying static directory", total=1)
                 self.render_static(pathlib.Path(self.static_path).name)
+
+            self._pm.hook.post_site_build(site=self)
