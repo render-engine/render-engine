@@ -1,5 +1,5 @@
 <url>
-	<loc>{{SITE_URL}}{{item.url}}</loc>
+	<loc>{{SITE_URL}}/{{item}}</loc>
 	{% if item.lastmod %}
 	<lastmod>{{item.lastmod}}</lastmod>
 	{% endif %}

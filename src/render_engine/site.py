@@ -50,7 +50,7 @@ class Site:
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
         self.engine.filters["url_for"] = partial(url_for, site=self)
 
-        if not hasattr(self, plugins):
+        if not hasattr(self, "plugins"):
             setattr(self, "plugins", [])
 
         if plugins:
@@ -58,9 +58,9 @@ class Site:
 
         self._register_plugins()
 
-    def _register_plugin(self):
-        for hook in self.hooks:
-            self._pm.register(hook)
+    def _register_plugins(self):
+        for plugin in self.plugins:
+            self._pm.register(plugin)
 
     @property
     def engine(self) -> Environment:
@@ -177,4 +177,6 @@ class Site:
                 task = progress.add_task("copying static directory", total=1)
                 self.render_static(pathlib.Path(self.static_path).name)
 
+            post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_site_build(site=self)
+            progress.update(pre_build_task, advance=1)
