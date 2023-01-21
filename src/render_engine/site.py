@@ -10,11 +10,10 @@ from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine, url_for
+from .hookspecs import SiteSpecs
 from .page import Page
 
-PROJECT_NAME = "render_engine"
-
-hook_impl = pluggy.HookimplMarker(project_name=PROJECT_NAME)
+_PROJECT_NAME = "render_engine"
 
 
 class Site:
@@ -45,7 +44,7 @@ class Site:
         self,
         plugins=None,
     ) -> None:
-        self._pm = pluggy.PluginManager(project_name=PROJECT_NAME)
+        self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
         self._pm.add_hookspecs(SiteSpecs)
         self.route_list: defaultdict = defaultdict(list)
         self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
@@ -139,10 +138,6 @@ class Site:
         with Progress() as progress:
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
             self._pm.hook.pre_build_site(site=self)
-
-            if clean:
-                task = progress.add_task("[red]Cleaning Output Folder", total=1)
-                shutil.rmtree(self.output_path, ignore_errors=True)
 
             # Parse Route List
             task_add_route = progress.add_task(

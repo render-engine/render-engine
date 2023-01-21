@@ -5,8 +5,8 @@ Plugins are a way to extend the functionality of the render engine site.
 import pathlib
 import shutil
 
-from render_engine import Site, hook_impl
 from render_engine.engine import engine
+from render_engine.hookspecs import hook_impl
 
 
 class Clean:
