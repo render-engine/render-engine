@@ -24,7 +24,7 @@ class SiteSpecs:
         pass
 
     @hook_spec
-    def post_build_page(self, page: "Page") -> None:
+    def post_build_page(self, site: "Site") -> None:
         """Steps Prior to Building the page"""
         pass
 
@@ -33,13 +33,13 @@ class SiteSpecs:
         pass
 
     @hook_spec
-    def post_build_collection(self, collection: "Collection") -> None:
+    def post_build_collection(self, site: "Site") -> None:
         pass
 
     @hook_spec
-    def pre_build_collection_pages(self, collection: "Collection") -> None:
+    def pre_build_collection_pages(self, page: "Page") -> None:
         pass
 
     @hook_spec
-    def post_build_collection_pages(self, collection: "Collection") -> None:
+    def post_build_collection_pages(self, site: "Site") -> None:
         pass

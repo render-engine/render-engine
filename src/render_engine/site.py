@@ -75,11 +75,14 @@ class Site:
     def collection(self, collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
         _collection = collection()
+        self._pm.hook.pre_build_collection(collection=_collection)
         logging.info("Adding Collection: %s", _collection.__class__.__name__)
 
         for page in _collection.pages:
             logging.debug("Adding Page: %s", page.__class__.__name__)
+            self._pm.hook.pre_build_collection_pages(page=page)
             self.add_to_route_list(page)
+            self._pm.hook.post_build_collection_pages(site=self)
 
         for archive in _collection.archives:
             logging.debug("Adding Archive: %s", archive.__class__.__name__)
@@ -87,13 +90,16 @@ class Site:
 
         if feed := _collection._feed:
             self.add_to_route_list(feed)
+        self._pm.hook.post_build_collection(site=self)
 
         return _collection
 
     def page(self, page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
         _page = page()
+        self._pm.hook.pre_build_site(page=_page)
         self.add_to_route_list(_page)
+        self._pm.hook.post_build_site(site=self)
         return _page
 
     def render_static(self, directory) -> None:
