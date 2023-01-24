@@ -1,7 +1,5 @@
 import pluggy
 
-from render_engine.page import Page
-
 _PROJECT_NAME = "render_engine"
 hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
@@ -18,4 +16,30 @@ class SiteSpecs:
     @hook_spec
     def post_build_site(self, site: "Site") -> None:
         """Build After Building the site"""
+        pass
+
+    @hook_spec
+    def pre_build_page(self, page: "Page") -> None:
+        """Steps Prior to Building the page"""
+        pass
+
+    @hook_spec
+    def post_build_page(self, page: "Page") -> None:
+        """Steps Prior to Building the page"""
+        pass
+
+    @hook_spec
+    def pre_build_collection(self, collection: "Collection") -> None:
+        pass
+
+    @hook_spec
+    def post_build_collection(self, collection: "Collection") -> None:
+        pass
+
+    @hook_spec
+    def pre_build_collection_pages(self, collection: "Collection") -> None:
+        pass
+
+    @hook_spec
+    def post_build_collection_pages(self, collection: "Collection") -> None:
         pass

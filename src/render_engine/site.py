@@ -178,5 +178,5 @@ class Site:
                 self.render_static(pathlib.Path(self.static_path).name)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
-            self._pm.hook.post_site_build(site=self)
+            self._pm.hook.post_build_site(site=self)
             progress.update(pre_build_task, advance=1)

@@ -14,8 +14,9 @@ class CleanOutput:
     """Clean the output folder before rendering"""
 
     @hook_impl
-    def pre_site_build(site: type[Site]):
+    def pre_build_site(site: type[Site]):
         """Clean the output folder before rendering"""
+        print(f"Removing {site.output_path} (if exist) before rendering")
         shutil.rmtree(site.output_path, ignore_errors=True)
 
 
@@ -23,7 +24,7 @@ class SiteMap:
     """Generate a sitemap.xml file"""
 
     @hook_impl
-    def post_site_build(site: type[Site]):
+    def post_build_site(site: type[Site]):
         """Generate a sitemap.xml file"""
         print("Generating sitemap.xml")
         template = engine.get_template("sitemap.xml")
