@@ -171,7 +171,6 @@ class Collection:
 
             for page_path in pages:
                 yield self.gen_page(content=page_path.read_text())
-        return ()
 
     @property
     def sorted_pages(self):

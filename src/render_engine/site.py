@@ -1,5 +1,6 @@
 import logging
 import pathlib
+import pdb
 import shutil
 from collections import defaultdict
 from functools import partial
@@ -76,7 +77,7 @@ class Site:
         """Create the pages in the collection including the archive"""
         _collection = collection()
         self._pm.hook.pre_build_collection(collection=_collection)
-        logging.info("Adding Collection: %s", _collection.__class__.__name__)
+        logging.debug("Adding Collection: %s", _collection.__class__.__name__)
 
         for page in _collection.pages:
             logging.debug("Adding Page: %s", page.__class__.__name__)
@@ -97,9 +98,9 @@ class Site:
     def page(self, page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
         _page = page()
-        self._pm.hook.pre_build_site(page=_page)
+        self._pm.hook.pre_build_page(page=_page)
         self.add_to_route_list(_page)
-        self._pm.hook.post_build_site(site=self)
+        self._pm.hook.post_build_page(site=self)
         return _page
 
     def render_static(self, directory) -> None:
