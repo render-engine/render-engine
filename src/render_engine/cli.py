@@ -2,15 +2,25 @@ import importlib
 import pathlib
 import sys
 import typing
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import dtyper
 import typer
+from rich.console import Console
 from rich.progress import Progress
 
 from render_engine.engine import engine
 from render_engine.site import Site
 
 app = typer.Typer()
+
+
+def get_app(module_site: str) -> Site:
+    """Split the site module into a module and a class name"""
+    sys.path.insert(0, ".")
+    import_path, app_name = module_site.split(":", 1)
+    importlib.import_module(import_path)
+    return getattr(sys.modules[import_path], app_name)
 
 
 def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
@@ -230,15 +240,48 @@ def init(
 @app.command()
 def build(site_module: str):
     """CLI for creating a new site"""
-    sys.path.insert(0, ".")
-    (
-        import_path,
-        app_name,
-    ) = site_module.split(":", 1)
-    importlib.import_module(import_path)
-
-    app = getattr(sys.modules[import_path], app_name)
+    app = get_app(site_module)
     app.render()
+
+
+@app.command()
+def serve(
+    module_site: str,
+    build: bool = False,
+    directory: typing.Optional[str] = typer.Option(
+        None,
+        "--directory",
+        "-d",
+        help="Directory to serve",
+        show_default=False,
+    ),
+    port: int = typer.Option(
+        8000,
+        "--port",
+        "-p",
+        help="Port to serve on",
+        show_default=False,
+    ),
+):
+    """CLI for creating a new site"""
+    app = get_app(module_site)
+
+    if build:
+        app.render()
+
+    if not directory:
+        directory = app.output_path
+
+    class server(SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=directory, **kwargs)
+
+    server_address = ("localhost", port)
+    httpd = HTTPServer(server_address, server)
+    console = Console()
+    console.print(f"Serving [blue]{directory} on http://localhost:{port}")
+    console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
+    return httpd.serve_forever()
 
 
 def cli():

@@ -19,13 +19,8 @@ class SiteSpecs:
         pass
 
     @hook_spec
-    def pre_build_page(self, page: "Page") -> None:
-        """Steps Prior to Building the page"""
-        pass
-
-    @hook_spec
-    def post_build_page(self, site: "Site") -> None:
-        """Steps Prior to Building the page"""
+    def post_build_page(self, page: "Page") -> None:
+        """Augments the content of the page before it is rendered"""
         pass
 
     @hook_spec
