@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Generator, Type
 
@@ -71,6 +72,7 @@ class Page:
 
         if content := (content or getattr(self, "content", None)):
             attrs, self.content = self.Parser.parse_content(content)
+            self.replace_internal_references()
 
         else:
             attrs = {}
@@ -189,3 +191,12 @@ class Page:
 
         else:
             raise ValueError(f"{self=} must have either content or template")
+
+    def replace_internal_references(self):
+        """Finds the curly boys in the content and replaces them with the correct value"""
+
+        markers = re.findall(r"{{(.+)}}", self.content)
+
+        for value in markers:
+            if replacement := getattr(self, value, None):
+                self.content = self.content.replace(f"{{{{{value}}}}}", replacement)
