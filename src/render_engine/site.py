@@ -170,6 +170,7 @@ class Site:
             task_render_subcollection = progress.add_task(
                 "[blue]Rendering SubCollections", total=len(self.subcollections)
             )
+
             for tag, subcollection in self.subcollections.items():
                 progress.update(
                     task_render_subcollection,
@@ -190,4 +191,5 @@ class Site:
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(site=self)
+
             progress.update(pre_build_task, advance=1)
