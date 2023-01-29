@@ -69,12 +69,6 @@ def test_page_from_template_with_content(tmp_path):
     assert page._render_content(engine=environment) == "This is a test page"
 
 
-def find_all_curly_boys(content):
-    the_boys = re.findall(r"{{(.+)}}", content)
-    for value in the_boys:
-        print(value)
-
-
 def test_page_template_supports_mustache_vars():
     class CustomPage(Page):
         title = "Test Page"
