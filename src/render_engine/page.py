@@ -1,11 +1,10 @@
 import logging
 import re
 from pathlib import Path
-from typing import Generator, Type
+from typing import Type
 
-import frontmatter
 import jinja2
-from markdown2 import markdown
+import pluggy
 from slugify import slugify
 
 from .parsers.base_parsers import BasePageParser
@@ -27,15 +26,6 @@ class Page:
     Attributes:
 
     """
-
-    # TODO: REMOVE THIS
-    # markdown: str | None = None
-    # """This is base markdown that will be used to render the page.
-
-    # !!! warning
-
-    #     This will be overwritten if a `content_path` is provided.
-    # """
 
     content: str | None
     content_path: str | None
@@ -61,11 +51,11 @@ class Page:
         content: str | None = None,
         content_path: str | None = None,
         Parser: Type[BasePageParser] | None = None,
+        pm: pluggy.PluginManager | None = None,
     ) -> None:
         """Set Attributes that may be passed in from collections"""
 
-        if Parser:
-            self.Parser = Parser
+        self.Parser = getattr(self, "Parser", Parser)
 
         if content_path := (content_path or getattr(self, "content_path", None)):
             content = self.Parser.parse_content_path(content_path)
@@ -82,13 +72,15 @@ class Page:
         for name, value in attrs.items():
             # comma delimit attributes using list_attrs.
             name = name.lower()
+
             if name in invalid_attrs:
+                logging.warning(f"{name=} is not a valid attribute. Setting to _{name}")
                 name = f"_{name}"
 
-            if name in getattr(self, "list_attrs", []):
-                value = [attrval.lower() for attrval in value.split(", ")]
-
             setattr(self, name, value)
+
+        if pm:
+            pm.hook.post_build_page(page=self)
 
     @property
     def title(self) -> str:

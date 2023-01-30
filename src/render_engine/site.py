@@ -63,12 +63,6 @@ class Site:
         for plugin in self.plugins:
             self._pm.register(plugin)
 
-    def post_build_page(self, page: Page):
-        """Parse the content of the page using the plugins"""
-        _page = page
-        self._pm.hook.post_build_page(page=_page)
-        return _page
-
     @property
     def engine(self) -> Environment:
         env = engine
@@ -103,8 +97,8 @@ class Site:
 
     def page(self, page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        _page = self.post_build_page(page())
-        self.add_to_route_list(_page)
+        _page = page(pm=self._pm)
+        self.add_to_route_list(page(pm=self._pm))
         return _page
 
     def render_static(self, directory) -> None:

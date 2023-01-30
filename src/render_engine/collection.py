@@ -1,10 +1,8 @@
-import itertools
 import pathlib
-from collections import defaultdict
 from typing import Any, Callable, Type
 
-import jinja2
-from more_itertools import chunked, flatten
+import pluggy
+from more_itertools import batched, chunked, flatten
 
 from .feeds import RSSFeed
 from .page import Page, _route
@@ -114,7 +112,11 @@ class Collection:
     sort_reverse: bool = False
     has_archive: bool = False
 
-    def __init__(self):
+    def __init__(
+        self,
+        pm: pluggy.PluginManager | None = None,
+    ) -> None:
+
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
@@ -138,72 +140,74 @@ class Collection:
 
     @property
     def collection_vars(self):
-        """
-        Creates Collection Vars to Pass into template.
-        """
+        """Creates Collection Vars to Pass into template."""
         return {f"COLLECTION_{key.upper()}": val for key, val in vars(self).items()}
 
-    def gen_page(self, content):
-        page = self.content_type(content=content, Parser=self.PageParser)
-        page.routes = self.routes
-        page.subcollections = getattr(self, "subcollections", [])
-        page.subcollection_template = getattr(self, "subcollection_template", [])
-        page.template = getattr(self, "template", None)
+    def _iter_content_path(self):
+        """Iterate through all files in the collection's content path."""
+        return flatten(
+            [
+                pathlib.Path(self.content_path).glob(extension)
+                for extension in self.includes
+            ]
+        )
 
-        for extra, extra_val in getattr(self, "parser_extras", {}).items():
-            setattr(page, extra, extra_val)
-
-        for key, val in self.collection_vars.items():
-            setattr(page, key, val)
-
-        return page
-
-    @property
-    def pages(self) -> list[Type[Page]]:
+    def get_page(self, content_path=None) -> list[Type[Page]]:
         """Returns a list of pages for the collection."""
-        if getattr(self, "content_path", None):
-            pages = flatten(
-                [
-                    pathlib.Path(self.content_path).glob(extension)
-                    for extension in self.includes
-                ]
-            )
 
-            for page_path in pages:
-                yield self.gen_page(content=page_path.read_text())
+        class Page(self.content_type):
+            routes = self.routes
+            subcollections = getattr(self, "subcollections", [])
+            subocollection_template = getattr(self, "subcollection_template", [])
+            template = getattr(self, "template", None)
+            Parser = self.PageParser
+
+            def __init__(self, collection, content_path):
+                self.content_path = content_path
+                for extra, extra_val in getattr(
+                    collection, "parser_extras", {}
+                ).items():
+                    setattr(self, extra, extra_val)
+
+                for key, val in getattr(collection, "collection_vars", {}).items():
+                    setattr(self, key, val)
+
+                super().__init__(pm=getattr(collection, "pm", None))
+
+        return Page(self, content_path)
 
     @property
     def sorted_pages(self):
         return sorted(
-            self.pages,
-            key=lambda page: getattr(page, self.sort_by),
+            (page for page in self.__iter__()),
+            key=lambda page: getattr(page, self.sort_by, self.title),
             reverse=self.sort_reverse,
         )
 
     @property
     def archives(self) -> list[Archive]:
         """Returns a list of Archive pages containing the pages of data for each archive."""
-        if self.has_archive:
-            return gen_collection(
-                pages=self.sorted_pages,
+        for pages in batched(
+            self.sorted_pages,
+            getattr(self.items_per_page, len(list(self._iter_content_path()))),
+        ):
+            yield Archive(
+                pages=pages,
                 template=self.archive_template,
                 title=self.title,
-                items_per_page=getattr(self, "items_per_page", None),
                 routes=self.routes,
                 collection_vars=self.collection_vars,
             )
-        return ()
 
     @property
     def _feed(self):
-        if hasattr(self, "feed"):
-            return self.feed(
-                pages=self.pages,
-                title=getattr(self, "feed_title", f"{self.title}"),
-                slug=f"{self.title}",
-                Parser=self.PageParser,
-                collection_vars=self.collection_vars,
-            )
+        return self.feed(
+            pages=self.pages,
+            title=getattr(self, "feed_title", f"{self.title}"),
+            slug=f"{self.title}",
+            Parser=self.PageParser,
+            collection_vars=self.collection_vars,
+        )
 
     def __repr__(self):
         return f"{self}: {__class__.__name__}"
@@ -212,7 +216,8 @@ class Collection:
         return f"{self}: {__class__.__name__}"
 
     def __iter__(self):
-        return iter(self.pages)
+        for page in self._iter_content_path():
+            yield self.get_page(page)
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:

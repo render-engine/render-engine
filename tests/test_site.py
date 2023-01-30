@@ -37,6 +37,11 @@ def test_site_site_vars_orrider_defaults_via_class():
 
 
 def test_site_page_in_route_list():
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
+
     site = Site()
 
     # assert that the route list is empty
@@ -44,6 +49,7 @@ def test_site_page_in_route_list():
 
     class CustomPage(Page):
         test_value = "test"
+        content_path = tmp_dir.absolute()
 
     site.page(CustomPage)
 
