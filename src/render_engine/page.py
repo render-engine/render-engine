@@ -74,7 +74,7 @@ class Page:
             name = name.lower()
 
             if name in invalid_attrs:
-                logging.warning(f"{name=} is not a valid attribute. Setting to _{name}")
+                logging.debug(f"{name=} is not a valid attribute. Setting to _{name}")
                 name = f"_{name}"
 
             setattr(self, name, value)

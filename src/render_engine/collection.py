@@ -1,77 +1,15 @@
 import pathlib
-from typing import Any, Callable, Type
+from typing import Any, Callable, Generator, Type
 
 import pluggy
-from more_itertools import batched, chunked, flatten
+from more_itertools import batched, flatten
+from slugify import slugify
 
+from .archive import Archive
 from .feeds import RSSFeed
 from .page import Page, _route
+from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
-
-
-def format_includes(include: str) -> str:
-    """Formats the include to be a list of strings"""
-    if not include.startswith("."):
-        return f".{include}"
-    return include
-
-
-class Archive(Page):
-    """Custom Page object used to make archive pages"""
-
-    def __init__(
-        self,
-        pages: list[Type[Page]],
-        template: str,
-        routes: list[_route],
-        **kwargs,
-    ) -> None:
-        """Create a `Page` object for the pages in the collection"""
-        super().__init__()
-        self.pages = pages
-        self.template = template
-        self.routes = routes
-        for key, val in kwargs.items():
-            setattr(self, key, val)
-
-
-def gen_collection(
-    pages: list[Type[Page]] | list[Archive],
-    template: str,
-    title: str,
-    routes: list[_route],
-    collection_vars: dict,
-    items_per_page: int | None = None,
-) -> list[Archive]:
-    """Returns a list of Archive pages containing the pages of data for each archive."""
-
-    if items_per_page:
-        page_chunks = chunked(pages, items_per_page)
-
-        pages = [
-            Archive(
-                pages=pages,
-                template=template,
-                slug=f"{title}_{i}",
-                title=title,
-                routes=routes,
-                **collection_vars,
-            )
-            for i, pages in enumerate(page_chunks)
-        ]
-
-        return pages
-
-    return [
-        Archive(
-            pages=pages,
-            template=template,
-            title=title,
-            routes=routes,
-            **collection_vars,
-        )
-    ]
-
 
 SubCollection = {str, list[Page]}
 
@@ -95,18 +33,18 @@ class Collection:
             pass
     """
 
-    feed: Type[RSSFeed]
+    Feed: Type[RSSFeed]
     feed_title: str
     content_path: pathlib.Path
     content_type: Type[Page] = Page
     archive_template: str | None
     template: str | None
     items_per_page: int | None
-    _includes: list[str] = ["*.md", "*.html"]
+    include_extensions: list[str] = ["*.md", "*.html"]
     sort_by: str = "title"
     subcollections: list[str | list[str]] | None
-    routes: list[str] = ["./"]
-    PageParser = MarkdownPageParser
+    routes: list[_route] = ["./"]
+    PageParser: Type[BasePageParser] = MarkdownPageParser
     parser_extras: dict[str, Any]
     content_path_filter: Callable[[pathlib.Path], bool] | None
     sort_reverse: bool = False
@@ -120,61 +58,46 @@ class Collection:
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
 
-        if hasattr(self, "archive_template"):
+        if any(
+            [
+                hasattr(self, "archive_template"),
+                getattr(self, "items_per_page", None),
+                getattr(self, "subcollections", None),
+            ]
+        ):
+
             self.has_archive = True
-            self.archive_template
 
             if hasattr(self, "subcollections") and not getattr(
                 self, "subcollections_template", None
             ):
                 self.subcollection_template = self.archive_template
 
-    @property
-    def includes(self):
-        for include in self._includes:
-            yield include
-
-    @includes.setter
-    def includes(self, *extensions: str):
-        self._includes = [format_includes(include) for include in extensions]
-
-    @property
-    def collection_vars(self):
-        """Creates Collection Vars to Pass into template."""
-        return {f"COLLECTION_{key.upper()}": val for key, val in vars(self).items()}
+        else:
+            self.has_archive = False
 
     def _iter_content_path(self):
         """Iterate through all files in the collection's content path."""
+
         return flatten(
             [
                 pathlib.Path(self.content_path).glob(extension)
-                for extension in self.includes
+                for extension in self.include_extensions
             ]
         )
 
     def get_page(self, content_path=None) -> list[Type[Page]]:
         """Returns a list of pages for the collection."""
 
-        class Page(self.content_type):
-            routes = self.routes
-            subcollections = getattr(self, "subcollections", [])
-            subocollection_template = getattr(self, "subcollection_template", [])
-            template = getattr(self, "template", None)
-            Parser = self.PageParser
+        _page = self.content_type(content_path=content_path)
+        _page.routes = self.routes
+        _page.subcollections = getattr(self, "subcollections", [])
+        _page.subcollection_template = getattr(self, "subcollection_template", [])
+        _page.template = getattr(self, "template", None)
+        _page.Parser = self.PageParser
+        _page.collection_vars = vars(self)
 
-            def __init__(self, collection, content_path):
-                self.content_path = content_path
-                for extra, extra_val in getattr(
-                    collection, "parser_extras", {}
-                ).items():
-                    setattr(self, extra, extra_val)
-
-                for key, val in getattr(collection, "collection_vars", {}).items():
-                    setattr(self, key, val)
-
-                super().__init__(pm=getattr(collection, "pm", None))
-
-        return Page(self, content_path)
+        return _page
 
     @property
     def sorted_pages(self):
@@ -185,29 +108,35 @@ class Collection:
         )
 
     @property
-    def archives(self) -> list[Archive]:
+    def archives(self) -> Generator[Archive, None, None]:
         """Returns a list of Archive pages containing the pages of data for each archive."""
+
+        if not self.has_archive:
+            yield from ()
+
         for pages in batched(
             self.sorted_pages,
-            getattr(self.items_per_page, len(list(self._iter_content_path()))),
+            getattr(self, "items_per_page", len(list(self.__iter__()))),
         ):
             yield Archive(
                 pages=pages,
-                template=self.archive_template,
+                template=getattr(self, "archive_template", None),
                 title=self.title,
                 routes=self.routes,
-                collection_vars=self.collection_vars,
             )
 
     @property
     def _feed(self):
-        return self.feed(
-            pages=self.pages,
-            title=getattr(self, "feed_title", f"{self.title}"),
-            slug=f"{self.title}",
-            Parser=self.PageParser,
-            collection_vars=self.collection_vars,
-        )
+        feed = self.Feed()
+        feed.pages = [page for page in self]
+        feed.title = getattr(self, "feed_title", self.title)
+        feed.slug = self.title
+        feed.Parser = self.PageParser
+        return feed
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
     def __repr__(self):
         return f"{self}: {__class__.__name__}"
@@ -216,8 +145,11 @@ class Collection:
         return f"{self}: {__class__.__name__}"
 
     def __iter__(self):
-        for page in self._iter_content_path():
-            yield self.get_page(page)
+        if not hasattr(self, "pages"):
+            for page in self._iter_content_path():
+                yield self.get_page(page)
+        else:
+            yield from getattr(self, "pages", ())
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:

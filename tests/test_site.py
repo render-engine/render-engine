@@ -36,7 +36,7 @@ def test_site_site_vars_orrider_defaults_via_class():
     assert site.site_vars["SITE_URL"] == "https://my-site.com"
 
 
-def test_site_page_in_route_list():
+def test_site_page_in_route_list(tmp_path):
     tmp_dir = tmp_path / "content"
     tmp_dir.mkdir()
     file = tmp_dir / "test.md"
@@ -49,7 +49,7 @@ def test_site_page_in_route_list():
 
     class CustomPage(Page):
         test_value = "test"
-        content_path = tmp_dir.absolute()
+        content_path = file.absolute()
 
     site.page(CustomPage)
 
@@ -68,9 +68,9 @@ def test_site_collection_in_route_list():
     class collection(Collection):
         pages = [CustomPage()]
 
-    site.collection(collection)
+    collection = site.collection(collection)
 
-    assert site.route_list["custompage"].test_value == "test"
+    assert site.route_list["collection"] == collection
 
 
 def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():

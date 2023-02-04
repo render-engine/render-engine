@@ -60,3 +60,23 @@ def test_collection_archive_no_items_per_page(tmp_path):
 
     collection = BasicCollection()
     assert len(list(collection.archives)) == 1
+
+
+def test_collection_vars(tmp_path):
+    """
+    Tests that collection_vars are passed to the page objects
+    """
+
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
+
+    class BasicCollection(Collection):
+        content_path = tmp_dir.absolute()
+        archive_template = None
+
+    collection = BasicCollection()
+
+    for page in collection:
+        assert page.collection_vars["title"] == collection.title
