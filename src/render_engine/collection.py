@@ -33,7 +33,7 @@ class Collection:
     content_type: Type[Page] = Page
     Feed: Type[RSSFeed]
     feed_title: str
-    include_suffix: list[str] = ["*.md", "*.html"]
+    include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
     PageParser: Type[BasePageParser] = MarkdownPageParser
     parser_extras: dict[str, Any]
