@@ -57,6 +57,7 @@ def test_site_page_in_route_list(tmp_path):
 
 
 def test_site_collection_in_route_list():
+    """Tests that when a collection is added to the route_list it is only the colleciton"""
     site = Site()
 
     # assert that the route list is empty
@@ -66,18 +67,16 @@ def test_site_collection_in_route_list():
         test_value = "test"
 
     class collection(Collection):
-        pages = [CustomPage()]
+        pages = [CustomPage(), CustomPage()]
 
     collection = site.collection(collection)
 
     assert site.route_list["collection"] == collection
+    assert len(site.route_list) == 1
 
 
 def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
     site = Site()
-
-    # assert that the route list is empty
-    assert len(site.route_list) == 0
 
     class CustomPage(Page):
         test_value = "test"

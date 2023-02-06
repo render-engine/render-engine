@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 from typing import Type
 
+import chevron
 import jinja2
 import pluggy
 from slugify import slugify
@@ -55,7 +56,8 @@ class Page:
     ) -> None:
         """Set Attributes that may be passed in from collections"""
 
-        self.Parser = getattr(self, "Parser", Parser)
+        if Parser:
+            self.Parser = Parser
 
         if content_path := (content_path or getattr(self, "content_path", None)):
             content = self.Parser.parse_content_path(content_path)
@@ -187,8 +189,4 @@ class Page:
     def _replace_internal_references(self):
         """Finds the curly boys in the content and replaces them with the correct value"""
 
-        markers = re.findall(r"{{(.+)}}", self.content)
-
-        for value in markers:
-            if replacement := getattr(self, value, None):
-                self.content = self.content.replace(f"{{{{{value}}}}}", replacement)
+        return chevron.render(self.content, vars(self))

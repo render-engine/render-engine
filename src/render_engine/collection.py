@@ -86,15 +86,14 @@ class Collection:
             ]
         )
 
-    def get_page(self, content_path=None) -> list[Type[Page]]:
+    def get_page(self, content_path=None) -> list[Type["Page"]]:
         """Returns a list of pages for the collection."""
 
-        _page = self.content_type(content_path=content_path)
+        _page = self.content_type(content_path=content_path, Parser=self.PageParser)
         _page.routes = self.routes
         _page.subcollections = getattr(self, "subcollections", [])
         _page.subcollection_template = getattr(self, "subcollection_template", [])
         _page.template = getattr(self, "template", None)
-        _page.Parser = self.PageParser
         _page.collection_vars = vars(self)
 
         return _page
@@ -114,12 +113,24 @@ class Collection:
         if not self.has_archive:
             yield from ()
 
-        for pages in batched(
-            self.sorted_pages,
-            getattr(self, "items_per_page", len(list(self.__iter__()))),
-        ):
+        if hasattr(self, "items_per_page"):
+            for index, pages in enumerate(
+                list(
+                    batched(
+                        self.sorted_pages,
+                        getattr(self, "items_per_page", len(list(self.__iter__()))),
+                    )
+                )
+            ):
+                yield Archive(
+                    pages=pages,
+                    template=getattr(self, "archive_template", None),
+                    title=f"{self.title}-{index}",
+                    routes=self.routes,
+                )
+        else:
             yield Archive(
-                pages=pages,
+                pages=self.sorted_pages,
                 template=getattr(self, "archive_template", None),
                 title=self.title,
                 routes=self.routes,
@@ -142,14 +153,15 @@ class Collection:
         return f"{self}: {__class__.__name__}"
 
     def __str__(self):
-        return f"{self}: {__class__.__name__}"
+        return f"{__class__.__name__}"
 
     def __iter__(self):
         if not hasattr(self, "pages"):
             for page in self._iter_content_path():
                 yield self.get_page(page)
         else:
-            yield from getattr(self, "pages", ())
+            for page in self.pages():
+                yield page
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:

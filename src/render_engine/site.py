@@ -47,9 +47,9 @@ class Site:
     ) -> None:
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
         self._pm.add_hookspecs(SiteSpecs)
-        self.route_list: defaultdict = defaultdict(dict)
-        self.subcollections: defaultdict = defaultdict(lambda: {"pages": []})
-        self.collections: defaultdict = defaultdict(list)
+        self.route_list = defaultdict(dict)
+        self.subcollections = defaultdict(lambda: {"pages": []})
+        self.collections = defaultdict(list)
         self.engine.filters["url_for"] = partial(url_for, site=self)
 
         if not hasattr(self, "plugins"):
@@ -76,10 +76,9 @@ class Site:
 
     def collection(self, collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
-        _collection = collection()
+        _collection = collection(pm=self._pm)
         self._pm.hook.pre_build_collection(collection=_collection)
         self.collections[_collection.__class__.__name__.lower()] = _collection
-        logging.debug("Adding Collection: %s", _collection.__class__.__name__)
         self.route_list[_collection.slug] = _collection
         return _collection
 
@@ -97,8 +96,6 @@ class Site:
 
     def render_output(self, route: str, page: Page):
         """writes the page object to disk"""
-        if page._extension == ".xml":
-            logging.debug("%s, %s", page.content, page.pages)
         path = (
             pathlib.Path(self.output_path)
             / pathlib.Path(route)
@@ -107,26 +104,10 @@ class Site:
         path.parent.mkdir(parents=True, exist_ok=True)
         return path.write_text(page._render_content(engine=self.engine))
 
-    def build_subcollections(self, page) -> None:
-        if subcollections := getattr(page, "subcollections", []):
-            logging.debug("Adding subcollections: %s", subcollections)
-
-            for attr in subcollections:
-                logging.debug("Adding attr: %s", attr)
-
-                for page_attr in getattr(page, attr, []):
-                    logging.debug("Adding page_attr: %s", page_attr)
-                    self.subcollections[page_attr]
-                    self.subcollections[page_attr]["pages"].append(page)
-                    self.subcollections[page_attr]["route"] = attr
-
-                    if "template" not in self.subcollections[page_attr]:
-                        self.subcollections[page_attr][
-                            "template"
-                        ] = page.subcollection_template
-
     def render_collection(self, collection: Collection) -> None:
         """Iterate through Pages and Check for Collections and Feeds"""
+        subcollections = dict()
+
         for entry in collection:
             for route in collection.routes:
                 self.render_output(route, entry)
@@ -139,7 +120,7 @@ class Site:
                     self.render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
-            self.render_output("/", collection._feed)
+            self.render_output("./", collection._feed)
 
     def render(self) -> None:
         """Render all pages and collections"""
@@ -164,41 +145,10 @@ class Site:
                             task_add_route,
                             description=f"[blue]Adding[gold]Route: [blue]{entry.slug}",
                         )
-                        self.render_output(route, page)
+                        self.render_output(route, entry)
 
                 if isinstance(entry, Collection):
                     self.render_collection(entry)
-
-            for page in self.route_list.values():
-                progress.update(
-                    task_add_route,
-                    description=f"[blue]Adding[grey]Route: [blue]{page.slug}",
-                )
-                self.build_subcollections(page)
-                progress.update(task_add_route, advance=1)
-
-            # Parse SubCollection
-            task_render_subcollection = progress.add_task(
-                "[blue]Rendering SubCollections", total=len(self.subcollections)
-            )
-
-            for tag, subcollection in self.subcollections.items():
-                progress.update(
-                    task_render_subcollection,
-                    description=f"[blue]Rendering[grey]SubCollection: [blue]{tag}",
-                )
-                page = Page()
-                page.title = tag
-                page.template = subcollection["template"]
-                page.pages = subcollection["pages"]
-
-                self.render_output(
-                    pathlib.Path(page.routes[0]).joinpath(subcollection["route"]), page
-                )
-
-            if pathlib.Path(self.static_path).is_dir():
-                task = progress.add_task("copying static directory", total=1)
-                self.render_static(pathlib.Path(self.static_path).name)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(site=self)
