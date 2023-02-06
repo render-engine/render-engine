@@ -12,7 +12,7 @@ class Archive(Page):
     def __init__(
         self,
         pages: list[Page],
-        template: str,
+        template: str | None,
         routes: list[_route],
         **kwargs,
     ) -> None:

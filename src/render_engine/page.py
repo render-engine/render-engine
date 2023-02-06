@@ -45,6 +45,7 @@ class Page:
     routes: list[_route] = ["./"]
     template: str | None
     invalid_attrs: list[str] = ["slug"]
+    collection_vars: dict | None
     Parser: Type[BasePageParser] = BasePageParser
 
     def __init__(

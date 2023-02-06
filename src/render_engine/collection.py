@@ -11,17 +11,12 @@ from .page import Page, _route
 from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
 
-SubCollection = {str, list[Page]}
-
 
 class Collection:
     """Collection objects serve as a way to quickly process pages that have a
     LARGE portion of content that is similar or file driven.
 
-    The most common form of collection would be a Blog, but can also be
-    static pages that have their content stored in a dedicated file.
-
-    Currently, collections must come from a content_path and all be the same
+    Currently, collection pages MUST come from a `content_path` and all be the same
     content type.
 
     Example::
@@ -33,22 +28,20 @@ class Collection:
             pass
     """
 
-    Feed: Type[RSSFeed]
-    feed_title: str
+    archive_template: str | None
     content_path: pathlib.Path
     content_type: Type[Page] = Page
-    archive_template: str | None
-    template: str | None
+    Feed: Type[RSSFeed]
+    feed_title: str
+    include_suffix: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
-    include_extensions: list[str] = ["*.md", "*.html"]
-    sort_by: str = "title"
-    subcollections: list[str | list[str]] | None
-    routes: list[_route] = ["./"]
     PageParser: Type[BasePageParser] = MarkdownPageParser
     parser_extras: dict[str, Any]
-    content_path_filter: Callable[[pathlib.Path], bool] | None
+    routes: list[_route] = ["./"]
+    sort_by: str = "title"
     sort_reverse: bool = False
-    has_archive: bool = False
+    title: str
+    template: str | None
 
     def __init__(
         self,
@@ -57,42 +50,29 @@ class Collection:
 
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
-
-        if any(
+        self.pm = pm
+        self.has_archive = any(
             [
                 hasattr(self, "archive_template"),
                 getattr(self, "items_per_page", None),
-                getattr(self, "subcollections", None),
-            ]
-        ):
-
-            self.has_archive = True
-
-            if hasattr(self, "subcollections") and not getattr(
-                self, "subcollections_template", None
-            ):
-                self.subcollection_template = self.archive_template
-
-        else:
-            self.has_archive = False
-
-    def _iter_content_path(self):
-        """Iterate through all files in the collection's content path."""
-
-        return flatten(
-            [
-                pathlib.Path(self.content_path).glob(extension)
-                for extension in self.include_extensions
             ]
         )
 
-    def get_page(self, content_path=None) -> list[Type["Page"]]:
+    def iter_content_path(self):
+        """Iterate through in the collection's content path."""
+
+        return flatten(
+            [
+                pathlib.Path(self.content_path).glob(suffix)
+                for suffix in self.include_suffixes
+            ]
+        )
+
+    def get_page(self, content_path=None) -> "Page":
         """Returns a list of pages for the collection."""
 
         _page = self.content_type(content_path=content_path, Parser=self.PageParser)
         _page.routes = self.routes
-        _page.subcollections = getattr(self, "subcollections", [])
-        _page.subcollection_template = getattr(self, "subcollection_template", [])
         _page.template = getattr(self, "template", None)
         _page.collection_vars = vars(self)
 
@@ -157,7 +137,7 @@ class Collection:
 
     def __iter__(self):
         if not hasattr(self, "pages"):
-            for page in self._iter_content_path():
+            for page in self.iter_content_path():
                 yield self.get_page(page)
         else:
             for page in self.pages():
