@@ -186,8 +186,3 @@ class Page:
 
         else:
             raise ValueError(f"{self=} must have either content or template")
-
-    def _replace_internal_references(self):
-        """Finds the curly boys in the content and replaces them with the correct value"""
-
-        return chevron.render(self.content, vars(self))
