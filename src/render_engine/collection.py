@@ -140,7 +140,7 @@ class Collection:
             for page in self.iter_content_path():
                 yield self.get_page(page)
         else:
-            for page in self.pages():
+            for page in self.pages:
                 yield page
 
 
