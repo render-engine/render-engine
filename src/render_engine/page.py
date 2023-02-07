@@ -65,7 +65,6 @@ class Page:
 
         if content := (content or getattr(self, "content", None)):
             attrs, self.content = self.Parser.parse_content(content)
-            self._replace_internal_references()
 
         else:
             attrs = {}
