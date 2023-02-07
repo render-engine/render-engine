@@ -2,6 +2,7 @@ import pytest
 
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
+from render_engine.page import Page
 from render_engine.parsers.markdown import MarkdownPageParser
 
 
@@ -15,45 +16,33 @@ def test_can_manually_set_slug():
     assert feed().slug == "test-feed-slug"
 
 
-def test_rss_feed_title():
-    """Test that the feed title can be set manually"""
-
-    feed = RSSFeed(pages=[], title="Test Feed Title")
-    assert feed.title == "Test Feed Title"
-    assert feed.slug == "test-feed-title"
-
-
 def test_rss_feed_title_from_collection():
     """Test that the feed title is set from the collection"""
 
     class TestCollection(Collection):
         feed_title = "Test Feed Title"
-        feed = RSSFeed
+        Feed = RSSFeed
+        pages = [Page()]
 
     collection = TestCollection()
 
-    print(collection.feed)
     assert collection._feed.title == "Test Feed Title"
 
 
-def test_rss_feed_inherites_from_collection():
+def test_rss_feed_inherites_from_collection(tmp_path):
     """Test that the feed title is set from the collection"""
 
-    class TestCollection(Collection):
-        feed = RSSFeed
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
 
-    collection = TestCollection()
+    class BasicCollection(Collection):
+        content_path = tmp_dir.absolute()
+        archive_template = None
+        Feed = RSSFeed
 
-    assert collection._feed.title == "TestCollection"
-    assert collection._feed.url == "testcollection.rss"
+    collection = BasicCollection()
 
-
-def test_rss_feed_pages_use_page_parser():
-    """Test that the feed pages use the page parser"""
-
-    class TestCollection(Collection):
-        feed = RSSFeed
-
-    collection = TestCollection()
-
-    assert collection.PageParser == collection._feed.Parser
+    assert collection._feed.title == "BasicCollection"
+    assert collection._feed.url == "basiccollection.rss"

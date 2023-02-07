@@ -67,24 +67,3 @@ def test_page_from_template_with_content(tmp_path):
 
     page = CustomPage()
     assert page._render_content(engine=environment) == "This is a test page"
-
-
-def find_all_curly_boys(content):
-    the_boys = re.findall(r"{{(.+)}}", content)
-    for value in the_boys:
-        print(value)
-
-
-def test_page_template_supports_mustache_vars():
-    class CustomPage(Page):
-        title = "Test Page"
-        template = "test.html"
-        content = "This is the {{title}}"
-
-    page = CustomPage()
-
-    environment = jinja2.Environment(
-        loader=jinja2.DictLoader({"test.html": "{{ content }}"}),
-    )
-
-    assert page._render_content(engine=environment) == "This is the Test Page"

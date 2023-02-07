@@ -4,6 +4,7 @@ import typing
 
 import more_itertools
 import pendulum
+import pluggy
 
 from .collection import Collection
 from .feeds import RSSFeed
@@ -21,6 +22,7 @@ class BlogPost(Page):
         self,
         content: str | None = None,
         content_path: str | None = None,
+        pm: typing.Type["pluggy.PluginManager"] | None = None,
         Parser: typing.Type["BasePageParer"] = MarkdownPageParser,
     ):
         """
@@ -32,7 +34,9 @@ class BlogPost(Page):
             date_friendly : str
         """
 
-        super().__init__(content=content, content_path=content_path, Parser=Parser)
+        super().__init__(
+            content=content, content_path=content_path, Parser=Parser, pm=pm
+        )
 
         # protect date_published, modified_date, or date_friendly in the frontmatter
 
@@ -96,4 +100,4 @@ class Blog(Collection):
     sort_reverse: bool = True
     sort_by = "date_published"
     has_archive = True
-    feed = RSSFeed
+    Feed = RSSFeed

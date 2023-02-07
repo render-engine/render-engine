@@ -1,11 +1,11 @@
 import logging
 import re
 from pathlib import Path
-from typing import Generator, Type
+from typing import Type
 
-import frontmatter
+import chevron
 import jinja2
-from markdown2 import markdown
+import pluggy
 from slugify import slugify
 
 from .parsers.base_parsers import BasePageParser
@@ -28,15 +28,6 @@ class Page:
 
     """
 
-    # TODO: REMOVE THIS
-    # markdown: str | None = None
-    # """This is base markdown that will be used to render the page.
-
-    # !!! warning
-
-    #     This will be overwritten if a `content_path` is provided.
-    # """
-
     content: str | None
     content_path: str | None
     """
@@ -54,6 +45,7 @@ class Page:
     routes: list[_route] = ["./"]
     template: str | None
     invalid_attrs: list[str] = ["slug"]
+    collection_vars: dict | None
     Parser: Type[BasePageParser] = BasePageParser
 
     def __init__(
@@ -61,6 +53,7 @@ class Page:
         content: str | None = None,
         content_path: str | None = None,
         Parser: Type[BasePageParser] | None = None,
+        pm: pluggy.PluginManager | None = None,
     ) -> None:
         """Set Attributes that may be passed in from collections"""
 
@@ -72,7 +65,6 @@ class Page:
 
         if content := (content or getattr(self, "content", None)):
             attrs, self.content = self.Parser.parse_content(content)
-            self.replace_internal_references()
 
         else:
             attrs = {}
@@ -82,13 +74,15 @@ class Page:
         for name, value in attrs.items():
             # comma delimit attributes using list_attrs.
             name = name.lower()
+
             if name in invalid_attrs:
+                logging.debug(f"{name=} is not a valid attribute. Setting to _{name}")
                 name = f"_{name}"
 
-            if name in getattr(self, "list_attrs", []):
-                value = [attrval.lower() for attrval in value.split(", ")]
-
             setattr(self, name, value)
+
+        if pm:
+            pm.hook.post_build_page(page=self)
 
     @property
     def title(self) -> str:
@@ -191,12 +185,3 @@ class Page:
 
         else:
             raise ValueError(f"{self=} must have either content or template")
-
-    def replace_internal_references(self):
-        """Finds the curly boys in the content and replaces them with the correct value"""
-
-        markers = re.findall(r"{{(.+)}}", self.content)
-
-        for value in markers:
-            if replacement := getattr(self, value, None):
-                self.content = self.content.replace(f"{{{{{value}}}}}", replacement)
