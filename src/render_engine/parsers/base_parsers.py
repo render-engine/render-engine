@@ -36,6 +36,6 @@ class BasePageParser:
         return frontmatter.parse(content)
 
     @staticmethod
-    def markup(page: Type["Page"], content: str | None):
+    def markup(page: "Page", content: str | None):
         """Convert the raw_content into HTML or the finalized format"""
         return content

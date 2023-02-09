@@ -20,7 +20,10 @@ class SiteSpecs:
 
     @hook_spec
     def post_build_page(self, page: "Page") -> None:
-        """Augments the content of the page before it is rendered"""
+        """
+        Augments the content of the page before it is rendered as output.
+        This is ran during `render_output`.
+        """
         pass
 
     @hook_spec

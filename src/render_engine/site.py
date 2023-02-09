@@ -82,11 +82,13 @@ class Site:
         self.route_list[_collection.slug] = _collection
         return _collection
 
-    def page(self, page: type[Page]) -> Page:
+    def page(self, Page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        _page = page(pm=self._pm)
-        self.add_to_route_list(page(pm=self._pm))
-        return _page
+        page = Page()
+        logging.info("Running Post Build Page")
+        self._pm.hook.post_build_page(page=page)
+        self.add_to_route_list(page)
+        return page
 
     def render_static(self, directory) -> None:
         """Copies a Static Directory to the output folder"""
@@ -135,6 +137,7 @@ class Site:
                 "[blue]Adding Routes", total=len(self.route_list)
             )
             engine.globals["site"] = self
+
             for slug, entry in self.route_list.items():
                 progress.update(
                     task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}"

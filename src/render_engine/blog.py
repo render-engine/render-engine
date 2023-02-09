@@ -34,10 +34,7 @@ class BlogPost(Page):
             date_friendly : str
         """
 
-        super().__init__(
-            content=content, content_path=content_path, Parser=Parser, pm=pm
-        )
-
+        super().__init__(pm=pm)
         # protect date_published, modified_date, or date_friendly in the frontmatter
 
         protected_date_attrs = ["modified_date", "date_published", "date_friendly"]

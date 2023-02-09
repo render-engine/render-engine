@@ -1,9 +1,7 @@
 import logging
-import re
 from pathlib import Path
 from typing import Type
 
-import chevron
 import jinja2
 import pluggy
 from slugify import slugify
@@ -55,7 +53,9 @@ class Page:
         Parser: Type[BasePageParser] | None = None,
         pm: pluggy.PluginManager | None = None,
     ) -> None:
-        """Set Attributes that may be passed in from collections"""
+        """
+        Set Attributes that may be passed in from collections.
+        """
 
         if Parser:
             self.Parser = Parser
@@ -81,8 +81,7 @@ class Page:
 
             setattr(self, name, value)
 
-        if pm:
-            pm.hook.post_build_page(page=self)
+        self._pm = pm
 
     @property
     def title(self) -> str:
@@ -162,8 +161,9 @@ class Page:
 
         # Parsing with a template
         if hasattr(self, "template") and engine:
+
+            # content should be converted to before being passed to the template
             if hasattr(self, "content"):
-                """Content should be converted to before being passed to the template"""
                 return engine.get_template(self.template).render(
                     **{
                         **self.to_dict,
