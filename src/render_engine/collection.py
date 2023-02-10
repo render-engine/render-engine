@@ -45,7 +45,7 @@ class Collection:
 
     def __init__(
         self,
-        pm: pluggy.PluginManager | None = None,
+        pm: pluggy.PluginManager,
     ) -> None:
 
         if not hasattr(self, "title"):
@@ -76,7 +76,6 @@ class Collection:
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
         _page.collection_vars = vars(self)
-        self._pm.hook.post_build_page(page=_page)
         return _page
 
     @property
@@ -101,6 +100,7 @@ class Collection:
 
         for index, pages in enumerate(archives):
             yield Archive(
+                pm=self._pm,
                 pages=pages,
                 template=getattr(self, "archive_template", None),
                 title=self.title,
@@ -111,7 +111,7 @@ class Collection:
 
     @property
     def _feed(self):
-        feed = self.Feed()
+        feed = self.Feed(pm=self._pm)
         feed.pages = [page for page in self]
         feed.title = getattr(self, "feed_title", self.title)
         feed.slug = self.title

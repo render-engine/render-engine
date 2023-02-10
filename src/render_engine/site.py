@@ -84,9 +84,8 @@ class Site:
 
     def page(self, Page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        page = Page()
+        page = Page(pm=self._pm)
         logging.info("Running Post Build Page")
-        self._pm.hook.post_build_page(page=page)
         self.add_to_route_list(page)
         return page
 

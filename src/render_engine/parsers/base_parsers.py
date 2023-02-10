@@ -15,6 +15,9 @@ def check_for_attrs(page, attrs):
 class BasePageParser:
     configuration_values: list[str]
 
+    def get_configuration_values(self, page):
+        return {attr: getattr(page, attr, None) for attr in self.configuration_values}
+
     def raise_for_errors(self, page):
         if missing_attrs := check_for_attrs(
             page, getattr(self, "configuration_values", [])
@@ -31,11 +34,11 @@ class BasePageParser:
         return pathlib.Path(content_path).read_text()
 
     @staticmethod
-    def parse_content(content: str) -> tuple[dict[str, Any], str]:
+    def parse_content(content: str):
         """Fething content and atttributes from a content_path"""
         return frontmatter.parse(content)
 
     @staticmethod
-    def markup(page: "Page", content: str | None):
-        """Convert the raw_content into HTML or the finalized format"""
+    def markup(content: str, page: "Page"):
+        """Convert the raw_content into HTML"""
         return content

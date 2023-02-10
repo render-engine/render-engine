@@ -26,7 +26,6 @@ class Page:
 
     """
 
-    content: str | None
     content_path: str | None
     """
     The path to the file that will be used to generate the page.
@@ -41,17 +40,17 @@ class Page:
     engine: jinja2.Environment
     reference: str = "slug"
     routes: list[_route] = ["./"]
-    template: str | None
-    invalid_attrs: list[str] = ["slug"]
+    template: str | jinja2.Template
+    invalid_attrs: list[str] = ["slug", "content"]
     collection_vars: dict | None
     Parser: Type[BasePageParser] = BasePageParser
 
     def __init__(
         self,
+        pm: pluggy.PluginManager,
         content: str | None = None,
         content_path: str | None = None,
         Parser: Type[BasePageParser] | None = None,
-        pm: pluggy.PluginManager | None = None,
     ) -> None:
         """
         Set Attributes that may be passed in from collections.
@@ -64,7 +63,7 @@ class Page:
             content = self.Parser.parse_content_path(content_path)
 
         if content := (content or getattr(self, "content", None)):
-            attrs, self.content = self.Parser.parse_content(content)
+            attrs, self.raw_content = self.Parser.parse_content(content)
 
         else:
             attrs = {}
@@ -102,7 +101,7 @@ class Page:
         return slugify(self.title)
 
     @slug.setter
-    def slug(self, value: str) -> str:
+    def slug(self, value: str) -> None:
         self._slug = slugify(value)
 
     @property
@@ -148,14 +147,17 @@ class Page:
         return f"<Page {self.title}>"
 
     @property
-    def markup(self) -> str:
+    def content(self):
         """Returns the markup of the page"""
-        if hasattr(self, "content"):
-            return self.Parser.markup(self, self.content)
+        if content := getattr(self, "raw_content", None):
+            # if modified_content := self._pm.hook.pre_render_content(content=content):
+            #    content = modified_content
+            pass
+        else:
+            return ""
+        return self.Parser.markup(content=content, page=self)
 
-    def _render_content(
-        self, engine: jinja2.Environment | None = None, **kwargs
-    ) -> str:
+    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
         """Renders the content of the page."""
         engine = getattr(self, "engine", engine)
 
@@ -163,11 +165,11 @@ class Page:
         if hasattr(self, "template") and engine:
 
             # content should be converted to before being passed to the template
-            if hasattr(self, "content"):
+            if hasattr(self, "raw_content"):
                 return engine.get_template(self.template).render(
                     **{
                         **self.to_dict,
-                        **{"content": self.markup},
+                        **{"content": self.content},
                         **kwargs,
                     },
                 )
@@ -180,8 +182,8 @@ class Page:
                 return content
 
         # Parsing without a template
-        elif hasattr(self, "content"):
-            return self.markup
+        elif hasattr(self, "raw_content"):
+            return self.content
 
         else:
             raise ValueError(f"{self=} must have either content or template")
