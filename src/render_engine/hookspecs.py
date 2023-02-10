@@ -11,32 +11,29 @@ class SiteSpecs:
     @hook_spec
     def pre_build_site(self, site: "Site") -> None:
         """Steps Prior to Building the site"""
-        pass
 
     @hook_spec
     def post_build_site(self, site: "Site") -> None:
         """Build After Building the site"""
-        pass
 
     @hook_spec
-    def pre_render_content(content) -> None:
+    def pre_render_content(page: "Page") -> str:
         """
         Augments the content of the page before it is rendered as output.
         """
-        pass
 
     @hook_spec
     def pre_build_collection(self, collection: "Collection") -> None:
-        pass
+        """Steps Prior to Building the collection"""
 
     @hook_spec
     def post_build_collection(self, site: "Site") -> None:
-        pass
+        """Build After Building the collection"""
 
     @hook_spec
     def pre_build_collection_pages(self, page: "Page") -> None:
-        pass
+        """Steps Prior to Building the collection pages"""
 
     @hook_spec
     def post_build_collection_pages(self, site: "Site") -> None:
-        pass
+        """Build After Building the collection pages"""

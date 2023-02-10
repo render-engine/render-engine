@@ -7,10 +7,10 @@ from ..base_parsers import BasePageParser
 
 
 class MarkdownPageParser(BasePageParser):
-    configuration_values = ["markdown_extras"]
-
     @staticmethod
     def markup(content: str, page: "Page") -> str:
         """Parses the content with the parser"""
-        markup = markdown(content, extras=getattr(page, "markdown_extras", None))
+        extras = getattr(page, "parser_extras", {})
+        print(f"{extras=}")
+        markup = markdown(content, extras=extras.get("markdown_extras", []))
         return markup

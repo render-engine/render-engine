@@ -73,6 +73,7 @@ class Collection:
         _page = self.content_type(
             content_path=content_path, Parser=self.PageParser, pm=self._pm
         )
+        _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
         _page.collection_vars = vars(self)

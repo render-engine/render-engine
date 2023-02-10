@@ -36,7 +36,6 @@ class Page:
     """
 
     extension: str = ".html"
-    """Extension to use for the rendered page output."""
     engine: jinja2.Environment
     reference: str = "slug"
     routes: list[_route] = ["./"]
@@ -149,13 +148,11 @@ class Page:
     @property
     def content(self):
         """Returns the markup of the page"""
-        if content := getattr(self, "raw_content", None):
-            # if modified_content := self._pm.hook.pre_render_content(content=content):
-            #    content = modified_content
-            pass
+        if self.raw_content:
+            self._pm.hook.pre_render_content(page=self)
+            return self.Parser.markup(content=self.raw_content, page=self)
         else:
             return ""
-        return self.Parser.markup(content=content, page=self)
 
     def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
         """Renders the content of the page."""
