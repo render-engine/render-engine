@@ -1,9 +1,12 @@
+import pluggy
 import pytest
 
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
 from render_engine.parsers.markdown import MarkdownPageParser
+
+pm = pluggy.PluginManager("fake_test")
 
 
 def test_can_manually_set_slug():
@@ -13,7 +16,7 @@ def test_can_manually_set_slug():
         pages = []
         slug = "test-feed-slug"
 
-    assert feed().slug == "test-feed-slug"
+    assert feed(pm=pm).slug == "test-feed-slug"
 
 
 def test_rss_feed_title_from_collection():
@@ -22,9 +25,9 @@ def test_rss_feed_title_from_collection():
     class TestCollection(Collection):
         feed_title = "Test Feed Title"
         Feed = RSSFeed
-        pages = [Page()]
+        pages = [Page(pm=pm)]
 
-    collection = TestCollection()
+    collection = TestCollection(pm=pm)
 
     assert collection._feed.title == "Test Feed Title"
 
@@ -42,7 +45,7 @@ def test_rss_feed_inherites_from_collection(tmp_path):
         archive_template = None
         Feed = RSSFeed
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
 
     assert collection._feed.title == "BasicCollection"
     assert collection._feed.url == "basiccollection.rss"
