@@ -45,18 +45,18 @@ class Collection:
 
     def __init__(
         self,
-        pm: pluggy.PluginManager | None = None,
+        pm: pluggy.PluginManager,
     ) -> None:
 
         if not hasattr(self, "title"):
             self.title = self.__class__.__name__
-        self.pm = pm
         self.has_archive = any(
             [
                 hasattr(self, "archive_template"),
                 getattr(self, "items_per_page", None),
             ]
         )
+        self._pm = pm
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
@@ -70,12 +70,13 @@ class Collection:
 
     def get_page(self, content_path=None) -> "Page":
         """Returns a list of pages for the collection."""
-
-        _page = self.content_type(content_path=content_path, Parser=self.PageParser)
+        _page = self.content_type(
+            content_path=content_path, Parser=self.PageParser, pm=self._pm
+        )
+        _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
         _page.collection_vars = vars(self)
-
         return _page
 
     @property
@@ -93,32 +94,25 @@ class Collection:
         if not self.has_archive:
             yield from ()
 
-        if hasattr(self, "items_per_page"):
-            for index, pages in enumerate(
-                list(
-                    batched(
-                        self.sorted_pages,
-                        getattr(self, "items_per_page", len(list(self.__iter__()))),
-                    )
-                )
-            ):
-                yield Archive(
-                    pages=pages,
-                    template=getattr(self, "archive_template", None),
-                    title=f"{self.title}-{index}",
-                    routes=self.routes,
-                )
-        else:
+        sorted_pages = list(self.sorted_pages)
+        items_per_page = getattr(self, "items_per_page", len(sorted_pages))
+        archives = list(batched(sorted_pages, items_per_page))
+        num_of_pages = len(archives)
+
+        for index, pages in enumerate(archives):
             yield Archive(
-                pages=self.sorted_pages,
+                pm=self._pm,
+                pages=pages,
                 template=getattr(self, "archive_template", None),
                 title=self.title,
                 routes=self.routes,
+                archive_index=index,
+                num_of_pages=num_of_pages,
             )
 
     @property
     def _feed(self):
-        feed = self.Feed()
+        feed = self.Feed(pm=self._pm)
         feed.pages = [page for page in self]
         feed.title = getattr(self, "feed_title", self.title)
         feed.slug = self.title

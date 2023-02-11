@@ -1,10 +1,10 @@
-import pdb
-import re
-
 import jinja2
+import pluggy
 import pytest
 
 from render_engine import Page
+
+pm = pluggy.PluginManager("fake_test")
 
 
 @pytest.fixture()
@@ -24,7 +24,7 @@ This is a test page
     class CustomPage(Page):
         content_path = d
 
-    return CustomPage()
+    return CustomPage(pm=pm)
 
 
 def test_page_attrs_from_file(page_from_file):
@@ -49,7 +49,7 @@ def test_page_from_template(tmp_path):
         loader=jinja2.DictLoader({"test.html": "{{ title }}"})
     )
 
-    page = CustomPage()
+    page = CustomPage(pm=pm)
     assert page._render_content(engine=environment) == "Test Page"
 
 
@@ -65,5 +65,5 @@ def test_page_from_template_with_content(tmp_path):
         loader=jinja2.DictLoader({"test.html": "{{ content }}"}),
     )
 
-    page = CustomPage()
+    page = CustomPage(pm=pm)
     assert page._render_content(engine=environment) == "This is a test page"
