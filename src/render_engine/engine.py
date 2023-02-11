@@ -1,4 +1,5 @@
 from datetime import datetime
+from email import utils
 from typing import Type
 
 from jinja2 import (
@@ -21,7 +22,7 @@ def to_pub_date(value: datetime):
     """
     Parse information from the given class object.
     """
-    return value.to_rfc2822_string()
+    return utils.format_datetime(value)
 
 
 def url_for(value: str, site):

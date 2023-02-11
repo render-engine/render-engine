@@ -1,10 +1,9 @@
 import logging
 from pathlib import Path
-from typing import Generator, Type
+from typing import Type
 
-import frontmatter
 import jinja2
-from markdown2 import markdown
+import pluggy
 from slugify import slugify
 
 from .parsers.base_parsers import BasePageParser
@@ -27,16 +26,6 @@ class Page:
 
     """
 
-    # TODO: REMOVE THIS
-    # markdown: str | None = None
-    # """This is base markdown that will be used to render the page.
-
-    # !!! warning
-
-    #     This will be overwritten if a `content_path` is provided.
-    # """
-
-    content: str | None
     content_path: str | None
     """
     The path to the file that will be used to generate the page.
@@ -47,21 +36,24 @@ class Page:
     """
 
     extension: str = ".html"
-    """Extension to use for the rendered page output."""
     engine: jinja2.Environment
     reference: str = "slug"
     routes: list[_route] = ["./"]
-    template: str | None
-    invalid_attrs: list[str] = ["slug"]
+    template: str | jinja2.Template
+    invalid_attrs: list[str] = ["slug", "content"]
+    collection_vars: dict | None
     Parser: Type[BasePageParser] = BasePageParser
 
     def __init__(
         self,
+        pm: pluggy.PluginManager,
         content: str | None = None,
         content_path: str | None = None,
         Parser: Type[BasePageParser] | None = None,
     ) -> None:
-        """Set Attributes that may be passed in from collections"""
+        """
+        Set Attributes that may be passed in from collections.
+        """
 
         if Parser:
             self.Parser = Parser
@@ -70,7 +62,7 @@ class Page:
             content = self.Parser.parse_content_path(content_path)
 
         if content := (content or getattr(self, "content", None)):
-            attrs, self.content = self.Parser.parse_content(content)
+            attrs, self.raw_content = self.Parser.parse_content(content)
 
         else:
             attrs = {}
@@ -80,13 +72,14 @@ class Page:
         for name, value in attrs.items():
             # comma delimit attributes using list_attrs.
             name = name.lower()
+
             if name in invalid_attrs:
+                logging.debug(f"{name=} is not a valid attribute. Setting to _{name}")
                 name = f"_{name}"
 
-            if name in getattr(self, "list_attrs", []):
-                value = [attrval.lower() for attrval in value.split(", ")]
-
             setattr(self, name, value)
+
+        self._pm = pm
 
     @property
     def title(self) -> str:
@@ -107,7 +100,7 @@ class Page:
         return slugify(self.title)
 
     @slug.setter
-    def slug(self, value: str) -> str:
+    def slug(self, value: str) -> None:
         self._slug = slugify(value)
 
     @property
@@ -153,25 +146,27 @@ class Page:
         return f"<Page {self.title}>"
 
     @property
-    def markup(self) -> str:
+    def content(self):
         """Returns the markup of the page"""
-        if hasattr(self, "content"):
-            return self.Parser.markup(self, self.content)
+        if self.raw_content:
+            self._pm.hook.pre_render_content(page=self)
+            return self.Parser.markup(content=self.raw_content, page=self)
+        else:
+            return ""
 
-    def _render_content(
-        self, engine: jinja2.Environment | None = None, **kwargs
-    ) -> str:
+    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
         """Renders the content of the page."""
         engine = getattr(self, "engine", engine)
 
         # Parsing with a template
         if hasattr(self, "template") and engine:
-            if hasattr(self, "content"):
-                """Content should be converted to before being passed to the template"""
+
+            # content should be converted to before being passed to the template
+            if hasattr(self, "raw_content"):
                 return engine.get_template(self.template).render(
                     **{
                         **self.to_dict,
-                        **{"content": self.markup},
+                        **{"content": self.content},
                         **kwargs,
                     },
                 )
@@ -184,8 +179,8 @@ class Page:
                 return content
 
         # Parsing without a template
-        elif hasattr(self, "content"):
-            return self.markup
+        elif hasattr(self, "raw_content"):
+            return self.content
 
         else:
             raise ValueError(f"{self=} must have either content or template")

@@ -22,16 +22,3 @@ class RSSFeed(Page):
 
     template = "rss2.0.xml"
     extension: str = "rss"
-
-    def __init__(
-        self,
-        pages=[],
-        title: str | None = None,
-        slug: str | None = None,
-        collection_vars: dict = {},
-        Parser: type[BasePageParser] = BasePageParser,
-    ):
-        super().__init__(Parser=Parser)
-        self.pages = list(pages)
-        self._title = title
-        self._slug = slug

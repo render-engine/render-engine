@@ -1,22 +1,10 @@
+import pluggy
+
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.parsers import BasePageParser
 
-
-def test_collection_generates_page():
-    """
-    Tests that you can generate a page from a collection.
-    Test Currently uses collection.gen_page()
-    """
-
-    class BasicCollection(Collection):
-        content_type = Page
-
-    collection = BasicCollection()
-    page = collection.gen_page("foo")
-
-    assert isinstance(page, Page)
-    assert page.content == "foo"
+pm = pluggy.PluginManager("fake_test")
 
 
 def test_collection_information_parser_passes_to_page():
@@ -31,8 +19,8 @@ def test_collection_information_parser_passes_to_page():
         PageParser = SimpleBasePageParser
         content_type = Page
 
-    collection = BasicCollection()
-    page = collection.gen_page("foo")
+    collection = BasicCollection(pm=pm)
+    page = collection.get_page()
 
     assert page.Parser == SimpleBasePageParser
 
@@ -52,24 +40,29 @@ def test_pages_generate_from_collection_content_path(tmp_path):
     class BasicCollection(Collection):
         content_path = dir
 
-    collection = BasicCollection()
-    assert len(list(collection.pages)) == len(content)
+    collection = BasicCollection(pm=pm)
+    assert len([page for page in collection]) == len(content)
 
-    for page in collection.pages:
+    for page in collection:
         # Order is not guaranteed
-        assert page.content in content
+        assert page.raw_content in content
 
 
-def test_collection_archive_no_items_per_page():
+def test_collection_archive_no_items_per_page(tmp_path):
     """
     Tests that archive generates a single page if items_per_page is not set
     """
 
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
+
     class BasicCollection(Collection):
-        pass
+        content_path = tmp_dir.absolute()
         archive_template = None
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
     assert len(list(collection.archives)) == 1
 
 
