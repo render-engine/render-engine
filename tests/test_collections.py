@@ -91,6 +91,8 @@ def test_collection_archives_has_title_of_collection(tmp_path):
     Tests that the title of the Archive Collection is the same as the parent Collection.
 
     This should be the case with all archive pages generated
+
+    Issue #105
     """
     tmp_dir = tmp_path / "content"
     tmp_dir.mkdir()
