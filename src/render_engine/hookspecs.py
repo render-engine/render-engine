@@ -25,15 +25,3 @@ class SiteSpecs:
     @hook_spec
     def pre_build_collection(self, collection: "Collection") -> None:
         """Steps Prior to Building the collection"""
-
-    @hook_spec
-    def post_build_collection(self, site: "Site") -> None:
-        """Build After Building the collection"""
-
-    @hook_spec
-    def pre_build_collection_pages(self, page: "Page") -> None:
-        """Steps Prior to Building the collection pages"""
-
-    @hook_spec
-    def post_build_collection_pages(self, site: "Site") -> None:
-        """Build After Building the collection pages"""

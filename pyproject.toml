@@ -19,7 +19,6 @@ dependencies = [
     "rich",
     "typer",
     "dtyper",
-    "chevron",
 ]
 
 [project.optional-dependencies]
