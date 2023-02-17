@@ -1,8 +1,11 @@
+import pluggy
 import pytest
 
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
+
+pm = pluggy.PluginManager("fake_test")
 
 
 def test_site_defaults():
@@ -67,7 +70,7 @@ def test_site_collection_in_route_list():
         test_value = "test"
 
     class collection(Collection):
-        pages = [CustomPage(), CustomPage()]
+        pages = [CustomPage(pm=pm), CustomPage(pm=pm)]
 
     collection = site.collection(collection)
 

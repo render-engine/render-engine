@@ -3,7 +3,6 @@ This is a simple app setup script created with `render-engine init`
 """
 
 from render_engine import Site, Page, Collection
-from render_engine.parsers import MarkdownPageParser
 
 app = Site()
 app.output_path = "output"
@@ -23,7 +22,6 @@ class Index(Page):
 
 @app.collection
 class Pages(Collection):
-    PageParser = MarkdownPageParser
     content_path = "pages" # path to content files
 
 if __name__ == "__main__":

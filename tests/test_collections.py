@@ -1,6 +1,10 @@
+import pluggy
+
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.parsers import BasePageParser
+
+pm = pluggy.PluginManager("fake_test")
 
 
 def test_collection_information_parser_passes_to_page():
@@ -15,7 +19,7 @@ def test_collection_information_parser_passes_to_page():
         PageParser = SimpleBasePageParser
         content_type = Page
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
     page = collection.get_page()
 
     assert page.Parser == SimpleBasePageParser
@@ -36,12 +40,12 @@ def test_pages_generate_from_collection_content_path(tmp_path):
     class BasicCollection(Collection):
         content_path = dir
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
     assert len([page for page in collection]) == len(content)
 
     for page in collection:
         # Order is not guaranteed
-        assert page.content in content
+        assert page.raw_content in content
 
 
 def test_collection_archive_no_items_per_page(tmp_path):
@@ -58,7 +62,7 @@ def test_collection_archive_no_items_per_page(tmp_path):
         content_path = tmp_dir.absolute()
         archive_template = None
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
     assert len(list(collection.archives)) == 1
 
 
@@ -76,7 +80,47 @@ def test_collection_vars(tmp_path):
         content_path = tmp_dir.absolute()
         archive_template = None
 
-    collection = BasicCollection()
+    collection = BasicCollection(pm=pm)
 
     for page in collection:
         assert page.collection_vars["title"] == collection.title
+
+
+def test_collection_archives_has_title_of_collection(tmp_path):
+    """
+    Tests that the title of the Archive Collection is the same as the parent Collection.
+
+    This should be the case with all archive pages generated
+
+    Issue #105
+    """
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+
+    file1 = tmp_dir / "test.md"
+    file1.write_text("test1")
+
+    file2 = tmp_dir / "test2.md"
+    file2.write_text("test")
+
+    class BasicCollection(Collection):
+        content_path = tmp_dir.absolute()
+        items_per_page = 1
+
+    collection = BasicCollection(pm=pm)
+    assert len(list(collection.archives)) == 2
+    for archive in collection.archives:
+        assert archive.title == collection.title
+
+
+def test_collection_paginated_archives_start_at_1(tmp_path):
+    """Tests that the first archive page is page 1 and not page 0"""
+
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+
+    file1 = tmp_dir / "test.md"
+    file1.write_text("test1")
+
+    file2 = tmp_dir / "test2.md"
+    file2.write_text("test")
