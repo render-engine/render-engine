@@ -12,7 +12,9 @@ nav:
     - getting-started/creating-a-collection.md
   - Components:
     - Page: page.md
-    - Collection: collection.md
+    - Collection:
+      - Collection: collection.md
+      - Archive: archive.md
     - Site: site.md
 markdown_extensions:
   toc:
