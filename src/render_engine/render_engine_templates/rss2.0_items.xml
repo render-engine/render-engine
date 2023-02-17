@@ -4,7 +4,7 @@
   <description><![CDATA[{{item.description}}]]></description>
 {% else %}
   {}
-  <description><![CDATA[{{item.markup|safe }}]]></description>
+  <description><![CDATA[{{item.content|safe }}]]></description>
 {% endif %}
 
 {% if item.enclosure %}
