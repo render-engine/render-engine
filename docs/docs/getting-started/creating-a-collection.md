@@ -11,27 +11,37 @@ pages
 └── ideas.md
 ```
 
-Each file can have the differing information for each page. For example, the `about.md` file could have the following information:
+Each file can have the differing information for each page. For example, the `spiderman.md` file could have the following information:
 
 ```txt
-# content/pages/about.md
+# content/heroes/spiderman.md
 
 ---
-title: About Me
-slug: about
-name: Peter Parker
-alias: Spiderman
+title: Spiderman
+slug: spiderman
+alias: Peter Parker
 ---
 
-I'm {{name}} and I like to write about things.
-
-When I'm not writing, I'm usually fighting crime as your friendly neighborhood {{alias}}.
+I'm a Photographer for the Daily Bugle. I'm also a superhero.
 ```
 
-For more information on how to build pages, see [Creating a Page][Creating a Page].
+while `hulk.md` could have the following information:
 
+```txt
+# content/heroes/hulk.md
 
-The collection would have all the information to parse the page the same. These could be attributes like the `template` or the `PageParser` that is used to parse each page in the collection.
+---
+title: The Incredible Hulk
+slug: hulk
+alias: Bruce Banner
+---
+
+I'm a scientist. I'm also a superhero.
+```
+
+> ***NOTE***: For more information on how to build pages, see [Creating a Page][Creating a Page].
+
+The collection would have all the information to parse all its pages the same. These could be attributes like the `template` or the `PageParser` that is used to parse each page in the collection. The individual pages attributes can  be referenced in the template or used for sorting or other functions.
 
 ```python
 
@@ -43,10 +53,10 @@ from render_engine.parsers.markdown import MarkdownPageParser
 app = Site()
 
 @app.collection()
-class Pages(Collection):
-  content_path = "content/pages"
-  PageParser =
-
+class Heroes(Collection):
+  content_path = "content/heroes"
+  template = "heroes.html"
+  PageParser = `MarkdownPageParser`
 ```
 
 [Collection]: ../collection

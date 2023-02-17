@@ -1,4 +1,3 @@
-.vscode
 tests/test_path
 tests/fakepath
 .envrc
@@ -158,3 +157,4 @@ cython_debug/
 poetry.lock
 
 docs/site
+.vscode/settings.json

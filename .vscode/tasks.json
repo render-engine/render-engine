@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Serve MkDocs",
+            "type": "shell",
+            "command": "${command:python.interpreterPath} -m mkdocs serve -f docs/mkdocs.yml"
+        }
+    ]
+}
