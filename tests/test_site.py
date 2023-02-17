@@ -1,8 +1,11 @@
+import pluggy
 import pytest
 
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
+
+pm = pluggy.PluginManager("fake_test")
 
 
 def test_site_defaults():
@@ -36,7 +39,12 @@ def test_site_site_vars_orrider_defaults_via_class():
     assert site.site_vars["SITE_URL"] == "https://my-site.com"
 
 
-def test_site_page_in_route_list():
+def test_site_page_in_route_list(tmp_path):
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
+
     site = Site()
 
     # assert that the route list is empty
@@ -44,6 +52,7 @@ def test_site_page_in_route_list():
 
     class CustomPage(Page):
         test_value = "test"
+        content_path = file.absolute()
 
     site.page(CustomPage)
 
@@ -51,6 +60,7 @@ def test_site_page_in_route_list():
 
 
 def test_site_collection_in_route_list():
+    """Tests that when a collection is added to the route_list it is only the colleciton"""
     site = Site()
 
     # assert that the route list is empty
@@ -60,18 +70,16 @@ def test_site_collection_in_route_list():
         test_value = "test"
 
     class collection(Collection):
-        pages = [CustomPage()]
+        pages = [CustomPage(pm=pm), CustomPage(pm=pm)]
 
-    site.collection(collection)
+    collection = site.collection(collection)
 
-    assert site.route_list["custompage"].test_value == "test"
+    assert site.route_list["collection"] == collection
+    assert len(site.route_list) == 1
 
 
 def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
     site = Site()
-
-    # assert that the route list is empty
-    assert len(site.route_list) == 0
 
     class CustomPage(Page):
         test_value = "test"
