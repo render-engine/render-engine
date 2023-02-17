@@ -1,28 +1,34 @@
-::: render_engine.page
+::: src.render_engine.page.Page
 
+## Invalid Attrs
 
-## list-attrs
-`list-attrs` are attributes that can be defined by the page object.
+Some attributes need to be not modified. For example, the `Page.slug` attribute needs to be slugified. If the user tries to set the `Page.slug` attribute to a non-slugified string, the path will be invalid.
 
-```markdown
-# my-page.md
+To protect your Page from _unexpected_ behavior, the `invalid_attrs` attribute is a list of attributes that cannot be set. If the user tries to set an attribute in the `invalid_attrs` list, a debug message will be logged and the value will be stored in an attribute with prefixed with `_`.
+
+Example:
+```md
+
+# test-page.md
 
 ---
-name: my-page
-tags: tag1, tag2
+title: Test Page
+slug: test-page
 ---
 
-This is a test page
+This is a test page.
 ```
 
-`list-attrs` will convert `tags` into an array of strings.
+```python
+# app.py
 
-
+@site.page
+class Page:
+    content_path = 'test-page.md'
 ```
-class page(Page):
-    content_path: my-page.md
 
+Rendering the page with result in the following debug message:
 
-print(page().tags)
-# >>> ['tag1', 'tag2']
+```shell
+>>> 'slug' is not a valid attribute. Setting to '_slug'
 ```

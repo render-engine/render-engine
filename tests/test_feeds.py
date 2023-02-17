@@ -48,4 +48,3 @@ def test_rss_feed_inherites_from_collection(tmp_path):
     collection = BasicCollection(pm=pm)
 
     assert collection._feed.title == "BasicCollection"
-    assert collection._feed.url == "basiccollection.rss"

@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
-docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

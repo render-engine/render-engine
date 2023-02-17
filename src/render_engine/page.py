@@ -1,4 +1,5 @@
 import logging
+import typing
 from pathlib import Path
 from typing import Type
 
@@ -23,21 +24,26 @@ class Page:
     When you create a page, you can specify variables that will be passed into rendering template.
 
     Attributes:
+        content_path: The path to the file that will be used to generate the Page's `content`.
+        raw_content: The base content of the page. This content will be passed into the page's Plugin Manager's `render_page_content` hook.
+        extension: The suffix to use for the page. Defaults to `.html`.
+        engine: If present, the engine to use for rendering the page. **This is normally not set and the `Site`'s engine will be used.**
+        reference: Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`.
+        routes: The routes to use for the page. Defaults to `["./"]`.
+        template: The template used to render the page. If not provided, the `Site`'s `content` will be used.
+        invalid_attrs: A list of attributes that are not valid for the page. Defaults to `["slug", "content"]`. See [Invalid Attrs][invalid-attrs].
+        collection_vars: A dictionary of variables passed in from a collection. See [Collection Vars][collection-vars].
+        Parser: The parser to generate the page's `raw_content`. Defaults to `BasePageParser`.
+        title: The title of the page. Defaults to the class name.
 
     """
 
     content_path: str | None
-    """
-    The path to the file that will be used to generate the page.
-
-    !!! note
-
-        This overrides the `content` attribute.
-    """
-
+    raw_content: str | None
     extension: str = ".html"
     engine: jinja2.Environment
     reference: str = "slug"
+    _pm: pluggy.PluginManager
     routes: list[_route] = ["./"]
     template: str | jinja2.Template
     invalid_attrs: list[str] = ["slug", "content"]
@@ -51,9 +57,6 @@ class Page:
         content_path: str | None = None,
         Parser: Type[BasePageParser] | None = None,
     ) -> None:
-        """
-        Set Attributes that may be passed in from collections.
-        """
 
         if Parser:
             self.Parser = Parser
@@ -83,7 +86,10 @@ class Page:
 
     @property
     def title(self) -> str:
-        # If no title is provided, use the class name.
+        """
+        The title of the Page
+        If no title is provided, use the class name.
+        """
         if not hasattr(self, "_title"):
             return self.__class__.__name__
         return self._title
@@ -105,7 +111,13 @@ class Page:
 
     @property
     def url_for(self) -> str:
-        """Returns the URL for the page"""
+        """
+        Returns the URL for the page including the first route.
+
+        Pages don't have access to the `Site` so this is the best way to get a valid URL for a page.
+
+        This is the preferred way to reference a page inside of a template.
+        """
         if (route := self.routes[0]) == "./":
             return f"/{self.slug}{self._extension}"
         else:
@@ -113,13 +125,10 @@ class Page:
 
     @property
     def url(self):
-        """Returns the URL for the page"""
-        return f"{self.slug}{self._extension}"
-
-    @property
-    def path(self) -> str:
-        """The first route and the slug of the page."""
-        return f"{self.slug}{self._extension}"
+        """
+        Returns the [`url_for`][src.render_engine.page.Page.url_for] for the page including the first route.
+        """
+        return self.url_for
 
     @property
     def _extension(self) -> str:
@@ -131,7 +140,12 @@ class Page:
 
     @property
     def to_dict(self):
-        """Returns a dict of the page's attributes"""
+        """
+        Returns a dict of the page's attributes.
+
+        This is often used to pass attributes into the page's `template`.
+
+        """
         return {
             **vars(self),
             **getattr(self, "template_vars", {}),

@@ -13,23 +13,47 @@ from .parsers.markdown import MarkdownPageParser
 
 
 class Collection:
-    """Collection objects serve as a way to quickly process pages that have a
-    LARGE portion of content that is similar or file driven.
+    """
+    Collection objects serve as a way to quickly process pages that have a
+    portion of content that is similar or file driven.
 
-    Currently, collection pages MUST come from a `content_path` and all be the same
+    Example:
+
+    ```python
+    from render_engine import Site, Collection
+
+    site = Site()
+
+    @site.collection
+    class BasicCollection(Collection):
+        content_path = "content/pages"
+    ```
+    Currently, collection pages **MUST** come from a `content_path` and all be the same
     content type.
 
-    Example::
+    Attributes:
 
-        from render_engine import Collection
+        archive_template: The template to use for the [`Archive`][src.render_engine.archive.Archive] pages.
+        content_path: The path to iterate over to generate pages.
+        content_type: Type[Page] = Page
+        Feed: Type[RSSFeed]
+        feed_title: str
+        include_suffixes: list[str] = ["*.md", "*.html"]
+        items_per_page: int | None
+        PageParser: Type[BasePageParser] = MarkdownPageParser
+        parser_extras: dict[str, Any]
+        routes: list[_route] = ["./"]
+        sort_by: str = "title"
+        sort_reverse: bool = False
+        title: str
+        template: str | None
 
-        @site.collection
-        class BasicCollection(Collection):
-            pass
+        archive_template str | None: The template to use for the archive pages.
+
     """
 
     archive_template: str | None
-    content_path: pathlib.Path
+    content_path: pathlib.Path | str
     content_type: Type[Page] = Page
     Feed: Type[RSSFeed]
     feed_title: str
@@ -89,7 +113,11 @@ class Collection:
 
     @property
     def archives(self) -> Generator[Archive, None, None]:
-        """Returns a list of Archive pages containing the pages of data for each archive."""
+        """
+        Returns a [Archive][src.render_engine.archive] objects containing the pages from the `content_path` .
+
+        Archives are an iterable and the individual pages are built shortly after the collection pages are built. This happens when [Site.render][render_engine.Site.render] is called.
+        """
 
         if not self.has_archive:
             yield from ()
@@ -99,7 +127,7 @@ class Collection:
         archives = list(batched(sorted_pages, items_per_page))
         num_of_pages = len(archives)
 
-        for index, pages in enumerate(archives):
+        for index, pages in enumerate(archives, start=1):
             yield Archive(
                 pm=self._pm,
                 pages=pages,

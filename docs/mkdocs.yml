@@ -15,15 +15,22 @@ nav:
     - Collection:
       - Collection: collection.md
       - Archive: archive.md
-    - Site: site.md
+      - RSS Feed: feeds.md
+    - Site:
+      - Site: site.md
+      - Plugins: hookspecs.md
+  - Extending Render Engine:
+    - Built-in Plugins: plugins.md
+    - Plugins: plugins.md
 markdown_extensions:
-  toc:
-    permalink: True
-  codehilite:
-    guess_lang: False
-  admonition:
-  pymdownx.details:
-  pymdownx.superfences:
+  - toc
+  - codehilite:
+      guess_lang: false
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+
 watch:
   - ../src/render_engine
 plugins:
@@ -32,5 +39,8 @@ plugins:
 - mkdocstrings:
     handlers:
       python:
+        paths: [../src]
         options:
           show_source: false
+          show_root_full_path: false
+          show_category_heading: true

@@ -72,7 +72,7 @@ class Site:
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
-        self.route_list[page.slug] = page
+        self.route_list[getattr(page, page.reference)] = page
 
     def collection(self, collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
