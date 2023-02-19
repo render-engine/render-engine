@@ -1,16 +1,13 @@
 import jinja2
 import pluggy
 import pytest
+import pathlib
 
 from render_engine import Page
 
-pm = pluggy.PluginManager("fake_test")
-
-
 @pytest.fixture()
-def page_from_file(tmp_path):
+def page_from_file(tmp_path: pathlib.Path):
     d = tmp_path / "test_page.md"
-
     content = """---
 title: Test Page
 custom: "test"
@@ -24,20 +21,20 @@ This is a test page
     class CustomPage(Page):
         content_path = d
 
-    return CustomPage(pm=pm)
+    return CustomPage()
 
 
-def test_page_attrs_from_file(page_from_file):
+def test_page_attrs_from_file(page_from_file: Page):
     """Tests that expected page attrsibutes are set from the file"""
-    assert page_from_file.title == "Test Page"
+    assert page_from_file._title == "Test Page"
 
 
-def test_page_custom_attrs_from_file(page_from_file):
+def test_page_custom_attrs_from_file(page_from_file: Page):
     """Tests that unique page attrsibutes are set from the file"""
     assert page_from_file.custom == "test"
 
 
-def test_page_from_template(tmp_path):
+def test_page_from_template(tmp_path: pathlib.Path):
     """Tests that page attributes are set from a template"""
 
     class CustomPage(Page):
@@ -49,21 +46,17 @@ def test_page_from_template(tmp_path):
         loader=jinja2.DictLoader({"test.html": "{{ title }}"})
     )
 
-    page = CustomPage(pm=pm)
+    page = CustomPage()
     assert page._render_content(engine=environment) == "Test Page"
 
 
-def test_page_from_template_with_content(tmp_path):
-    """Tests that page attributes are set from a template"""
+
+def test_page_content_renders_jinja():
+    """Tests that page content is rendered with jinja"""
 
     class CustomPage(Page):
-        title = "Test Page"
-        template = "test.html"
-        content = "This is a test page"
+        content = "Test Page"
 
-    environment = jinja2.Environment(
-        loader=jinja2.DictLoader({"test.html": "{{ content }}"}),
-    )
-
-    page = CustomPage(pm=pm)
-    assert page._render_content(engine=environment) == "This is a test page"
+    page = CustomPage()
+    assert page.content == "Test Page"
+    assert page._content == "Test Page"

@@ -70,7 +70,7 @@ def test_site_collection_in_route_list():
         test_value = "test"
 
     class collection(Collection):
-        pages = [CustomPage(pm=pm), CustomPage(pm=pm)]
+        pages = [CustomPage(), CustomPage()]
 
     collection = site.collection(collection)
 

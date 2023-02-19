@@ -11,7 +11,7 @@ from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine, url_for
-from .hookspecs import SiteSpecs
+from .hookspecs import register_plugins
 from .page import Page
 
 _PROJECT_NAME = "render_engine"
@@ -43,26 +43,14 @@ class Site:
 
     def __init__(
         self,
-        plugins=None,
+        plugins: list[str]=[],
     ) -> None:
-        self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
-        self._pm.add_hookspecs(SiteSpecs)
         self.route_list = defaultdict(dict)
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.collections = defaultdict(list)
         self.engine.filters["url_for"] = partial(url_for, site=self)
-
-        if not hasattr(self, "plugins"):
-            setattr(self, "plugins", [])
-
-        if plugins:
-            self.plugins.extend(plugins)
-
-        self._register_plugins()
-
-    def _register_plugins(self):
-        for plugin in self.plugins:
-            self._pm.register(plugin)
+        self.plugins = [*plugins, *getattr(self, "plugins", [])]
+        self._pm = register_plugins(plugins=self.plugins)
 
     @property
     def engine(self) -> Environment:
@@ -74,17 +62,21 @@ class Site:
         """Add a page to the route list"""
         self.route_list[getattr(page, page.reference)] = page
 
-    def collection(self, collection: Collection) -> Collection:
+    def collection(self, Collection: Collection) -> Collection:
         """Create the pages in the collection including the archive"""
-        _collection = collection(pm=self._pm)
-        self._pm.hook.pre_build_collection(collection=_collection)
-        self.collections[_collection.__class__.__name__.lower()] = _collection
-        self.route_list[_collection.slug] = _collection
-        return _collection
+        Collection = Collection()
+        Collection.title = Collection._title
+        self._pm.hook.pre_build_collection(collection=Collection)
+        self.collections[Collection.__class__.__name__.lower()] = Collection 
+        self.route_list[Collection._slug] = Collection
+        return Collection
 
     def page(self, Page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        page = Page(pm=self._pm)
+        page = Page()
+
+        # Expose _title to the user through `title`
+        page.title = page._title
         logging.info("Running Post Build Page")
         self.add_to_route_list(page)
         return page
@@ -100,7 +92,7 @@ class Site:
         path = (
             pathlib.Path(self.output_path)
             / pathlib.Path(route)
-            / pathlib.Path(page.url)
+            / pathlib.Path(page.path_name)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
         return path.write_text(page._render_content(engine=self.engine))

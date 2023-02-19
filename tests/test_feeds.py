@@ -16,7 +16,7 @@ def test_can_manually_set_slug():
         pages = []
         slug = "test-feed-slug"
 
-    assert feed(pm=pm).slug == "test-feed-slug"
+    assert feed().slug == "test-feed-slug"
 
 
 def test_rss_feed_title_from_collection():
@@ -25,9 +25,9 @@ def test_rss_feed_title_from_collection():
     class TestCollection(Collection):
         feed_title = "Test Feed Title"
         Feed = RSSFeed
-        pages = [Page(pm=pm)]
+        pages = [Page()]
 
-    collection = TestCollection(pm=pm)
+    collection = TestCollection()
 
     assert collection._feed.title == "Test Feed Title"
 
@@ -45,6 +45,6 @@ def test_rss_feed_inherites_from_collection(tmp_path):
         archive_template = None
         Feed = RSSFeed
 
-    collection = BasicCollection(pm=pm)
+    collection = BasicCollection()
 
     assert collection._feed.title == "BasicCollection"

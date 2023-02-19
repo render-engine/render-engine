@@ -8,11 +8,11 @@ import jinja2
 from jinja2 import Template, select_autoescape
 
 from .engine import render_engine_templates_loader
-from .page import Page
+from .page import BasePage
 from .parsers.markdown import BasePageParser
 
 
-class RSSFeed(Page):
+class RSSFeed(BasePage):
     """
     Creates an RSS feed [`Page`][render_engine.Page] Object.
 
