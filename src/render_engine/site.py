@@ -1,11 +1,9 @@
 import logging
 import pathlib
-import pdb
 import shutil
 from collections import defaultdict
 from functools import partial
 
-import pluggy
 from jinja2 import Environment
 from rich.progress import Progress
 
@@ -13,8 +11,6 @@ from .collection import Collection
 from .engine import engine, url_for
 from .hookspecs import register_plugins
 from .page import Page
-
-_PROJECT_NAME = "render_engine"
 
 
 class Site:
@@ -43,7 +39,7 @@ class Site:
 
     def __init__(
         self,
-        plugins: list[str]=[],
+        plugins: list[str] = [],
     ) -> None:
         self.route_list = defaultdict(dict)
         self.subcollections = defaultdict(lambda: {"pages": []})
@@ -62,18 +58,18 @@ class Site:
         """Add a page to the route list"""
         self.route_list[getattr(page, page.reference)] = page
 
-    def collection(self, Collection: Collection) -> Collection:
+    def collection(self, Collection: "Collection") -> Collection:
         """Create the pages in the collection including the archive"""
-        Collection = Collection()
+        Collection = Collection(plugins=self.plugins)
         Collection.title = Collection._title
         self._pm.hook.pre_build_collection(collection=Collection)
-        self.collections[Collection.__class__.__name__.lower()] = Collection 
+        self.collections[Collection.__class__.__name__.lower()] = Collection
         self.route_list[Collection._slug] = Collection
         return Collection
 
     def page(self, Page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
-        page = Page()
+        page = Page(plugins=self.plugins)
 
         # Expose _title to the user through `title`
         page.title = page._title
@@ -137,7 +133,7 @@ class Site:
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
-                            description=f"[blue]Adding[gold]Route: [blue]{entry.slug}",
+                            description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
                         )
                         self.render_output(route, entry)
 

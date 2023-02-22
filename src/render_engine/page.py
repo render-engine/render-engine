@@ -1,10 +1,11 @@
-from typing import Type, Any
+from typing import Any, Type
 
 import jinja2
 
 from ._base_object import BaseObject
 from .hookspecs import register_plugins
 from .parsers.base_parsers import BasePageParser
+
 
 class BasePage(BaseObject):
     """
@@ -22,6 +23,14 @@ class BasePage(BaseObject):
     """
 
     extension: str = ".html"
+    routes: list[str] = ["./"]
+    template: str | type[jinja2.Template] | None
+    reference: str = "_slug"
+
+    @property
+    def _content(self):
+        """Returns the content of the page."""
+        return getattr(self, "content", None)
 
     @property
     def _extension(self) -> str:
@@ -42,14 +51,42 @@ class BasePage(BaseObject):
             return f"/{self.path_name}"
         else:
             return f"/{route}/{self.path_name}"
-    
+
+    def _render_from_template(self, template: jinja2.Template, **kwargs) -> str:
+        """Renders the page from a template."""
+        return template.render(
+            **{
+                **self.to_dict(),
+                **{"content": self._content},
+                **kwargs,
+            },
+        )
+
+    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
+        """Renders the content of the page."""
+        engine = getattr(self, "engine", engine)
+        template = getattr(self, "template", None)
+
+        # Parsing with a template
+        if template and engine:
+            template = engine.get_template(template)
+            return self._render_from_template(template, **kwargs)
+
+        # Parsing without a template
+        try:
+            return self._content
+
+        except AttributeError:
+            raise AttributeError(
+                f"{self} does not have a content attribute. "
+                "You must either provide a template or content."
+            )
 
     def __str__(self):
         return self._slug
 
     def __repr__(self) -> str:
         return f"<Page: {self._title}>"
-
 
 
 class Page(BasePage):
@@ -80,18 +117,15 @@ class Page(BasePage):
 
     content: Any
     content_path: str | None
-    reference: str = "_slug"
     Parser: Type[BasePageParser] = BasePageParser
     plugins: list[callable] | None
-    routes: list[str]
-    template: str | type[jinja2.Template] | None
     inherit_plugins: bool
 
     def __init__(
         self,
-        content_path: str = None,
-        content: Any|None = None,
-        Parser: Type[BasePageParser] | None = None, 
+        content_path: str | None = None,
+        content: Any | None = None,
+        Parser: Type[BasePageParser] | None = None,
         plugins: list = [],
     ) -> None:
 
@@ -116,40 +150,10 @@ class Page(BasePage):
         # Set the plugins
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(self.plugins)
+        self.PM.hook.render_content(Page=self)
+        self.content = self._content
 
     @property
     def _content(self):
         """Returns the content of the page."""
-        return self.Parser.parse(self.content)
-
-    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
-        """Renders the content of the page."""
-        engine = getattr(self, "engine", engine)
-        content = self.content
-
-        # Parsing with a template
-        if hasattr(self, "template") and engine:
-
-            # content should be converted to before being passed to the template
-            if content:
-                return engine.get_template(self.template).render(
-                    **{
-                        **self.to_dict(),
-                        **{"content": content},
-                        **kwargs,
-                    },
-                )
-
-            else:
-                template = engine.get_template(self.template)
-                content = template.render(
-                    **{**self.to_dict(), **kwargs},
-                )
-                return content
-
-        # Parsing without a template
-        elif content:
-            return content
-
-        else:
-            raise ValueError(f"{self=} must have either content or template")
+        return self.Parser.parse(self.content, page=self)
