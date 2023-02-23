@@ -151,7 +151,6 @@ class Page(BasePage):
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(self.plugins)
         self.PM.hook.render_content(Page=self)
-        self.content = self._content
 
     @property
     def _content(self):
