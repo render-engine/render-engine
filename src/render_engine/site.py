@@ -30,6 +30,7 @@ class Site:
 
     output_path: str = "output"
     static_path: str = "static"
+    partial: bool = False
 
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
@@ -93,13 +94,21 @@ class Site:
         path.parent.mkdir(parents=True, exist_ok=True)
         return path.write_text(page._render_content(engine=self.engine))
 
-    def render_collection(self, collection: Collection) -> None:
+    def render_partial_collection(self, collection: Collection) -> None:
+        for entry in collection.get_partial_collection():
+            for route in collection.routes:
+                self.render_output(route, entry)
+
+        if hasattr(collection, "Feed"):
+            self.render_output("./", collection._feed)
+
+    def render_full_collection(self, collection: Collection) -> None:
         """Iterate through Pages and Check for Collections and Feeds"""
-        subcollections = dict()
 
         for entry in collection:
             for route in collection.routes:
                 self.render_output(route, entry)
+
 
         if collection.has_archive:
             for archive in collection.archives:

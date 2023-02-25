@@ -73,7 +73,6 @@ class Collection(BaseObject):
     def __init__(
         self,
         plugins: list[Callable] | None = [],
-        partial: bool = True, 
     ) -> None:
 
         self.has_archive = any(
