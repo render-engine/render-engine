@@ -81,7 +81,6 @@ class Collection(BaseObject):
                 getattr(self, "items_per_page", None),
             ]
         )
-        self.partial = partial
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(plugins=self.plugins)
 
