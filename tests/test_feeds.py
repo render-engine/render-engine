@@ -2,6 +2,7 @@ import pluggy
 import pytest
 
 from render_engine.collection import Collection
+from render_engine.blog import Blog
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
 from render_engine.parsers.markdown import MarkdownPageParser
@@ -32,19 +33,25 @@ def test_rss_feed_title_from_collection():
     assert collection._feed.title == "Test Feed Title"
 
 
-def test_rss_feed_inherites_from_collection(tmp_path):
+def test_rss_feed_inherites_from_collection():
     """Test that the feed title is set from the collection"""
 
-    tmp_dir = tmp_path / "content"
-    tmp_dir.mkdir()
-    file = tmp_dir / "test.md"
-    file.write_text("test")
-
     class BasicCollection(Collection):
-        content_path = tmp_dir.absolute()
+        pages = [Page()]
         archive_template = None
         Feed = RSSFeed
 
     collection = BasicCollection()
 
     assert collection._feed.title == "BasicCollection"
+
+
+def test_rss_feed_content_parsed_from__content(tmp_path):
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "#"
+    file.write_text("test")
+    class TestBlog(Blog):
+        pages = [Page()]
+        Feed = RSSFeed
+

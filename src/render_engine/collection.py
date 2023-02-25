@@ -1,7 +1,8 @@
+from enum import Enum
 import pathlib
 from typing import Any, Callable, Generator, Type
 
-import pluggy
+from git import Repo
 from more_itertools import batched, flatten
 from slugify import slugify
 
@@ -72,6 +73,7 @@ class Collection(BaseObject):
     def __init__(
         self,
         plugins: list[Callable] | None = [],
+        partial: bool = True, 
     ) -> None:
 
         self.has_archive = any(
@@ -80,6 +82,7 @@ class Collection(BaseObject):
                 getattr(self, "items_per_page", None),
             ]
         )
+        self.partial = partial
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(plugins=self.plugins)
 
@@ -92,6 +95,16 @@ class Collection(BaseObject):
                 for suffix in self.include_suffixes
             ]
         )
+    
+    def get_partial_collection(self)-> str:
+        repo = Repo()
+        pathlib_files = [pathlib.Path(changed_path) for changed_path in [*repo.untracked_files, *repo.index.diff()]]
+        collection_files = [file for file in pathlib_files if file.parent == pathlib.Path(self.content_path)]
+        return filter(
+                lambda file: file.parent == pathlib.Path(self.content_path),
+                collection_files,
+                )
+
 
     def get_page(self, content_path=None) -> "Page":
         """Returns a list of pages for the collection."""
@@ -149,6 +162,7 @@ class Collection(BaseObject):
         feed.Parser = self.PageParser
         return feed
 
+
     @property
     def slug(self):
         return slugify(self.title)
@@ -166,7 +180,6 @@ class Collection(BaseObject):
         else:
             for page in self.pages:
                 yield page
-
 
 def render_archives(archive, **kwargs) -> list[Archive]:
     return [archive.render(pages=archive.pages, **kwargs) for archive in archive]
