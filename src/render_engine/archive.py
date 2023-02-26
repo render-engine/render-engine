@@ -10,7 +10,10 @@ from .page import BasePage
 class Archive(BasePage):
     """
     ???+ Warning "Not Directly Used"
-        The Archive object is not meant to be used directly. It is used by the [Collection][src.render_engine.Collection] object. Attributes can be used to customize the [archive_template][src.render_engine.collection.Collection].
+        The Archive object is not meant to be used directly. 
+        It is used by the [Collection][src.render_engine.Collection] object. 
+        Attributes can be used to customize the 
+        [archive_template][src.render_engine.collection.Collection].
 
     Custom [`Page`][src.render_engine.page.Page] object used to show all the pages in a [Collection][src.render_engine.Collection].
 

@@ -20,6 +20,14 @@ def test_can_manually_set_slug():
     assert feed().slug == "test-feed-slug"
 
 
+def test_feed_path_name():
+    """Test that the feed path name is set correctly"""
+
+    class feed(RSSFeed):
+        pages = []
+
+    assert feed().path_name == "feed.rss"
+
 def test_rss_feed_title_from_collection():
     """Test that the feed title is set from the collection"""
 

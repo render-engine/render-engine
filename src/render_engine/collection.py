@@ -2,7 +2,7 @@ from enum import Enum
 import pathlib
 from typing import Any, Callable, Generator, Type
 
-from git import Repo
+import git
 from more_itertools import batched, flatten
 from slugify import slugify
 
@@ -72,7 +72,7 @@ class Collection(BaseObject):
 
     def __init__(
         self,
-        plugins: list[Callable] | None = [],
+        plugins: list[Callable] = [],
     ) -> None:
 
         self.has_archive = any(
@@ -83,6 +83,7 @@ class Collection(BaseObject):
         )
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(plugins=self.plugins)
+        self.title = self._title
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
@@ -94,18 +95,32 @@ class Collection(BaseObject):
             ]
         )
     
-    def get_partial_collection(self)-> str:
-        repo = Repo()
-        pathlib_files = [pathlib.Path(changed_path) for changed_path in [*repo.untracked_files, *repo.index.diff()]]
-        collection_files = [file for file in pathlib_files if file.parent == pathlib.Path(self.content_path)]
-        return filter(
-                lambda file: file.parent == pathlib.Path(self.content_path),
-                collection_files,
-                )
+    def _generate_content_from_modified_pages(self) -> Generator[Page, None, None]:
+        """
+        Check git status for newly created and modified files.
+        Returns the Page objects for the files in the content path
+        """
+        
+        repo = git.Repo()
+        
+        
+        
+        changed_files = [
+            *repo.untracked_files, # new files not yet in git's index
+            *repo.index.diff(), # modified files in git index
+        ]
+        
+        return (
+            self.get_page(pathlib.Path(changed_path))
+            for changed_path in changed_files
+            if pathlib.Path(changed_path).parent == pathlib.Path(self.content_path)
+        )
 
-
-    def get_page(self, content_path=None) -> "Page":
-        """Returns a list of pages for the collection."""
+    def get_page(
+            self,
+            content_path:str|None=None,
+    ) -> type[Page]:
+        """Returns the page Object for the specified Content Path"""
         _page = self.content_type(
             content_path=content_path,
             Parser=self.PageParser,

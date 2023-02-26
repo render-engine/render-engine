@@ -3,7 +3,7 @@ import pathlib
 import shutil
 from collections import defaultdict
 from functools import partial
-
+from typing import Type
 from jinja2 import Environment
 from rich.progress import Progress
 
@@ -42,9 +42,8 @@ class Site:
         self,
         plugins: list[str] = [],
     ) -> None:
-        self.route_list = defaultdict(dict)
+        self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
-        self.collections = defaultdict(list)
         self.engine.filters["url_for"] = partial(url_for, site=self)
         self.plugins = [*plugins, *getattr(self, "plugins", [])]
         self._pm = register_plugins(plugins=self.plugins)
@@ -57,16 +56,14 @@ class Site:
 
     def add_to_route_list(self, page: Page) -> None:
         """Add a page to the route list"""
-        self.route_list[getattr(page, page.reference)] = page
+        self.route_list[getattr(page, page._reference)] = page
 
-    def collection(self, Collection: "Collection") -> Collection:
+    def collection(self, Collection: Type[Collection]) -> Collection:
         """Create the pages in the collection including the archive"""
-        Collection = Collection(plugins=self.plugins)
-        Collection.title = Collection._title
-        self._pm.hook.pre_build_collection(collection=Collection)
-        self.collections[Collection.__class__.__name__.lower()] = Collection
-        self.route_list[Collection._slug] = Collection
-        return Collection
+        _Collection = Collection(plugins=self.plugins)
+        self._pm.hook.pre_build_collection(collection=_Collection) #type: ignore
+        self.route_list[_Collection._slug] = _Collection
+        return _Collection
 
     def page(self, Page: type[Page]) -> Page:
         """Create a Page object and add it to self.routes"""
@@ -84,7 +81,7 @@ class Site:
             directory, pathlib.Path(self.output_path) / directory, dirs_exist_ok=True
         )
 
-    def render_output(self, route: str, page: Page):
+    def render_output(self, route: str, page: Type[Page]):
         """writes the page object to disk"""
         path = (
             pathlib.Path(self.output_path)
@@ -92,12 +89,21 @@ class Site:
             / pathlib.Path(page.path_name)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
-        return path.write_text(page._render_content(engine=self.engine))
+        return path.write_text(
+            page._render_content(engine=self.engine)
+        )
 
     def render_partial_collection(self, collection: Collection) -> None:
-        for entry in collection.get_partial_collection():
+        """Iterate through the Changed Pages and Check for Collections and Feeds"""
+        for entry in collection._generate_content_from_modified_pages():
             for route in collection.routes:
                 self.render_output(route, entry)
+
+        if collection.has_archive:
+            for archive in collection.archives:
+                logging.debug("Adding Archive: %s", archive.__class__.__name__)
+
+                self.render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
             self.render_output("./", collection._feed)
@@ -108,7 +114,6 @@ class Site:
         for entry in collection:
             for route in collection.routes:
                 self.render_output(route, entry)
-
 
         if collection.has_archive:
             for archive in collection.archives:
@@ -147,7 +152,10 @@ class Site:
                         self.render_output(route, entry)
 
                 if isinstance(entry, Collection):
-                    self.render_collection(entry)
+                    if self.partial:
+                        self.render_partial_collection(entry)
+                    else:
+                        self.render_full_collection(entry)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(site=self)

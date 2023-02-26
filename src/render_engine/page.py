@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any, Type, Callable
 
 import jinja2
 
@@ -18,32 +18,35 @@ class BasePage(BaseObject):
     Attributes:
         slug: The slug of the page. Defaults to the `title` slugified.
         content: The content to be rendered by the page
-        parser: The Parser used to parse the page's content. Defaults to `BasePageParser`.
-
+        parser: 
+            The Parser used to parse the page's content. Defaults to `BasePageParser`.
+        reference: 
+            The attribute to use as the reference for the page in the site's route list.
+            Defaults to `slug`.
     """
 
     extension: str = ".html"
     routes: list[str] = ["./"]
     template: str | type[jinja2.Template] | None
-    reference: str = "_slug"
+    _reference: str = "_slug"
 
     @property
     def _content(self):
         """Returns the content of the page."""
         return getattr(self, "content", None)
 
-    @property
-    def _extension(self) -> str:
-        """Ensures consistency on extension"""
-        if not self.extension.startswith("."):
-            return f".{self.extension}"
-        return self.extension
-
     def url_for(self) -> str:
         """
         Returns the URL for the page including the first route.
 
-        Pages don't have access to the `Site` so this is the best way to get a valid URL for a page.
+        This gets the relative URL for a page.
+
+        !!! note
+
+            Pages don't have access to the `Site` attrs.
+            You cannot get an abolute URL from a Page object.
+            Use {{SITE_URL}} in your templates to get the absolute URL.
+
 
         This is the preferred way to reference a page inside of a template.
         """
@@ -62,7 +65,7 @@ class BasePage(BaseObject):
             },
         )
 
-    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs):
+    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs) -> str:
         """Renders the content of the page."""
         engine = getattr(self, "engine", engine)
         template = getattr(self, "template", None)
@@ -74,7 +77,11 @@ class BasePage(BaseObject):
 
         # Parsing without a template
         try:
-            return self._content
+            if isinstance(self._content, str):
+                return self._content
+            
+            else:
+                raise ValueError("The returned content attribute must be a string.")
 
         except AttributeError:
             raise AttributeError(
@@ -100,17 +107,31 @@ class Page(BasePage):
         Not all attributes are defined by default (those that are marked *optional*) but
         will be checked for in other areas of the code.
 
-    When you create a page, you can specify variables that will be passed into rendering template.
+    When you create a page, you specify variables passed into rendering template.
 
     Attributes:
-        content_path: The path to the file that will be used to generate the Page's `content`.
+        content_path: 
+            The path to the file that will be used to generate the Page's `content`.
         extension: The suffix to use for the page. Defaults to `.html`.
-        engine: If present, the engine to use for rendering the page. **This is normally not set and the `Site`'s engine will be used.**
-        reference: Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`.
+        engine: 
+            If present, the engine to use for rendering the page. 
+
+            !!! note
+                **This is normally not set and the `Site`'s engine will be used.**
+
+        reference: 
+            Used to determine how to reference the page in the `Site`'s route_list.
+            Defaults to `slug`.
         routes: The routes to use for the page. Defaults to `["./"]`.
-        template: The template used to render the page. If not provided, the `Site`'s `content` will be used.
-        invalid_attrs: A list of attributes that are not valid for the page. Defaults to `["slug", "content"]`. See [Invalid Attrs][invalid-attrs].
-        Parser: The parser to generate the page's `raw_content`. Defaults to `BasePageParser`.
+        template: 
+            The template used to render the page.
+            If not provided, the `Site`'s `content` will be used.
+        invalid_attrs: 
+            A list of attributes that are not valid for the page.
+            Defaults to `["slug", "content"]`. See [Invalid Attrs][invalid-attrs].
+        Parser: 
+            The parser to generate the page's `raw_content`.
+            Defaults to `BasePageParser`.
         title: The title of the page. Defaults to the class name.
 
     """
@@ -118,15 +139,16 @@ class Page(BasePage):
     content: Any
     content_path: str | None
     Parser: Type[BasePageParser] = BasePageParser
-    plugins: list[callable] | None
     inherit_plugins: bool
+    parser_extras: dict[str, Any] | None
+    title: str
 
     def __init__(
         self,
         content_path: str | None = None,
         content: Any | None = None,
         Parser: Type[BasePageParser] | None = None,
-        plugins: list = [],
+        plugins: list[Callable] = [],
     ) -> None:
 
         if Parser:
@@ -150,7 +172,7 @@ class Page(BasePage):
         # Set the plugins
         self.plugins = [*getattr(self, "plugins", []), *plugins]
         self.PM = register_plugins(self.plugins)
-        self.PM.hook.render_content(Page=self)
+        self.PM.hook.render_content(Page=self) # type: ignore pluggy doesn't expose hook
 
     @property
     def _content(self):

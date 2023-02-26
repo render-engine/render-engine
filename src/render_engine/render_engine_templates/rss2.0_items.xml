@@ -3,7 +3,6 @@
 {% if item.description %}
   <description><![CDATA[{{item.description}}]]></description>
 {% else %}
-  {}
   <description><![CDATA[{{item._content|safe }}]]></description>
 {% endif %}
 
