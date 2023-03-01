@@ -103,8 +103,6 @@ class Collection(BaseObject):
         
         repo = git.Repo()
         
-        
-        
         changed_files = [
             *repo.untracked_files, # new files not yet in git's index
             *repo.index.diff(), # modified files in git index
