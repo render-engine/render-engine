@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2023.1.3a12"
+version = "2023.1.3b1"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -25,7 +25,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
-maintainers = ["build", "twine"]
+maintainers = ["build", "twine", "python-semantic-release"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -43,3 +43,6 @@ render-engine = "render_engine.cli:cli"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.semantic_release]
+version_toml = "pyproject.toml:project.version"
