@@ -5,6 +5,16 @@ hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
 
+def register_plugins(plugins):
+    """Register the plugins with the plugin manager"""
+    pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
+    pm.add_hookspecs(SiteSpecs)
+
+    for plugin in plugins:
+        pm.register(plugin)
+    return pm
+
+
 class SiteSpecs:
     """Plugin hook specifications for the Site class"""
 
@@ -17,7 +27,7 @@ class SiteSpecs:
         """Build After Building the site"""
 
     @hook_spec
-    def pre_render_content(page: "Page") -> str:
+    def render_content(Page: "page"):
         """
         Augments the content of the page before it is rendered as output.
         """
@@ -29,11 +39,3 @@ class SiteSpecs:
     @hook_spec
     def post_build_collection(self, site: "Site") -> None:
         """Build After Building the collection"""
-
-    @hook_spec
-    def pre_build_collection_pages(self, page: "Page") -> None:
-        """Steps Prior to Building the collection pages"""
-
-    @hook_spec
-    def post_build_collection_pages(self, site: "Site") -> None:
-        """Build After Building the collection pages"""

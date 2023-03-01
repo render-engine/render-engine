@@ -65,6 +65,7 @@ class Blog(Collection):
         - Rename the archive items so they are not private
     """
 
+    BasePageParser = MarkdownPageParser
     content_type: typing.Type[BlogPost] = BlogPost
     sort_reverse: bool = True
     sort_by = "date_published"

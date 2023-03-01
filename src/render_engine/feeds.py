@@ -1,18 +1,13 @@
 """
+Feed Objects for Generating RSS Feeds
 """
 
-from collections import namedtuple
-from datetime import datetime
-
-import jinja2
-from jinja2 import Template, select_autoescape
-
-from .engine import render_engine_templates_loader
-from .page import Page
-from .parsers.markdown import BasePageParser
 
 
-class RSSFeed(Page):
+from .page import BasePage
+
+
+class RSSFeed(BasePage):
     """
     Creates an RSS feed [`Page`][render_engine.Page] Object.
 
@@ -39,4 +34,4 @@ class RSSFeed(Page):
     """
 
     template = "rss2.0.xml"
-    extension: str = "rss"
+    extension: str = ".rss"

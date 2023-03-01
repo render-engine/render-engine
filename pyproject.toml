@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "render_engine"
-version = "2023.1.3a7"
+version = "2023.1.3a12"
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
@@ -19,12 +19,13 @@ dependencies = [
     "rich",
     "typer",
     "dtyper",
-    "chevron",
+    "gitpython",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-mock"]
 docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
+maintainers = ["build", "twine"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
