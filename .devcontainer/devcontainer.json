@@ -3,12 +3,15 @@
 {
 	"name": "Python",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.10",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		"args": {
+			"IMAGE": "python:3.11"
+		}
+	},
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/pre-commit:1": {},
-		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers-contrib/features/twine": {},
-		"ghcr.io/devcontainers-contrib/features/mkdocs": {}
+		"ghcr.io/devcontainers/features/github-cli": "latest"
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
@@ -19,18 +22,12 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "bash .devcontainer/setup.sh",
-	"postStartCommand": "bash .devcontainer/start.sh",
 
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"microsoft.python",
-				"eamodio.Gitlens",
-				"GitHub.vscode-pull-request-github",
-				"GitHub.codespaces",
-				"GitHub.copilot-labs",
-				"bierner.markdown-preview-github-styles"
+				"microsoft.python"
 			]
 		}
 	}
