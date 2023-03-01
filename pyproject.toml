@@ -12,7 +12,6 @@ dependencies = [
     "Jinja2",
     "markdown2",
     "more-itertools",
-    "pendulum",
     "pluggy",
     "python-frontmatter",
     "python-slugify",
@@ -46,3 +45,6 @@ pythonpath = ["src"]
 
 [tool.semantic_release]
 version_toml = "pyproject.toml:project.version"
+branch = "main"
+prerelease_tag = "b"
+
