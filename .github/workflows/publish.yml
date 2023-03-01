@@ -1,7 +1,9 @@
 name: Build distribution
 
-on: [push, pull_request]
-
+on: 
+  push:
+    tags:
+      - '*'
 jobs:
   test:
     runs-on: "ubuntu-latest"
