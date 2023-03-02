@@ -1,3 +1,5 @@
+"""Shared Properties and methods across render_engine objects."""
+
 from slugify import slugify
 
 class BaseObject:
