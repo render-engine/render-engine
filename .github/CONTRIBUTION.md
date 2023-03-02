@@ -5,18 +5,23 @@ Render Engine is open source and contributions are welcome.
 Below are the steps for contributing to the project.
 
 For code contributions. Please complete the following steps.
+
 ## Submit Issue with **feature** or **bugfix** label. Issue should use story
+
 like verbage. Ex:
 
-**For Features**
+### Features
+>
 > When I do/call <CODE FOR FEATURE>, I would like <OUTCOME FOR FEATURE>. This
 > would <EXPLANATION OF WHY YOU THINK FEATURE WOULD BE GREAT>.
 
-**For Bugs**
+### Bugs
+>
 > When I do/call <CODE causing Bug>, <THE BUG HAPPENING> when I would expect
 > <EXPECTED OUTCOME>.
 
 ## Providing Code for your Contribution
+
 - Include a test case using pytest showing that your code works as intended.
 - Ensure that all existing tests pass unless you are correcting the behavior of
   a feature previously tested.
@@ -27,6 +32,7 @@ like verbage. Ex:
   Documentation guidelines.
 
 ## Style Guidelines
+
 Render Engine uses two modules to style code.
 
 - [isort](https://github.com/timothycrosley/isort)
@@ -38,6 +44,7 @@ done by executing the following command (with both modules installed).
 `$render_engine> noisort render_engine --profile=black && black render_engine`
 
 ## Contributing to Documentation
+
 Render Engine uses [readthedocs](https://readthedocs.org) in combination with
 [Sphinx, Autodoc and Napoleon]().
 
