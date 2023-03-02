@@ -10,10 +10,6 @@
 			"IMAGE": "python:3.11"
 		}
 	},
-	"features": {
-		"ghcr.io/devcontainers/features/github-cli": "latest"
-	},
-
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
