@@ -46,33 +46,4 @@ done by executing the following command (with both modules installed).
 ## Contributing to Documentation
 
 Render Engine uses [readthedocs](https://readthedocs.org) in combination with
-[Sphinx, Autodoc and Napoleon]().
-
-Document modules using Google Doc Format
-
-Example:
-
-> ### no_index
->
-> `no_index: bool = False`
->
-> If your site has a Search object, setting no_index = True will omit the page
-> from the generated search index.
->
-> ```
-> from render_engine.search import Fuse
->
-> site = Site()
-> site.search = Fuse
->
-> class About(Page): # will be indexed
->     pass
->
-> class Index(Page): # will not be indexed
->     no_index = True
->
-> ```
->
-> Setting `no_index` when your site does not have search defined does nothing.
-
-Build your document changes using `mkdocs build`.
+[MkDocs](https://www.mkdocs.org),[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), and [mkdocsstrings](https://mkdocsstrings.readthedocs.io/en/latest/) to generate documentation.
