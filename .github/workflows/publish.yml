@@ -4,6 +4,8 @@ on:
   pull_request:
     tags:
       - '*'
+  workflow_dispatch:
+    
 jobs:
   test:
     runs-on: "ubuntu-latest"
