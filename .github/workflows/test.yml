@@ -1,4 +1,4 @@
-name: Test
+name: ${{github.repository}} - Test
 on:
   push:
     branches:
@@ -6,18 +6,15 @@ on:
   pull_request:
 
 jobs:
-  test-with-pytest:
+  pytest:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
-      - name: Install requirements
-        run: |
-          bash .devcontainer/setup.sh
+          python-version: '3.10'
+      - name: Install Requirements
+        run: pip install -r requirements.txt
 
       - name: Run tests
         run: python -m pytest
