@@ -12,7 +12,6 @@ dependencies = [
     "Jinja2",
     "markdown2",
     "more-itertools",
-    "pendulum",
     "pluggy",
     "python-frontmatter",
     "python-slugify",
@@ -23,8 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-mock"]
-docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
+dev = ["pytest", "pytest-mock", "mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
 maintainers = ["build", "twine"]
 
 [tool.setuptools]
