@@ -9,12 +9,12 @@ jobs:
   test-with-pytest:
     runs-on: ubuntu-latest
 
-    container:
-      image: .devcontainer/Dockerfile
-      options: --IMAGE python:3.11
-    
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
       - name: Install requirements
         run: |
           bash .devcontainer/setup.sh
