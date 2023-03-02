@@ -46,7 +46,7 @@ done by executing the following command (with both modules installed).
 ## Contributing to Documentation
 
 Render Engine uses [readthedocs](https://readthedocs.org) in combination with
-[Sphinx, Autodoc and Napoleon]().
+[MKDocs](https://www.mkdocs.org) & [MkDocStrings](https://mkdocstrings.github.io) to generate documentation.
 
 Document modules using Google Doc Format
 
