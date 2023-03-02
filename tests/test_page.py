@@ -1,11 +1,11 @@
 import jinja2
-import pluggy
 import pytest
 import pathlib
 
 from render_engine import Page
 
-@pytest.fixture()
+
+@pytest.fixture
 def page_from_file(tmp_path: pathlib.Path):
     d = tmp_path / "test_page.md"
     content = """---
@@ -16,20 +16,19 @@ custom: "test"
 # Test Page
 This is a test page
 """
+
     d.write_text(content)
+    return Page(content_path=d)
 
-    class CustomPage(Page):
-        content_path = d
-
-    return CustomPage()
-
-
-def test_page_attrs_from_file(page_from_file: Page):
-    """Tests that expected page attrsibutes are set from the file"""
+def test_page_attrs_from_file(page_from_file):
+    """
+    Tests that expected page attrsibutes are set from the file.
+    Currently this is handled by the BasePageParser and the logic in the Page.
+    """
     assert page_from_file._title == "Test Page"
 
 
-def test_page_custom_attrs_from_file(page_from_file: Page):
+def test_page_custom_attrs_from_file(page_from_file):
     """Tests that unique page attrsibutes are set from the file"""
     assert page_from_file.custom == "test"
 
