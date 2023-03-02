@@ -9,13 +9,13 @@ description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 
 dependencies = [
-    "dateutil",
     "dtyper",
     "gitpython",
     "jinja2",
     "markdown2",
     "more-itertools",
     "pluggy",
+    "python-dateutil",
     "python-frontmatter",
     "python-slugify",
     "rich",
