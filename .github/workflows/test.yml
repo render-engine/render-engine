@@ -1,4 +1,4 @@
-name: ${{github.repository}} - Test
+name: PyTest
 on:
   push:
     branches:
