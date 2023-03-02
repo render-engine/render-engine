@@ -25,8 +25,3 @@ class BasePageParser:
     def parse(content: str, page: "Page"=None):
         """parses the content"""
         return content
-
-    @staticmethod
-    def markup(content: str, page: "Page"):
-        """Convert the raw_content into HTML"""
-        return content

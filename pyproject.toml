@@ -22,15 +22,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-mock"]
-docs = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
-maintainers = ["build", "twine", "python-semantic-release"]
+dev = ["pytest", "pytest-mock", "mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
 
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
 # version_scheme = "python-simplified-semver"
-
 
 [tool.setuptools]
 package-dir = {"" = "src"}
