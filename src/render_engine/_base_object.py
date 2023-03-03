@@ -12,6 +12,7 @@ class BaseObject:
     """
 
     title: str
+    template_vars: dict
 
     @property
     def _title(self) -> str:
@@ -54,9 +55,17 @@ class BaseObject:
         This is often used to pass attributes into the page's `template`.
 
         """
-        return {
+        base_dict ={
             **vars(self),
-            **getattr(self, "template_vars", {}),
             "title": self._title,
             "slug": self._slug,
         }
+
+        # Pull out template_vars
+        if hasattr(self, "template_vars"):
+            for key, value in self.template_vars.items():
+                base_dict[key] = value
+
+            base_dict.pop("template_vars")
+        
+        return base_dict
