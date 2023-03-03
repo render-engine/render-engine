@@ -37,3 +37,26 @@ class TestBaseObjectProperties:
         no_dot_BaseObject = BaseObject()
         no_dot_BaseObject.extension = "xml"
         assert self.test_object.extension.startswith(".")
+
+    def test_base_object_path_name(self):
+        """Tests that the path name is returned correctly"""
+        assert self.test_object.path_name == "testobject.html"
+
+    def test_base_object_to_dict(self):
+        """Tests that the to_dict method returns a dict of the object's attributes"""
+        assert self.test_object.to_dict() == {
+            "title": "TestObject",
+            "slug": "testobject",
+        }
+
+    def test_base_object_to_dict_with_template_vars(self):
+        """Tests that the `to_dict` adds template_vars extracted method returns a dict of the object's attributes"""
+        self.test_object.template_vars = {"test": "test"}
+
+        assert self.test_object.to_dict() == {
+            "title": "TestObject",
+            "slug": "testobject",
+            "test": "test",
+        }
+
+        assert self.test_object.template_vars == {"test": "test"}
