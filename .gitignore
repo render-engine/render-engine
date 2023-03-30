@@ -157,4 +157,4 @@ cython_debug/
 poetry.lock
 
 docs/site
-.vscode/settings.json
+.vscode
