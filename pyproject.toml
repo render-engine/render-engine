@@ -23,7 +23,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-mock", "mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
+dev = [
+    "pytest",
+    "pytest-mock",
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "pymdown-extensions",
+    "ruff",
+    "black",
+    ]
 
 
 [tool.setuptools_scm]

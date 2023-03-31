@@ -10,6 +10,7 @@
             "IMAGE": "python:3.11"
         }
     },
+    "postCreateCommand": ". .devcontainer/setup.sh",
     "customizations": {
         "vscode": {
             "settings": {
