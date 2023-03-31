@@ -1,15 +1,12 @@
 import datetime
-import logging
 import typing
 
 import dateutil.parser
 import more_itertools
-import pluggy
 
 from .collection import Collection
 from .feeds import RSSFeed
 from .page import Page
-from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
 
 

@@ -1,3 +1,4 @@
+import pathlib
 import pluggy
 import pytest
 
@@ -88,3 +89,43 @@ def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
     site.page(CustomPage)
 
     assert len(site.route_list) == 1
+
+
+def test_site_output_path(tmp_path):
+    """Tests site outputs to output_path"""
+
+    output_tmp_dir = tmp_path / "output"
+    output_tmp_dir.mkdir()
+
+    class CustomSite(Site):
+        output_path = output_tmp_dir
+
+    site = CustomSite()
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    assert (output_tmp_dir / "custompage.html").exists()
+
+
+def test_site_static_renders_in_static_output_path(tmp_path):
+    """
+    Tests that a static file is rendered in the static output path.
+    """
+
+    static_tmp_dir = tmp_path / "static"
+    output_tmp_dir = tmp_path / "output"
+    output_tmp_dir.mkdir()
+    static_tmp_dir.mkdir()
+    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+
+    class CustomSite(Site):
+        output_path = output_tmp_dir
+
+    site = CustomSite()
+    site.render() 
+
+    print(list(output_tmp_dir.iterdir()))
+    assert (output_tmp_dir / "static" / "test.txt").exists()
