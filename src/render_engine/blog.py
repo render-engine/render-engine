@@ -46,8 +46,9 @@ class BlogPost(Page):
         )
         if isinstance(_date_published, datetime.datetime):
             return _date_published.replace(tzinfo=None)
+        
         return (
-            dateutil.parser.parse(_date_published).replace(tzinfo=None)
+            dateutil.parser.parse(_date_published, ignoretz=True)
             if _date_published
             else None
         )
