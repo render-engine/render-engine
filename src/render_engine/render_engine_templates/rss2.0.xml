@@ -6,13 +6,13 @@
     <description>{{description}}</description>
     <atom:link href="{{SITE_URL}}" rel="self" type="application/rss+xml" />
 
-{% if language %}<language>{{language}}</language>{% endif %}
-{% if copyright %}<copyright>{{copyright}}</copyright>{% endif %}
-{% if managing_editor %}<managingEditor>{{managing_editor}}</managingEditor>{% endif %}
-{% if web_master %}<webMaster>{{web_master}}</webMaster>{% endif %}
-{% if pub_date %}<pubDate>{{pub_date}}</pubDate>{% endif %}
-{% if last_build_date %}<lastBuildDate>{{last_build_date}}</lastBuildDate>{% endif %}
-{% if categories %}
+{% if language is defined and language %}<language>{{language}}</language>{% endif %}
+{% if copyright is defined and copyright %}<copyright>{{copyright}}</copyright>{% endif %}
+{% if managing_editor is defined and managing_editor %}<managingEditor>{{managing_editor}}</managingEditor>{% endif %}
+{% if web_master is defined and web_master %}<webMaster>{{web_master}}</webMaster>{% endif %}
+{% if pub_date is defined and pub_date %}<pubDate>{{pub_date}}</pubDate>{% endif %}
+{% if last_build_date is defined and last_build_date %}<lastBuildDate>{{last_build_date}}</lastBuildDate>{% endif %}
+{% if categories is defined and categories %}
 {% for category in categories %}
 {% if category['domain'] %}
 <category domain="{{category['domain']}}">{{category}}</category>
@@ -21,14 +21,14 @@
 {% endif %}
 {% endfor %}
 {% endif %}
-{% if generator %}<generator>{{generator}}</generator>{% endif %}
-{% if docs %}<docs>{{docs}}</docs>{% endif %}
-{% if cloud %}
+{% if generator is defined and generator %}<generator>{{generator}}</generator>{% endif %}
+{% if docs is defined and docs %}<docs>{{docs}}</docs>{% endif %}
+{% if cloud is defined and cloud %}
 <cloud domain="{{cloud.domain}}" port={{cloud.port}} path="{{cloud.path}}" registerProcedure="{{cloud.register_procedure}}" protocol="{{cloud.protocol}}" />
 {% endif %}
-{% if ttl %}<ttl>{{ttl}}</ttl>{% endif %}
-{% if image %}<image>{{image}}</image>{% endif %}
-{% if comments %}{{comments}}{% endif %}
+{% if ttl is defined and ttl %}<ttl>{{ttl}}</ttl>{% endif %}
+{% if image is defined and image %}<image>{{image}}</image>{% endif %}
+{% if comments is defined and comments %}{{comments}}{% endif %}
 {% for item in pages %}
 {% include 'rss2.0_items.xml' %}
 {% endfor %}

@@ -1,5 +1,7 @@
 import pluggy
 
+from jinja2 import StrictUndefined
+
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
@@ -65,3 +67,26 @@ def test_rss_feed_item_url(tmp_path):
     collection = TestCollection()
     print(collection._feed.template)
     assert "http://localhost:8000//page.html" in collection._feed._render_content(engine=engine)
+
+
+def test_rss_feed_template_with_strictundefined(engine, tmp_path):
+    """Test that the RSS feed template works with the StrictUndefined undefined handler."""
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "#"
+    file.write_text("test")
+
+    class TestCollection(Collection):
+        pages = [Page(content_path=file)]
+        Feed = RSSFeed
+
+    collection = TestCollection()
+    engine.undefined = StrictUndefined
+    rendered_content = collection._feed._render_content(
+        engine=engine,
+        SITE_TITLE="Test Site Title",
+        SITE_URL="http://localhost:8000",
+        title="Test Feed Title",
+        description="Test Feed Description",
+    )
+    assert "http://localhost:8000/page.html" in rendered_content
