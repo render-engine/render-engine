@@ -1,5 +1,6 @@
 name: PyTest
 on:
+  workflow_call:
   push:
     branches:
       - main
