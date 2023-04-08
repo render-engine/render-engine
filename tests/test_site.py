@@ -123,9 +123,30 @@ def test_site_static_renders_in_static_output_path(tmp_path):
 
     class CustomSite(Site):
         output_path = output_tmp_dir
+        static_path = static_tmp_dir
 
     site = CustomSite()
     site.render() 
 
-    print(list(output_tmp_dir.iterdir()))
     assert (output_tmp_dir / "static" / "test.txt").exists()
+
+def tests_site_nested_static_paths(tmp_path):
+    """given a static path with nested directories, the output should be the same"""
+    static_tmp_dir = tmp_path / "static"
+    output_tmp_dir = tmp_path / "output"
+    output_tmp_dir.mkdir()
+    static_tmp_dir.mkdir()
+    pathlib.Path(static_tmp_dir / "nested").mkdir()
+    pathlib.Path(static_tmp_dir / "nested" / pathlib.Path("test.txt")).write_text("test")
+    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+
+    class CustomSite(Site):
+        output_path = output_tmp_dir
+        static_path = static_tmp_dir
+
+    site = CustomSite()
+    site.render() 
+    print(list(pathlib.Path(output_tmp_dir/'static').iterdir()))
+    print(list(pathlib.Path(output_tmp_dir/'static'/'nested').iterdir()))
+    assert (output_tmp_dir / "static" / "test.txt").exists()
+    assert (output_tmp_dir / "static" / "nested" / "test.txt").exists()
