@@ -25,7 +25,7 @@ def _check_date_values(date_value_name:str, potential_attrs: typing.Iterable[str
         )
 
     if isinstance(set_attr, datetime.datetime) or isinstance(set_attr, datetime.date):
-        return set_attr
+        return set_attr.replace(tzinfo=None)
         
     else:
         logging.warning(
