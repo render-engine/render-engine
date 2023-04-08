@@ -79,7 +79,7 @@ class Site:
         """Copies a Static Directory to the output folder"""
         shutil.copytree(
             self.static_path,
-            pathlib.Path(self.output_path / pathlib.Path(self.static_path.name)),
+            pathlib.Path(self.output_path / pathlib.Path(self.static_path).name),
             dirs_exist_ok=True
         )
 
