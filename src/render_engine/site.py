@@ -75,10 +75,12 @@ class Site:
         self.add_to_route_list(page)
         return page
 
-    def render_static(self, directory) -> None:
+    def render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
         shutil.copytree(
-            directory, pathlib.Path(self.output_path) / directory, dirs_exist_ok=True
+            self.static_path,
+            pathlib.Path(self.output_path / pathlib.Path(self.static_path.name)),
+            dirs_exist_ok=True
         )
 
     def render_output(self, route: str, page: Type[Page]):
@@ -137,6 +139,9 @@ class Site:
             task_add_route = progress.add_task(
                 "[blue]Adding Routes", total=len(self.route_list)
             )
+
+            if pathlib.Path(self.static_path).exists():
+                self.render_static()
             engine.globals["site"] = self
 
             for slug, entry in self.route_list.items():
@@ -156,8 +161,6 @@ class Site:
                         self.render_partial_collection(entry)
                     else:
                         self.render_full_collection(entry)
-
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(site=self)
-
             progress.update(pre_build_task, advance=1)
