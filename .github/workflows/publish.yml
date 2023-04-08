@@ -7,8 +7,10 @@ on:
   
 jobs:
   test:
-    runs-on: "ubuntu-latest"
-
+    uses: ./.github/workflows/test.yml
+  deploy:
+    name: Deploy to PyPI
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v3

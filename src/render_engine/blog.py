@@ -4,13 +4,39 @@ import typing
 
 import dateutil.parser
 import more_itertools
-import pluggy
 
 from .collection import Collection
 from .feeds import RSSFeed
 from .page import Page
-from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
+
+
+def _check_date_values(date_value_name:str, potential_attrs: typing.Iterable[str]) -> datetime.date | datetime.datetime:
+    """
+    Checks potential attrs for a date value.
+    This will raise an error if the value is not a datetime object.
+    """
+    
+    set_attr = more_itertools.first_true(potential_attrs)
+
+    if set_attr is None:
+        raise ValueError(
+            f"""Error Parsing {date_value_name}. No date value found."""
+        )
+
+    if isinstance(set_attr, datetime.datetime) or isinstance(set_attr, datetime.date):
+        return set_attr
+        
+    else:
+        logging.warning(
+                f"""
+                date_modified={set_attr} equated as string and not datetime.
+                Render Engine will attempt to parse as a datetime object. For Best Results use RFC2822 format.
+                
+                For more information, see: https://render-engine.readthedocs.io/en/latest/blog.html#date-published-and-date-modified
+                """
+        )
+        return dateutil.parser.parse(set_attr).replace(tzinfo=None)
 
 
 class BlogPost(Page):
@@ -21,40 +47,22 @@ class BlogPost(Page):
 
     @property
     def date_modified(self):
-        _date_modified = more_itertools.first_true(
-            (
+        valid_date_modified_values = (
                 getattr(self, "_date_modified", None),
                 getattr(self, "modified_date", None),
                 getattr(self, "date", None),
-            ),
-            default=None,
-        )
-        if isinstance(_date_modified, datetime.datetime):
-            return _date_modified.replace(tzinfo=None)
-        return (
-            dateutil.parser.parse(_date_modified).replace(tzinfo=None)
-            if _date_modified
-            else None
-        )
+            )
+        return _check_date_values("date_modified", valid_date_modified_values)
 
     @property
     def date_published(self):
-        _date_published = more_itertools.first_true(
-            (
+        valid_date_published_values = (
                 getattr(self, "_date_published", None),
                 getattr(self, "publish_date", None),
                 getattr(self, "date", None),
-            ),
-            default=None,
-        )
-        if isinstance(_date_published, datetime.datetime):
-            return _date_published.replace(tzinfo=None)
-        return (
-            dateutil.parser.parse(_date_published).replace(tzinfo=None)
-            if _date_published
-            else None
-        )
-
+            )
+    
+        return _check_date_values("date_published", valid_date_published_values)
 
 class Blog(Collection):
     """

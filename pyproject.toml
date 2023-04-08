@@ -23,7 +23,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-mock", "mkdocs", "mkdocs-material", "mkdocstrings[python]", "pymdown-extensions"]
+dev = [
+    "pytest",
+    "pytest-mock",
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "pymdown-extensions",
+    "ruff",
+    "black",
+    ]
 
 
 [tool.setuptools_scm]
@@ -50,3 +59,13 @@ pythonpath = ["src"]
 [tool.semantic_release]
 version_toml = "pyproject.toml:project.version"
 branch = "main"
+
+[tool.ruff]
+select = ["E", "F", "I", "UP"]
+target-version = "py311"
+line-length = 120
+src = ["src"]
+
+[tool.black]
+target-version =  ["py311"]
+line-length = 120
