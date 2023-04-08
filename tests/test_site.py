@@ -128,5 +128,4 @@ def test_site_static_renders_in_static_output_path(tmp_path):
     site = CustomSite()
     site.render() 
 
-    assert pathlib.Path(static_tmp_dir /  "test.txt").exists()
-    # assert (output_tmp_dir / "static" / "test.txt").exists()
+    assert (output_tmp_dir / "static" / "test.txt").exists()
