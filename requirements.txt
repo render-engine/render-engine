@@ -74,7 +74,7 @@ mkdocstrings[python]==0.20.0
     # via
     #   mkdocstrings-python
     #   render-engine (pyproject.toml)
-mkdocstrings-python==0.8.3
+mkdocstrings-python==0.9.0
     # via mkdocstrings
 more-itertools==9.1.0
     # via render-engine (pyproject.toml)
