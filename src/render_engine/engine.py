@@ -8,6 +8,7 @@ from jinja2 import (
     FileSystemLoader,
     PackageLoader,
     select_autoescape,
+    pass_environment,
 )
 
 render_engine_templates_loader = ChoiceLoader(
@@ -23,6 +24,13 @@ def to_pub_date(value: datetime):
     Parse information from the given class object.
     """
     return utils.format_datetime(value)
+
+@pass_environment
+def format_datetime(env, value: str) -> datetime:
+    """
+    Parse information from the given class object.
+    """
+    return datetime.strftime(value, env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
 
 
 def url_for(value: str, site):
@@ -40,3 +48,4 @@ engine = Environment(
 )
 
 engine.filters["to_pub_date"] = to_pub_date
+engine.filters["format_datetime"] = format_datetime

@@ -11,6 +11,7 @@ from .collection import Collection
 from .engine import engine, url_for
 from .hookspecs import register_plugins
 from .page import Page
+from datetime import datetime
 
 
 class Site:
@@ -35,8 +36,11 @@ class Site:
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
+        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
     }
     plugins: list
+
+
 
     def __init__(
         self,
