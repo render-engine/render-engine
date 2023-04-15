@@ -294,8 +294,6 @@ def serve(
                     console.print(f"Unable to list to http://{server_address[0]}:{server_address[1]}.")
                     console.print(f"Address is already in use, sleeping 60 sec. Attempts left {attempts}")
                     time.sleep(60)
-                else:
-                    break
         else:
            console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
            console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
