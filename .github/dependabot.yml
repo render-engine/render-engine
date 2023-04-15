@@ -9,7 +9,7 @@ updates:
     directory: "/"
     ignore:
       - dependency-name: "Markdown"
-      # For Markdown, ignore all updates for version 4 and 5
+      # For Markdown, ignore all updates for version 3.4.X
         versions: ["3.4.x"]
     # Check the pypi registry for updates every day (weekdays)
     schedule:
