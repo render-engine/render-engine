@@ -289,6 +289,7 @@ def serve(
             httpd = HTTPServer(server_address, server)
         except OSError as e:
             if 'Address already in use' in str(e):
+                import time
                 attempts -= 1
                 if attempts:
                     console.print(f"Unable to list to http://{server_address[0]}:{server_address[1]}.")
