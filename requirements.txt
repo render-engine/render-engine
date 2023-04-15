@@ -102,7 +102,7 @@ pymdown-extensions==9.10
     #   mkdocs-material
     #   mkdocstrings
     #   render-engine (pyproject.toml)
-pytest==7.3.0
+pytest==7.3.1
     # via
     #   pytest-mock
     #   render-engine (pyproject.toml)
