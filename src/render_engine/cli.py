@@ -262,6 +262,12 @@ def serve(
         help="Port to serve on",
         show_default=False,
     ),
+    attempts: int = type.Option(
+        10,
+        "--attempts",
+        help="Attempt to bind to port."
+        show_default=True,
+    ),
 ):
     """CLI for creating a new site"""
     app = get_app(module_site)
@@ -277,11 +283,23 @@ def serve(
             super().__init__(*args, directory=directory, **kwargs)
 
     server_address = ("localhost", port)
-    httpd = HTTPServer(server_address, server)
     console = Console()
-    console.print(f"Serving [blue]{directory} on http://localhost:{port}")
-    console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
-    return httpd.serve_forever()
+    while attempts:
+        try:
+            httpd = HTTPServer(server_address, server)
+        except OSError as e:
+            if 'Address already in use' in str(e):
+                attempts -= 1
+                if attempts:
+                    console.print(f"Unable to list to http://{server_address[0]}:{server_address[1]}.")
+                    console.print(f"Address is already in use, sleeping 60 sec. Attempts left {attempts}")
+                    time.sleep(60)
+                else:
+                    break
+        else:
+           console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
+           console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
+           return httpd.serve_forever()
 
 
 def cli():
