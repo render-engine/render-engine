@@ -268,6 +268,12 @@ def serve(
         help="Attempt to bind to port.",
         show_default=True,
     ),
+    attempts_wait_time: int = typer.Option(
+        60,
+        "--attempts-timeout",
+        help="Time to wait between attempts to bind to port.",
+        show_default=True,
+    ),
 ):
     """CLI for creating a new site"""
     app = get_app(module_site)
@@ -294,7 +300,7 @@ def serve(
                 if attempts:
                     console.print(f"Unable to list to http://{server_address[0]}:{server_address[1]}.")
                     console.print(f"Address is already in use, sleeping 60 sec. Attempts left {attempts}")
-                    time.sleep(60)
+                    time.sleep(attempts_wait_time)
         else:
            console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
            console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
