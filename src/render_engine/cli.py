@@ -248,7 +248,7 @@ def build(site_module: str):
 def serve(
     module_site: str,
     build: bool = False,
-    directory: typing.Optional[str] = typer.Option(
+    directory: typing.Optional[str] = typer.Option(  # noqa: UP007
         None,
         "--directory",
         "-d",
