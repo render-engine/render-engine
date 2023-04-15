@@ -12,7 +12,7 @@ class BlogPost(Page):
 
 class Blog(Collection):
     """
-    Custom :py:class:`collection.Collection` class with archiving enabled, sort by `date_published` by default.
+    Custom :py:class:`collection.Collection` class with archiving enabled, sort by `date` by default.
 
     Todos:
         - Add Support for JSON Feeds

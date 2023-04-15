@@ -19,7 +19,7 @@
     <link>
       {{SITE_URL}}{{item.url_for()}}
     </link>
-{% if item.date_published is defined and date_published %}<pubDate>{{item.date_published | to_pub_date }}</pubDate>{% endif %}
+{% if item.date is defined %}<pubDate>{{item.date | to_pub_date }}</pubDate>{% endif %}
 {% if item.guid is defined and guid %}<guid isPermaLink="false">{{item.guid}}</guid>{% endif %}
 {% if item.author is defined and author %}{{item.author}}{% endif %}
 {% if item.comments is defined and comments %}{{item.comments}}{% endif %}
