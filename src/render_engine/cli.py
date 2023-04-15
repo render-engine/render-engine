@@ -265,7 +265,7 @@ def serve(
     attempts: int = type.Option(
         10,
         "--attempts",
-        help="Attempt to bind to port."
+        help="Attempt to bind to port.",
         show_default=True,
     ),
 ):
