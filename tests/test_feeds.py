@@ -4,7 +4,7 @@ import pluggy
 from jinja2 import StrictUndefined
 
 from render_engine.collection import Collection
-from render_engine.engine import engine
+from render_engine.engine import engine, to_pub_date
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
 
@@ -94,14 +94,19 @@ def test_rss_feed_template_with_strictundefined(engine, tmp_path):
 
 
 def test_rss_feed_template_parses_date_correctly(engine):
-    """Tests that a feed parses the page date in RFC3339 Format"""
+    """Tests that a feed parses the page date in RFC2822 Format"""
+
+
     class TestPage(Page):
-        date = datetime.datetime(2021, 1, 1, 0, 0, 0, tzinfo=datetime.UTC)
+        date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.timezone.utc)   # noqa: UP017
     class TestCollection(Collection):
         Feed = RSSFeed
         pages = [TestPage()]
 
     collection = TestCollection()
+
+    engine.filters["to_pub_date"] = to_pub_date
+
     rendered_content = collection._feed._render_content(
         engine=engine,
         SITE_TITLE="Test Site Title",
@@ -109,4 +114,5 @@ def test_rss_feed_template_parses_date_correctly(engine):
         title="Test Feed Title",
         description="Test Feed Description",
     )
-    assert "2021-01-01T00:00:00+00:00" in rendered_content
+
+    assert "Sat, 15 Apr 2023 00:00:00 +0000" in rendered_content
