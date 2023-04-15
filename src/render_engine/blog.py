@@ -1,10 +1,3 @@
-import datetime
-import logging
-import typing
-
-import dateutil.parser
-import more_itertools
-
 from .collection import Collection
 from .feeds import RSSFeed
 from .page import Page
@@ -13,9 +6,9 @@ from .parsers.markdown import MarkdownPageParser
 
 class BlogPost(Page):
     """Page Like object with slight modifications to work with BlogPosts."""
-
     list_attrs = ["tags"]
     invalid_attrs = ["slug"]
+
 
 class Blog(Collection):
     """
@@ -27,7 +20,7 @@ class Blog(Collection):
     """
 
     BasePageParser = MarkdownPageParser
-    content_type: typing.Type[BlogPost] = BlogPost
+    content_type: BlogPost = BlogPost
     sort_reverse: bool = True
     sort_by = "date"
     has_archive = True
