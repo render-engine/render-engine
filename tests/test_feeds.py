@@ -1,11 +1,12 @@
-import pluggy
+import datetime
 
+import pluggy
 from jinja2 import StrictUndefined
 
 from render_engine.collection import Collection
+from render_engine.engine import engine
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
-from render_engine.engine import engine
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -90,3 +91,22 @@ def test_rss_feed_template_with_strictundefined(engine, tmp_path):
         description="Test Feed Description",
     )
     assert "http://localhost:8000/page.html" in rendered_content
+
+
+def test_rss_feed_template_parses_date_correctly(engine):
+    """Tests that a feed parses the page date in RFC3339 Format"""
+    class TestPage(Page):
+        date = datetime.datetime(2021, 1, 1, 0, 0, 0, tzinfo=datetime.UTC)
+    class TestCollection(Collection):
+        Feed = RSSFeed
+        pages = [TestPage()]
+
+    collection = TestCollection()
+    rendered_content = collection._feed._render_content(
+        engine=engine,
+        SITE_TITLE="Test Site Title",
+        SITE_URL="http://localhost:8000",
+        title="Test Feed Title",
+        description="Test Feed Description",
+    )
+    assert "2021-01-01T00:00:00+00:00" in rendered_content

@@ -1,14 +1,14 @@
 from datetime import datetime
 from email import utils
-from typing import Type
+import typing
 
 from jinja2 import (
     ChoiceLoader,
     Environment,
     FileSystemLoader,
     PackageLoader,
-    select_autoescape,
     pass_environment,
+    select_autoescape,
 )
 
 render_engine_templates_loader = ChoiceLoader(
@@ -26,7 +26,7 @@ def to_pub_date(value: datetime):
     return utils.format_datetime(value)
 
 @pass_environment
-def format_datetime(env, value: str) -> datetime:
+def format_datetime(env: Environment, value: str) -> datetime:
     """
     Parse information from the given class object.
     """
