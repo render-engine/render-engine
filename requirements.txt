@@ -80,7 +80,7 @@ more-itertools==9.1.0
     # via render-engine (pyproject.toml)
 mypy-extensions==1.0.0
     # via black
-packaging==23.0
+packaging==23.1
     # via
     #   black
     #   mkdocs
