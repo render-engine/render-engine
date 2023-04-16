@@ -1,3 +1,5 @@
+# noqa: UP007
+
 import importlib
 import pathlib
 import sys
@@ -248,7 +250,7 @@ def build(site_module: str):
 def serve(
     module_site: str,
     build: bool = False,
-    directory: typing.Optional[str] = typer.Option(  # noqa: UP007
+    directory: typing.Optional[str] = typer.Option(
         None,
         "--directory",
         "-d",
