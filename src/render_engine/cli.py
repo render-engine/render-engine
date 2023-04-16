@@ -1,3 +1,5 @@
+# noqa: UP007
+
 import importlib
 import pathlib
 import sys
