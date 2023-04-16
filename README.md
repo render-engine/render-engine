@@ -1,8 +1,9 @@
 > ***Warning***
-> Render Engine 2022.12.3 introduced a change to the schema where now the following commands were changed. I apologize for any inconvenience.
-> - `render_page` is just `page`
-> - `render_collection` is just `collection`
-> - You will need to now add `site.render()` where `site` is your `Site` instance
+> **BREAKING CHANGE**
+> As of 2023.4.2a1 Render Engine no longer uses the `date_published` or `date_modified` attributes for `Blog` objects. Please instead use `date`.
+>
+> **BREAKING CHANGE**
+> As of 2023.4.2a1 Render Engine enforces that the `Blog.date` attribute is a `datetime` object. If using frontmatter please use [iso8601](https://en.wikipedia.org/wiki/ISO_8601) format for the date attribute.
 
 ## What is RenderEngine
 ## The _3 layer_ Architecture 
