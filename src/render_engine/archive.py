@@ -2,9 +2,10 @@
 The Archive is the Page object used by the collection that focuses on presenting Page objects.
 """
 import pathlib
+
 import jinja2
 
-from .page import BasePage 
+from .page import BasePage
 
 
 class Archive(BasePage):
@@ -15,7 +16,7 @@ class Archive(BasePage):
         Attributes can be used to customize the 
         [archive_template][src.render_engine.collection.Collection].
 
-    Custom [`Page`][src.render_engine.page.Page] object used to show all the pages in a [Collection][src.render_engine.Collection].
+    Custom [`Page`][src.render_engine.page.Page] used to show the pages in a [Collection][src.render_engine.Collection].
 
     Parameters:
         pages: The list of pages to include in the archive

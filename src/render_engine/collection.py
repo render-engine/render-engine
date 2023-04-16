@@ -1,6 +1,5 @@
-from enum import Enum
 import pathlib
-from typing import Any, Callable, Generator, Type
+import typing
 
 import git
 from more_itertools import batched, flatten
@@ -9,10 +8,10 @@ from slugify import slugify
 from ._base_object import BaseObject
 from .archive import Archive
 from .feeds import RSSFeed
+from .hookspecs import register_plugins
 from .page import Page
 from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
-from .hookspecs import register_plugins
 
 
 class Collection(BaseObject):
@@ -57,22 +56,22 @@ class Collection(BaseObject):
 
     archive_template: str | None
     content_path: pathlib.Path | str
-    content_type: Type[Page] = Page
-    Feed: Type[RSSFeed]
+    content_type: Page = Page
+    Feed: RSSFeed
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
-    PageParser: Type[BasePageParser] = MarkdownPageParser
-    parser_extras: dict[str, Any]
+    PageParser: BasePageParser = MarkdownPageParser
+    parser_extras: dict[str, any]
     routes: list[str] = ["./"]
     sort_by: str = "title"
     sort_reverse: bool = False
     template: str | None
-    plugins: list[Callable] | None
+    plugins: list[typing.Callable] | None
 
     def __init__(
         self,
-        plugins: list[Callable] = [],
+        plugins: list[typing.Callable] = [],
     ) -> None:
 
         self.has_archive = any(
@@ -95,7 +94,7 @@ class Collection(BaseObject):
             ]
         )
     
-    def _generate_content_from_modified_pages(self) -> Generator[Page, None, None]:
+    def _generate_content_from_modified_pages(self) -> typing.Generator[Page, None, None]:
         """
         Check git status for newly created and modified files.
         Returns the Page objects for the files in the content path
@@ -139,7 +138,7 @@ class Collection(BaseObject):
         )
 
     @property
-    def archives(self) -> Generator[Archive, None, None]:
+    def archives(self) -> typing.Generator[Archive, None, None]:
         """
         Returns a [Archive][src.render_engine.archive] objects containing the pages from the `content_path` .
 

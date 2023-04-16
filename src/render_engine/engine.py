@@ -1,12 +1,13 @@
 from datetime import datetime
 from email import utils
-from typing import Type
+import typing
 
 from jinja2 import (
     ChoiceLoader,
     Environment,
     FileSystemLoader,
     PackageLoader,
+    pass_environment,
     select_autoescape,
 )
 
@@ -24,6 +25,13 @@ def to_pub_date(value: datetime):
     """
     return utils.format_datetime(value)
 
+@pass_environment
+def format_datetime(env: Environment, value: str) -> datetime:
+    """
+    Parse information from the given class object.
+    """
+    return datetime.strftime(value, env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
+
 
 def url_for(value: str, site):
     if value in site.route_list:
@@ -40,3 +48,4 @@ engine = Environment(
 )
 
 engine.filters["to_pub_date"] = to_pub_date
+engine.filters["format_datetime"] = format_datetime
