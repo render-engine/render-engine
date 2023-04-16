@@ -1,12 +1,17 @@
-# <PR_TITLE>
-
 ## Summary
 
 <SUMMARY OF THE CHANGES BEING MADE>
 
+## Type of Issue
+
+- [ ] :bug: (bug)
+- [ ] :dizzy: (New Feature)
+- [ ] :radioactive: (Deprecation)
+- [ ] :no_entry_sign: (Removal)
+
 ## Issues Referenced
 
-fixes <#ISSUE NUMBER>
+resolves <#ISSUE NUMBER>
 
 ## Discussions Referenced
 
