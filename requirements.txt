@@ -93,7 +93,7 @@ pluggy==1.0.0
     # via
     #   pytest
     #   render-engine (pyproject.toml)
-pygments==2.14.0
+pygments==2.15.0
     # via
     #   mkdocs-material
     #   rich
