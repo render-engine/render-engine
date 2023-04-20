@@ -130,7 +130,7 @@ requests==2.28.2
     # via mkdocs-material
 rich==13.3.4
     # via render-engine (pyproject.toml)
-ruff==0.0.261
+ruff==0.0.262
     # via render-engine (pyproject.toml)
 six==1.16.0
     # via python-dateutil
