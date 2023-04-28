@@ -3,7 +3,6 @@
 import importlib
 import pathlib
 import sys
-import typing
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import dtyper
@@ -102,17 +101,17 @@ def init(
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
-    site_author: typing.Optional[str] = typer.Option(
+    site_author: str | None = typer.Option(
         None,
         help="(Optional): Author of the site",
         rich_help_panel="Site Vars",
     ),
-    site_description: typing.Optional[str] = typer.Option(
+    site_description: str | None = typer.Option(
         None,
         help="(Optional): Site Description",
         rich_help_panel="Site Vars",
     ),
-    site_title: typing.Optional[str] = typer.Option(
+    site_title: str | None = typer.Option(
         None,
         "--title",
         "-t",
@@ -120,7 +119,7 @@ def init(
         rich_help_panel="Site Vars",
         show_default=False,
     ),
-    site_url: typing.Optional[str] = typer.Option(
+    site_url: str | None = typer.Option(
         None,
         "--url",
         "-u",
@@ -153,8 +152,24 @@ def init(
         help="custom templates folder",
     ),
 ):
-    """CLI for creating a new site"""
-
+    """
+    CLI for creating a new site configuration.
+    
+    Params:
+        collection_path: create your content folder in a custom location
+        force: Force overwrite of existing files
+        output_path: custom output folder location
+        project_path_name: name of render_engine app name
+        project_folder: path to create the project
+        site_author:  Author of the site
+        site_description: Site Description
+        site_title: title of the site
+        site_url: URL for the site
+        skip_collection: Skip creating the content folder and a collection
+        skip_static: Skip copying static files
+        static_path: custom static folder
+        templates_path: custom templates folder
+    """
     # creating the site object and site_vars
 
     project_folder_path = pathlib.Path(project_folder)
@@ -241,16 +256,22 @@ def init(
 
 @app.command()
 def build(site_module: str):
-    """CLI for creating a new site"""
+    """
+    CLI for creating a new site
+
+    Params:
+        site_module: module and class name of the site
+    
+    """
     app = get_app(site_module)
     app.render()
 
 
 @app.command()
 def serve(
-    module_site: str,
+    module_site: str | None = None,
     build: bool = False,
-    directory: typing.Optional[str] = typer.Option(
+    directory: str | None = typer.Option(
         None,
         "--directory",
         "-d",
@@ -264,20 +285,20 @@ def serve(
         help="Port to serve on",
         show_default=False,
     ),
-    attempts: int = typer.Option(
-        10,
-        "--attempts",
-        help="Attempt to bind to port.",
-        show_default=True,
-    ),
-    attempts_wait_time: int = typer.Option(
-        60,
-        "--attempts-timeout",
-        help="Time to wait between attempts to bind to port.",
-        show_default=True,
-    ),
 ):
-    """CLI for creating a new site"""
+    """
+    Create an HTTP server to serve the site at `localhost`.
+
+    !!! warning
+        this is only for development purposes and should not be used in production.
+
+    Params:
+        module_site: Python module and initialize Site class
+        build: flag to build the site prior to serving the app
+        directory: Directory to serve. If `module_site` is provided, this will be the `output_path` of the site.
+        port: Port to serve on
+    """
+
     app = get_app(module_site)
 
     if build:
@@ -305,7 +326,7 @@ def serve(
                     time.sleep(attempts_wait_time)
         else:
            console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
-           console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
+           console.print("Press [bold red]CTRL+C[/bold red] to stop serving")
            return httpd.serve_forever()
 
 
