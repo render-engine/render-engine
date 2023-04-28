@@ -3,7 +3,7 @@
 
 * **[Page](page.md)** - A single webpage item built from content, a template, raw data, or a combination of those things.
 * **[Collection](collection.md)** - A group of webpages built from the same template, organized in a single directory
-* **[Site](site.md)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
+* **[Site](site.md)** - The container that helps to render all Pages and Collections in with uniform settings and variables
 
 ## Installing Render Engine
 
