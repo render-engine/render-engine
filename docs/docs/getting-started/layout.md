@@ -1,4 +1,4 @@
-## Simple Site Layout
+# Simple Site Layout
 Render Engine has a very simple site layout. You can see the example site layout below.
 
 ```bash
@@ -147,13 +147,3 @@ class Blog(Blog):
   template="blog.html"
   content_path="content/blog"
 ```
-
-### Generating your site
-
-Once you have your site's build file (in our case app.py), you can generate the site by running the `generate` method on your site object.
-
-```bash
-python app.py
-```
-
-Your site will be generated in the `output` folder. You can change the output folder by passing in the `output_path` attribute to the `Site` class.
