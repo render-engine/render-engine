@@ -6,10 +6,11 @@ nav:
   - Home: index.md
   - Getting Started:
     - getting-started/installation.md
-    - getting-started/create-app.md
-    - getting-started/layout.md
+    - getting-started/creating-your-app.md
     - getting-started/creating-a-page.md
     - getting-started/creating-a-collection.md
+    - getting-started/layout.md
+    - getting-started/building-your-site.md
   - Components:
     - Page: page.md
     - Collection:
@@ -22,6 +23,7 @@ nav:
   - Extending Render Engine:
     - Built-in Plugins: plugins.md
     - Plugins: plugins.md
+  - CLI: cli.md
 markdown_extensions:
   - toc
   - codehilite:
@@ -30,7 +32,6 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - attr_list
-
 watch:
   - ../src/render_engine
 plugins:

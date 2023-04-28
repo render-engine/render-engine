@@ -1,27 +1,10 @@
-## Build your site with `create-app`
+# Render Engine CLI
 
-You can get started quickly using the `create_app` command.
+Render Engine comes with a CLI that can be used to create, build, and serve your site.
 
-```bash
-$ create-app
-```
+## creating your app with `render-engine init`
 
-or
-
-```bash
-$ python -m render_engine.create_app
-```
-
-!!! Warning
-    This is a work in progress. It is not ready for production. The callable `create_app` may be changed to a different name.
-
-### Available Options
-
-`create-app` has a few options that you can use to customize your site. While you must provide a `site_title` and `site_url`, other values are optional.
-
-You can view the options using the `--help` flag.
-
-![create-app --help](../assets/create-app-help.png)
+::: src.render_engine.cli.init
 
 #### `collection-path` (`Path`: default=`"pages"`)
 
@@ -62,3 +45,13 @@ If `True`, will not create the [`static`](../../site#static_path) folder. This i
 #### `templates-path` (`Path`: default=`"templates"`)
 
 The path to the folder that will contain your [`templates`](../templates). This is where you will put your Jinja2 templates.
+
+## Building your site with `render-engine build`
+
+::: src.render_engine.cli.build
+
+`build` takes the `site_module` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `site_module` parameter would be `app:site`.
+
+## Serving your site (locally) with `render-engine serve`
+
+:::src.render_engine.cli.serve
