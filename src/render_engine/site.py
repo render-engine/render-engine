@@ -3,7 +3,7 @@ import pathlib
 import shutil
 from collections import defaultdict
 from functools import partial
-from typing import Type
+
 from jinja2 import Environment
 from rich.progress import Progress
 
@@ -11,7 +11,6 @@ from .collection import Collection
 from .engine import engine, url_for
 from .hookspecs import register_plugins
 from .page import Page
-from datetime import datetime
 
 
 class Site:
@@ -19,67 +18,109 @@ class Site:
     The site stores your pages and collections to be rendered.
 
     Attributes:
-        output_path: str to write rendered content. **Default**: `output`
-        static: Output str Path for the static folder. This will get copied to the output folder. **Default**: `static`
-        site_vars: Vars that will be passed into the render functions
-
-            Default `site_vars`:
-
-            - SITE_TITLE: "Untitled Site"
-            - SITE_URL: "http://example.com"
+        engine: Jinja2 Environment used to render pages
+        output_path: 
+            path to write rendered content
+        partial: 
+            if True, only render pages that have been modified. Uses gitPython to check for changes.
+        plugins: 
+            list of plugins that will be loaded and passed into each object
+        static: 
+            path for the static folder. This will get copied to the output folder.
+        site_vars: 
+            dictionary that will be passed into page template
+        site_settings:
+            settings that will be passed into pages and collections but not into templates
     """
 
     output_path: str = "output"
     static_path: str = "static"
     partial: bool = False
-
+    site_settings: dict = {
+        "plugins": {}
+    }
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
     }
     plugins: list
-
+    engine: Environment = engine
 
 
     def __init__(
         self,
         plugins: list[str] = [],
     ) -> None:
-        self.route_list = dict()
+        self._route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
+        self.engine.globals.update(self.site_vars)
         self.engine.filters["url_for"] = partial(url_for, site=self)
         self.plugins = [*plugins, *getattr(self, "plugins", [])]
         self._pm = register_plugins(plugins=self.plugins)
 
-    @property
-    def engine(self) -> Environment:
-        env = engine
-        env.globals.update(self.site_vars)
-        return env
+    def collection(self, Collection: type[Collection]) -> Collection:
+        """
+        Add the collection to the route list to be rendered later.
 
-    def add_to_route_list(self, page: Page) -> None:
-        """Add a page to the route list"""
-        self.route_list[getattr(page, page._reference)] = page
+        This is the primary way to add a collection to the site and 
+        can either be called on an uninstantiated class or on the class definition as a decorator.
 
-    def collection(self, Collection: Type[Collection]) -> Collection:
-        """Create the pages in the collection including the archive"""
+        In most cases. You should use the decorator method.
+
+        ```python
+        from render_engine import Site, Collection
+
+        site = Site()
+
+        @site.collection # works
+        class Pages(Collection):
+            pass
+
+
+        class Posts(Collection):
+            pass
+
+        site.collection(Posts) # also works
+        ```
+        """
         _Collection = Collection(plugins=self.plugins)
         self._pm.hook.pre_build_collection(collection=_Collection) #type: ignore
-        self.route_list[_Collection._slug] = _Collection
+        self._route_list[_Collection._slug] = _Collection
         return _Collection
 
-    def page(self, Page: type[Page]) -> Page:
-        """Create a Page object and add it to self.routes"""
-        page = Page(plugins=self.plugins)
+    def page(self, Page: Page) -> Page:
+        """
+        Add the page to the route list to be rendered later.
+        Also remaps `title` in case the user wants to use it in the template rendering.
 
-        # Expose _title to the user through `title`
-        page.title = page._title
-        logging.info("Running Post Build Page")
-        self.add_to_route_list(page)
+        This is the primary way to add a page to the site and can either be called
+        on an uninstantiated class or on the class definition as a decorator.
+
+        In most cases. You should use the decorator method.
+
+        ```python
+
+        from render_engine import Site, Page
+
+        site = Site()
+
+        @site.page # works
+        class Home(Page):
+            pass
+
+        class About(Page):
+            pass
+
+        site.page(About) # also works
+        ```
+        """
+        page = Page(plugins=self.plugins)
+        page.title = page._title # Expose _title to the user through `title`
+        self._route_list[getattr(page, page._reference)] = page
         return page
 
-    def render_static(self) -> None:
+    def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
         shutil.copytree(
             self.static_path,
@@ -87,7 +128,7 @@ class Site:
             dirs_exist_ok=True
         )
 
-    def render_output(self, route: str, page: Type[Page]):
+    def _render_output(self, route: str, page: type[Page]):
         """writes the page object to disk"""
         path = (
             pathlib.Path(self.output_path)
@@ -99,40 +140,50 @@ class Site:
             page._render_content(engine=self.engine)
         )
 
-    def render_partial_collection(self, collection: Collection) -> None:
+    def _render_partial_collection(self, collection: Collection) -> None:
         """Iterate through the Changed Pages and Check for Collections and Feeds"""
         for entry in collection._generate_content_from_modified_pages():
             for route in collection.routes:
-                self.render_output(route, entry)
+                self._render_output(route, entry)
 
         if collection.has_archive:
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 
-                self.render_output(collection.routes[0], archive)
+                self._render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
-            self.render_output("./", collection._feed)
+            self._render_output("./", collection._feed)
 
-    def render_full_collection(self, collection: Collection) -> None:
+    def _render_full_collection(self, collection: Collection) -> None:
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
             for route in collection.routes:
-                self.render_output(route, entry)
+                self._render_output(route, entry)
 
         if collection.has_archive:
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 
                 for route in collection.routes:
-                    self.render_output(collection.routes[0], archive)
+                    self._render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
-            self.render_output("./", collection._feed)
+            self._render_output("./", collection._feed)
 
     def render(self) -> None:
-        """Render all pages and collections"""
+        """
+        Render all pages and collections.
+
+        These are pages and collections that have been added to the site using 
+        the [`Site.page`][src.render_engine.Site.page] 
+        and [`Site.collection`][src.render_engine.Site.collection] methods.
+
+        Render should be called after all pages and collections have been added to the site.
+
+        You can choose to call it manually in your file or use the CLI command [`render-engine build`][src.render_engine.cli.build]
+        """
 
         with Progress() as progress:
 
@@ -141,14 +192,14 @@ class Site:
 
             # Parse Route List
             task_add_route = progress.add_task(
-                "[blue]Adding Routes", total=len(self.route_list)
+                "[blue]Adding Routes", total=len(self._route_list)
             )
 
             if pathlib.Path(self.static_path).exists():
-                self.render_static()
-            engine.globals["site"] = self
+                self._render_static()
+            self.engine.globals["site"] = self
 
-            for slug, entry in self.route_list.items():
+            for slug, entry in self._route_list.items():
                 progress.update(
                     task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}"
                 )
@@ -158,13 +209,13 @@ class Site:
                             task_add_route,
                             description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
                         )
-                        self.render_output(route, entry)
+                        self._render_output(route, entry)
 
                 if isinstance(entry, Collection):
                     if self.partial:
-                        self.render_partial_collection(entry)
+                        self._render_partial_collection(entry)
                     else:
-                        self.render_full_collection(entry)
-            post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
+                        self._render_full_collection(entry)
+            progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(site=self)
             progress.update(pre_build_task, advance=1)
