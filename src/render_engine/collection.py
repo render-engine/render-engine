@@ -30,8 +30,9 @@ class Collection(BaseObject):
     class BasicCollection(Collection):
         content_path = "content/pages"
     ```
-    Currently, collection pages **MUST** come from a `content_path` and all be the same
-    content type.
+
+    Collection pages **MUST** come from a `content_path` and all be the same
+    content type.  `content_path` can be a string representing a path or URL, depending on the [parser][src.render_engine.parsers.base_parsers] used.
 
     Attributes:
 

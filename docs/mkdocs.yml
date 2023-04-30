@@ -23,6 +23,7 @@ nav:
   - Extending Render Engine:
     - Built-in Plugins: plugins.md
     - Plugins: plugins.md
+  - Parsers: parsers.md
   - CLI: cli.md
 markdown_extensions:
   - toc
