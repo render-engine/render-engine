@@ -12,7 +12,7 @@ nav:
     - getting-started/layout.md
     - getting-started/building-your-site.md
   - Components:
-    - Page: page.md
+    - Page Objects: page.md
     - Collection:
       - Collection: collection.md
       - Archive: archive.md
@@ -23,6 +23,7 @@ nav:
   - Extending Render Engine:
     - Built-in Plugins: plugins.md
     - Plugins: plugins.md
+  - Parsers: parsers.md
   - CLI: cli.md
 markdown_extensions:
   - toc

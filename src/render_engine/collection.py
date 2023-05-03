@@ -30,8 +30,9 @@ class Collection(BaseObject):
     class BasicCollection(Collection):
         content_path = "content/pages"
     ```
-    Currently, collection pages **MUST** come from a `content_path` and all be the same
-    content type.
+
+    Collection pages **MUST** come from a `content_path` and all be the same
+    content type.  `content_path` can be a string representing a path or URL, depending on the [parser][src.render_engine.parsers.base_parsers] used.
 
     Attributes:
 
@@ -140,7 +141,7 @@ class Collection(BaseObject):
     @property
     def archives(self) -> typing.Generator[Archive, None, None]:
         """
-        Returns a [Archive][src.render_engine.archive] objects containing the pages from the `content_path` .
+        Returns a [Archive][src.render_engine.archive.Archive] objects containing the pages from the `content_path` .
 
         Archives are an iterable and the individual pages are built shortly after the collection pages are built. This happens when [Site.render][render_engine.Site.render] is called.
         """

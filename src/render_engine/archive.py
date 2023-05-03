@@ -1,6 +1,3 @@
-"""
-The Archive is the Page object used by the collection that focuses on presenting Page objects.
-"""
 import pathlib
 
 import jinja2
@@ -10,13 +7,7 @@ from .page import BasePage
 
 class Archive(BasePage):
     """
-    ???+ Warning "Not Directly Used"
-        The Archive object is not meant to be used directly. 
-        It is used by the [Collection][src.render_engine.Collection] object. 
-        Attributes can be used to customize the 
-        [archive_template][src.render_engine.collection.Collection].
-
-    Custom [`Page`][src.render_engine.page.Page] used to show the pages in a [Collection][src.render_engine.Collection].
+    The Archive is a [Page][src.render_engine.page.Page] object used by the collection that focuses on presenting the Collection's pages.
 
     Parameters:
         pages: The list of pages to include in the archive
@@ -25,6 +16,11 @@ class Archive(BasePage):
         routes: The routes for where the archive page should be generated
         archive_index: The index of the page in the series of archive pages
         num_of_pages: The total number of pages in the series of archive pages
+
+    !!! Warning "Not Directly Used"
+        The Archive object is not meant to be used directly. 
+        It is used by the [Collection][src.render_engine.Collection] object. 
+        Attributes can be used to customize.
     """
 
     def __init__(
