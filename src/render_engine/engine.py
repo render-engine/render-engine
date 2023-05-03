@@ -33,7 +33,7 @@ def format_datetime(env: Environment, value: str) -> datetime:
     return datetime.strftime(value, env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
 
 
-def url_for(value: str, site):
+def url_for(value: str, site: "Site"):
     if value in site.route_list:
         return site.route_list[value].url_for
     else:

@@ -141,7 +141,7 @@ class Collection(BaseObject):
     @property
     def archives(self) -> typing.Generator[Archive, None, None]:
         """
-        Returns a [Archive][src.render_engine.archive] objects containing the pages from the `content_path` .
+        Returns a [Archive][src.render_engine.archive.Archive] objects containing the pages from the `content_path` .
 
         Archives are an iterable and the individual pages are built shortly after the collection pages are built. This happens when [Site.render][render_engine.Site.render] is called.
         """
