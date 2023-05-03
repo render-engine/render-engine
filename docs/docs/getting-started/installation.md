@@ -1,7 +1,4 @@
-# Getting Started
-This document will walk you through the basics of Render Engine.
-
-## Installing Render Engine
+# Installing Render Engine
 
 In order to use render engine, you must have python 3.9+ installed. You can download python from [python.org](https://python.org).
 
