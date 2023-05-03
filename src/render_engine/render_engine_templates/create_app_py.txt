@@ -8,10 +8,14 @@ app = Site()
 app.output_path = "{{output_path}}"
 app.static_path = "{{static_path}}"
 
-# Your site_vars will be used throughout your site
+{% if has_attrs %}# Your site_vars will be used throughout your site
 app.site_vars.update(
+    {% if site_title %}
     SITE_TITLE="{{site_title}}",
+    {% endif %}
+    {% if site_url %}
     SITE_URL="{{site_url}}",
+    {% endif %}
     {% if site_description %}
     SITE_DESCRIPTION="{{site_description}}",
     {% endif %}
@@ -20,6 +24,7 @@ app.site_vars.update(
     {% endif %}
     )
 
+{% endif %}
 @app.page
 class Index(Page):
     template = "index.html"

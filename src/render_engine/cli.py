@@ -210,8 +210,11 @@ def init(
             f"Generating App File: [blue]{project_config_path}", total=1
         )
 
+        has_attrs = any((site_title, site_url, site_description, site_author))
+
         project_config_path.write_text(
             CREATE_APP_PY_TEMPLATE.render(
+                has_attrs=has_attrs,
                 site_title=site_title,
                 site_url=site_url,
                 site_description=site_description,
