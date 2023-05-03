@@ -1,9 +1,6 @@
 import pathlib
 
-import pytest
-
 import render_engine.cli as cli
-from render_engine.site import Site
 
 
 def test_create_site_with_vars():
@@ -54,4 +51,17 @@ def test_create_app(tmp_path):
     assert (
         d.joinpath("app.py").read_text().strip()
         == pathlib.Path("tests/create_app_check_file.txt").read_text().strip()
+    )
+
+def test_create_app_no_vars(tmp_path):
+    """Tests app.py is created with no update to vars"""
+    d = tmp_path
+
+    cli.init(
+        project_folder=d,
+    )
+
+    assert (
+        d.joinpath("app.py").read_text().strip()
+        == pathlib.Path("tests/create_app_check_file_no_site_vars.txt").read_text().strip()
     )
