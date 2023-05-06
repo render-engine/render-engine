@@ -36,7 +36,8 @@ class Archive(BasePage):
         self.pages = pages
         self.template = template
         self.routes = routes
+        self.archive_index = archive_index
         self.title = title
 
-        if num_archive_pages > 1:
+        if archive_index:
             self.slug = f"{self._slug}{archive_index}"

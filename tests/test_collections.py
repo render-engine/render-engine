@@ -1,4 +1,7 @@
+import pathlib
+
 import pluggy
+import pytest
 
 from render_engine.collection import Collection
 from render_engine.page import Page
@@ -25,7 +28,7 @@ def test_collection_information_parser_passes_to_page():
     assert page.Parser == SimpleBasePageParser
 
 
-def test_pages_generate_from_collection_content_path(tmp_path):
+def test_pages_generate_from_collection_content_path(tmp_path: pathlib.Path):
     """
     Tests that pages are generated from a collection
     """
@@ -48,7 +51,7 @@ def test_pages_generate_from_collection_content_path(tmp_path):
         assert page.content in content
 
 
-def test_collection_archive_no_items_per_page(tmp_path):
+def test_collection_archive_no_items_per_page(tmp_path: pathlib.Path):
     """
     Tests that archive generates a single page if items_per_page is not set
     """
@@ -66,7 +69,7 @@ def test_collection_archive_no_items_per_page(tmp_path):
     assert len(list(collection.archives)) == 1
 
 
-def test_collection_vars(tmp_path):
+def test_collection_vars(tmp_path: pathlib.Path):
     """
     Tests that collection_vars are passed to the page objects
     """
@@ -86,7 +89,7 @@ def test_collection_vars(tmp_path):
         assert page.collection_vars["title"] == collection._title
 
 
-def test_collection_archives_has_title_of_collection(tmp_path):
+def test_collection_archives_has_title_of_collection(tmp_path: pathlib.Path):
     """
     Tests that the title of the Archive Collection is the same as the parent Collection.
 
@@ -108,12 +111,12 @@ def test_collection_archives_has_title_of_collection(tmp_path):
         items_per_page = 1
 
     collection = BasicCollection()
-    assert len(list(collection.archives)) == 2
+    assert len(list(collection.archives)) == 3
     for archive in collection.archives:
         assert archive._title == collection._title
 
 
-def test_collection_paginated_archives_start_at_1(tmp_path):
+def test_collection_paginated_archives_start_at_1(tmp_path: pathlib.Path):
     """Tests that the first archive page is page 1 and not page 0"""
 
     tmp_dir = tmp_path / "content"
@@ -124,3 +127,28 @@ def test_collection_paginated_archives_start_at_1(tmp_path):
 
     file2 = tmp_dir / "test2.md"
     file2.write_text("test")
+
+
+@pytest.mark.parametrize(
+        "attr,attrval",
+        [
+            ("template", "test.html"),
+            ("routes", ["/test/long/route"]),
+        ]
+)
+def test_collection_attrs_pass_to_page(attr: str, attrval: str | list[str]):
+    """Tests that the template attribute for the collection is passed to the page"""
+
+    class SimpleBasePageParser(BasePageParser):
+        pass
+
+    class BasicCollection(Collection):
+        PageParser = SimpleBasePageParser
+        content_type = Page
+        
+    setattr(BasicCollection, attr, attrval)
+
+    collection = BasicCollection()
+    page = collection.get_page()
+
+    assert getattr(page, attr) == attrval

@@ -151,10 +151,13 @@ class Collection(BaseObject):
 
         sorted_pages = list(self.sorted_pages)
         items_per_page = getattr(self, "items_per_page", len(sorted_pages))
-        archives = list(batched(sorted_pages, items_per_page))
+        archives = [sorted_pages]
+
+        if items_per_page != len(sorted_pages):
+            archives.extend(list(batched(sorted_pages, items_per_page)))
         num_archive_pages = len(archives)
 
-        for index, pages in enumerate(archives, start=1):
+        for index, pages in enumerate(archives):
             yield Archive(
                 pages=pages,
                 template=getattr(self, "archive_template", None),
