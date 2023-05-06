@@ -25,7 +25,7 @@ nav:
     - Plugins: plugins.md
   - Parsers: parsers.md
   - CLI: cli.md
-Templates.md
+Templates: templates.md
 markdown_extensions:
   - toc
   - codehilite:
