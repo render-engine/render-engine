@@ -2,13 +2,12 @@ import logging
 import pathlib
 import shutil
 from collections import defaultdict
-from functools import partial
 
 from jinja2 import Environment
 from rich.progress import Progress
 
 from .collection import Collection
-from .engine import engine, url_for
+from .engine import engine
 from .hookspecs import register_plugins
 from .page import Page
 
@@ -55,7 +54,6 @@ class Site:
         self._route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
-        self.engine.filters["url_for"] = partial(url_for, site=self)
         self.plugins = [*plugins, *getattr(self, "plugins", [])]
         self._pm = register_plugins(plugins=self.plugins)
 
@@ -198,6 +196,7 @@ class Site:
             if pathlib.Path(self.static_path).exists():
                 self._render_static()
             self.engine.globals["site"] = self
+            self.engine.globals["routes"] = self._route_list
 
             for slug, entry in self._route_list.items():
                 progress.update(
