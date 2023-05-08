@@ -3,7 +3,8 @@
 import importlib
 import pathlib
 import sys
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+import typing
+from http.server import SimpleHTTPRequestHandler
 
 import dtyper
 import typer
@@ -51,11 +52,11 @@ def _create_templates_folder(
 
 def _create_site_with_vars(
     *,
-    site_title: str | None = None,
-    site_url: str | None = None,
-    site_description: str | None = None,
-    site_author: str | None = None,
-    collection_path: str | None = None,
+    site_title: typing.Optional[str] = None,
+    site_url: typing.Optional[str] = None,
+    site_description: typing.Optional[str] = None,
+    site_author: typing.Optional[str] = None,
+    collection_path: typing.Optional[str] = None,
 ) -> Site:
     """Create a new site from a template"""
     site = Site()
@@ -101,17 +102,17 @@ def init(
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
-    site_author: str | None = typer.Option(
+    site_author: typing.Optional[str] = typer.Option(
         None,
         help="(Optional): Author of the site",
         rich_help_panel="Site Vars",
     ),
-    site_description: str | None = typer.Option(
+    site_description: typing.Optional[str] = typer.Option(
         None,
         help="(Optional): Site Description",
         rich_help_panel="Site Vars",
     ),
-    site_title: str | None = typer.Option(
+    site_title: typing.Optional[str] = typer.Option(
         None,
         "--title",
         "-t",
@@ -119,7 +120,7 @@ def init(
         rich_help_panel="Site Vars",
         show_default=False,
     ),
-    site_url: str | None = typer.Option(
+    site_url: typing.Optional[str] = typer.Option(
         None,
         "--url",
         "-u",
@@ -272,9 +273,9 @@ def build(site_module: str):
 
 @app.command()
 def serve(
-    module_site: str | None = None,
+    module_site: typing.Optional[str] = None,
     build: bool = False,
-    directory: str | None = typer.Option(
+    directory: typing.Optional[str] = typer.Option(
         None,
         "--directory",
         "-d",
