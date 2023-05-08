@@ -3,8 +3,7 @@
 import importlib
 import pathlib
 import sys
-import typing
-from http.server import SimpleHTTPRequestHandler
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import dtyper
 import typer
@@ -52,11 +51,11 @@ def _create_templates_folder(
 
 def _create_site_with_vars(
     *,
-    site_title: typing.Optional[str] = None,
-    site_url: typing.Optional[str] = None,
-    site_description: typing.Optional[str] = None,
-    site_author: typing.Optional[str] = None,
-    collection_path: typing.Optional[str] = None,
+    site_title: str | None = None,
+    site_url: str | None = None,
+    site_description: str | None = None,
+    site_author: str | None = None,
+    collection_path: str | None = None,
 ) -> Site:
     """Create a new site from a template"""
     site = Site()
@@ -102,17 +101,17 @@ def init(
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
-    site_author: typing.Optional[str] = typer.Option(
+    site_author: str | None = typer.Option(
         None,
         help="(Optional): Author of the site",
         rich_help_panel="Site Vars",
     ),
-    site_description: typing.Optional[str] = typer.Option(
+    site_description: str | None = typer.Option(
         None,
         help="(Optional): Site Description",
         rich_help_panel="Site Vars",
     ),
-    site_title: typing.Optional[str] = typer.Option(
+    site_title: str | None = typer.Option(
         None,
         "--title",
         "-t",
@@ -120,7 +119,7 @@ def init(
         rich_help_panel="Site Vars",
         show_default=False,
     ),
-    site_url: typing.Optional[str] = typer.Option(
+    site_url: str | None = typer.Option(
         None,
         "--url",
         "-u",
@@ -273,9 +272,9 @@ def build(site_module: str):
 
 @app.command()
 def serve(
-    module_site: typing.Optional[str] = None,
+    module_site: str | None = None,
     build: bool = False,
-    directory: typing.Optional[str] = typer.Option(
+    directory: str | None = typer.Option(
         None,
         "--directory",
         "-d",
@@ -316,9 +315,10 @@ def serve(
             super().__init__(*args, directory=directory, **kwargs)
 
     server_address = ("localhost", port)
+    httpd = HTTPServer(server_address, server)
     console = Console()
     console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
-    console.print(f"Press [bold red]CTRL+C[/bold red] to stop serving")
+    console.print("Press [bold red]CTRL+C[/bold red] to stop serving")
     return httpd.serve_forever()
 
 
