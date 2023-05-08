@@ -142,7 +142,7 @@ typer==0.7.0
     # via
     #   dtyper
     #   render-engine (pyproject.toml)
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests
 watchdog==3.0.0
     # via mkdocs
