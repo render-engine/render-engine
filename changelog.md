@@ -2,6 +2,39 @@
 ## [Unreleased]
 
 
+<a name="2023.5.1"></a>
+## [2023.5.1] - 2023-05-08
+
+<a name="2023.5.1a2"></a>
+## [2023.5.1a2] - 2023-05-08
+
+<a name="2023.5.1a1"></a>
+## [2023.5.1a1] - 2023-05-08
+
+<a name="v-2023.5.1a1"></a>
+## [v-2023.5.1a1] - 2023-05-08
+### Pull Requests
+- Merge pull request [#187](https://github.com/kjaymiller/render_engine/issues/187) from kjaymiller:dependabot/pip/platformdirs-3.5.0
+- Merge pull request [#189](https://github.com/kjaymiller/render_engine/issues/189) from kjaymiller:dependabot/pip/ruff-0.0.265
+- Merge pull request [#188](https://github.com/kjaymiller/render_engine/issues/188) from kjaymiller:dependabot/pip/urllib3-2.0.2
+- Merge pull request [#190](https://github.com/kjaymiller/render_engine/issues/190) from kjaymiller:dependabot/pip/rich-13.3.5
+- Merge pull request [#191](https://github.com/kjaymiller/render_engine/issues/191) from kjaymiller:dependabot/pip/mkdocs-1.4.3
+- Merge pull request [#185](https://github.com/kjaymiller/render_engine/issues/185) from kjaymiller/kjaymiller/issue146
+- Merge pull request [#184](https://github.com/kjaymiller/render_engine/issues/184) from kjaymiller:kjaymiller/issue174
+- Merge pull request [#183](https://github.com/kjaymiller/render_engine/issues/183) from kjaymiller:renames-gs-getting-started-to-installation
+- Merge pull request [#158](https://github.com/kjaymiller/render_engine/issues/158) from kjaymiller/dependabot/pip/pymdown-extensions-9.11
+- Merge pull request [#160](https://github.com/kjaymiller/render_engine/issues/160) from kjaymiller/dependabot/pip/griffe-0.27.1
+- Merge pull request [#162](https://github.com/kjaymiller/render_engine/issues/162) from kjaymiller/dependabot/pip/attrs-23.1.0
+- Merge pull request [#165](https://github.com/kjaymiller/render_engine/issues/165) from kjaymiller/dependabot/pip/ruff-0.0.263
+- Merge pull request [#163](https://github.com/kjaymiller/render_engine/issues/163) from kjaymiller/dependabot/pip/pygments-2.15.1
+- Merge pull request [#181](https://github.com/kjaymiller/render_engine/issues/181) from kjaymiller/kjaymiller/issue84
+- Merge pull request [#179](https://github.com/kjaymiller/render_engine/issues/179) from kjaymiller/kjaymiller/issue87
+- Merge pull request [#178](https://github.com/kjaymiller/render_engine/issues/178) from kjaymiller/kjaymiller/issue142
+- Merge pull request [#177](https://github.com/kjaymiller/render_engine/issues/177) from kjaymiller:kjaymiller/issue168
+- Merge pull request [#176](https://github.com/kjaymiller/render_engine/issues/176) from kjaymiller/corrects-docs-for-createapp
+- Merge pull request [#175](https://github.com/kjaymiller/render_engine/issues/175) from jefftriplett/small-typos
+
+
 <a name="2023.4.2a1"></a>
 ## [2023.4.2a1] - 2023-04-16
 ### Reverts
@@ -122,7 +155,11 @@
 - Merge pull request [#40](https://github.com/kjaymiller/render_engine/issues/40) from jonafato/test-in-ci
 
 
-[Unreleased]: https://github.com/kjaymiller/render_engine/compare/2023.4.2a1...HEAD
+[Unreleased]: https://github.com/kjaymiller/render_engine/compare/2023.5.1...HEAD
+[2023.5.1]: https://github.com/kjaymiller/render_engine/compare/2023.5.1a2...2023.5.1
+[2023.5.1a2]: https://github.com/kjaymiller/render_engine/compare/2023.5.1a1...2023.5.1a2
+[2023.5.1a1]: https://github.com/kjaymiller/render_engine/compare/v-2023.5.1a1...2023.5.1a1
+[v-2023.5.1a1]: https://github.com/kjaymiller/render_engine/compare/2023.4.2a1...v-2023.5.1a1
 [2023.4.2a1]: https://github.com/kjaymiller/render_engine/compare/2023.4.1a5...2023.4.2a1
 [2023.4.1a5]: https://github.com/kjaymiller/render_engine/compare/2023.4.1a4...2023.4.1a5
 [2023.4.1a4]: https://github.com/kjaymiller/render_engine/compare/2023.4.1a3...2023.4.1a4
