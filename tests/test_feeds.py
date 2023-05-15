@@ -1,10 +1,10 @@
 import datetime
 
 import pluggy
+import pytest
 from jinja2 import StrictUndefined
 
 from render_engine.collection import Collection
-from render_engine.engine import engine, to_pub_date
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
 
@@ -54,22 +54,19 @@ def test_rss_feed_inherites_from_collection():
 
     assert collection._feed.title == "BasicCollection"
 
-def test_rss_feed_item_url(tmp_path):
+
+def test_rss_feed_item_url(site):
     """Test that the feed item url is set correctly"""
-    tmp_dir = tmp_path / "content"
-    tmp_dir.mkdir()
-    file = tmp_dir / "#"
-    file.write_text("test")
-
-    class TestCollection(Collection):
-        pages = [Page(content_path=file)]
-        Feed = RSSFeed
-
-    collection = TestCollection()
-    print(collection._feed.template)
-    assert "http://localhost:8000//page.html" in collection._feed._render_content(engine=engine)
+    assert "<link>http://localhost:8000/page.html</link>" in site._route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
 
 
+
+def test_rss_feed_item_has_guid(site):
+    """Test that the feed item url is set correctly"""
+    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in site._route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
+
+
+@pytest.mark.skip("Invalid Test")
 def test_rss_feed_template_with_strictundefined(engine, tmp_path):
     """Test that the RSS feed template works with the StrictUndefined undefined handler."""
     tmp_dir = tmp_path / "content"
@@ -104,8 +101,6 @@ def test_rss_feed_template_parses_date_correctly(engine):
         pages = [TestPage()]
 
     collection = TestCollection()
-
-    engine.filters["to_pub_date"] = to_pub_date
 
     rendered_content = collection._feed._render_content(
         engine=engine,

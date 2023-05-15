@@ -1,3 +1,5 @@
+import urllib.parse
+
 from datetime import datetime
 from email import utils
 
@@ -34,6 +36,7 @@ def to_pub_date(value: datetime):
     return utils.format_datetime(value)
 engine.filters["to_pub_date"] = to_pub_date
 
+
 @pass_environment
 def format_datetime(env: Environment, value: str) -> str:
     """
@@ -41,6 +44,13 @@ def format_datetime(env: Environment, value: str) -> str:
     """
     return datetime.strftime(value, env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
 engine.filters["format_datetime"] = format_datetime
+
+
+@pass_environment
+def to_absolute(env: Environment, url:str) -> str:
+    return urllib.parse.urljoin(env.globals.get('SITE_URL'), url)
+engine.filters["to_absolute"] = to_absolute
+
 
 @pass_environment
 def url_for(env: Environment, value: str, page: int=0) -> str:
