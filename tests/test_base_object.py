@@ -1,5 +1,6 @@
 from render_engine._base_object import BaseObject
 
+
 class TestObject(BaseObject):
     pass
     
@@ -47,6 +48,7 @@ class TestBaseObjectProperties:
         assert self.test_object.to_dict() == {
             "title": "TestObject",
             "slug": "testobject",
+            "url": None,
         }
 
     def test_base_object_to_dict_with_template_vars(self):
@@ -56,6 +58,7 @@ class TestBaseObjectProperties:
         assert self.test_object.to_dict() == {
             "title": "TestObject",
             "slug": "testobject",
+            "url": None,
             "test": "test",
         }
 

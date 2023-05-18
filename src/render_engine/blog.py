@@ -6,7 +6,6 @@ from .parsers.markdown import MarkdownPageParser
 
 class BlogPost(Page):
     """Page Like object with slight modifications to work with BlogPosts."""
-    list_attrs = ["tags"]
     invalid_attrs = ["slug"]
 
 

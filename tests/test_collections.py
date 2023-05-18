@@ -10,7 +10,7 @@ from render_engine.parsers import BasePageParser
 pm = pluggy.PluginManager("fake_test")
 
 
-def test_collection_information_parser_passes_to_page():
+def test_collection_information_parser_passes_to_page(tmp_path):
     """
     Tests that information page parser is passed into the page
     """
@@ -24,7 +24,6 @@ def test_collection_information_parser_passes_to_page():
 
     collection = BasicCollection()
     page = collection.get_page()
-
     assert page.Parser == SimpleBasePageParser
 
 
@@ -134,9 +133,9 @@ def test_collection_paginated_archives_start_at_1(tmp_path: pathlib.Path):
         [
             ("template", "test.html"),
             ("routes", ["/test/long/route"]),
-        ]
+        ],
 )
-def test_collection_attrs_pass_to_page(attr: str, attrval: str | list[str]):
+def test_collection_attrs_pass_to_page(tmp_path, attr: str, attrval: str | list[str]):
     """Tests that the template attribute for the collection is passed to the page"""
 
     class SimpleBasePageParser(BasePageParser):

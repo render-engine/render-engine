@@ -2,6 +2,7 @@
 
 from slugify import slugify
 
+
 class BaseObject:
     """
     Shared properties for render_engine objects.
@@ -48,6 +49,10 @@ class BaseObject:
         """
         return f"{self._slug}{self.extension}"
 
+    def url_for(self):
+        pass
+
+
     def to_dict(self):
         """
         Returns a dict of the page's attributes.
@@ -59,6 +64,7 @@ class BaseObject:
             **vars(self),
             "title": self._title,
             "slug": self._slug,
+            "url": self.url_for(),
         }
 
         # Pull out template_vars
