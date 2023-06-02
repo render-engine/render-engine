@@ -2,6 +2,8 @@
 
 from slugify import slugify
 
+from .hookspecs import register_plugins
+
 
 class BaseObject:
     """
@@ -14,6 +16,7 @@ class BaseObject:
 
     title: str
     template_vars: dict
+    plugins: list
 
     @property
     def _title(self) -> str:
@@ -71,7 +74,16 @@ class BaseObject:
         if hasattr(self, "template_vars"):
             for key, value in self.template_vars.items():
                 base_dict[key] = value
-
-            base_dict.pop("template_vars")
         
         return base_dict
+
+
+    def register_plugins(self, plugins):
+        """Creates the plugin manager and registers plugins"""
+
+        if getattr('self', 'plugins', None):
+            self.plugins.extend(plugins)
+        else:
+            self.plugins = plugins
+
+        self._pm = register_plugins(self.plugins)

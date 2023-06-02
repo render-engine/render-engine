@@ -60,6 +60,7 @@ class TestBaseObjectProperties:
             "slug": "testobject",
             "url": None,
             "test": "test",
+            'template_vars': {'test': 'test'},
         }
 
         assert self.test_object.template_vars == {"test": "test"}

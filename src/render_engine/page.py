@@ -3,7 +3,6 @@ from typing import Any, Type, Callable
 import jinja2
 
 from ._base_object import BaseObject
-from .hookspecs import register_plugins
 from .parsers.base_parsers import BasePageParser
 
 
@@ -126,9 +125,6 @@ class Page(BasePage):
         template: 
             The template used to render the page.
             If not provided, the `Site`'s `content` will be used.
-        invalid_attrs: 
-            A list of attributes that are not valid for the page.
-            Defaults to `["slug", "content"]`. See [Invalid Attrs][invalid-attrs].
         Parser: 
             The parser to generate the page's `raw_content`.
             Defaults to `BasePageParser`.
@@ -168,11 +164,6 @@ class Page(BasePage):
         # Set the attributes
         for key, val in attrs.items():
             setattr(self, key.lower(), val)
-
-        # Set the plugins
-        self.plugins = [*getattr(self, "plugins", []), *plugins]
-        self.PM = register_plugins(self.plugins)
-        self.PM.hook.render_content(Page=self) # type: ignore pluggy doesn't expose hook
 
     @property
     def _content(self):

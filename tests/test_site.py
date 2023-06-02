@@ -51,7 +51,7 @@ def test_site_page_in_route_list(tmp_path):
     site = Site()
 
     # assert that the route list is empty
-    assert len(site._route_list) == 0
+    assert len(site.route_list) == 0
 
     class CustomPage(Page):
         test_value = "test"
@@ -59,7 +59,7 @@ def test_site_page_in_route_list(tmp_path):
 
     site.page(CustomPage)
 
-    assert site._route_list["custompage"].test_value == "test"
+    assert site.route_list["custompage"].test_value == "test"
 
 
 def test_site_collection_in_route_list():
@@ -67,7 +67,7 @@ def test_site_collection_in_route_list():
     site = Site()
 
     # assert that the route list is empty
-    assert len(site._route_list) == 0
+    assert len(site.route_list) == 0
 
     class CustomPage1(Page):
         pass
@@ -81,9 +81,9 @@ def test_site_collection_in_route_list():
 
     collection = site.collection(collection)
 
-    assert site._route_list["collection"] == collection
-    assert len(site._route_list) == 1
-    assert 'custompage1' in [getattr(page, page._reference) for page in site._route_list["collection"]]
+    assert site.route_list["collection"] == collection
+    assert len(site.route_list) == 1
+    assert 'custompage1' in [getattr(page, page._reference) for page in site.route_list["collection"]]
 
 
 def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
@@ -96,7 +96,7 @@ def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
 
     site.page(CustomPage)
 
-    assert len(site._route_list) == 1
+    assert len(site.route_list) == 1
 
 def test_url_for_Page_in_site(tmp_path):
     """Tests that url_for a page is added to a template"""
@@ -139,7 +139,7 @@ def test_collection_archive_in_route_list(tmp_path):
         has_archive = True
         pages = [CustomCollectionPage()]
 
-    print(site._route_list)
+    print(site.route_list)
 
     site.render()
     print(list(tmp_path.iterdir()))

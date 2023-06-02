@@ -72,7 +72,6 @@ class Collection(BaseObject):
 
     def __init__(
         self,
-        plugins: list[typing.Callable] = [],
     ) -> None:
 
         self.has_archive = any(
@@ -81,8 +80,6 @@ class Collection(BaseObject):
                 getattr(self, "items_per_page", None),
             ]
         )
-        self.plugins = [*getattr(self, "plugins", []), *plugins]
-        self.PM = register_plugins(plugins=self.plugins)
         self.title = self._title
 
     def iter_content_path(self):
@@ -122,8 +119,10 @@ class Collection(BaseObject):
         _page = self.content_type(
             content_path=content_path,
             Parser=self.PageParser,
-            plugins=self.plugins,
         )
+
+        if getattr(self, '_pm', None):
+            _page.register_plugins(self.plugins)
         _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)

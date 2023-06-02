@@ -57,13 +57,13 @@ def test_rss_feed_inherites_from_collection():
 
 def test_rss_feed_item_url(site):
     """Test that the feed item url is set correctly"""
-    assert "<link>http://localhost:8000/page.html</link>" in site._route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
+    assert "<link>http://localhost:8000/page.html</link>" in site.route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
 
 
 
 def test_rss_feed_item_has_guid(site):
     """Test that the feed item url is set correctly"""
-    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in site._route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
+    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in site.route_list['testcollection']._feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
 
 
 @pytest.mark.skip("Invalid Test")

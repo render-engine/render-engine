@@ -51,7 +51,7 @@ class Site:
         self,
         plugins: list[str] = [],
     ) -> None:
-        self._route_list = dict()
+        self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
         self.plugins = [*plugins, *getattr(self, "plugins", [])]
@@ -82,9 +82,10 @@ class Site:
         site.collection(Posts) # also works
         ```
         """
-        _Collection = Collection(plugins=self.plugins)
+        _Collection = Collection()
+        _Collection.register_plugins(self.plugins)
         self._pm.hook.pre_build_collection(collection=_Collection) #type: ignore
-        self._route_list[_Collection._slug] = _Collection
+        self.route_list[_Collection._slug] = _Collection
         return _Collection
 
     def page(self, Page: Page) -> Page:
@@ -113,10 +114,10 @@ class Site:
         site.page(About) # also works
         ```
         """
-        page = Page(plugins=self.plugins)
+        page = Page()
         page.title = page._title # Expose _title to the user through `title`
-        self._route_list[getattr(page, page._reference)] = page
-        return page
+        page.register_plugins(self.plugins)
+        self.route_list[getattr(page, page._reference)] = page
 
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
@@ -141,6 +142,7 @@ class Site:
     def _render_partial_collection(self, collection: Collection) -> None:
         """Iterate through the Changed Pages and Check for Collections and Feeds"""
         for entry in collection._generate_content_from_modified_pages():
+            entry._pm.hook.render_content(Page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
@@ -157,6 +159,7 @@ class Site:
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
+            entry._pm.hook.render_content(Page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
@@ -190,19 +193,21 @@ class Site:
 
             # Parse Route List
             task_add_route = progress.add_task(
-                "[blue]Adding Routes", total=len(self._route_list)
+                "[blue]Adding Routes", total=len(self.route_list)
             )
 
             if pathlib.Path(self.static_path).exists():
                 self._render_static()
             self.engine.globals["site"] = self
-            self.engine.globals["routes"] = self._route_list
+            self.engine.globals["routes"] = self.route_list
 
-            for slug, entry in self._route_list.items():
+            for slug, entry in self.route_list.items():
                 progress.update(
                     task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}"
                 )
                 if isinstance(entry, Page):
+                    if getattr(entry, "collection", None):
+                        entry._pm.hook.render_content(Page=entry)
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
