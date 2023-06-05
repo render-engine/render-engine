@@ -14,7 +14,7 @@ gitpython==3.1.31
     # via render-engine (pyproject.toml)
 jinja2==3.1.2
     # via render-engine (pyproject.toml)
-markdown-it-py==2.2.0
+markdown-it-py==3.0.0
     # via rich
 markdown2==2.4.8
     # via render-engine (pyproject.toml)
