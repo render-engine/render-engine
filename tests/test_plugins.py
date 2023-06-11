@@ -1,7 +1,8 @@
 import pytest
-from src.render_engine.hookspecs import hook_impl
-from src.render_engine.page import Page
-from src.render_engine.site import Site
+from render_engine.hookspecs import hook_impl
+from render_engine.page import Page
+from render_engine.site import Site
+from render_engine.collection import Collection
 
 
 class FakePlugin:
@@ -21,17 +22,18 @@ def site():
 
     return TestSite()
 
-def test_register_plugins(site):
+def test_register_plugins(site: "TestSite"):
     """Check that the plugin is registered"""
     assert site._pm.list_name_plugin()[0][0] == 'FakePlugin' 
 
+def test_pages_in_collection_inherit_pugins():
+    """Check that collection plugins are inherited by pages in the collection"""
 
-def test_page_plugin_inherits_from_page(site):
-    
-    class TestPage(Page):
-        pass
+    collection = Collection()
+    collection.register_plugins([FakePlugin])
+    page = collection.get_page()
+    # Check that a plugin was registered in the page
+    assert page._pm.list_name_plugin()[0][0] == 'FakePlugin' 
 
-
-    page = Page()
-    page.register_plugins(*site.plugins)
-    assert page._pm.list_name_plugin()[0][0] == 'FakePlugin'
+    # Check that the plugin is the same as the one in the collection
+    assert page._pm.get_plugins() == collection._pm.get_plugins()
