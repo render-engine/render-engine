@@ -81,7 +81,7 @@ class Collection(BaseObject):
             ]
         )
         self.title = self._title
-
+        
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
 
