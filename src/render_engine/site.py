@@ -153,7 +153,7 @@ class Site:
                 self._render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
-            self._render_output("./", collection._feed)
+            self._render_output("./", collection.feed)
 
     def _render_full_collection(self, collection: Collection) -> None:
         """Iterate through Pages and Check for Collections and Feeds"""
@@ -171,7 +171,7 @@ class Site:
                     self._render_output(collection.routes[0], archive)
 
         if hasattr(collection, "Feed"):
-            self._render_output("./", collection._feed)
+            self._render_output("./", collection.feed)
 
     def render(self) -> None:
         """
