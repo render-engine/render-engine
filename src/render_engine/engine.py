@@ -28,7 +28,6 @@ engine = Environment(
     trim_blocks=True,
 )
 
-
 def to_pub_date(value: datetime):
     """
     Parse information from the given class object.
@@ -51,6 +50,13 @@ def to_absolute(env: Environment, url:str) -> str:
     return urllib.parse.urljoin(env.globals.get('SITE_URL'), url)
 engine.filters["to_absolute"] = to_absolute
 
+
+@pass_environment
+def feed_url(env: Environment, value: str) -> str:
+    """Returns the URL for the collections feed"""
+    routes = env.globals.get("routes")
+    return routes[value].feed.url_for()
+engine.filters["feed_url"] = feed_url
 
 @pass_environment
 def url_for(env: Environment, value: str, page: int=0) -> str:
