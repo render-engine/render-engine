@@ -160,7 +160,7 @@ class Site:
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
-            entry._pm.hook.render_content(page=entry)
+            self._pm.hook.render_content(page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
@@ -208,7 +208,7 @@ class Site:
                 )
                 if isinstance(entry, Page):
                     if getattr(entry, "collection", None):
-                        entry._pm.hook.render_content(Page=entry)
+                        self._pm.hook.render_content(Page=entry)
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
