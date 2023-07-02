@@ -27,7 +27,13 @@ class SiteSpecs:
         """Build After Building the site"""
 
     @hook_spec
-    def render_content(Page: "page"):
+    def render_content(page: "page"):
+        """
+        Augments the content of the page before it is rendered as output.
+        """
+
+    @hook_spec
+    def post_render_content(page : "page"):
         """
         Augments the content of the page before it is rendered as output.
         """
