@@ -127,7 +127,7 @@ class Site:
             dirs_exist_ok=True
         )
 
-    def _render_output(self, route: str, page: type[Page]):
+    def _render_output(self, route: str, page: Page):
         """writes the page object to disk"""
         path = (
             pathlib.Path(self.output_path)
@@ -135,14 +135,15 @@ class Site:
             / pathlib.Path(page.path_name)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
-        return path.write_text(
-            page._render_content(engine=self.engine)
-        )
+        page.rendered_content = page._render_content(engine=self.engine)
+
+        self._pm.hook.post_render_content(page=page)
+
+        return path.write_text(page.rendered_content)
 
     def _render_partial_collection(self, collection: Collection) -> None:
         """Iterate through the Changed Pages and Check for Collections and Feeds"""
         for entry in collection._generate_content_from_modified_pages():
-            entry._pm.hook.render_content(Page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
@@ -159,7 +160,7 @@ class Site:
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
-            entry._pm.hook.render_content(Page=entry)
+            entry._pm.hook.render_content(page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
