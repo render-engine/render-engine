@@ -1,6 +1,4 @@
-"""
-Plugins are a way to extend the functionality of the render engine site.
-"""
+
 
 import pathlib
 import shutil

@@ -22,6 +22,7 @@ class SiteSpecs:
     def pre_build_site(self, site: "Site") -> None:
         """Steps Prior to Building the site"""
 
+
     @hook_spec
     def post_build_site(self, site: "Site") -> None:
         """Build After Building the site"""
