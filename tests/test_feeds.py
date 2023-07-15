@@ -7,6 +7,7 @@ from jinja2 import StrictUndefined
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
+from render_engine.site import Site
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -29,41 +30,23 @@ def test_feed_path_name():
 
     assert feed().path_name == "feed.rss"
 
-def test_rss_feed_title_from_collection():
-    """Test that the feed title is set from the collection"""
+def test_rss_feed_title_from_collection(feed_test_site):
+    """
+    Test a Collection's title is used as the feed title if no title is provided.
 
-    class TestCollection(Collection):
-        feed_title = "Test Feed Title"
-        Feed = RSSFeed
-        pages = [Page()]
+    In this case, the collection is named TestCollection.
+    """
+    assert "<title>Untitled Site-TestCollection</title>" in feed_test_site
 
-    collection = TestCollection()
-
-    assert collection.feed.title == "Test Feed Title"
-
-
-def test_rss_feed_inherites_from_collection():
-    """Test that the feed title is set from the collection"""
-
-    class BasicCollection(Collection):
-        pages = [Page()]
-        archive_template = None
-        Feed = RSSFeed
-
-    collection = BasicCollection()
-
-    assert collection.feed.title == "BasicCollection"
-
-
-def test_rss_feed_item_url(site):
+def test_rss_feed_item_url(feed_test_site):
     """Test that the feed item url is set correctly"""
-    assert "<link>http://localhost:8000/page.html</link>" in site.route_list['testcollection'].feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
+    assert "<link>http://localhost:8000/page.html</link>" in feed_test_site
 
 
 
-def test_rss_feed_item_has_guid(site):
+def test_rss_feed_item_has_guid(feed_test_site):
     """Test that the feed item url is set correctly"""
-    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in site.route_list['testcollection'].feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
+    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in feed_test_site
 
 
 @pytest.mark.skip("Invalid Test")
@@ -93,7 +76,6 @@ def test_rss_feed_template_with_strictundefined(engine, tmp_path):
 def test_rss_feed_template_parses_date_correctly(engine):
     """Tests that a feed parses the page date in RFC2822 Format"""
 
-
     class TestPage(Page):
         date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.timezone.utc)   # noqa: UP017
     class TestCollection(Collection):
@@ -111,3 +93,7 @@ def test_rss_feed_template_parses_date_correctly(engine):
     )
 
     assert "Sat, 15 Apr 2023 00:00:00 +0000" in rendered_content
+
+def test_feed_atom_link(feed_test_site):
+    """Test that the feed atom link is set correctly"""
+    assert '<atom:link href="http://localhost:8000/testcollection.rss" rel="self" type="application/rss+xml" />' in feed_test_site

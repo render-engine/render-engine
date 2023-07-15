@@ -68,6 +68,7 @@ class BaseObject:
             "title": self._title,
             "slug": self._slug,
             "url": self.url_for(),
+            "path_name": self.path_name,
         }
 
         # Pull out template_vars

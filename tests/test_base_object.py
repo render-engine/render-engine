@@ -49,6 +49,7 @@ class TestBaseObjectProperties:
             "title": "TestObject",
             "slug": "testobject",
             "url": None,
+            "path_name": "testobject.html",
         }
 
     def test_base_object_to_dict_with_template_vars(self):
@@ -61,6 +62,7 @@ class TestBaseObjectProperties:
             "url": None,
             "test": "test",
             'template_vars': {'test': 'test'},
+            "path_name": "testobject.html",
         }
 
         assert self.test_object.template_vars == {"test": "test"}
