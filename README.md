@@ -1,10 +1,5 @@
-> ***Warning***
-> 
-> **BREAKING CHANGE**
-> As of 2023.4.2a1 Render Engine no longer uses the `date_published` or `date_modified` attributes for `Blog` objects. Please instead use `date`.
->
-> **BREAKING CHANGE**
-> As of 2023.4.2a1 Render Engine enforces that the `Blog.date` attribute is a `datetime` object. If using frontmatter please use [iso8601](https://en.wikipedia.org/wiki/ISO_8601) format for the date attribute.
+# Render Engine
+[![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
 
 ## What is RenderEngine
 ## The _3 layer_ Architecture 
