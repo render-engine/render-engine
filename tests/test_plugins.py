@@ -37,3 +37,22 @@ def test_pages_in_collection_inherit_pugins():
 
     # Check that the plugin is the same as the one in the collection
     assert page._pm.get_plugins() == collection._pm.get_plugins()
+
+
+def test_page_ignores_plugin():
+    class testSite(Site):
+        plugins = [
+            FakePlugin,
+        ]
+
+    site = testSite()
+    
+    @site.page
+    class testPage(Page):
+        ignore_plugins = [
+            FakePlugin,
+        ]
+    
+    assert site.route_list['testpage']._pm.list_name_plugin() == []
+
+    

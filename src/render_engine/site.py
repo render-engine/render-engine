@@ -11,7 +11,6 @@ from .engine import engine
 from .hookspecs import register_plugins
 from .page import Page
 
-
 class Site:
     """
     The site stores your pages and collections to be rendered.
@@ -116,7 +115,12 @@ class Site:
         """
         page = Page()
         page.title = page._title # Expose _title to the user through `title`
-        page.register_plugins(self.plugins)
+        
+        plugins = [*self.plugins, *getattr(page, "plugins", [])]
+        
+        for plugin in getattr(page, 'ignore_plugins', []):
+            plugins.remove(plugin)
+        page.register_plugins(plugins)
         self.route_list[getattr(page, page._reference)] = page
 
     def _render_static(self) -> None:
