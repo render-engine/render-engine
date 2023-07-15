@@ -40,6 +40,7 @@ def test_pages_in_collection_inherit_pugins():
 
 
 def test_page_ignores_plugin():
+    """Check that the plugin is not registered in the page if it is ignored"""
     class testSite(Site):
         plugins = [
             FakePlugin,
@@ -54,5 +55,22 @@ def test_page_ignores_plugin():
         ]
     
     assert site.route_list['testpage']._pm.list_name_plugin() == []
+
+def test_collection_ignores_plugin():
+    """Check that the plugin is not registered in the collection if it is ignored"""
+    class testSite(Site):
+        plugins = [
+            FakePlugin,
+        ]
+
+    site = testSite()
+    
+    @site.collection
+    class testCollection(Collection):
+        ignore_plugins = [
+            FakePlugin,
+        ]
+    
+    assert site.route_list['testcollection']._pm.list_name_plugin() == []
 
     

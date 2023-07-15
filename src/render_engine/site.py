@@ -82,7 +82,12 @@ class Site:
         ```
         """
         _Collection = Collection()
-        _Collection.register_plugins(self.plugins)
+        plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
+        
+        for plugin in getattr(_Collection, 'ignore_plugins', []):
+            plugins.remove(plugin)
+        _Collection.register_plugins(plugins)
+
         self._pm.hook.pre_build_collection(collection=_Collection) #type: ignore
         self.route_list[_Collection._slug] = _Collection
         return _Collection
