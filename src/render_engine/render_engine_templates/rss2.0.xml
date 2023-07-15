@@ -4,7 +4,7 @@
     <title>{{SITE_TITLE}}-{{title}}</title>
     <link>{{SITE_URL}}</link>
     <description>{{description}}</description>
-    <atom:link href="{{SITE_URL}}" rel="self" type="application/rss+xml" />
+    <atom:link href="{{SITE_URL}}/{{ path_name }}" rel="self" type="application/rss+xml" />
 
 {% if language is defined and language %}<language>{{language}}</language>{% endif %}
 {% if copyright is defined and copyright %}<copyright>{{copyright}}</copyright>{% endif %}
