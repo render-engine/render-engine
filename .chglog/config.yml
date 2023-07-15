@@ -6,12 +6,21 @@ info:
 options:
   commits:
     # filters:
-    #   Type: []
+    #   Type:
+    #     - sparkles
+    #     - bug
+    #     - zap
+    #     - recycle
   commit_groups:
-    # title_maps: []
+    # title_maps:
+    #   sparkles: Features
+    #   bug: Bug Fixes
+    #   zap: Performance Improvements
+    #   recycle: Code Refactoring
   header:
-    pattern: "^(.*)$"
+    pattern: "^:(\\w*)\\:\\s(.*)$"
     pattern_maps:
+      - Type
       - Subject
   notes:
     keywords:
