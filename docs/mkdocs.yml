@@ -19,10 +19,10 @@ nav:
       - RSS Feed: feeds.md
     - Site:
       - Site: site.md
-      - Plugins: hookspecs.md
   - Extending Render Engine:
-    - Built-in Plugins: plugins.md
     - Plugins: plugins.md
+    - Plugins Entrypoints: hookspecs.md
+    - Built-in Plugins: plugins.md
   - Parsers: parsers.md
   - CLI: cli.md
   - Templates: templates.md
