@@ -28,6 +28,7 @@ class MyCollection(Collection):
 
 my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin']
+```
 
 ### Implementing a plugin
 
@@ -53,8 +54,4 @@ class MyPage(Page):
 
 my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin2']
-
-
 ```
-
-"""
