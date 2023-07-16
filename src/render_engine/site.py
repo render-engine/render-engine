@@ -88,7 +88,10 @@ class Site:
             plugins.remove(plugin)
         _Collection.register_plugins(plugins)
 
-        self._pm.hook.pre_build_collection(collection=_Collection) #type: ignore
+        self._pm.hook.pre_build_collection(
+            collection=_Collection,
+            settings=self.site_settings.get('plugins', {}),
+        ) #type: ignore
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
@@ -199,7 +202,10 @@ class Site:
         with Progress() as progress:
 
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
-            self._pm.hook.pre_build_site(site=self)
+            self._pm.hook.pre_build_site(
+                site=self,
+                settings=self.site_settings.get('plugins', {})
+                ) #type: ignore
 
             # Parse Route List
             task_add_route = progress.add_task(
@@ -217,7 +223,7 @@ class Site:
                 )
                 if isinstance(entry, Page):
                     if getattr(entry, "collection", None):
-                        self._pm.hook.render_content(Page=entry)
+                        self._pm.hook.render_content(Page=entry, settings=self.site_settings.get('plugins', None))
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
@@ -231,5 +237,8 @@ class Site:
                     else:
                         self._render_full_collection(entry)
             progress.add_task("Loading Post-Build Plugins", total=1)
-            self._pm.hook.post_build_site(site=self)
+            self._pm.hook.post_build_site(
+                site=self,
+                settings=self.site_settings.get('plugins', {}),
+            )
             progress.update(pre_build_task, advance=1)
