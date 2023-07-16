@@ -1,3 +1,5 @@
+import typing
+import logging
 import pytest
 from render_engine.hookspecs import hook_impl
 from render_engine.page import Page
@@ -9,9 +11,16 @@ class FakePlugin:
     """Clean the output folder before rendering"""
 
     @hook_impl
-    def pre_build_site(site: type[Site]):
+    def pre_build_site(
+        site: type[Site],
+        settings: dict[str, typing.Any]|None,
+        ):
         """Clean the output folder before rendering"""
-        pass
+        if settings:
+            logging.info(settings['FakePlugin']['test'])
+        else:
+            print(settings)
+            raise ValueError("FAIL")
 
 @pytest.fixture
 def site():
@@ -73,4 +82,29 @@ def test_collection_ignores_plugin():
     
     assert site.route_list['testcollection']._pm.list_name_plugin() == []
 
+    
+
+def test_plugin_settings_from_site(caplog):
+    """Check that the plugin settings are passed from the site to the plugin"""
+    
+    class testSite(Site):
+        plugins = [
+            FakePlugin,
+        ]
+        site_settings = {
+            "plugins": {
+                "FakePlugin": {
+                    "test": "Testing the plugin settings"
+                }
+            }
+        }
+
+    
+    site = testSite()
+    with caplog.at_level(logging.INFO):
+        site._pm.hook.pre_build_site(
+            site=site,
+            settings=site.site_settings['plugins']
+        )
+    assert 'Testing the plugin settings' in caplog.text
     
