@@ -2,6 +2,9 @@
 ## [Unreleased]
 
 
+<a name="2023.7.4a1"></a>
+## [2023.7.4a1] - 2023-07-16
+
 <a name="2023.7.3"></a>
 ## [2023.7.3] - 2023-07-15
 ### Pull Requests
@@ -200,7 +203,8 @@
 - Merge pull request [#40](https://github.com/kjaymiller/render_engine/issues/40) from jonafato/test-in-ci
 
 
-[Unreleased]: https://github.com/kjaymiller/render_engine/compare/2023.7.3...HEAD
+[Unreleased]: https://github.com/kjaymiller/render_engine/compare/2023.7.4a1...HEAD
+[2023.7.4a1]: https://github.com/kjaymiller/render_engine/compare/2023.7.3...2023.7.4a1
 [2023.7.3]: https://github.com/kjaymiller/render_engine/compare/2023.7.1a1...2023.7.3
 [2023.7.1a1]: https://github.com/kjaymiller/render_engine/compare/2023.7.2a1...2023.7.1a1
 [2023.7.2a1]: https://github.com/kjaymiller/render_engine/compare/2023.7.1...2023.7.2a1
