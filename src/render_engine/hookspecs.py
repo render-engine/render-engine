@@ -19,6 +19,14 @@ def register_plugins(plugins):
 
 class SiteSpecs:
     """Plugin hook specifications for the Site class"""
+    default_settings: dict[str, typing.Any]
+    
+    @hook_spec
+    def add_default_settings(
+        self,
+        site: "Site",
+    ) -> None:
+        """Add default settings to the site"""
 
     @hook_spec
     def pre_build_site(
@@ -70,3 +78,8 @@ class SiteSpecs:
         settings: dict[str, typing.Any],
     ) -> None:
         """Build After Building the collection"""
+
+
+
+
+

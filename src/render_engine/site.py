@@ -1,3 +1,5 @@
+import sys
+import typing
 import logging
 import pathlib
 import shutil
@@ -8,8 +10,9 @@ from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
-from .hookspecs import register_plugins
 from .page import Page
+import pluggy
+from .hookspecs import _PROJECT_NAME, SiteSpecs
 
 class Site:
     """
@@ -31,6 +34,7 @@ class Site:
             settings that will be passed into pages and collections but not into templates
     """
 
+    _pm: pluggy.PluginManager
     output_path: str = "output"
     static_path: str = "static"
     partial: bool = False
@@ -42,19 +46,44 @@ class Site:
         "SITE_URL": "http://localhost:8000/",
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
     }
-    plugins: list
     engine: Environment = engine
 
 
     def __init__(
         self,
-        plugins: list[str] = [],
     ) -> None:
         self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
-        self.plugins = [*plugins, *getattr(self, "plugins", [])]
-        self._pm = register_plugins(plugins=self.plugins)
+        
+        # Manage Plugins
+        self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
+        self._pm.add_hookspecs(SiteSpecs)
+
+
+    def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
+        """Register plugins with the site
+        
+        parameters:
+            plugins: list of plugins to register
+            settings: settings to pass into the plugins
+                settings keys are the plugin names as strings.
+        """
+        
+        for plugin in plugins:
+            self._pm.register(plugin)        
+            self.site_settings['plugins'][plugin.__name__] = plugin.default_settings
+
+        self._pm.hook.add_default_settings(
+            site=self,
+            custom_settings=settings,
+        ) 
+        self.site_settings['plugins'].update(**settings)
+
+    @property
+    def plugins(self):
+        return self._pm.get_plugins()
+
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
@@ -123,12 +152,13 @@ class Site:
         """
         page = Page()
         page.title = page._title # Expose _title to the user through `title`
-        
-        plugins = [*self.plugins, *getattr(page, "plugins", [])]
-        
+
+        # copy the plugin manager, removing any plugins that the page has ignored
+        page._pm = self._pm
+
         for plugin in getattr(page, 'ignore_plugins', []):
-            plugins.remove(plugin)
-        page.register_plugins(plugins)
+            page._pm.unregister(plugin)
+
         self.route_list[getattr(page, page._reference)] = page
 
     def _render_static(self) -> None:

@@ -9,31 +9,31 @@ from render_engine.collection import Collection
 
 class FakePlugin:
     """Clean the output folder before rendering"""
+    default_settings = {
+        "test": "default",
+    }
 
     @hook_impl
     def pre_build_site(
         site: type[Site],
         settings: dict[str, typing.Any]|None,
         ):
-        """Clean the output folder before rendering"""
+        """Test Pre Build Site"""
         if settings:
             logging.info(settings['FakePlugin']['test'])
         else:
-            print(settings)
             raise ValueError("FAIL")
 
 @pytest.fixture
 def site():
-    class TestSite(Site):
-        plugins = [
-            FakePlugin,
-        ]
+    site = Site()
+    site.register_plugins(FakePlugin)
+    return site
 
-    return TestSite()
-
-def test_register_plugins(site: "TestSite"):
+def test_plugin_is_registered(site: Site):
     """Check that the plugin is registered"""
-    assert site._pm.list_name_plugin()[0][0] == 'FakePlugin' 
+    assert [site._pm.get_name(x) for x in site.plugins] == ['FakePlugin']
+
 
 def test_pages_in_collection_inherit_pugins():
     """Check that collection plugins are inherited by pages in the collection"""
@@ -48,15 +48,9 @@ def test_pages_in_collection_inherit_pugins():
     assert page._pm.get_plugins() == collection._pm.get_plugins()
 
 
-def test_page_ignores_plugin():
+def test_page_ignores_plugin(site: Site):
     """Check that the plugin is not registered in the page if it is ignored"""
-    class testSite(Site):
-        plugins = [
-            FakePlugin,
-        ]
-
-    site = testSite()
-    
+       
     @site.page
     class testPage(Page):
         ignore_plugins = [
@@ -84,27 +78,13 @@ def test_collection_ignores_plugin():
 
     
 
-def test_plugin_settings_from_site(caplog):
+def test_plugin_settings_from_site(caplog, site: Site):
     """Check that the plugin settings are passed from the site to the plugin"""
-    
-    class testSite(Site):
-        plugins = [
-            FakePlugin,
-        ]
-        site_settings = {
-            "plugins": {
-                "FakePlugin": {
-                    "test": "Testing the plugin settings"
-                }
-            }
-        }
 
-    
-    site = testSite()
     with caplog.at_level(logging.INFO):
         site._pm.hook.pre_build_site(
             site=site,
             settings=site.site_settings['plugins']
         )
-    assert 'Testing the plugin settings' in caplog.text
+    assert 'default' in caplog.text
     
