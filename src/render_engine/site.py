@@ -1,3 +1,4 @@
+import sys
 import typing
 import logging
 import pathlib
@@ -9,9 +10,25 @@ from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
-import pluggy
-from .hookspecs import _PROJECT_NAME, SiteSpecs
 from .page import Page
+import pluggy
+from .hookspecs import _PROJECT_NAME, SiteSpecs, hook_impl
+
+
+
+@hook_impl(wrapper=True)
+def add_plugin_settings(
+    self,
+    site: "Site",
+    custom_settings: dict[str, typing.Any],
+    ) -> None:
+    """Called after the plugins are registered."""
+    site.site_settings[self.__class__.__name__] = {
+        **self.default_settings,
+        **custom_settings[self.__class__.__name__],
+    }
+    return (yield)
+
 
 class Site:
     """
@@ -68,10 +85,11 @@ class Site:
             settings: settings to pass into the plugins
                 settings keys are the plugin names as strings.
         """
-
+        
         for plugin in plugins:
-            self._pm.register(plugin)
+            self._pm.register(plugin)        
 
+        self._pm.register(sys.modules[__name__])
         self._pm.hook.add_plugin_settings(
             site=self,
             custom_settings=settings,

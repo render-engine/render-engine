@@ -21,19 +21,7 @@ class SiteSpecs:
     """Plugin hook specifications for the Site class"""
     default_settings: dict[str, typing.Any]
     
-    @hook_spec
-    @hook_impl(trylast=True)
-    def add_plugin_settings(
-        cls,
-        site: "Site",
-        custom_settings: dict[str, typing.Any],
-        ) -> None:
-        """Called after the plugins are registered."""
-        site.site_settings[cls.__class__.__name__] = {
-            **cls.default_settings,
-            **custom_settings[cls.__class__.__name__],
-        }
-        
+
     @hook_spec
     def pre_build_site(
         self,
@@ -84,3 +72,8 @@ class SiteSpecs:
         settings: dict[str, typing.Any],
     ) -> None:
         """Build After Building the collection"""
+
+
+
+
+
