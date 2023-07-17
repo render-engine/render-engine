@@ -9,13 +9,16 @@ from render_engine.collection import Collection
 
 class FakePlugin:
     """Clean the output folder before rendering"""
+    default_settings = {
+        "test": "default",
+    }
 
     @hook_impl
     def pre_build_site(
         site: type[Site],
         settings: dict[str, typing.Any]|None,
         ):
-        """Clean the output folder before rendering"""
+        """Test Pre Build Site"""
         if settings:
             logging.info(settings['FakePlugin']['test'])
         else:
@@ -24,12 +27,9 @@ class FakePlugin:
 
 @pytest.fixture
 def site():
-    class TestSite(Site):
-        plugins = [
-            FakePlugin,
-        ]
-
-    return TestSite()
+    site = Site()
+    site.register_plugins(FakePlugin)
+    return site
 
 def test_register_plugins(site: "TestSite"):
     """Check that the plugin is registered"""
@@ -46,6 +46,12 @@ def test_pages_in_collection_inherit_pugins():
 
     # Check that the plugin is the same as the one in the collection
     assert page._pm.get_plugins() == collection._pm.get_plugins()
+
+
+def test_site_plugin_settings(site):
+    """Check that the plugin settings are passed from the site to the plugin"""
+    logging.warning(site.site_settings)
+    assert site.site_settings['plugins']
 
 
 def test_page_ignores_plugin():

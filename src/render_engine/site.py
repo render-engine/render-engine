@@ -1,3 +1,4 @@
+import typing
 import logging
 import pathlib
 import shutil
@@ -8,7 +9,8 @@ from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
-from .hookspecs import register_plugins
+import pluggy
+from .hookspecs import _PROJECT_NAME, SiteSpecs
 from .page import Page
 
 class Site:
@@ -31,6 +33,7 @@ class Site:
             settings that will be passed into pages and collections but not into templates
     """
 
+    _pm: pluggy.PluginManager
     output_path: str = "output"
     static_path: str = "static"
     partial: bool = False
@@ -42,19 +45,38 @@ class Site:
         "SITE_URL": "http://localhost:8000/",
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
     }
-    plugins: list
     engine: Environment = engine
 
 
     def __init__(
         self,
-        plugins: list[str] = [],
     ) -> None:
         self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
-        self.plugins = [*plugins, *getattr(self, "plugins", [])]
-        self._pm = register_plugins(plugins=self.plugins)
+        
+        # Manage Plugins
+        self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
+        self._pm.add_hookspecs(SiteSpecs)
+
+
+    def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
+        """Register plugins with the site
+        
+        parameters:
+            plugins: list of plugins to register
+            settings: settings to pass into the plugins
+                settings keys are the plugin names as strings.
+        """
+
+        for plugin in plugins:
+            self._pm.register(plugin)
+
+        self._pm.hook.add_plugin_settings(
+            site=self,
+            custom_settings=settings,
+        )
+
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
