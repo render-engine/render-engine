@@ -72,7 +72,7 @@ class Site:
         
         for plugin in plugins:
             self._pm.register(plugin)        
-            self.site_settings['plugins'][plugin.__name__] = plugin.default_settings
+            self.site_settings['plugins'][plugin.__name__] = getattr(plugin, 'default_settings', {})
 
         self._pm.hook.add_default_settings(
             site=self,
