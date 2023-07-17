@@ -14,22 +14,6 @@ from .page import Page
 import pluggy
 from .hookspecs import _PROJECT_NAME, SiteSpecs, hook_impl
 
-
-
-@hook_impl(wrapper=True)
-def add_plugin_settings(
-    self,
-    site: "Site",
-    custom_settings: dict[str, typing.Any],
-    ) -> None:
-    """Called after the plugins are registered."""
-    site.site_settings[self.__class__.__name__] = {
-        **self.default_settings,
-        **custom_settings[self.__class__.__name__],
-    }
-    return (yield)
-
-
 class Site:
     """
     The site stores your pages and collections to be rendered.
@@ -88,12 +72,14 @@ class Site:
         
         for plugin in plugins:
             self._pm.register(plugin)        
+            self.site_settings['plugins'][plugin.__name__] = plugin.default_settings
 
         self._pm.register(sys.modules[__name__])
-        self._pm.hook.add_plugin_settings(
+        self._pm.hook.add_default_settings(
             site=self,
             custom_settings=settings,
-        )
+        ) 
+        self.site_settings['plugins'].update(**settings)
 
 
     def collection(self, Collection: type[Collection]) -> Collection:
