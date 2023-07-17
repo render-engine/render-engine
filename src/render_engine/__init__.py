@@ -3,4 +3,4 @@ from .collection import Collection
 from .page import Page
 from .site import Site
 
-__all__ == ["Blog", "Collection", "Page", "Site"]
+__all__ = ["Blog", "Collection", "Page", "Site"]
