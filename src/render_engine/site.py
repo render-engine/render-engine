@@ -12,7 +12,7 @@ from .collection import Collection
 from .engine import engine
 from .page import Page
 import pluggy
-from .hookspecs import _PROJECT_NAME, SiteSpecs, hook_impl
+from .hookspecs import _PROJECT_NAME, SiteSpecs
 
 class Site:
     """
@@ -74,12 +74,15 @@ class Site:
             self._pm.register(plugin)        
             self.site_settings['plugins'][plugin.__name__] = plugin.default_settings
 
-        self._pm.register(sys.modules[__name__])
         self._pm.hook.add_default_settings(
             site=self,
             custom_settings=settings,
         ) 
         self.site_settings['plugins'].update(**settings)
+
+    @property
+    def plugins(self):
+        return self._pm.get_plugins()
 
 
     def collection(self, Collection: type[Collection]) -> Collection:
@@ -149,12 +152,13 @@ class Site:
         """
         page = Page()
         page.title = page._title # Expose _title to the user through `title`
-        
-        plugins = [*self.plugins, *getattr(page, "plugins", [])]
-        
+
+        # copy the plugin manager, removing any plugins that the page has ignored
+        page._pm = self._pm
+
         for plugin in getattr(page, 'ignore_plugins', []):
-            plugins.remove(plugin)
-        page.register_plugins(plugins)
+            page._pm.unregister(plugin)
+
         self.route_list[getattr(page, page._reference)] = page
 
     def _render_static(self) -> None:

@@ -1,4 +1,4 @@
-from typing import Any, Type, Callable
+from typing import Any, Callable
 
 import jinja2
 
@@ -134,7 +134,7 @@ class Page(BasePage):
 
     content: Any
     content_path: str | None
-    Parser: Type[BasePageParser] = BasePageParser
+    Parser: type[BasePageParser] = BasePageParser
     inherit_plugins: bool
     parser_extras: dict[str, Any] | None
     title: str
@@ -143,8 +143,7 @@ class Page(BasePage):
         self,
         content_path: str | None = None,
         content: Any | None = None,
-        Parser: Type[BasePageParser] | None = None,
-        plugins: list[Callable] = [],
+        Parser: type[BasePageParser] | None = None,
     ) -> None:
 
         if Parser:
