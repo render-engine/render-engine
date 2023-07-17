@@ -2,6 +2,7 @@ from markdown2 import markdown
 
 from ..base_parsers import BasePageParser
 
+__all__ == ["markdown", "BasePageParser"]
 
 class MarkdownPageParser(BasePageParser):
     """
