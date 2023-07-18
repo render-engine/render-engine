@@ -85,6 +85,13 @@ class Site:
         return self._pm.get_plugins()
 
 
+    def register_themes(self, *themes) -> None:
+        """Register a theme with the site"""
+        for theme in themes:
+            logging.info(f"Registering theme: {theme}")
+            self.engine.loader.loaders.insert(0, theme)
+
+
     def collection(self, Collection: type[Collection]) -> Collection:
         """
         Add the collection to the route list to be rendered later.
