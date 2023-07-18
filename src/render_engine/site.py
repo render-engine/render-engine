@@ -60,6 +60,10 @@ class Site:
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
         self._pm.add_hookspecs(SiteSpecs)
 
+    def update_site_vars(self, **kwargs) -> None:
+        self.site_vars.update(**kwargs)
+        self.engine.globals.update(self.site_vars)
+
 
     def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
         """Register plugins with the site
@@ -90,6 +94,7 @@ class Site:
         for theme in themes:
             logging.info(f"Registering theme: {theme}")
             self.engine.loader.loaders.insert(0, theme)
+
 
 
     def collection(self, Collection: type[Collection]) -> Collection:
@@ -244,6 +249,8 @@ class Site:
                 settings=self.site_settings.get('plugins', {})
                 ) #type: ignore
 
+
+            self.engine.globals.update(self.site_vars)
             # Parse Route List
             task_add_route = progress.add_task(
                 "[blue]Adding Routes", total=len(self.route_list)
