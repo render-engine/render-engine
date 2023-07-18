@@ -12,16 +12,16 @@ from render_engine.site import Site
 class SiteMap:
     """Generate a sitemap.xml file"""
 
+    default_settings = {
+        "template": "sitemap.xml",
+        "output_path": "sitemap.xml",
+        "map_item_pattern": "*.html",
+    }
+
     @hook_impl
     def post_build_site(
         site: Site,
-        settings: dict[str, typing.Any] = {
-            "SiteMap": {
-                "template": "sitemap.xml",
-                "output_path": "sitemap.xml",
-                "map_pattern": "*.html",
-            },
-        }
+        settings: dict[str, typing.Any],
         ):
         """Generate a sitemap.xml file.
         
