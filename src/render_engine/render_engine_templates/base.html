@@ -9,10 +9,6 @@
         </head>
         <body>
             {% block content %}
-                <h1>{{collection_title}}</h1>
-                {% for page in pages %}
-                <div><a href="{{page.url_for}}">{{page}}</a></div>
-                {% endfor %}
             {% endblock %}
         </body>
     </html>
