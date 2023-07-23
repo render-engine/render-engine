@@ -13,8 +13,9 @@ from .engine import engine
 from .page import Page
 import pluggy
 from .hookspecs import _PROJECT_NAME, SiteSpecs
+from .utils.themes import ThemeManager
 
-class Site:
+class Site(ThemeManager):
     """
     The site stores your pages and collections to be rendered.
 
@@ -26,8 +27,8 @@ class Site:
             if True, only render pages that have been modified. Uses gitPython to check for changes.
         plugins: 
             list of plugins that will be loaded and passed into each object
-        static: 
-            path for the static folder. This will get copied to the output folder.
+        static_paths: 
+            list of paths for static folders. This will get copied to the output folder. Folders are recursive.
         site_vars: 
             dictionary that will be passed into page template
         site_settings:
@@ -36,7 +37,6 @@ class Site:
 
     _pm: pluggy.PluginManager
     output_path: str = "output"
-    static_path: str = "static"
     partial: bool = False
     site_settings: dict = {
         "plugins": {}
@@ -87,14 +87,6 @@ class Site:
     @property
     def plugins(self):
         return self._pm.get_plugins()
-
-
-    def register_themes(self, *themes) -> None:
-        """Register a theme with the site"""
-        for theme in themes:
-            logging.info(f"Registering theme: {theme}")
-            self.engine.loader.loaders.insert(0, theme)
-
 
 
     def collection(self, Collection: type[Collection]) -> Collection:
@@ -173,13 +165,7 @@ class Site:
 
         self.route_list[getattr(page, page._reference)] = page
 
-    def _render_static(self) -> None:
-        """Copies a Static Directory to the output folder"""
-        shutil.copytree(
-            self.static_path,
-            pathlib.Path(self.output_path) / pathlib.Path(self.static_path).name,
-            dirs_exist_ok=True
-        )
+
 
     def _render_output(self, route: str, page: Page):
         """writes the page object to disk"""
@@ -256,8 +242,11 @@ class Site:
                 "[blue]Adding Routes", total=len(self.route_list)
             )
 
-            if pathlib.Path(self.static_path).exists():
-                self._render_static()
+            if getattr(self, "static_path", False):
+                self.static_paths.add(self.static_path)
+
+            self._render_static()
+
             self.engine.globals["site"] = self
             self.engine.globals["routes"] = self.route_list
 
