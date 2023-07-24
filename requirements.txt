@@ -34,7 +34,7 @@ python-frontmatter==1.0.0
     # via render-engine (pyproject.toml)
 python-slugify==8.0.1
     # via render-engine (pyproject.toml)
-pyyaml==6.0
+pyyaml==6.0.1
     # via python-frontmatter
 rich==13.4.2
     # via render-engine (pyproject.toml)
