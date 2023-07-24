@@ -4,7 +4,7 @@
 #
 #    pip-compile pyproject.toml
 #
-click==8.1.5
+click==8.1.6
     # via typer
 dtyper==2.1.0
     # via render-engine (pyproject.toml)
