@@ -16,7 +16,7 @@ jinja2==3.1.2
     # via render-engine (pyproject.toml)
 markdown-it-py==3.0.0
     # via rich
-markdown2==2.4.9
+markdown2==2.4.10
     # via render-engine (pyproject.toml)
 markupsafe==2.1.3
     # via jinja2
