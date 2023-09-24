@@ -10,6 +10,7 @@ from jinja2 import Environment, PackageLoader
 class Theme:
     loader: PackageLoader
     static_dir: str|pathlib.Path
+    filters: dict[str, callable]
 
 class ThemeManager:
     """
