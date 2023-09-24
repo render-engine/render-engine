@@ -38,7 +38,7 @@ class ThemeManager:
             logging.info(f"Registering theme: {theme}")
             self.engine.loader.loaders.insert(0, theme.loader)
             self.static_paths.add(theme.static_dir)
-        logging.warning(self.engine.loader.loaders)
+            self.engine.filters.update(theme.filters)
         
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
