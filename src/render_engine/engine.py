@@ -1,5 +1,4 @@
 import urllib.parse
-
 from datetime import datetime
 from email import utils
 
@@ -37,11 +36,15 @@ engine.filters["to_pub_date"] = to_pub_date
 
 
 @pass_environment
-def format_datetime(env: Environment, value: str) -> str:
+def format_datetime(env: Environment, value: str, datetime_format: str) -> str:
     """
     Parse information from the given class object.
     """
-    return datetime.strftime(value, env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
+    if datetime_format:
+        format = datetime_format
+    else:
+        format = env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z")
+    return datetime.strftime(value, format)
 engine.filters["format_datetime"] = format_datetime
 
 
@@ -71,7 +74,7 @@ def url_for(env: Environment, value: str, page: int=0) -> str:
                 if getattr(page, page._reference) == route:
                     return page.url_for()
 
-    else: 
+    else:
         route = routes.get(value)
         if isinstance(route, Collection):
             return list(route.archives)[page].url_for()
