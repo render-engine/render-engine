@@ -242,9 +242,6 @@ class Site(ThemeManager):
                 "[blue]Adding Routes", total=len(self.route_list)
             )
 
-            if getattr(self, "static_path", False):
-                self.static_paths.add(self.static_path)
-
             self._render_static()
 
             self.engine.globals["site"] = self

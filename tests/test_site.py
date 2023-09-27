@@ -230,7 +230,7 @@ def test_site_output_path(tmp_path):
     assert (output_tmp_dir / "custompage.html").exists()
 
 
-def test_site_static_renders_in_static_output_path(tmp_path):
+def test_site_static_renders_in_static_output_path(tmp_path, site):
     """
     Tests that a static file is rendered in the static output path.
     """
@@ -241,16 +241,13 @@ def test_site_static_renders_in_static_output_path(tmp_path):
     static_tmp_dir.mkdir()
     pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
-    class CustomSite(Site):
-        output_path = output_tmp_dir
-        static_path = static_tmp_dir
-
-    site = CustomSite()
+    site.output_path = output_tmp_dir
+    site.static_paths.add(static_tmp_dir)
     site.render() 
 
     assert (output_tmp_dir / "static" / "test.txt").exists()
 
-def tests_site_nested_static_paths(tmp_path):
+def tests_site_nested_static_paths(tmp_path, site):
     """given a static path with nested directories, the output should be the same"""
     static_tmp_dir = tmp_path / "static"
     output_tmp_dir = tmp_path / "output"
@@ -260,13 +257,25 @@ def tests_site_nested_static_paths(tmp_path):
     pathlib.Path(static_tmp_dir / "nested" / pathlib.Path("test.txt")).write_text("test")
     pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
-    class CustomSite(Site):
-        output_path = output_tmp_dir
-        static_path = static_tmp_dir
-
-    site = CustomSite()
+    site.output_path = output_tmp_dir
+    site.static_paths.add(static_tmp_dir)
     site.render() 
-    print(list(pathlib.Path(output_tmp_dir/'static').iterdir()))
-    print(list(pathlib.Path(output_tmp_dir/'static'/'nested').iterdir()))
     assert (output_tmp_dir / "static" / "test.txt").exists()
     assert (output_tmp_dir / "static" / "nested" / "test.txt").exists()
+
+def tests_site_multiple_static_paths(tmp_path, site):
+    """given a static path with nested directories, the output should be the same"""
+    static_tmp_dir = tmp_path / "static"
+    output_tmp_dir = tmp_path / "output"
+    output_tmp_dir.mkdir()
+    static_tmp_dir.mkdir()
+    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+
+    second_static_tmp_dir = tmp_path / "static2"
+    pathlib.Path(second_static_tmp_dir / pathlib.Path("test2.txt")).write_text("test")
+
+    site.output_path = output_tmp_dir
+    site.static_paths.add(static_tmp_dir)
+    site.render() 
+    assert (output_tmp_dir / "static" / "test.txt").exists()
+    assert (output_tmp_dir / "static2" / "test2.txt").exists()
