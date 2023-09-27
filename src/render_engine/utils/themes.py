@@ -3,12 +3,12 @@ import logging
 import pathlib
 import shutil
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import BaseLoader, Environment
 
 
 @dataclasses.dataclass
 class Theme:
-    loader: PackageLoader
+    loader: BaseLoader
     static_dir: str|pathlib.Path
     filters: dict[str, callable]
 
