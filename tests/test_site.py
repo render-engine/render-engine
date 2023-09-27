@@ -272,10 +272,11 @@ def tests_site_multiple_static_paths(tmp_path, site):
     pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
     second_static_tmp_dir = tmp_path / "static2"
+    second_static_tmp_dir.mkdir()
     pathlib.Path(second_static_tmp_dir / pathlib.Path("test2.txt")).write_text("test")
 
     site.output_path = output_tmp_dir
-    site.static_paths.add(static_tmp_dir)
+    site.static_paths.update([static_tmp_dir, second_static_tmp_dir])
     site.render() 
     assert (output_tmp_dir / "static" / "test.txt").exists()
     assert (output_tmp_dir / "static2" / "test2.txt").exists()
