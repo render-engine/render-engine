@@ -20,9 +20,10 @@ class ThemeManager:
     Attributes:
         engine: Jinja2 Environment used to render pages
         output_path: path to write rendered content
-        static_paths: list of paths for static folders. 
+        static_paths: set of filepaths for static folders. 
             This will get copied to the output folder. 
             Folders are recursive.
+            
     """
     engine: Environment
     output_path: str = "output"

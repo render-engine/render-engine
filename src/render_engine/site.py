@@ -36,7 +36,6 @@ class Site(ThemeManager):
     """
 
     _pm: pluggy.PluginManager
-    output_path: str = "output"
     partial: bool = False
     site_settings: dict = {
         "plugins": {}
