@@ -6,7 +6,7 @@ from render_engine import Site, Page, Collection
 
 app = Site()
 app.output_path = "{{output_path}}"
-app.static_path = "{{static_path}}"
+app.static_paths.add("{{static_paths}}")
 
 {% if has_attrs %}# Your site_vars will be used throughout your site
 app.site_vars.update(

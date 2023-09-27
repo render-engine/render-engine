@@ -36,7 +36,6 @@ class Site(ThemeManager):
     """
 
     _pm: pluggy.PluginManager
-    output_path: str = "output"
     partial: bool = False
     site_settings: dict = {
         "plugins": {}
@@ -241,9 +240,6 @@ class Site(ThemeManager):
             task_add_route = progress.add_task(
                 "[blue]Adding Routes", total=len(self.route_list)
             )
-
-            if getattr(self, "static_path", False):
-                self.static_paths.add(self.static_path)
 
             self._render_static()
 
