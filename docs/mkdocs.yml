@@ -26,6 +26,10 @@ nav:
   - Parsers: parsers.md
   - CLI: cli.md
   - Templates: templates.md
+  - Templates and Themes: 
+    - Templates: templates.md
+    - ThemeManager: theme_management.md
+    
 markdown_extensions:
   - toc
   - codehilite:
