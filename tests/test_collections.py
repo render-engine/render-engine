@@ -68,9 +68,9 @@ def test_collection_archive_no_items_per_page(tmp_path: pathlib.Path):
     assert len(list(collection.archives)) == 1
 
 
-def test_collection_vars(tmp_path: pathlib.Path):
+def test_collection_context(tmp_path: pathlib.Path):
     """
-    Tests that collection_vars are passed to the page objects
+    Tests that `collection` context is passed to the page objects
     """
 
     tmp_dir = tmp_path / "content"
@@ -85,7 +85,7 @@ def test_collection_vars(tmp_path: pathlib.Path):
     collection = BasicCollection()
 
     for page in collection:
-        assert page.collection_vars["title"] == collection._title
+        assert page.collection["title"] == collection._title
 
 
 def test_collection_archives_has_title_of_collection(tmp_path: pathlib.Path):
@@ -144,7 +144,7 @@ def test_collection_attrs_pass_to_page(tmp_path, attr: str, attrval: str | list[
     class BasicCollection(Collection):
         PageParser = SimpleBasePageParser
         content_type = Page
-        
+
     setattr(BasicCollection, attr, attrval)
 
     collection = BasicCollection()
