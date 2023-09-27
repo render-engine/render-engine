@@ -25,7 +25,6 @@ nav:
     - Built-in Plugins: plugins.md
   - Parsers: parsers.md
   - CLI: cli.md
-  - Templates: templates.md
   - Templates and Themes: 
     - Templates: templates.md
     - ThemeManager: theme_management.md
