@@ -8,7 +8,6 @@ from slugify import slugify
 from ._base_object import BaseObject
 from .archive import Archive
 from .feeds import RSSFeed
-from .hookspecs import register_plugins
 from .page import Page
 from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
@@ -81,7 +80,7 @@ class Collection(BaseObject):
             ]
         )
         self.title = self._title
-        
+
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
 
@@ -91,20 +90,20 @@ class Collection(BaseObject):
                 for suffix in self.include_suffixes
             ]
         )
-    
+
     def _generate_content_from_modified_pages(self) -> typing.Generator[Page, None, None]:
         """
         Check git status for newly created and modified files.
         Returns the Page objects for the files in the content path
         """
-        
+
         repo = git.Repo()
-        
+
         changed_files = [
             *repo.untracked_files, # new files not yet in git's index
             *repo.index.diff(), # modified files in git index
         ]
-        
+
         return (
             self.get_page(pathlib.Path(changed_path))
             for changed_path in changed_files
@@ -126,7 +125,7 @@ class Collection(BaseObject):
         _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
-        _page.collection_vars = self.to_dict()
+        _page.collection = self.to_dict()
         return _page
 
     @property
