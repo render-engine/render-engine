@@ -36,10 +36,8 @@ engine.filters["to_pub_date"] = to_pub_date
 
 
 @pass_environment
-def format_datetime(env: Environment, value: str, datetime_format: str) -> str:
-    """
-    Parse information from the given class object.
-    """
+def format_datetime(env: Environment, value: str, datetime_format: str|None = None) -> str:
+    """Parse information from the given class object."""
     if datetime_format:
         format = datetime_format
     else:
