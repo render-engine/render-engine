@@ -43,9 +43,9 @@ I'm a scientist. I'm also a superhero.
 
 The collection would have all the information to parse all its pages the same. These could be attributes like the `template` or the `PageParser` that is used to parse each page in the collection. The individual pages attributes can  be referenced in the template or used for sorting or other functions.
 
-If you want to pass additional objects through the template context (see [Jinja's Template Context](https://jinja.palletsprojects.com/en/3.0.x/api/#the-context)), you can create additional attributes.
+If you want to pass additional objects through the template context (see [Jinja's Template Context](https://jinja.palletsprojects.com/en/3.0.x/api/#the-context)), you can create a dictionary of additional attributes.
 
-For example, if you want to send an attribute called `some_value` with a value of `"42"`, you can create this attribute in your `Collection` class, and it will be passed to the template through a `collection` attribute that contains a key:value pair (`{"some_value: "42"}`).
+For example, if you want to send an attribute called `some_value` with a value of `"42"`, you can assign the dictionary to a `template_vars` attribute within your `Collection` class, and it will be passed to the template through a `collection` attribute that contains the key:value pair (`{"some_value: "42"}`).
 
 
 ```python
@@ -62,9 +62,12 @@ class Heroes(Collection):
   content_path = "content/heroes"
   template = "heroes.html"
   PageParser = `MarkdownPageParser`
-  some_value = "42"
+  template_vars = {
+    "some_value": "42"
   }
 ```
+
+The value of `42` can be accessed in your template using `{{collection.some_value}}`.
 
 [Collection]: ../collection
 [Creating a Page]: /getting-started/creating-a-page
