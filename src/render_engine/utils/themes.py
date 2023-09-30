@@ -11,6 +11,7 @@ class Theme:
     loader: BaseLoader
     static_dir: str|pathlib.Path
     filters: dict[str, callable]
+    plugins: list[callable] | None = None
 
 class ThemeManager:
     """
@@ -29,18 +30,27 @@ class ThemeManager:
     output_path: str = "output"
     static_paths: set[str|pathlib.Path] = {"static"}
 
-    def register_themes(self, *themes: Theme):
+    def register_theme(self, theme: Theme):
         """
         Register a theme.
 
         Args:
             *themes: Theme objects to register
         """
+        logging.info(f"Registering theme: {theme}")
+        self.engine.loader.loaders.insert(0, theme.loader)
+        self.static_paths.add(theme.static_dir)
+        self.engine.filters.update(theme.filters)
+
+    def register_themes(self, *themes: Theme):
+        """
+        Register multiple themes.
+
+        Args:
+            *themes: Theme objects to register
+        """
         for theme in themes:
-            logging.info(f"Registering theme: {theme}")
-            self.engine.loader.loaders.insert(0, theme.loader)
-            self.static_paths.add(theme.static_dir)
-            self.engine.filters.update(theme.filters)
+            self.register_theme(theme)
         
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""

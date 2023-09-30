@@ -1,19 +1,18 @@
-import sys
-import typing
 import logging
 import pathlib
-import shutil
+import typing
 from collections import defaultdict
 
+import pluggy
 from jinja2 import Environment
 from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
-from .page import Page
-import pluggy
 from .hookspecs import _PROJECT_NAME, SiteSpecs
-from .utils.themes import ThemeManager
+from .page import Page
+from .utils.themes import Theme, ThemeManager
+
 
 class Site(ThemeManager):
     """
@@ -63,7 +62,6 @@ class Site(ThemeManager):
         self.site_vars.update(**kwargs)
         self.engine.globals.update(self.site_vars)
 
-
     def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
         """Register plugins with the site
         
@@ -86,6 +84,12 @@ class Site(ThemeManager):
     @property
     def plugins(self):
         return self._pm.get_plugins()
+
+    def register_theme(self, theme: Theme):
+        """Overrides the ThemeManager register_theme method to add plugins to the site"""
+        super().register_theme(theme)
+        if theme.plugins:
+            self.register_plugins(*theme.plugins)
 
 
     def collection(self, Collection: type[Collection]) -> Collection:
