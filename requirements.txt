@@ -24,7 +24,7 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==9.1.0
     # via render-engine (pyproject.toml)
-pluggy==1.2.0
+pluggy==1.3.0
     # via render-engine (pyproject.toml)
 pygments==2.15.1
     # via rich
