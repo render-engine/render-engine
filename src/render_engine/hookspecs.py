@@ -58,7 +58,9 @@ class SiteSpecs:
     def post_render_content(
         self,
         page : "page",
-        settings: dict[str: typing.Any]):
+        settings: dict[str: typing.Any],
+        site: "Site",
+    ) -> None:
         """
         Augments the content of the page before it is rendered as output.
         """

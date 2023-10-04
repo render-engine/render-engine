@@ -2,9 +2,10 @@ import logging
 import pathlib
 import typing
 from collections import defaultdict
+from re import template
 
 import pluggy
-from jinja2 import Environment
+from jinja2 import Environment, FileSystemLoader
 from rich.progress import Progress
 
 from .collection import Collection
@@ -45,6 +46,7 @@ class Site(ThemeManager):
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
     }
     engine: Environment = engine
+    template_path: str = "templates"
 
 
     def __init__(
@@ -53,6 +55,9 @@ class Site(ThemeManager):
         self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
+        
+        if self.template_path:
+            self.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
         
         # Manage Plugins
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
@@ -179,8 +184,9 @@ class Site(ThemeManager):
         )
         path.parent.mkdir(parents=True, exist_ok=True)
         page.rendered_content = page._render_content(engine=self.engine)
-
-        self._pm.hook.post_render_content(page=page)
+        # pass the route to the plugin settings
+        settings = {**self.site_settings.get('plugins', {}), **{'route': route}}
+        self._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)
 
