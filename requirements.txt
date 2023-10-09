@@ -6,7 +6,7 @@
 #
 click==8.1.5
     # via typer
-dtyper==2.1.0
+dtyper==2.4.0
     # via render-engine (pyproject.toml)
 gitdb==4.0.10
     # via gitpython
