@@ -32,7 +32,6 @@ class BasePage(BaseObject):
     @property
     def _content(self):
         """Returns the content of the page."""
-        print(getattr(self, "content", None))
         return getattr(self, "content", None)
 
     def url_for(self) -> str:
@@ -77,6 +76,7 @@ class BasePage(BaseObject):
 
         # Parsing without a template
         try:
+            print(self._content)
             if isinstance(self._content, str):
                 return self._content
             
