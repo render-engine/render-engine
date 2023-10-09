@@ -149,7 +149,6 @@ class Page(BasePage):
         if Parser:
             self.Parser = Parser
 
-        print(getattr(self, "content", None))
         # Parse Content from the Content Path or the Content
         if content_path := (content_path or getattr(self, "content_path", None)):
             attrs, self.content = self.Parser.parse_content_path(content_path)
