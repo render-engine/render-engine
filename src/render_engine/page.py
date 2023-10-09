@@ -76,7 +76,7 @@ class BasePage(BaseObject):
 
         # Parsing without a template
         try:
-            print(self._content)
+            print(self.content)
             if isinstance(self._content, str):
                 return self._content
             
