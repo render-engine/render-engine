@@ -32,6 +32,7 @@ class BasePage(BaseObject):
     @property
     def _content(self):
         """Returns the content of the page."""
+        print(getattr(self, "content", None))
         return getattr(self, "content", None)
 
     def url_for(self) -> str:

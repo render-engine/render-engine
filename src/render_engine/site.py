@@ -173,8 +173,6 @@ class Site(ThemeManager):
 
         self.route_list[getattr(page, page._reference)] = page
 
-
-
     def _render_output(self, route: str, page: Page):
         """writes the page object to disk"""
         path = (
@@ -183,10 +181,10 @@ class Site(ThemeManager):
             / pathlib.Path(page.path_name)
         )
         path.parent.mkdir(parents=True, exist_ok=True)
+        settings = {**self.site_settings.get('plugins', {}), **{'route': route}}
         self._pm.hook.render_content(page=page.__class__, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.engine)
         # pass the route to the plugin settings
-        settings = {**self.site_settings.get('plugins', {}), **{'route': route}}
         self._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)
