@@ -182,7 +182,7 @@ class Site(ThemeManager):
         )
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get('plugins', {}), **{'route': route}}
-        self._pm.hook.render_content(page=page.__class__, settings=settings, site=self)
+        self._pm.hook.render_content(page=page, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.engine)
         # pass the route to the plugin settings
         self._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
