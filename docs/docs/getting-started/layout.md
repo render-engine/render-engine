@@ -1,5 +1,9 @@
 # Simple Site Layout
-Render Engine has a very simple site layout. You can see the example site layout below.
+Render Engine has a very simple site layout. You can see the example site layout below generated via the cli.
+
+```shell
+python -m render_engine init
+```
 
 ```bash
 .
@@ -8,7 +12,6 @@ Render Engine has a very simple site layout. You can see the example site layout
 │  ├── pages # collection of files to build similarly styled pages
 │  │  └── about.md
 │  │  └── contact.md
-│  └── index.md # file to build a single page
 ├── static # static files (images, css, javascript)
 │  ├── img.jpg
 │  └── style.css
@@ -18,49 +21,132 @@ Render Engine has a very simple site layout. You can see the example site layout
 
 ## Building your Site
 
-Render Engine uses classes to create most of the object. You will need to import the `Site` and `Page`/`Collection` classes you'll need `render_engine`.
-
-```python
-# app.py
-
-from render_engine import Site, Page, Collection
-```
-
 ### Creating your Site
 Let's look at the `app.py` file and explore the different components.
 
 ```python
-# app.py
+# import Render Engine components
+# import render_engine built-in parsers
+# import render engine plugins and themes
 from render_engine import Site, Page, Collection
 from render_engine.parsers.markdown import MarkdownPageParser
+from render_engine_kjaymiller_theme import kjaymiller
+from render_engine_youtube_embed import YouTubeEmbed
 
+# create Site() as `app` or `site`
+# add your `output_path` (if not default)
+# add local `static_paths`
+# register plugins and themes
 
-class MySite(Site):
-    site_vars = {
-      "SITE_TITLE": "My Website",
-      "SITE_URL": "https://example.com",
-      "SITE_AUTHOR": "Peter Parker",
-    }
+app = Site()
+app.output_path = "output"
+app.static_paths.add("static")
+app.register_plugins(YouTubeEmbed)
+app.register_theme(kjaymiller)
 
-site = Site()
+# add any custom settings
+settings = {
+   "AUTHOR": {
+      "name": "Peter Parker",
+      "email": "peter@dailybugle.com",
+    },
+   "SITE_TITLE": "My Cool Website",
+   "SITE_URL": "http://example.com",
+   "plugins": "YouTubeEmbed": {...},
+   "theme": {...},
+}
+app.site_vars.update(settings)
 
-@site.page
-def index(Page):
-    Parser = MarkdownPageParser
-    title = "Welcome to my Site!"
-    template = "index.html"
-    content_path = "content/index.md"
+# Add Routes. Start with single pages and add Collections
+@app.page
+class Index(Page):
+    template="index.html"
 
+@app.collection
+class Pages(Collection):
+    Parser=MarkdownPageParser
+    content_path="content"
 
-@site.collection
-def pages(Collection):
-    PageParser = MarkdownPageParser
-    template = "page.html"
-    content_path = "content/pages"
 
 if __name__ == "__main__":
-    site.render()
+    app.render()
 ```
+
+### Importing Render Engine Components
+
+Render Engine uses classes to create most of the objects for the site. 
+
+You will need to import the `Site` and `Page`/`Collection` classes you'll need `render_engine`.
+
+```python
+# app.py
+
+from render_engine import Site, Page, Collection
+```
+
+### Importing parsers needed to generate html
+
+Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](/parsers#BasePageParser) and [MarkdownPageParser](/parsers#MarkdownPageParser)) or create your own. 
+
+Custom parsers can be imported and set in the `Parsers` attribute of the `Page` or `Collection` class.
+
+```python
+# app.py
+from render_engine_rss import RSSCollection, RSSFeedPageParser
+```
+
+> **IMPORTANT:**
+> Some custom parsers will only work with [custom collections](/custom_collections). Please refer to the parser's documentation for more information.****
+
+### Render Engine plugins and themes
+
+Plugins and themes are not required but can be used to quickly get your site's style and functionality up and running quickly. 
+
+To use custom plugins and themes, you will need to import the parsers you want to use.
+
+
+```python
+from render_engine_kjaymiller_theme import kjaymiller
+from render_engine_youtube_embed import YouTubeEmbed
+```
+
+Then you'll need to register the plugins and themes you want to use.
+
+```python
+app.register_plugins(YouTubeEmbed)
+app.register_theme(kjaymiller)
+```
+
+> **IMPORTANT:**
+> You can register multiple themes but be careful of the order as theme files are looked up in REVERSE order they are added (LIFO - Last in, First out)
+
+```python
+from render_engine_kjaymiller_theme import kjaymiller
+from render_engine_icon_packs import icon_packs
+
+...
+
+app.register_themes([kjaymiller, icon_packs])
+```
+
+### Adding custom site_vars
+
+Render Engine has a few built-in site variables (`site_vars`) that can be used to customize your site. You can also add your own custom settings.
+
+```python
+#app.py
+
+app = Site()
+app.site_vars.update(
+  {
+   "AUTHOR": {
+      "name": "Peter Parker",
+      "email": "peter@dailybugle.com"
+   },
+)
+```
+
+### Adding Pages and Collections
 
 The page that is created there will generate a file called `index.html` in the output directory. That name comes from the class name but can be defined either in the class itself (using the `slug` attribute) or in an markdown file (defined with the `content_path` attribute).
 
@@ -117,7 +203,7 @@ The markdown in `content` will converted to html and rendered in the template.
 <p>I'm happy that you are here!</p>
 ```
 
-### Creating a Collection:
+#### Creating a Collection:
 Collections are a group of pages that are rendered using the same template and (some) attributes. They are created using the `Collection` class and the `render_collection` decorator.
 
 ```python
@@ -133,7 +219,7 @@ The `content_path` attribute is the path to the folder that contains the markdow
 
 You an also pass custom attributes to the collection. These attributes will be passed into each page in the collection as well.
 
-### Custom Collections
+#### Custom Collections
 
 We named our collection Blog but if you noticed there aren't a lot of features that come with a blog included. Render Engine has a built in `Blog` class that you can use to create a blog. It will automatically create a collection of posts and a page for each post. It will also create a page for the blog index and an RSS Feed.
 
