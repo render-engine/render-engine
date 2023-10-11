@@ -139,10 +139,8 @@ def test_collection_archive_in_route_list(tmp_path):
         has_archive = True
         pages = [CustomCollectionPage()]
 
-    print(site.route_list)
 
     site.render()
-    print(list(tmp_path.iterdir()))
     assert pathlib.Path(tmp_path / "customcollection.html").exists()
     assert pathlib.Path(tmp_path / "customcollectionpage.html").exists()
     assert pathlib.Path(tmp_path / "customcollection.html").read_text() == "This is the collection archive"
