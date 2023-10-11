@@ -208,7 +208,6 @@ class Site(ThemeManager):
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
-            self._pm.hook.render_content(page=entry)
             for route in collection.routes:
                 self._render_output(route, entry)
 
