@@ -221,7 +221,7 @@ You an also pass custom attributes to the collection. These attributes will be p
 
 #### Custom Collections
 
-We named our collection Blog but if you noticed there aren't a lot of features that come with a blog included. Render Engine has a built in `Blog` class that you can use to create a blog. It will automatically create a collection of posts and a page for each post. It will also create a page for the blog index and an RSS Feed.
+We named our collection Blog but there aren't a lot of features that come with a blog included. Render Engine actually has a built-in `Blog` class you can use to create a blog. It will automatically create a collection of posts and a page for each post. It will also create a page for the blog index and an RSS Feed.
 
 It's still rendered using the same `render_collection` decorator.
 
@@ -233,3 +233,5 @@ class Blog(Blog):
   template="blog.html"
   content_path="content/blog"
 ```
+
+### Continue to [Building Your Site](../building-your-site/)
