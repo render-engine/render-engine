@@ -19,4 +19,4 @@ pip install render-engine
 ```
 
 ## Getting Started
-Check out the [Getting Started](/getting-started/installation).
+Check out the [Getting Started](/getting-started/getting-started).
