@@ -20,3 +20,5 @@ You can view the options using the `--help` flag.
 ![render-engine init --help](../assets/render-engine-init-help.png)
 
 Visit the [CLI - init](../cli/init.md) page for more information.
+
+### Continue to [Creating a Page](../creating-a-page/)

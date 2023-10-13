@@ -233,3 +233,5 @@ class Blog(Blog):
   template="blog.html"
   content_path="content/blog"
 ```
+
+### Continue to [Building Your Site](../building-your-site/)
