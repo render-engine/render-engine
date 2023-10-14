@@ -234,4 +234,4 @@ class Blog(Blog):
   content_path="content/blog"
 ```
 
-### Continue to [Building Your Site](../building-your-site/)
+### Continue to [Creating a Page](../creating-a-page/)

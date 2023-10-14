@@ -69,7 +69,7 @@ class Heroes(Collection):
 
 The value of `42` can be accessed in your template using `{{collection.some_value}}`.
 
-### Continue to [Simple Site Layout](../simple-site-layout/)
+### Continue to [Building your Site](../building-your-site/)
 
 [Collection]: ../collection
 [Creating a Page]: /getting-started/creating-a-page

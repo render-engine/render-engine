@@ -5,10 +5,9 @@ This section will walk you through the basics of Render Engine. It will show you
 ### Sections
 #### [Installation](../installation.html)
 #### [Creating your app](../creating-your-app.html)
-#### [Building your Site](../building-your-site.html)
+#### [Simple Site Layout](../layout.html)
 #### [Creating a Page](../creating-a-page.html)
 #### [Creating a Collection](../creating-a-collection.html)
-#### [Simple Site Layout](../simple-site-layout.html)
 #### [Building your Site](../building-your-site.html)
 
 ---

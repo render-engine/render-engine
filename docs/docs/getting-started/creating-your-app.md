@@ -21,4 +21,4 @@ You can view the options using the `--help` flag.
 
 Visit the [CLI - init](../cli/init.md) page for more information.
 
-### Continue to [Creating a Page](../creating-a-page/)
+### Continue to [Simple Site Layout](../layout/)
