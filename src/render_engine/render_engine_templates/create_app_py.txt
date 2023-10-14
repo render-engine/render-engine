@@ -22,8 +22,18 @@ app.site_vars.update({
         "name": "{{author['name']}}",
         "email": "{{author['email']}}",
     },
-    NAVIGATION={}
-        
+    NAVIGATION=[
+        {
+            "name": "Home",
+            "url": "/",
+        }
+        {% if not skip_collection %}
+        {
+            "name": "Collection Page",
+            "url": "/example-page.html",
+        }
+        {% endif %}
+    ]
     })
 
 @app.page
