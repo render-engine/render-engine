@@ -5,6 +5,7 @@
 ## Type of Issue
 
 - [ ] :bug: (bug)
+- [ ] :book: (Documentation)
 - [ ] :dizzy: (New Feature)
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
