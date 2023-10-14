@@ -102,9 +102,16 @@ def init(
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
-    site_author: typing.Optional[str] = typer.Option(
-        None,
-        help="(Optional): Author of the site",
+    author_name: typing.Optional[str] = typer.Option(
+        ...,
+        prompt="Author Name",
+        help="Site Author's Name",
+        rich_help_panel="Site Vars",
+    ),
+    author_email: typing.Optional[str] = typer.Option(
+        ...,
+        prompt="Author Email",
+        help="Email of Site's Author",
         rich_help_panel="Site Vars",
     ),
     site_description: typing.Optional[str] = typer.Option(
@@ -176,33 +183,6 @@ def init(
     project_folder_path = pathlib.Path(project_folder)
     with Progress() as progress:
         progress.console.rule("[green][bold]Creating Project")
-        task_project = progress.add_task("Creating Site", total=5)
-        site = _create_site_with_vars(
-            site_title=site_title,
-            site_url=site_url,
-            site_description=site_description,
-            site_author=site_author,
-            collection_path=collection_path,
-        )
-        progress.update(task_project, advance=1)
-
-        # add output path
-        if output_path:
-            site.output_path = str(output_path)
-
-        # creating folders unless skipped
-        if not skip_static:
-            task_static_folder = progress.add_task(
-                f"Creating Static Folder: [blue]{static_path}",
-                total=1,
-            )
-            static = project_folder_path.joinpath(static_path)
-            static.mkdir(exist_ok=force)
-            site.static_path = str(static_path)
-            progress.update(task_static_folder, advance=1)
-
-        progress.update(task_project, advance=1)
-
         # creating the app.py file from the template
         project_config_path = (
             pathlib.Path(project_folder).joinpath(project_path_name).with_suffix(".py")
@@ -211,22 +191,18 @@ def init(
             f"Generating App File: [blue]{project_config_path}", total=1
         )
 
-        has_attrs = any((site_title, site_url, site_description, site_author))
-
         project_config_path.write_text(
             CREATE_APP_PY_TEMPLATE.render(
-                has_attrs=has_attrs,
                 site_title=site_title,
                 site_url=site_url,
                 site_description=site_description,
-                site_author=site_author,
+                author={"name": author_name, "email": author_email},
                 output_path=output_path,
                 static_path=static_path,
                 collection_path=collection_path,
             )
         )
         progress.update(task_generate_project_path, advance=1)
-        progress.update(task_project, advance=1)
 
         # Create the templates folder and the index.html file
         task_templates = progress.add_task(
@@ -241,7 +217,6 @@ def init(
         )
 
         progress.update(task_templates, advance=1)
-        progress.update(task_project, advance=1)
 
         # Create the collection
         if not skip_collection:
@@ -255,7 +230,6 @@ def init(
             )
 
             progress.update(task_create_collection, advance=1)
-        progress.update(task_project, advance=1)
 
 
 @app.command()

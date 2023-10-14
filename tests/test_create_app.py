@@ -35,35 +35,3 @@ def test_create_folder(mocker):
     )
 
     assert app_folder == cli.pathlib.Path("mytest_folder")
-
-@pytest.mark.skip(reason="Not implemented")
-def test_create_app(tmp_path):
-    """Tests that the app.py is created"""
-    d = tmp_path
-
-    cli.init(
-        site_title="title",
-        site_url="url",
-        site_description="description",
-        site_author="author",
-        project_folder=d,
-    )
-
-    assert (
-        d.joinpath("app.py").read_text().strip()
-        == pathlib.Path("tests/create_app_check_file.txt").read_text().strip()
-    )
-
-@pytest.mark.skip(reason="Not implemented")
-def test_create_app_no_vars(tmp_path):
-    """Tests app.py is created with no update to vars"""
-    d = tmp_path
-
-    cli.init(
-        project_folder=d,
-    )
-
-    assert (
-        d.joinpath("app.py").read_text().strip()
-        == pathlib.Path("tests/create_app_check_file_no_site_vars.txt").read_text().strip()
-    )

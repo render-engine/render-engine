@@ -8,8 +8,7 @@ app = Site()
 app.output_path = "{{output_path}}"
 app.static_paths.add("{{static_paths}}")
 
-{% if has_attrs %}# Your site_vars will be used throughout your site
-app.site_vars.update(
+app.site_vars.update({
     {% if site_title %}
     SITE_TITLE="{{site_title}}",
     {% endif %}
@@ -19,15 +18,18 @@ app.site_vars.update(
     {% if site_description %}
     SITE_DESCRIPTION="{{site_description}}",
     {% endif %}
-    {% if site_author %}
-    SITE_AUTHOR="{{site_author}}",
-    {% endif %}
-    )
+    AUTHOR={
+        "name": "{{author['name']}}",
+        "email": "{{author['email']}}",
+    },
+    NAVIGATION={}
+        
+    })
 
-{% endif %}
 @app.page
 class Index(Page):
     template = "index.html"
+    template_vars = {"welcome_message": "Welcome to your new site!"}
 
 {% if not skip_collection %}
 @app.collection

@@ -1,6 +1,7 @@
 import pytest
 from jinja2 import Environment, select_autoescape
 
+import render_engine.cli as _cli
 from render_engine.collection import Collection
 from render_engine.engine import (
     render_engine_templates_loader,
@@ -63,3 +64,21 @@ def feed_test_site(tmp_path):
     feed = site.route_list['testcollection'].feed
     feed_content = feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
     return feed_content
+
+
+@pytest.fixture(scope="session")
+def cli(tmp_path_factory):
+    project_folder = tmp_path_factory.getbasetemp() / "test_app"
+    project_folder.mkdir()
+    output_path = tmp_path_factory.getbasetemp() / "output"
+
+    _cli.init(
+        collection_path="pages",
+        project_folder=project_folder,
+        site_title="Test Site",
+        site_url="http://localhost:8000",
+        site_description="Test Site Description",
+        author_name="Test Site Author",
+        author_email="hello@example.com",
+        output_path=output_path
+    )
