@@ -200,6 +200,7 @@ def init(
                 output_path=output_path,
                 static_path=static_path,
                 collection_path=collection_path,
+                skip_collection=skip_collection,
             )
         )
         progress.update(task_generate_project_path, advance=1)
@@ -225,7 +226,7 @@ def init(
             )
             _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
             _collection_path.mkdir(exist_ok=force)
-            _collection_path.joinpath("sample_pages.md").write_text(
+            _collection_path.joinpath("sample_page.md").write_text(
                 engine.get_template("base_collection_path.md").render()
             )
 
