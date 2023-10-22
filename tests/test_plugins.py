@@ -1,10 +1,13 @@
-import typing
 import logging
+import pathlib
+import typing
+
 import pytest
+
+from render_engine.collection import Collection
 from render_engine.hookspecs import hook_impl
 from render_engine.page import Page
 from render_engine.site import Site
-from render_engine.collection import Collection
 
 
 class FakePlugin:
@@ -24,9 +27,22 @@ class FakePlugin:
         else:
             raise ValueError("FAIL")
 
-@pytest.fixture
-def site():
-    site = Site()
+    @hook_impl
+    def render_content(
+        page: Page,
+        settings: dict[str, typing.Any],
+    ):
+        print("Render Content Called!")
+
+@pytest.fixture(scope="module")
+def site(tmp_path_factory):
+    
+    tmp_output_path = tmp_path_factory.getbasetemp() / "plugin_test_output"
+    class testSite(Site):
+        output_path = tmp_output_path
+        
+        
+    site = testSite()
     site.register_plugins(FakePlugin)
     return site
 
@@ -78,13 +94,30 @@ def test_collection_ignores_plugin():
 
     
 
-def test_plugin_settings_from_site(caplog, site: Site):
-    """Check that the plugin settings are passed from the site to the plugin"""
+def test_plugin_render_content_runs_from_archive(tmp_path, mocker):
+    """Mock a plugin that runs from archive and assert that plugin's render_content is called"""
 
-    with caplog.at_level(logging.INFO):
-        site._pm.hook.pre_build_site(
-            site=site,
-            settings=site.site_settings['plugins']
-        )
-    assert 'default' in caplog.text
+    tmp_output_path = tmp_path / "plugin_test_output"
+    tmp_content_path = tmp_path / "content"
+    tmp_content_path.mkdir()
+    tmp_file = tmp_content_path / "test.md"
+    tmp_file.write_text("test")
     
+    class TestPluginSite(Site):
+        output_path = tmp_output_path
+
+    site = TestPluginSite()
+    site.register_plugins(FakePlugin)
+    
+    @site.collection
+    class testCollection(Collection):
+        content_path = tmp_content_path
+        has_archive = True
+
+    mock_render_content = mocker.patch.object(site._pm.hook, 'render_content')
+    site.render()
+
+    assert pathlib.Path(tmp_output_path).exists()
+    assert pathlib.Path(tmp_output_path / "page.html").exists()
+    assert pathlib.Path(tmp_output_path / "testcollection.html").exists()
+    assert mock_render_content.call_count == 2

@@ -54,7 +54,7 @@ class Collection(BaseObject):
 
     """
 
-    archive_template: str | None
+    archive_template: str|pathlib.Path = "archive.html"
     content_path: pathlib.Path | str
     content_type: Page = Page
     Feed: RSSFeed
@@ -73,12 +73,9 @@ class Collection(BaseObject):
         self,
     ) -> None:
 
-        self.has_archive = any(
-            [
-                hasattr(self, "archive_template"),
-                getattr(self, "items_per_page", None),
-            ]
-        )
+        if not getattr(self, 'has_archive', False):
+            self.has_archive = getattr(self, "items_per_page", None)
+
         self.title = self._title
 
     def iter_content_path(self):

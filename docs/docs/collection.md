@@ -27,3 +27,9 @@ You can access `some_value` in your template like this:
 ```
 {{collection.some_value}}
 ```
+
+## Collection Archives
+
+Collection archives are a special type of page that is automatically generated for each collection.
+
+For more information, see [Collection Archives](/docs/archive).
