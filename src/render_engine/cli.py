@@ -13,6 +13,7 @@ from rich.progress import Progress
 
 from render_engine.engine import engine
 from render_engine.site import Site
+from render_engine.watcher import RegExHandler
 
 app = typer.Typer()
 
@@ -162,7 +163,7 @@ def init(
 ):
     """
     CLI for creating a new site configuration.
-    
+
     Params:
         collection_path: create your content folder in a custom location
         force: Force overwrite of existing files
@@ -240,7 +241,7 @@ def build(site_module: str):
 
     Params:
         site_module: module and class name of the site
-    
+
     """
     app = get_app(site_module)
     app.render()
@@ -253,6 +254,12 @@ def serve(
         "--build",
         "-b",
         help="module:site for Build the site prior to serving",
+    ),
+    reload: typing.Optional[bool] = typer.Option(
+        None,
+        "--reload",
+        "-r",
+        help="Reload the server when files change",
     ),
     directory: typing.Optional[str] = typer.Option(
         None,
@@ -277,6 +284,7 @@ def serve(
 
     Params:
         module_site: Python module and initialize Site class
+        reload: Use to reload server on file change
         build: flag to build the site prior to serving the app
         directory: Directory to serve. If `module_site` is provided, this will be the `output_path` of the site.
         port: Port to serve on
@@ -293,17 +301,24 @@ def serve(
         else:
             directory = 'output'
 
-    class server(SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, directory=directory, **kwargs)
+    server_address = ("127.0.0.1", port)
 
-    server_address = ("localhost", port)
-    httpd = HTTPServer(server_address, server)
+    handler = RegExHandler(
+            server_address=server_address,
+            dir_to_serve=directory,
+            app=app,
+            patterns=None,
+            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$"],
+        )
+
     console = Console()
-    console.print(f"Serving [blue]{directory} on http://{server_address[0]}:{server_address[1]}")
-    console.print("Press [bold red]CTRL+C[/bold red] to stop serving")
-    return httpd.serve_forever()
 
+    if not reload:
+        console.print(f"[bold green]Starting server on http://{server_address[0]}:{server_address[1]}[/bold green]")
+        handler._server.serve_forever()
+    else:
+        console.print("Watching for changes...")
+        handler.watch()
 
 def cli():
     app()
