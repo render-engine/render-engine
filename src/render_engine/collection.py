@@ -60,7 +60,7 @@ class Collection(BaseObject):
     Feed: RSSFeed
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
-    items_per_page: int | None
+    items_per_page: int = -1
     PageParser: BasePageParser = MarkdownPageParser
     parser_extras: dict[str, any]
     routes: list[str] = ["./"]
