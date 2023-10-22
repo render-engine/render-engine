@@ -74,7 +74,7 @@ class Collection(BaseObject):
     ) -> None:
 
         if not getattr(self, 'has_archive', False):
-            self.has_archive = getattr(self, "items_per_page", False)
+            self.has_archive = getattr(self, "items_per_page", -1) >= 0
 
         self.title = self._title
 
