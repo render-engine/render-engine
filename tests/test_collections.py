@@ -62,7 +62,6 @@ def test_collection_archive_no_items_per_page(tmp_path: pathlib.Path):
 
     class BasicCollection(Collection):
         content_path = tmp_dir.absolute()
-        archive_template = None
 
     collection = BasicCollection()
     assert len(list(collection.archives)) == 0

@@ -195,7 +195,7 @@ class Site(ThemeManager):
             for route in collection.routes:
                 self._render_output(route, entry)
 
-        if collection.has_archive:
+        if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 
@@ -211,7 +211,7 @@ class Site(ThemeManager):
             for route in collection.routes:
                 self._render_output(route, entry)
 
-        if collection.has_archive:
+        if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 

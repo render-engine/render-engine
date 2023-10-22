@@ -186,7 +186,9 @@ def test_collection_archive_pages_in_route_list(tmp_path, page_number, expected_
 
 
 def test_url_for_Collection_in_site(tmp_path):
-    """Tests that url_for a page in a collection is added to a template"""
+    """
+    Tests that url_for a page in a collection is added to a template
+    """
     test_template = pathlib.Path(tmp_path / "custom_template.html")
     test_template.write_text("The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'")
     

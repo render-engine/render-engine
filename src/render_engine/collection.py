@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import typing
 
@@ -73,7 +74,7 @@ class Collection(BaseObject):
         self,
     ) -> None:
 
-        if self.items_per_page > 0:
+        if getattr(self, "items_per_page", False):
             self.has_archive = True
 
         self.title = self._title
@@ -142,6 +143,7 @@ class Collection(BaseObject):
         """
 
         if not self.has_archive:
+            logging.warning("Collection %s has no archives", self._title)
             yield from ()
 
         sorted_pages = list(self.sorted_pages)
