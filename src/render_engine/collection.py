@@ -60,7 +60,7 @@ class Collection(BaseObject):
     Feed: RSSFeed
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
-    items_per_page: int = -1
+    items_per_page: int | None
     PageParser: BasePageParser = MarkdownPageParser
     parser_extras: dict[str, any]
     routes: list[str] = ["./"]
@@ -73,11 +73,8 @@ class Collection(BaseObject):
         self,
     ) -> None:
 
-        if not getattr(self, 'has_archive', False):
-            self.has_archive = getattr(self, "items_per_page", -1) >= 0
-
-        elif self.items_per_page < 0:
-            self.items_per_page = 0
+        if self.items_per_page > 0:
+            self.has_archive = True
 
         self.title = self._title
 
