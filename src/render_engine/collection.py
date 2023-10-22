@@ -76,6 +76,9 @@ class Collection(BaseObject):
         if not getattr(self, 'has_archive', False):
             self.has_archive = getattr(self, "items_per_page", -1) >= 0
 
+        elif self.items_per_page < 0:
+            self.items_per_page = 0
+
         self.title = self._title
 
     def iter_content_path(self):
