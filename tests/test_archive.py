@@ -1,7 +1,5 @@
-import pytest
 from render_engine.page import Page
 from render_engine.archive import Archive
-from render_engine.collection import Collection
 
 
 def test_archive_slug_name_with_pages():

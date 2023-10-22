@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import typing
 
@@ -73,8 +74,8 @@ class Collection(BaseObject):
         self,
     ) -> None:
 
-        if not getattr(self, 'has_archive', False):
-            self.has_archive = getattr(self, "items_per_page", None)
+        if getattr(self, "items_per_page", False):
+            self.has_archive = True
 
         self.title = self._title
 
@@ -141,7 +142,8 @@ class Collection(BaseObject):
         Archives are an iterable and the individual pages are built shortly after the collection pages are built. This happens when [Site.render][render_engine.Site.render] is called.
         """
 
-        if not self.has_archive:
+        if not getattr(self, "has_archive", False):
+            logging.warning("`has_archive` is set to `False` for %s. While an archive will be generated. The file will not be saved.", self._title)
             yield from ()
 
         sorted_pages = list(self.sorted_pages)
