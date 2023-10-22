@@ -142,8 +142,8 @@ class Collection(BaseObject):
         Archives are an iterable and the individual pages are built shortly after the collection pages are built. This happens when [Site.render][render_engine.Site.render] is called.
         """
 
-        if not self.has_archive:
-            logging.warning("Collection %s has no archives", self._title)
+        if not getattr(self, "has_archive", False):
+            logging.warning("`has_archive` is set to `False` for %s. While an archive will be generated. The file will not be saved.", self._title)
             yield from ()
 
         sorted_pages = list(self.sorted_pages)

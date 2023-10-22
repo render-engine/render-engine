@@ -50,7 +50,7 @@ def test_pages_generate_from_collection_content_path(tmp_path: pathlib.Path):
         assert page.content in content
 
 
-def test_collection_archive_no_items_per_page(tmp_path: pathlib.Path):
+def test_collection_archive_no_items_per_page(caplog, tmp_path: pathlib.Path):
     """
     Tests that archive generates a single page if items_per_page is not set
     """
@@ -63,8 +63,11 @@ def test_collection_archive_no_items_per_page(tmp_path: pathlib.Path):
     class BasicCollection(Collection):
         content_path = tmp_dir.absolute()
 
-    collection = BasicCollection()
-    assert len(list(collection.archives)) == 0
+    with caplog.at_level("WARNING"):
+        collection = BasicCollection()
+        assert len(list(collection.archives)) == 1
+        assert "`has_archive` is set to `False`" in caplog.text
+        assert "BasicCollection" in caplog.text
 
 
 def test_collection_context(tmp_path: pathlib.Path):
