@@ -41,6 +41,7 @@ def site(tmp_path):
     class TestCollection(Collection):
         pages = [Page(content_path=file)]
         Feed = RSSFeed
+        has_archive = True
 
     return site
 
