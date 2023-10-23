@@ -6,7 +6,7 @@
 #
 babel==2.13.0
     # via mkdocs-material
-black==23.9.1
+black==23.10.1
     # via render-engine (pyproject.toml)
 certifi==2023.7.22
     # via requests
