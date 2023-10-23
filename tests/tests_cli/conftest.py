@@ -2,7 +2,7 @@ import pytest
 import render_engine.cli as _cli
 
 pytest.fixture()
-def get_tmp_path(tmp_path_facorty, folder):
+def get_tmp_path(tmp_path_factory, folder):
     return tmp_path_factory.getbasetemp() / folder
 
 @pytest.fixture(scope="session")
