@@ -210,7 +210,7 @@ def init(
         task_templates = progress.add_task(
             f"Creating Templates Folder: [blue]{templates_path}", total=1
         )
-        templates = ["index.html", "base.html", "content.html"]
+        templates = ["index.html", "content.html"]
         _create_templates_folder(
             *templates,
             project_folder=project_folder,

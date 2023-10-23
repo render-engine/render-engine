@@ -123,7 +123,7 @@ class Site(ThemeManager):
         ```
         """
         _Collection = Collection()
-        self.register_themes(_Collection.required_themes)
+        self.register_themes(*getattr(_Collection, "required_themes", []))
         plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
         
         for plugin in getattr(_Collection, 'ignore_plugins', []):
@@ -199,7 +199,6 @@ class Site(ThemeManager):
         if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
-                print("Building Partial Archive using template: %s", archive.template)
 
                 self._render_output(collection.routes[0], archive)
 
@@ -216,7 +215,6 @@ class Site(ThemeManager):
         if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
-                print("Building Full Archive using template: %s", archive.template)
 
                 for route in collection.routes:
                     self._render_output(collection.routes[0], archive)
