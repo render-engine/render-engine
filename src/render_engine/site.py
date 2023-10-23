@@ -123,6 +123,7 @@ class Site(ThemeManager):
         ```
         """
         _Collection = Collection()
+        self.register_themes(*getattr(_Collection, "required_themes",[]))
         plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
         
         for plugin in getattr(_Collection, 'ignore_plugins', []):
@@ -269,10 +270,11 @@ class Site(ThemeManager):
                         self._render_output(route, entry)
 
                 if isinstance(entry, Collection):
-                    if self.partial:
-                        self._render_partial_collection(entry)
-                    else:
+                    if not self.partial:
                         self._render_full_collection(entry)
+                    else:
+                        self._render_partial_collection(entry)
+
             progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(
                 site=self,

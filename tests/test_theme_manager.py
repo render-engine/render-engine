@@ -28,18 +28,21 @@ def test_ThemeManager_registers_theme():
     loader2theme = Theme(
         loader=loader2,
         static_dir="test",
-        filters={"test_up": lambda x: x.upper()}
+        filters={"test_up": lambda x: x.upper()},
+        plugins = []
     )
 
     loader3theme = Theme(
         loader=loader3,
         static_dir="test",
-        filters={"test_down": lambda x: x.lower()}
+        filters={"test_down": lambda x: x.lower()},
+        plugins = []
     )
 
     loader4theme = Theme(
         loader=loader1,
-        filters = {}
+        filters = {},
+        plugins = []
     )
     class TestThemeManager(ThemeManager):
         engine = Environment(loader=ChoiceLoader(loaders=[loader1]))

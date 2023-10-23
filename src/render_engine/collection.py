@@ -45,6 +45,7 @@ class Collection(BaseObject):
         items_per_page: int | None
         PageParser: Type[BasePageParser] = MarkdownPageParser
         parser_extras: dict[str, Any]
+        required_themes: list[callable]
         routes: list[str] = ["./"]
         sort_by: str = "title"
         sort_reverse: bool = False
@@ -64,6 +65,7 @@ class Collection(BaseObject):
     items_per_page: int | None
     PageParser: BasePageParser = MarkdownPageParser
     parser_extras: dict[str, any]
+    required_themes: list[typing.Callable]
     routes: list[str] = ["./"]
     sort_by: str = "title"
     sort_reverse: bool = False
