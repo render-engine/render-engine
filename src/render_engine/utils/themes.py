@@ -9,8 +9,8 @@ from jinja2 import BaseLoader, Environment
 @dataclasses.dataclass
 class Theme:
     loader: BaseLoader
-    static_dir: str|pathlib.Path
     filters: dict[str, callable]
+    static_dir: str | pathlib.Path | None = None
     plugins: list[callable] | None = None
 
 class ThemeManager:
@@ -39,7 +39,10 @@ class ThemeManager:
         """
         logging.info(f"Registering theme: {theme}")
         self.engine.loader.loaders.insert(0, theme.loader)
-        self.static_paths.add(theme.static_dir)
+        
+        if theme.static_dir:
+            logging.debug(f"Adding static path: {theme.static_dir}")
+            self.static_paths.add(theme.static_dir)
         self.engine.filters.update(theme.filters)
 
     def register_themes(self, *themes: Theme):
