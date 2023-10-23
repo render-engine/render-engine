@@ -6,7 +6,7 @@ from render_engine import Site, Page, Collection
 
 app = Site()
 app.output_path = "{{output_path}}"
-app.static_paths.add("{{static_paths}}")
+app.static_paths.add("{{static_path}}")
 
 app.site_vars.update({
     {% if site_title %}
