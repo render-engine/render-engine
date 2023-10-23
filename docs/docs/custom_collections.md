@@ -46,6 +46,8 @@ While you can set any of the attributes and override any methods on the Collecti
 
 `parser_extras: dict[str, Any]`: Extra attributes that will be passed to the `PageParser` class.
 
+`required_themes: list[Theme]`: Some collections may require a specific theme to be used. This attribute allows you to set a list of themes that will be required for the collection. These will be installed when @site.collection is called.
+
 `sort_by: str`: The attribute that will be used to sort the collection `Page` objects. By default, this is the title of the page, but you can set this to any attribute that is available on the page object, or leave it to the user to set.
 
 `sort_reverse: bool`: Whether or not the collection should be sorted in reverse order. By default, this is False, but you can set this to True, or leave it to the user to set.
