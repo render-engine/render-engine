@@ -199,6 +199,7 @@ class Site(ThemeManager):
         if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
+                print("Building Partial Archive using template: %s", archive.template)
 
                 self._render_output(collection.routes[0], archive)
 
@@ -215,6 +216,7 @@ class Site(ThemeManager):
         if getattr(collection, 'has_archive', False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
+                print("Building Full Archive using template: %s", archive.template)
 
                 for route in collection.routes:
                     self._render_output(collection.routes[0], archive)
@@ -270,10 +272,11 @@ class Site(ThemeManager):
                         self._render_output(route, entry)
 
                 if isinstance(entry, Collection):
-                    if self.partial:
-                        self._render_partial_collection(entry)
-                    else:
+                    if not self.partial:
                         self._render_full_collection(entry)
+                    else:
+                        self._render_partial_collection(entry)
+
             progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(
                 site=self,
