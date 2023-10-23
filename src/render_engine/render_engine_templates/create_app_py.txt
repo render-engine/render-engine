@@ -18,9 +18,9 @@ app.site_vars.update({
     {% if site_description %}
     SITE_DESCRIPTION:"{{site_description}}",
     {% endif %}
-    AUTHOR:{
-        "name": "{{author['name']}}",
-        "email": "{{author['email']}}",
+    OWNER:{
+        "name": "{{owner['name']}}",
+        "email": "{{owner['email']}}",
     },
     NAVIGATION:[
         {

@@ -103,16 +103,16 @@ def init(
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
-    author_name: typing.Optional[str] = typer.Option(
+    owner_name: typing.Optional[str] = typer.Option(
         ...,
-        prompt="Author Name",
-        help="Site Author's Name",
+        prompt="Owner Name",
+        help="Site Owners's Name",
         rich_help_panel="Site Vars",
     ),
-    author_email: typing.Optional[str] = typer.Option(
+    owner_email: typing.Optional[str] = typer.Option(
         ...,
-        prompt="Author Email",
-        help="Email of Site's Author",
+        prompt="Owner Email",
+        help="Email of Site's Owner",
         rich_help_panel="Site Vars",
     ),
     site_description: typing.Optional[str] = typer.Option(
@@ -170,7 +170,7 @@ def init(
         output_path: custom output folder location
         project_path_name: name of render_engine app name
         project_folder: path to create the project
-        site_author:  Author of the site
+        owner:  owner of the site
         site_description: Site Description
         site_title: title of the site
         site_url: URL for the site
@@ -197,7 +197,7 @@ def init(
                 site_title=site_title,
                 site_url=site_url,
                 site_description=site_description,
-                author={"name": author_name, "email": author_email},
+                owner={"name": owner_name, "email": owner_email},
                 output_path=output_path,
                 static_path=static_path,
                 collection_path=collection_path,

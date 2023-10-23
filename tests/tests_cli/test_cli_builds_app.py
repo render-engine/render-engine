@@ -5,17 +5,17 @@ from render_engine import collection
 
 
 def test_cli_author_name(default_cli, tmp_path_factory):
-    """Asserts there is a SITE_AUTHOR and SITE_EMAIL in the author patch"""
+    """Asserts there is a `OWNER` key"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
-    assert "AUTHOR:" in temp_app.read_text()
+    assert "OWNER:" in temp_app.read_text()
 
 def test_cli_author_name(default_cli, tmp_path_factory):
-    """Asserts there is a SITE_AUTHOR and SITE_EMAIL in the author patch"""
+    """Asserts there is a `name` key in the OWNER value"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
     assert "\"name\": \"Test Site Author\"" in temp_app.read_text()
 
 def test_cli_author_email(default_cli, tmp_path_factory):
-    """Asserts there is a SITE_AUTHOR and SITE_EMAIL in the author patch"""
+    """Asserts there is a `email` in the OWNER value"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
     assert "\"email\": \"hello@example.com\"" in temp_app.read_text()
 
