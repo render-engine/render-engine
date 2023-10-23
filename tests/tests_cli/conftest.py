@@ -17,8 +17,8 @@ def default_cli(tmp_path_factory):
         site_title="Test Site",
         site_url="http://localhost:8000",
         site_description="Test Site Description",
-        author_name="Test Site Author",
-        author_email="hello@example.com",
+        owner_name="Test Site Author",
+        owner_email="hello@example.com",
         output_path=output_path
     )
 
@@ -34,7 +34,7 @@ def skip_collection_cli(tmp_path_factory):
         site_title="Test Site",
         site_url="http://localhost:8000",
         site_description="Test Site Description",
-        author_name="Test Site Author",
-        author_email="hello@example.com",
+        owner_name="Test Site Author",
+        owner_email="hello@example.com",
         output_path=output_path
     )
