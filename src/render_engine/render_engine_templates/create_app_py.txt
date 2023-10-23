@@ -10,19 +10,19 @@ app.static_paths.add("{{static_paths}}")
 
 app.site_vars.update({
     {% if site_title %}
-    SITE_TITLE="{{site_title}}",
+    SITE_TITLE:"{{site_title}}",
     {% endif %}
     {% if site_url %}
-    SITE_URL="{{site_url}}",
+    SITE_URL:"{{site_url}}",
     {% endif %}
     {% if site_description %}
-    SITE_DESCRIPTION="{{site_description}}",
+    SITE_DESCRIPTION:"{{site_description}}",
     {% endif %}
-    AUTHOR={
+    AUTHOR:{
         "name": "{{author['name']}}",
         "email": "{{author['email']}}",
     },
-    NAVIGATION=[
+    NAVIGATION:[
         {
             "name": "Home",
             "url": "/",
