@@ -30,7 +30,7 @@ dev = [
     "pytest-lazy-fixture",
     "mkdocs",
     "mkdocs-material",
-    "mkdocstrings[pyt`hon]",
+    "mkdocstrings[python]",
     "pymdown-extensions",
     "ruff",
     "black",

@@ -4,7 +4,7 @@ import pytest
 from render_engine import collection
 
 
-def test_cli_autho_name(default_cli, tmp_path_factory):
+def test_cli_author_name(default_cli, tmp_path_factory):
     """Asserts there is a SITE_AUTHOR and SITE_EMAIL in the author patch"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
     assert "AUTHOR:" in temp_app.read_text()
@@ -18,6 +18,11 @@ def test_cli_author_email(default_cli, tmp_path_factory):
     """Asserts there is a SITE_AUTHOR and SITE_EMAIL in the author patch"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
     assert "\"email\": \"hello@example.com\"" in temp_app.read_text()
+
+def test_cli_static_path(default_cli, tmp_path_factory):
+    """Asserts there is a SITE_STATIC_PATH in the author patch"""
+    temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
+    assert "app.static_paths.add(\"static\")" in temp_app.read_text()
 
 @pytest.mark.parametrize(
     "cli, exists", 
