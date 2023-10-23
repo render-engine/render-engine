@@ -123,7 +123,7 @@ class Site(ThemeManager):
         ```
         """
         _Collection = Collection()
-        self.register_themes(*getattr(_Collection, "required_themes", []))
+        self.register_themes(*getattr(_Collection, "required_themes",[]))
         plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
         
         for plugin in getattr(_Collection, 'ignore_plugins', []):
