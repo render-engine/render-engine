@@ -1,10 +1,7 @@
 # ruff: noqa: UP007
 
-import importlib
 import pathlib
-import sys
 import typing
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import dtyper
 import typer
@@ -13,17 +10,10 @@ from rich.progress import Progress
 
 from render_engine.engine import engine
 from render_engine.site import Site
-from render_engine.watcher import RegExHandler
+from render_engine.watcher import RegExHandler, get_app
 
 app = typer.Typer()
 
-
-def get_app(module_site: str) -> Site:
-    """Split the site module into a module and a class name"""
-    sys.path.insert(0, ".")
-    import_path, app_name = module_site.split(":", 1)
-    importlib.import_module(import_path)
-    return getattr(sys.modules[import_path], app_name)
 
 
 def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
@@ -181,7 +171,7 @@ def init(
     """
     # creating the site object and site_vars
 
-    project_folder_path = pathlib.Path(project_folder)
+    pathlib.Path(project_folder)
     with Progress() as progress:
         progress.console.rule("[green][bold]Creating Project")
         # creating the app.py file from the template
@@ -307,8 +297,9 @@ def serve(
             server_address=server_address,
             dir_to_serve=directory,
             app=app,
+            module_site=module_site,
             patterns=None,
-            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$"],
+            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r"__*+$"],
         )
 
     console = Console()

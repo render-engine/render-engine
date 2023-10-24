@@ -1,4 +1,6 @@
 
+import importlib
+import sys
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -30,6 +32,12 @@ def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHT
         return ThreadingHTTPServer(server_address, _RequestHandler)
     return _httpd()
 
+def get_app(module_site: str) -> Site:
+    """Split the site module into a module and a class name"""
+    sys.path.insert(0, ".")
+    import_path, app_name = module_site.split(":", 1)
+    importlib.import_module(import_path)
+    return getattr(sys.modules[import_path], app_name)
 
 class RegExHandler(RegexMatchingEventHandler):
     """
@@ -37,10 +45,9 @@ class RegExHandler(RegexMatchingEventHandler):
     well as creates a server to serve files in a given directory (`dir_to_serve`). The
     class contains helper methods to manage server events in a thread.
 
-    Meanwhile, the
-    `watch` method uses an instance of this handler class to monitor for file changes.
-    The files to be monitored are all files/directories within the `dir_to_watch`, which
-    defaults to the project root directory. The `patterns` and `ignore_patterns` are used
+    Meanwhile, the `watch` method uses an instance of this handler class to monitor for file
+    changes. The files to be monitored are all files/directories within the `dir_to_watch`,
+    which defaults to the project root directory. The `patterns` and `ignore_patterns` are used
     to filter the files to be monitored using regular expressions.
 
     Params:
@@ -57,6 +64,7 @@ class RegExHandler(RegexMatchingEventHandler):
         server_address: tuple[int, int],
         dir_to_serve: str,
         app: Site,
+        module_site: str,
         dir_to_watch: str = ".",
         patterns: [list[str] | None] = None,
         ignore_patterns: [list[str] | None] = None,
@@ -68,6 +76,7 @@ class RegExHandler(RegexMatchingEventHandler):
         self.server_address = server_address
         self.dir_to_serve = dir_to_serve,
         self.app = app
+        self.module_site = module_site
         self.dir_to_watch = dir_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
@@ -91,20 +100,20 @@ class RegExHandler(RegexMatchingEventHandler):
         self._thread.join()
 
     def rebuild(self):
-        console.print(f"[bold purple]Reloading and Rebuilding site...[/bold purple]")
+        console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
+        import_path = self.module_site.split(":", 1)[0]
+        module = importlib.import_module(import_path)
+        importlib.reload(module)
         self.app.render()
 
 
     def on_any_event(self, event: FileSystemEvent):
         if event.is_directory:
             return None
-        if event.event_type == "modified":
-
+        if self._server:
             self.stop_server()
-            time.sleep(1)
-            self.rebuild()
-            time.sleep(1)
             self.start_server()
+        self.rebuild()
 
 
     def watch(self):
