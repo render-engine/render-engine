@@ -72,7 +72,7 @@ class RegExHandler(RegexMatchingEventHandler):
         **kwargs
     ):
         self.p = None
-        self._server = spawn_server(server_address, dir_to_serve)
+        self._server = spawn_server
         self.server_address = server_address
         self.dir_to_serve = dir_to_serve,
         self.app = app
@@ -105,14 +105,12 @@ class RegExHandler(RegexMatchingEventHandler):
         module = importlib.import_module(import_path)
         importlib.reload(module)
         self.app.render()
+        
 
 
     def on_any_event(self, event: FileSystemEvent):
         if event.is_directory:
             return None
-        if self._server:
-            self.stop_server()
-            self.start_server()
         self.rebuild()
 
 
