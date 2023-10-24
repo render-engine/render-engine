@@ -299,14 +299,14 @@ def serve(
             app=app,
             module_site=module_site,
             patterns=None,
-            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r"__*+$"],
+            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r"(.+/)*__.*+$"],
         )
 
     console = Console()
 
     if not reload:
         console.print(f"[bold green]Starting server on http://{server_address[0]}:{server_address[1]}[/bold green]")
-        handler._server.serve_forever()
+        handler._server(server_address=server_address, directory=directory).serve_forever()
     else:
         console.print("Watching for changes...")
         handler.watch()
