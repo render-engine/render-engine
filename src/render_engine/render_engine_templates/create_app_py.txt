@@ -18,15 +18,15 @@ app.site_vars.update({
     {% if site_description %}
     SITE_DESCRIPTION:"{{site_description}}",
     {% endif %}
-    OWNER:{
+    "OWNER":{
         "name": "{{owner['name']}}",
         "email": "{{owner['email']}}",
     },
-    NAVIGATION:[
+    "NAVIGATION":[
         {
             "name": "Home",
             "url": "/",
-        }
+        },
         {% if not skip_collection %}
         {
             "name": "Collection Page",

@@ -7,7 +7,7 @@ from render_engine import collection
 def test_cli_author_name(default_cli, tmp_path_factory):
     """Asserts there is a `OWNER` key"""
     temp_app = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
-    assert "OWNER:" in temp_app.read_text()
+    assert "\"OWNER\":" in temp_app.read_text()
 
 def test_cli_author_name(default_cli, tmp_path_factory):
     """Asserts there is a `name` key in the OWNER value"""
@@ -52,7 +52,7 @@ def test_site_has_NAVIGATION(tmp_path_factory, default_cli):
     """Assert the generated site has a NAVIGATION item in site_vars"""
     site = tmp_path_factory.getbasetemp() / "test_default_cli_app" / "app.py"
     assert site.exists()
-    assert "NAVIGATION:" in site.read_text()
+    assert "\"NAVIGATION\":" in site.read_text()
 
 @pytest.mark.parametrize(
     "cli, exists", 
