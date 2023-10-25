@@ -200,7 +200,7 @@ def init(
         task_templates = progress.add_task(
             f"Creating Templates Folder: [blue]{templates_path}", total=1
         )
-        templates = ["index.html", "content.html"]
+        templates = ["index.html"]
         _create_templates_folder(
             *templates,
             project_folder=project_folder,
@@ -299,7 +299,7 @@ def serve(
             app=app,
             module_site=module_site,
             patterns=None,
-            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r"(.+/)*__.*+$"],
+            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*+$"],
         )
 
     console = Console()

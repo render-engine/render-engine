@@ -43,10 +43,13 @@ class Site(ThemeManager):
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
-        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
+        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
+        "head": [],
+        "theme": {},
     }
     engine: Environment = engine
     template_path: str = "templates"
+    themes: defaultdict = defaultdict(list)
 
 
     def __init__(
@@ -93,9 +96,15 @@ class Site(ThemeManager):
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
         super().register_theme(theme)
+
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
+        self.themes.append[theme]
+
+    def update_theme_settings(self, **settings):
+        for key,value in settings.items():
+            self.site_vars["theme"].update({key: value})
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
