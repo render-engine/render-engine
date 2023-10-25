@@ -49,7 +49,6 @@ class Site(ThemeManager):
     }
     engine: Environment = engine
     template_path: str = "templates"
-    themes: defaultdict = defaultdict(list)
 
 
     def __init__(
@@ -100,7 +99,6 @@ class Site(ThemeManager):
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
-        self.themes.append[theme]
 
     def update_theme_settings(self, **settings):
         for key,value in settings.items():
