@@ -102,7 +102,7 @@ class Site(ThemeManager):
 
         self.themes.append[theme]
 
-    def add_theme_setttings(self, **settings):
+    def update_theme_settings(self, **settings):
         for key,value in settings.items():
             self.site_vars["theme"].update({key: value})
 

@@ -288,5 +288,5 @@ def test_site_theme_update_settings():
     site = Site()
     assert "theme" in site.site_vars
     assert "test" not in site.site_vars
-    site.add_theme_setttings(test="test")
+    site.update_theme_settings(test="test")
     assert site.site_vars["theme"]["test"] == "test"
