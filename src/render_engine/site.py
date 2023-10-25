@@ -95,12 +95,6 @@ class Site(ThemeManager):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
         super().register_theme(theme)
 
-        if theme.required_settings:
-            for setting in theme.required_settings:
-                if not self.site_settings.get(setting):
-                    raise KeyError(f"Missing required setting: %s for theme: %s" % (setting, theme))
-        
-
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
