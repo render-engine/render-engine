@@ -9,7 +9,7 @@ from jinja2 import BaseLoader, Environment
 @dataclasses.dataclass
 class Theme:
     loader: BaseLoader
-    filters: dataclasses.field(default_factory=dict)
+    filters: dataclasses.field(default_factory=dict) 
     plugins: dataclasses.field(default_factory=list)
     static_dir: str | pathlib.Path | None = None
     globals: dataclasses.field(default_factory=dict) = None
