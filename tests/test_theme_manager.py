@@ -71,4 +71,3 @@ def test_ThemeManager_registers_theme_globals():
     thememgr.register_theme(theme)
     content = thememgr.engine.get_or_select_template('test1.html').render()
     assert content == "This is a test"
-    

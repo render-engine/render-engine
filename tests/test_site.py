@@ -7,6 +7,7 @@ from jinja2 import FileSystemLoader
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
+from render_engine.utils.themes import Theme
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -280,3 +281,12 @@ def tests_site_multiple_static_paths(tmp_path, site):
     site.render() 
     assert (output_tmp_dir / "static" / "test.txt").exists()
     assert (output_tmp_dir / "static2" / "test2.txt").exists()
+
+
+def test_site_theme_update_settings():
+    """Tests that the theme manager updates the settings"""
+    site = Site()
+    assert "theme" in site.site_vars
+    assert "test" not in site.site_vars
+    site.add_theme_setttings(test="test")
+    assert site.site_vars["theme"]["test"] == "test"

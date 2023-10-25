@@ -45,9 +45,11 @@ class Site(ThemeManager):
         "SITE_URL": "http://localhost:8000/",
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
         "head": [],
+        "theme": {},
     }
     engine: Environment = engine
     template_path: str = "templates"
+    themes: defaultdict = defaultdict(list)
 
 
     def __init__(
@@ -98,6 +100,11 @@ class Site(ThemeManager):
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
+        self.themes.append[theme]
+
+    def add_theme_setttings(self, **settings):
+        for key,value in settings.items():
+            self.site_vars["theme"].update({key: value})
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
