@@ -13,6 +13,8 @@ class Theme:
     plugins: dataclasses.field(default_factory=list)
     static_dir: str | pathlib.Path | None = None
     globals: dataclasses.field(default_factory=dict) = None
+    required_settings: dataclasses.field(default_factory=tuple) = None
+
 
 class ThemeManager:
     """
