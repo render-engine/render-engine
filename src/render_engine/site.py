@@ -43,7 +43,8 @@ class Site(ThemeManager):
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
-        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z"
+        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
+        "head": [],
     }
     engine: Environment = engine
     template_path: str = "templates"
