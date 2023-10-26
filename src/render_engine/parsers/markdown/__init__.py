@@ -4,12 +4,12 @@ from ..base_parsers import BasePageParser
 
 __all__ = ["BasePageParser"]
 
+
 class MarkdownPageParser(BasePageParser):
     """
     Uses the Base Parse to frontmatter parser the attrs
     Markdown2 then parses the content
     """
-
 
     @staticmethod
     def parse(content: str, page: "Page") -> str:

@@ -19,8 +19,9 @@ def register_plugins(plugins):
 
 class SiteSpecs:
     """Plugin hook specifications for the Site class"""
+
     default_settings: dict[str, typing.Any]
-    
+
     @hook_spec
     def add_default_settings(
         self,
@@ -57,8 +58,8 @@ class SiteSpecs:
     @hook_spec
     def post_render_content(
         self,
-        page : "page",
-        settings: dict[str: typing.Any],
+        page: "page",
+        settings: dict[str : typing.Any],
         site: "Site",
     ) -> None:
         """
@@ -80,8 +81,3 @@ class SiteSpecs:
         settings: dict[str, typing.Any],
     ) -> None:
         """Build After Building the collection"""
-
-
-
-
-

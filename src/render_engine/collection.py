@@ -56,7 +56,7 @@ class Collection(BaseObject):
 
     """
 
-    archive_template: str|pathlib.Path = "archive.html"
+    archive_template: str | pathlib.Path = "archive.html"
     content_path: pathlib.Path | str
     content_type: Page = Page
     Feed: RSSFeed
@@ -75,7 +75,6 @@ class Collection(BaseObject):
     def __init__(
         self,
     ) -> None:
-
         if getattr(self, "items_per_page", False):
             self.has_archive = True
 
@@ -84,12 +83,7 @@ class Collection(BaseObject):
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
 
-        return flatten(
-            [
-                pathlib.Path(self.content_path).glob(suffix)
-                for suffix in self.include_suffixes
-            ]
-        )
+        return flatten([pathlib.Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
 
     def _generate_content_from_modified_pages(self) -> typing.Generator[Page, None, None]:
         """
@@ -100,8 +94,8 @@ class Collection(BaseObject):
         repo = git.Repo()
 
         changed_files = [
-            *repo.untracked_files, # new files not yet in git's index
-            *repo.index.diff(), # modified files in git index
+            *repo.untracked_files,  # new files not yet in git's index
+            *repo.index.diff(),  # modified files in git index
         ]
 
         return (
@@ -111,8 +105,8 @@ class Collection(BaseObject):
         )
 
     def get_page(
-            self,
-            content_path:str|None=None,
+        self,
+        content_path: str | None = None,
     ) -> type[Page]:
         """Returns the page Object for the specified Content Path"""
         _page = self.content_type(
@@ -120,7 +114,7 @@ class Collection(BaseObject):
             Parser=self.PageParser,
         )
 
-        if getattr(self, '_pm', None):
+        if getattr(self, "_pm", None):
             _page.register_plugins(self.plugins)
         _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
@@ -145,7 +139,10 @@ class Collection(BaseObject):
         """
 
         if not getattr(self, "has_archive", False):
-            logging.warning("`has_archive` is set to `False` for %s. While an archive will be generated. The file will not be saved.", self._title)
+            logging.warning(
+                "`has_archive` is set to `False` for %s. While an archive will be generated. The file will not be saved.",
+                self._title,
+            )
             yield from ()
 
         sorted_pages = list(self.sorted_pages)
@@ -175,7 +172,6 @@ class Collection(BaseObject):
         feed.Parser = self.PageParser
         return feed
 
-
     @property
     def slug(self):
         return slugify(self.title)
@@ -193,6 +189,7 @@ class Collection(BaseObject):
         else:
             for page in self.pages:
                 yield page
+
 
 def render_archives(archive, **kwargs) -> list[Archive]:
     return [archive.render(pages=archive.pages, **kwargs) for archive in archive]

@@ -29,9 +29,8 @@ class BaseObject:
     @property
     def _slug(self) -> str:
         """The slugified path of the page"""
-        return slugify(getattr(self, 'slug', self._title))
+        return slugify(getattr(self, "slug", self._title))
 
-    
     @property
     def extension(self) -> str:
         """The extension of the page"""
@@ -44,7 +43,6 @@ class BaseObject:
             self._extension = f".{extension}"
         self._extension = extension
 
-
     @property
     def path_name(self) -> str:
         """
@@ -55,7 +53,6 @@ class BaseObject:
     def url_for(self):
         pass
 
-
     def to_dict(self):
         """
         Returns a dict of the page's attributes.
@@ -63,7 +60,7 @@ class BaseObject:
         This is often used to pass attributes into the page's `template`.
 
         """
-        base_dict ={
+        base_dict = {
             **vars(self),
             "title": self._title,
             "slug": self._slug,
@@ -75,14 +72,13 @@ class BaseObject:
         if hasattr(self, "template_vars"):
             for key, value in self.template_vars.items():
                 base_dict[key] = value
-        
-        return base_dict
 
+        return base_dict
 
     def register_plugins(self, plugins):
         """Creates the plugin manager and registers plugins"""
 
-        if getattr('self', 'plugins', None):
+        if getattr("self", "plugins", None):
             self.plugins.extend(plugins)
         else:
             self.plugins = plugins

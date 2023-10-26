@@ -8,6 +8,7 @@ def parse_content(content: str) -> tuple[dict, str]:
     p = frontmatter.parse(content)
     return p
 
+
 class BasePageParser:
     """
     The default Parser for Page objects.
@@ -23,7 +24,7 @@ class BasePageParser:
         This is a separate method so that it can be overridden by subclasses.
 
         params:
-            content_path: 
+            content_path:
                 The path to the file that will be used to generate the Page's `content`.
                 Should be a valid path to a file or a url.
         """
@@ -37,7 +38,7 @@ class BasePageParser:
         This is a separate method so that it can be overridden by subclasses.
 
         params:
-            content: 
+            content:
                 The path to the file that will be used to generate the Page's `content`.
                 Should be a valid path to a file or a url.
         """
@@ -45,7 +46,7 @@ class BasePageParser:
         return parse_content(content)
 
     @staticmethod
-    def parse(content: str, page: "Page"=None):
+    def parse(content: str, page: "Page" = None):
         """
         Parses content to be rendered into HTML
 

@@ -1,4 +1,3 @@
-
 import importlib
 import sys
 import threading
@@ -16,21 +15,24 @@ console = Console()
 
 def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHTTPServer:
     """
-	Create and return an instance of ThreadingHTTPServer that serves files
+        Create and return an instance of ThreadingHTTPServer that serves files
     from the specified directory.
 
     Params:
-	    server_address: A tuple of a string and integer representing the server address (host, port).
-	    directory: A string representing the directory from which the server should serve files.
+            server_address: A tuple of a string and integer representing the server address (host, port).
+            directory: A string representing the directory from which the server should serve files.
 
-	"""
+    """
+
     class _RequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=directory, **kwargs)
 
     def _httpd() -> ThreadingHTTPServer:
         return ThreadingHTTPServer(server_address, _RequestHandler)
+
     return _httpd()
+
 
 def get_app(module_site: str) -> Site:
     """Split the site module into a module and a class name"""
@@ -38,6 +40,7 @@ def get_app(module_site: str) -> Site:
     import_path, app_name = module_site.split(":", 1)
     importlib.import_module(import_path)
     return getattr(sys.modules[import_path], app_name)
+
 
 class RegExHandler(RegexMatchingEventHandler):
     """
@@ -69,27 +72,23 @@ class RegExHandler(RegexMatchingEventHandler):
         patterns: [list[str] | None] = None,
         ignore_patterns: [list[str] | None] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.p = None
         self._server = spawn_server
         self.server_address = server_address
-        self.dir_to_serve = dir_to_serve,
+        self.dir_to_serve = (dir_to_serve,)
         self.app = app
         self.module_site = module_site
         self.dir_to_watch = dir_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
-        super().__init__(
-            *args,
-            regexes=patterns,
-            ignore_regexes=ignore_patterns,
-            **kwargs
-        )
-
+        super().__init__(*args, regexes=patterns, ignore_regexes=ignore_patterns, **kwargs)
 
     def start_server(self):
-        console.print(f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]")
+        console.print(
+            f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
+        )
         self._server = spawn_server(self.server_address, self.dir_to_serve[0])
         self._thread = threading.Thread(target=self._server.serve_forever)
         self._thread.start()
@@ -105,14 +104,11 @@ class RegExHandler(RegexMatchingEventHandler):
         module = importlib.import_module(import_path)
         importlib.reload(module)
         self.app.render()
-        
-
 
     def on_any_event(self, event: FileSystemEvent):
         if event.is_directory:
             return None
         self.rebuild()
-
 
     def watch(self):
         """
@@ -127,7 +123,7 @@ class RegExHandler(RegexMatchingEventHandler):
         If a KeyboardInterrupt is raised, it stops the observer and server.
         """
 
-        console.print(f'[yellow]Serving {self.app.output_path}[/yellow]')
+        console.print(f"[yellow]Serving {self.app.output_path}[/yellow]")
 
         observer = Observer()
         observer.schedule(self, self.dir_to_watch, recursive=True)
@@ -142,5 +138,4 @@ class RegExHandler(RegexMatchingEventHandler):
             observer.stop()
             self.stop_server()
         observer.join()
-        console.print('[bold red]FIN![/bold red]')
-
+        console.print("[bold red]FIN![/bold red]")
