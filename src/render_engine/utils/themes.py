@@ -47,8 +47,8 @@ class ThemeManager:
             self.static_paths.add(theme.static_dir)
         self.engine.filters.update(theme.filters)
 
-        if theme.globals:
-            for key, value in theme.globals.items():
+        if theme.template_globals:
+            for key, value in theme.template_globals.items():
                 self.engine.globals.setdefault(key, []).append(value)
 
     def register_themes(self, *themes: Theme):

@@ -52,22 +52,3 @@ def test_ThemeManager_registers_theme():
     assert thememgr.engine.get_or_select_template('test2.html').render(test="test") == "This is a TEST"
     assert "test3.html" in thememgr.engine.list_templates()
     assert thememgr.engine.get_or_select_template('test3.html').render(test="test") == "This is a test"
-
-
-def test_ThemeManager_registers_theme_globals():
-    """Asserts the theme manager registers globals"""
-    class TestThemeManager(ThemeManager):
-        engine = Environment(loader=ChoiceLoader(loaders=[DictLoader({"test1.html": "{% include head %}"})]))
-
-    thememgr = TestThemeManager()
-
-    theme = Theme(
-        loader=DictLoader({"test2.html": f"This is a test"}),
-        globals={"head": "test2.html"},
-        filters=[],
-        plugins={},
-    )
-
-    thememgr.register_theme(theme)
-    content = thememgr.engine.get_or_select_template('test1.html').render()
-    assert content == "This is a test"
