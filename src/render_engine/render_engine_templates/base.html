@@ -11,7 +11,7 @@
         {% endfor %}
         {% endblock %}
     </head>
-    <body>
+    <body {% if body_class is defined %}class="{{"".join(body_class)}}"{%endif%}>
         {% block content %}
         {% endblock %}
     </body>
