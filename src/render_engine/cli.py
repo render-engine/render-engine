@@ -15,7 +15,6 @@ from render_engine.watcher import RegExHandler, get_app
 app = typer.Typer()
 
 
-
 def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     """Create a folder if it doesn't exist or if overwrite is True"""
     folder.mkdir(parents=True, exist_ok=overwrite)
@@ -175,12 +174,8 @@ def init(
     with Progress() as progress:
         progress.console.rule("[green][bold]Creating Project")
         # creating the app.py file from the template
-        project_config_path = (
-            pathlib.Path(project_folder).joinpath(project_path_name).with_suffix(".py")
-        )
-        task_generate_project_path = progress.add_task(
-            f"Generating App File: [blue]{project_config_path}", total=1
-        )
+        project_config_path = pathlib.Path(project_folder).joinpath(project_path_name).with_suffix(".py")
+        task_generate_project_path = progress.add_task(f"Generating App File: [blue]{project_config_path}", total=1)
 
         project_config_path.write_text(
             CREATE_APP_PY_TEMPLATE.render(
@@ -197,9 +192,7 @@ def init(
         progress.update(task_generate_project_path, advance=1)
 
         # Create the templates folder and the index.html file
-        task_templates = progress.add_task(
-            f"Creating Templates Folder: [blue]{templates_path}", total=1
-        )
+        task_templates = progress.add_task(f"Creating Templates Folder: [blue]{templates_path}", total=1)
         templates = ["index.html"]
         _create_templates_folder(
             *templates,
@@ -212,9 +205,7 @@ def init(
 
         # Create the collection
         if not skip_collection:
-            task_create_collection = progress.add_task(
-                f"Creating Collection: [blue]{collection_path}", total=1
-            )
+            task_create_collection = progress.add_task(f"Creating Collection: [blue]{collection_path}", total=1)
             _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
             _collection_path.mkdir(exist_ok=force)
             _collection_path.joinpath("sample_page.md").write_text(
@@ -280,7 +271,6 @@ def serve(
         port: Port to serve on
     """
 
-
     if module_site:
         app = get_app(module_site)
         app.render()
@@ -289,18 +279,18 @@ def serve(
         if module_site:
             directory = app.output_path
         else:
-            directory = 'output'
+            directory = "output"
 
     server_address = ("127.0.0.1", port)
 
     handler = RegExHandler(
-            server_address=server_address,
-            dir_to_serve=directory,
-            app=app,
-            module_site=module_site,
-            patterns=None,
-            ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*+$"],
-        )
+        server_address=server_address,
+        dir_to_serve=directory,
+        app=app,
+        module_site=module_site,
+        patterns=None,
+        ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*+$"],
+    )
 
     console = Console()
 
@@ -310,6 +300,7 @@ def serve(
     else:
         console.print("Watching for changes...")
         handler.watch()
+
 
 def cli():
     app()

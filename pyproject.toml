@@ -33,7 +33,6 @@ dev = [
     "mkdocstrings[python]",
     "pymdown-extensions",
     "ruff",
-    "black",
     ]
 
 

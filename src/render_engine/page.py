@@ -17,9 +17,9 @@ class BasePage(BaseObject):
     Attributes:
         slug: The slug of the page. Defaults to the `title` slugified.
         content: The content to be rendered by the page
-        parser: 
+        parser:
             The Parser used to parse the page's content. Defaults to `BasePageParser`.
-        reference: 
+        reference:
             The attribute to use as the reference for the page in the site's route list.
             Defaults to `slug`.
     """
@@ -78,14 +78,13 @@ class BasePage(BaseObject):
         try:
             if isinstance(self._content, str):
                 return self._content
-            
+
             else:
                 raise ValueError("The returned content attribute must be a string.")
 
         except AttributeError:
             raise AttributeError(
-                f"{self} does not have a content attribute. "
-                "You must either provide a template or content."
+                f"{self} does not have a content attribute. " "You must either provide a template or content."
             )
 
     def __str__(self):
@@ -109,23 +108,23 @@ class Page(BasePage):
     When you create a page, you specify variables passed into rendering template.
 
     Attributes:
-        content_path: 
+        content_path:
             The path to the file that will be used to generate the Page's `content`.
         extension: The suffix to use for the page. Defaults to `.html`.
-        engine: 
-            If present, the engine to use for rendering the page. 
+        engine:
+            If present, the engine to use for rendering the page.
 
             !!! note
                 **This is normally not set and the `Site`'s engine will be used.**
 
-        reference: 
+        reference:
             Used to determine how to reference the page in the `Site`'s route_list.
             Defaults to `slug`.
         routes: The routes to use for the page. Defaults to `["./"]`.
-        template: 
+        template:
             The template used to render the page.
             If not provided, the `Site`'s `content` will be used.
-        Parser: 
+        Parser:
             The parser to generate the page's `raw_content`.
             Defaults to `BasePageParser`.
         title: The title of the page. Defaults to the class name.
@@ -145,7 +144,6 @@ class Page(BasePage):
         content: Any | None = None,
         Parser: type[BasePageParser] | None = None,
     ) -> None:
-
         if Parser:
             self.Parser = Parser
 

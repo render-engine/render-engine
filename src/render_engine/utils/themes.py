@@ -9,10 +9,10 @@ from jinja2 import BaseLoader, Environment
 @dataclasses.dataclass
 class Theme:
     loader: BaseLoader
-    filters: dataclasses.field(default_factory=dict) 
+    filters: dataclasses.field(default_factory=dict)
     plugins: dataclasses.field(default_factory=list)
     static_dir: str | pathlib.Path | None = None
-    globals: dataclasses.field(default_factory=dict) = None
+    template_globals: dataclasses.field(default_factory=dict) = None
 
 
 class ThemeManager:
@@ -23,14 +23,15 @@ class ThemeManager:
     Attributes:
         engine: Jinja2 Environment used to render pages
         output_path: path to write rendered content
-        static_paths: set of filepaths for static folders. 
-            This will get copied to the output folder. 
+        static_paths: set of filepaths for static folders.
+            This will get copied to the output folder.
             Folders are recursive.
-            
+
     """
+
     engine: Environment
     output_path: str = "output"
-    static_paths: set[str|pathlib.Path] = {"static"}
+    static_paths: set[str | pathlib.Path] = {"static"}
 
     def register_theme(self, theme: Theme):
         """
@@ -41,14 +42,14 @@ class ThemeManager:
         """
         logging.info(f"Registering theme: {theme}")
         self.engine.loader.loaders.insert(0, theme.loader)
-        
+
         if theme.static_dir:
             logging.debug(f"Adding static path: {theme.static_dir}")
             self.static_paths.add(theme.static_dir)
         self.engine.filters.update(theme.filters)
 
-        if theme.globals:
-            for key, value in theme.globals.items():
+        if theme.template_globals:
+            for key, value in theme.template_globals.items():
                 self.engine.globals.setdefault(key, []).append(value)
 
     def register_themes(self, *themes: Theme):
@@ -60,14 +61,12 @@ class ThemeManager:
         """
         for theme in themes:
             self.register_theme(theme)
-        
+
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
         for static_path in self.static_paths:
             logging.debug(f"Copying Static Files from {static_path}")
             if pathlib.Path(static_path).exists():
                 shutil.copytree(
-                    static_path,
-                    pathlib.Path(self.output_path) / pathlib.Path(static_path).name,
-                    dirs_exist_ok=True
+                    static_path, pathlib.Path(self.output_path) / pathlib.Path(static_path).name, dirs_exist_ok=True
                 )

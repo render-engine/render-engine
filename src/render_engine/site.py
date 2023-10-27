@@ -21,15 +21,15 @@ class Site(ThemeManager):
 
     Attributes:
         engine: Jinja2 Environment used to render pages
-        output_path: 
+        output_path:
             path to write rendered content
-        partial: 
+        partial:
             if True, only render pages that have been modified. Uses gitPython to check for changes.
-        plugins: 
+        plugins:
             list of plugins that will be loaded and passed into each object
-        static_paths: 
+        static_paths:
             list of paths for static folders. This will get copied to the output folder. Folders are recursive.
-        site_vars: 
+        site_vars:
             dictionary that will be passed into page template
         site_settings:
             settings that will be passed into pages and collections but not into templates
@@ -37,9 +37,7 @@ class Site(ThemeManager):
 
     _pm: pluggy.PluginManager
     partial: bool = False
-    site_settings: dict = {
-        "plugins": {}
-    }
+    site_settings: dict = {"plugins": {}}
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
@@ -50,17 +48,16 @@ class Site(ThemeManager):
     engine: Environment = engine
     template_path: str = "templates"
 
-
     def __init__(
         self,
     ) -> None:
         self.route_list = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.engine.globals.update(self.site_vars)
-        
+
         if self.template_path:
             self.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
-        
+
         # Manage Plugins
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
         self._pm.add_hookspecs(SiteSpecs)
@@ -71,22 +68,22 @@ class Site(ThemeManager):
 
     def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
         """Register plugins with the site
-        
+
         parameters:
             plugins: list of plugins to register
             settings: settings to pass into the plugins
                 settings keys are the plugin names as strings.
         """
-        
+
         for plugin in plugins:
-            self._pm.register(plugin)        
-            self.site_settings['plugins'][plugin.__name__] = getattr(plugin, 'default_settings', {})
+            self._pm.register(plugin)
+            self.site_settings["plugins"][plugin.__name__] = getattr(plugin, "default_settings", {})
 
         self._pm.hook.add_default_settings(
             site=self,
             custom_settings=settings,
-        ) 
-        self.site_settings['plugins'].update(**settings)
+        )
+        self.site_settings["plugins"].update(**settings)
 
     @property
     def plugins(self):
@@ -99,16 +96,15 @@ class Site(ThemeManager):
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
-
     def update_theme_settings(self, **settings):
-        for key,value in settings.items():
+        for key, value in settings.items():
             self.site_vars["theme"].update({key: value})
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
         Add the collection to the route list to be rendered later.
 
-        This is the primary way to add a collection to the site and 
+        This is the primary way to add a collection to the site and
         can either be called on an uninstantiated class or on the class definition as a decorator.
 
         In most cases. You should use the decorator method.
@@ -130,17 +126,17 @@ class Site(ThemeManager):
         ```
         """
         _Collection = Collection()
-        self.register_themes(*getattr(_Collection, "required_themes",[]))
+        self.register_themes(*getattr(_Collection, "required_themes", []))
         plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
-        
-        for plugin in getattr(_Collection, 'ignore_plugins', []):
+
+        for plugin in getattr(_Collection, "ignore_plugins", []):
             plugins.remove(plugin)
         _Collection.register_plugins(plugins)
 
         self._pm.hook.pre_build_collection(
             collection=_Collection,
-            settings=self.site_settings.get('plugins', {}),
-        ) #type: ignore
+            settings=self.site_settings.get("plugins", {}),
+        )  # type: ignore
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
@@ -171,25 +167,21 @@ class Site(ThemeManager):
         ```
         """
         page = Page()
-        page.title = page._title # Expose _title to the user through `title`
+        page.title = page._title  # Expose _title to the user through `title`
 
         # copy the plugin manager, removing any plugins that the page has ignored
         page._pm = self._pm
 
-        for plugin in getattr(page, 'ignore_plugins', []):
+        for plugin in getattr(page, "ignore_plugins", []):
             page._pm.unregister(plugin)
 
         self.route_list[getattr(page, page._reference)] = page
 
     def _render_output(self, route: str, page: Page):
         """writes the page object to disk"""
-        path = (
-            pathlib.Path(self.output_path)
-            / pathlib.Path(route)
-            / pathlib.Path(page.path_name)
-        )
+        path = pathlib.Path(self.output_path) / pathlib.Path(route) / pathlib.Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
-        settings = {**self.site_settings.get('plugins', {}), **{'route': route}}
+        settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
         self._pm.hook.render_content(page=page, settings=settings)
         page.rendered_content = page._render_content(engine=self.engine)
         # pass the route to the plugin settings
@@ -203,7 +195,7 @@ class Site(ThemeManager):
             for route in collection.routes:
                 self._render_output(route, entry)
 
-        if getattr(collection, 'has_archive', False):
+        if getattr(collection, "has_archive", False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 
@@ -219,7 +211,7 @@ class Site(ThemeManager):
             for route in collection.routes:
                 self._render_output(route, entry)
 
-        if getattr(collection, 'has_archive', False):
+        if getattr(collection, "has_archive", False):
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
 
@@ -233,8 +225,8 @@ class Site(ThemeManager):
         """
         Render all pages and collections.
 
-        These are pages and collections that have been added to the site using 
-        the [`Site.page`][src.render_engine.Site.page] 
+        These are pages and collections that have been added to the site using
+        the [`Site.page`][src.render_engine.Site.page]
         and [`Site.collection`][src.render_engine.Site.collection] methods.
 
         Render should be called after all pages and collections have been added to the site.
@@ -243,19 +235,12 @@ class Site(ThemeManager):
         """
 
         with Progress() as progress:
-
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
-            self._pm.hook.pre_build_site(
-                site=self,
-                settings=self.site_settings.get('plugins', {})
-                ) #type: ignore
-
+            self._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
 
             self.engine.globals.update(self.site_vars)
             # Parse Route List
-            task_add_route = progress.add_task(
-                "[blue]Adding Routes", total=len(self.route_list)
-            )
+            task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
 
             self._render_static()
 
@@ -263,12 +248,10 @@ class Site(ThemeManager):
             self.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
-                progress.update(
-                    task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}"
-                )
+                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 if isinstance(entry, Page):
                     if getattr(entry, "collection", None):
-                        self._pm.hook.render_content(Page=entry, settings=self.site_settings.get('plugins', None))
+                        self._pm.hook.render_content(Page=entry, settings=self.site_settings.get("plugins", None))
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
@@ -285,6 +268,6 @@ class Site(ThemeManager):
             progress.add_task("Loading Post-Build Plugins", total=1)
             self._pm.hook.post_build_site(
                 site=self,
-                settings=self.site_settings.get('plugins', {}),
+                settings=self.site_settings.get("plugins", {}),
             )
             progress.update(pre_build_task, advance=1)
