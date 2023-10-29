@@ -12,7 +12,8 @@
         {% endblock %}
     </head>
     <body {% if body_class is defined %}class="{{"".join(body_class)}}"{%endif%}>
-        {% block content %}
+        {% block body %}
+            {% block page_title %}{% endblock %}
         {% endblock %}
     </body>
 </html>
