@@ -29,7 +29,7 @@ def test_create_folder(mocker):
         overwrite=True,
     )
 
-    cli.pathlib.Path.mkdir.called_once_with(
+    cli.pathlib.Path.mkdir.assert_called_once_with(
         parents=True,
         exist_ok=True,
     )
