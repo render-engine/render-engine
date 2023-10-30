@@ -1,6 +1,6 @@
 # Creating a Collection
 
-[Collection] objects allow you to build multiple Pages from a single configuration. They are rendered using the site's `collection` decorator.
+[Collection](../collection.md) objects allow you to build multiple Pages from a single configuration. They are rendered using the site's `collection` decorator.
 
 You can build a collection by defining `Collection` class object. You'll also need to provide a `content_path` that points to the page references for each page. By default, collections work with a directory of files. Each file will be used to build a page.
 
