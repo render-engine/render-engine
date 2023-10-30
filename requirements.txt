@@ -111,7 +111,7 @@ pymdown-extensions==10.3.1
     #   mkdocs-material
     #   mkdocstrings
     #   render-engine (pyproject.toml)
-pytest==7.4.2
+pytest==7.4.3
     # via
     #   pytest-lazy-fixture
     #   pytest-mock
