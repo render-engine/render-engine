@@ -54,4 +54,11 @@ The path to the folder that will contain your [`templates`](../templates). This 
 
 ## Serving your site (locally) with `render-engine serve`
 
+The `serve` command creates a simple webserver that you can use to view your files. 
+
+You can also use the `--reload` flag to have the site rebuild when changes are made.
+
 :::src.render_engine.cli.serve
+
+> **NOTE**
+> `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.
