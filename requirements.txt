@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev
 #
-babel==2.13.0
+babel==2.13.1
     # via mkdocs-material
 black==23.10.1
     # via render-engine (pyproject.toml)
