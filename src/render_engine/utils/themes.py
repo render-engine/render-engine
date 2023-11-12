@@ -20,6 +20,14 @@ class Theme:
             The key is the name of the global and the value is the value of the global.
             In many cases, this will be a string path to a template file
             or a string of template content.
+
+            Example:
+                ```python
+                {
+                    "head": "head.html",
+                    "body_class": "my-class",
+                }
+                ```
     """
     loader: BaseLoader
     filters: dataclasses.field(default_factory=dict)
