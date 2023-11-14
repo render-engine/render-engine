@@ -13,7 +13,10 @@
     </head>
     <body {% if body_class is defined %}class="{{"".join(body_class)}}"{%endif%}>
         {% block body %}
+            {% block header %}{% endblock %}
             {% block page_title %}{% endblock %}
+            {% block content %}{% endblock %}
+            {% block footer %}{% endblock %}
         {% endblock %}
     </body>
 </html>

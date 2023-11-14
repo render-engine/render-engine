@@ -42,10 +42,24 @@ def test_base_html_head_include(theme_site):
     class headIncludeTheme(Theme):
         template_globals = { "head": "head.html"}
         loader = DictLoader({"head.html": "<script>console.log('test')</script>"})
-        filters = {}
+        filters = set()
         plugins = []
 
     theme_site.register_themes(headIncludeTheme)
     theme_site._render_output("./", theme_site.route_list["testpage"])
 
     assert "<script>console.log('test')</script>" in (theme_site.output_path / "testpage.html").read_text()
+
+
+def test_base_html_head_reload_theme_count(theme_site):
+    """Tests that the theme is only registered once"""
+    class headIncludeTheme(Theme):
+        template_globals = { "head": "head.html"}
+        loader = DictLoader({"head.html": "<script>console.log('test')</script>"})
+        filters = set()
+        plugins = []
+
+    theme_site.register_themes(headIncludeTheme)
+    theme_site.register_themes(headIncludeTheme)
+    assert (theme_site.site_vars["head"] == {"head.html"})
+    

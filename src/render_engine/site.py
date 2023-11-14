@@ -42,7 +42,7 @@ class Site(ThemeManager):
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
         "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
-        "head": [],
+        "head": set(),
         "theme": {},
     }
     engine: Environment = engine
