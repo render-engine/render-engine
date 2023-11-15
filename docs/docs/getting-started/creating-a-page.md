@@ -10,7 +10,7 @@ from render_engine import Site, Page
 
 app = Site()
 
-@app.page()
+@app.page
 class Index(Page):
   title="Welcome to my Page!"
   template="index.html"
@@ -35,7 +35,7 @@ If you have some content that you want to use in your page, you can define it in
 
 ```python
 
-@app.page()
+@app.page
 class About(Page):
   title="About Me"
   template="about.html"
@@ -71,7 +71,7 @@ The top section of the file is the metadata for the `Page`. Most Parsers will us
 
 import render_engine.parsers.markdown import MarkdownPageParser
 
-@app.page()
+@app.page
 class About(Page):
   template="about.html"
   Parser=MarkdownPageParser
