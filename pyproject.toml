@@ -7,7 +7,7 @@ name = "render_engine"
 dynamic = ["version"]
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
-
+python-requires = ">=3.9"
 dependencies = [
     "dtyper",
     "gitpython",
