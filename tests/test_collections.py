@@ -131,11 +131,11 @@ def test_collection_paginated_archives_start_at_1(tmp_path: pathlib.Path):
 
 
 @pytest.mark.parametrize(
-        "attr,attrval",
-        [
-            ("template", "test.html"),
-            ("routes", ["/test/long/route"]),
-        ],
+    "attr,attrval",
+    [
+        ("template", "test.html"),
+        ("routes", ["/test/long/route"]),
+    ],
 )
 def test_collection_attrs_pass_to_page(tmp_path, attr: str, attrval: str | list[str]):
     """Tests that the template attribute for the collection is passed to the page"""

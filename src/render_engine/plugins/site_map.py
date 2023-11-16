@@ -1,7 +1,6 @@
-import typing
 import logging
-
 import pathlib
+import typing
 
 from render_engine.engine import engine
 from render_engine.hookspecs import hook_impl

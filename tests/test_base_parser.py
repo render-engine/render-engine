@@ -1,5 +1,7 @@
 import pytest
-from render_engine.parsers.base_parsers import parse_content, BasePageParser
+
+from render_engine.parsers.base_parsers import BasePageParser, parse_content
+
 
 @pytest.fixture()
 def base_content() -> str:
@@ -11,7 +13,6 @@ title: This is a Test
 # This is a Test"""
 
 
-
 @pytest.fixture()
 def base_content_path(tmp_path, base_content):
     """Returns the path to a test file"""
@@ -21,16 +22,16 @@ def base_content_path(tmp_path, base_content):
 
 
 def test_parse_content(base_content):
-        """
-        Tests that parse_content returns a split of the content and attributes
-        Currently python-frontmatter is used to do this. This test is here to
-        ensure that the API is consistent.
+    """
+    Tests that parse_content returns a split of the content and attributes
+    Currently python-frontmatter is used to do this. This test is here to
+    ensure that the API is consistent.
 
-        Base Content is an example of a markdown file with frontmatter.
-        """
+    Base Content is an example of a markdown file with frontmatter.
+    """
 
-        expected_result = ({"title": "This is a Test"}, "# This is a Test")
-        assert expected_result == parse_content(base_content)
+    expected_result = ({"title": "This is a Test"}, "# This is a Test")
+    assert expected_result == parse_content(base_content)
 
 
 def test_base_parser_parse_content(base_content):

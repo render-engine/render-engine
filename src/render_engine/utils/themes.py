@@ -29,6 +29,7 @@ class Theme:
                 }
                 ```
     """
+
     loader: BaseLoader
     filters: dataclasses.field(default_factory=dict)
     plugins: dataclasses.field(default_factory=list)

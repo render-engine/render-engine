@@ -1,4 +1,3 @@
-import pytest
 import pathlib
 
 import render_engine.cli as cli
