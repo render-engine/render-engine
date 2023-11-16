@@ -1,9 +1,13 @@
 import pytest
+
 import render_engine.cli as _cli
 
 pytest.fixture()
+
+
 def get_tmp_path(tmp_path_factory, folder):
     return tmp_path_factory.getbasetemp() / folder
+
 
 @pytest.fixture(scope="session")
 def default_cli(tmp_path_factory):
@@ -19,8 +23,9 @@ def default_cli(tmp_path_factory):
         site_description="Test Site Description",
         owner_name="Test Site Author",
         owner_email="hello@example.com",
-        output_path=output_path
+        output_path=output_path,
     )
+
 
 @pytest.fixture(scope="session")
 def skip_collection_cli(tmp_path_factory):
@@ -36,5 +41,5 @@ def skip_collection_cli(tmp_path_factory):
         site_description="Test Site Description",
         owner_name="Test Site Author",
         owner_email="hello@example.com",
-        output_path=output_path
+        output_path=output_path,
     )

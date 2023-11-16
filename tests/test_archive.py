@@ -1,5 +1,5 @@
-from render_engine.page import Page
 from render_engine.archive import Archive
+from render_engine.page import Page
 
 
 def test_archive_slug_name_with_pages():
@@ -9,7 +9,7 @@ def test_archive_slug_name_with_pages():
         title="archive",
         pages=[Page()],
         template="",
-        routes = ["./"],
+        routes=["./"],
         archive_index=1,
         num_archive_pages=2,
     )

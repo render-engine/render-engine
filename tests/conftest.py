@@ -14,7 +14,6 @@ from render_engine.site import Site
 
 @pytest.fixture
 def engine() -> Environment:
-
     env = Environment(
         loader=render_engine_templates_loader,
         autoescape=select_autoescape(["xml"]),
@@ -22,10 +21,9 @@ def engine() -> Environment:
         trim_blocks=True,
     )
 
-    env.filters['to_pub_date'] = to_pub_date
-    env.filters['to_absolute'] = to_absolute
+    env.filters["to_pub_date"] = to_pub_date
+    env.filters["to_absolute"] = to_absolute
     return env
-
 
 
 @pytest.fixture()
@@ -34,7 +32,7 @@ def site(tmp_path):
     tmp_dir.mkdir()
     file = tmp_dir / "#"
     file.write_text("test")
-    
+
     site = Site()
 
     @site.collection
@@ -52,15 +50,15 @@ def feed_test_site(tmp_path):
     tmp_dir.mkdir()
     file = tmp_dir / "#"
     file.write_text("test")
-    
+
     site = Site()
 
     @site.collection
     class TestCollection(Collection):
         pages = [Page(content_path=file)]
         Feed = RSSFeed
-        routes = ['feed']
+        routes = ["feed"]
 
-    feed = site.route_list['testcollection'].feed
+    feed = site.route_list["testcollection"].feed
     feed_content = feed._render_content(engine=site.engine, SITE_URL="http://localhost:8000")
     return feed_content

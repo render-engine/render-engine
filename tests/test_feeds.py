@@ -7,7 +7,6 @@ from jinja2 import StrictUndefined
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
-from render_engine.site import Site
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -30,6 +29,7 @@ def test_feed_path_name():
 
     assert feed().path_name == "feed.rss"
 
+
 def test_rss_feed_title_from_collection(feed_test_site):
     """
     Test a Collection's title is used as the feed title if no title is provided.
@@ -38,10 +38,10 @@ def test_rss_feed_title_from_collection(feed_test_site):
     """
     assert "<title>Untitled Site-TestCollection</title>" in feed_test_site
 
+
 def test_rss_feed_item_url(feed_test_site):
     """Test that the feed item url is set correctly"""
     assert "<link>http://localhost:8000/page.html</link>" in feed_test_site
-
 
 
 def test_rss_feed_item_has_guid(feed_test_site):
@@ -77,7 +77,8 @@ def test_rss_feed_template_parses_date_correctly(engine):
     """Tests that a feed parses the page date in RFC2822 Format"""
 
     class TestPage(Page):
-        date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.timezone.utc)   # noqa: UP017
+        date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.timezone.utc)  # noqa: UP017
+
     class TestCollection(Collection):
         Feed = RSSFeed
         pages = [TestPage()]
@@ -94,6 +95,10 @@ def test_rss_feed_template_parses_date_correctly(engine):
 
     assert "Sat, 15 Apr 2023 00:00:00 +0000" in rendered_content
 
+
 def test_feed_atom_link(feed_test_site):
     """Test that the feed atom link is set correctly"""
-    assert '<atom:link href="http://localhost:8000/testcollection.rss" rel="self" type="application/rss+xml" />' in feed_test_site
+    assert (
+        '<atom:link href="http://localhost:8000/testcollection.rss" rel="self" type="application/rss+xml" />'
+        in feed_test_site
+    )

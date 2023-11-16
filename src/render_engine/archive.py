@@ -7,7 +7,8 @@ from .page import BasePage
 
 class Archive(BasePage):
     """
-    The Archive is a [Page][src.render_engine.page.Page] object used by the collection that focuses on presenting the Collection's pages.
+    The Archive is a [Page][src.render_engine.page.Page] object used by the collection
+    that focuses on presenting the Collection's pages.
 
     Parameters:
         pages: The list of pages to include in the archive

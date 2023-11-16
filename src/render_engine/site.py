@@ -2,7 +2,6 @@ import logging
 import pathlib
 import typing
 from collections import defaultdict
-from re import template
 
 import pluggy
 from jinja2 import Environment, FileSystemLoader
@@ -231,7 +230,8 @@ class Site(ThemeManager):
 
         Render should be called after all pages and collections have been added to the site.
 
-        You can choose to call it manually in your file or use the CLI command [`render-engine build`][src.render_engine.cli.build]
+        You can choose to call it manually in your file or
+        use the CLI command [`render-engine build`][src.render_engine.cli.build]
         """
 
         with Progress() as progress:

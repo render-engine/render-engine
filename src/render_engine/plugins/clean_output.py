@@ -1,7 +1,6 @@
-import typing
 import logging
-
 import shutil
+import typing
 
 from render_engine.hookspecs import hook_impl
 from render_engine.site import Site
