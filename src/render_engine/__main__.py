@@ -1,4 +1,4 @@
-"""Enables the use of `python -m render-engine` to run the CLI."""
+"""Enables the use of `python -m render_engine` to run the CLI."""
 
 from .cli import app
 
