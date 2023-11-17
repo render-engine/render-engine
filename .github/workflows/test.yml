@@ -29,7 +29,7 @@ jobs:
 
   test-against-latest:
     runs-on: ubuntu-latest
-    if: ${{github.event_name != 'workflow_call'}}
+    if: ${{github.event_name == 'pull_request'}} || ${{github.event_name == 'push'}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
