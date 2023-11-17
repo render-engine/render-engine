@@ -13,7 +13,7 @@ jobs:
     if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'workflow_dispatch'}}
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
