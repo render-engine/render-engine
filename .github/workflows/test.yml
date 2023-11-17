@@ -7,18 +7,36 @@ on:
   pull_request:
 
 jobs:
-  test-with-pytest:
+  test-against-matrix:
     runs-on: ubuntu-latest
-
+    if: ${{github.event_name == 'workflow_call'}}
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
+          python-version: ${{ matrix.python-version }}
       - name: Install requirements
         run: |
-          bash .devcontainer/setup.sh
-
+          python -m pip install -e .[dev]
       - name: Run tests
-        run: python -m pytest
+        run: |
+          python -m pytest
+
+
+  test-against-latest:
+    runs-on: ubuntu-latest
+    if: ${{github.event_name == 'workflow_call'}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install requirements
+        run: |
+          python -m pip install -e .[dev]
+      - name: Run tests
+        run: |
+          python -m pytest
