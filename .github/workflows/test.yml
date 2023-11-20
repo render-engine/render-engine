@@ -9,11 +9,12 @@ on:
 
 jobs:
   test-against-matrix:
-    if: ${{github.event_name == 'workflow_call'}}
+    # Only test all the supported versions when a pull request is made or the workflow is called
+    if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11']
       fail-fast: true
     steps:
       - uses: actions/checkout@v4
@@ -28,8 +29,8 @@ jobs:
           python -m pytest
 
   test-against-latest:
+    # Always run against the latest version
     runs-on: ubuntu-latest
-    if: ${{github.event_name == 'pull_request'}} || ${{github.event_name == 'push'}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
