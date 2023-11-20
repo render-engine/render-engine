@@ -1,24 +1,44 @@
 name: PyTest
 on:
   workflow_call:
+  workflow_dispatch:
   push:
     branches:
       - main
   pull_request:
 
 jobs:
-  test-with-pytest:
+  test-against-matrix:
+    # Only test all the supported versions when a pull request is made or the workflow is called
+    if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+      fail-fast: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
+          python-version: ${{ matrix.python-version }}
       - name: Install requirements
         run: |
-          bash .devcontainer/setup.sh
-
+          python -m pip install -e .[dev]
       - name: Run tests
-        run: python -m pytest
+        run: |
+          python -m pytest
+
+  test-against-latest:
+    # Always run against the latest version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install requirements
+        run: |
+          python -m pip install -e .[dev]
+      - name: Run tests
+        run: |
+          python -m pytest
