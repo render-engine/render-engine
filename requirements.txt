@@ -73,7 +73,7 @@ mkdocs-material==9.4.8
     # via render-engine (pyproject.toml)
 mkdocs-material-extensions==1.3
     # via mkdocs-material
-mkdocstrings[python]==0.23.0
+mkdocstrings[python]==0.24.0
     # via
     #   mkdocstrings-python
     #   render-engine (pyproject.toml)
