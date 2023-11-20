@@ -184,6 +184,7 @@ def init(
                 site_description=site_description,
                 owner={"name": owner_name, "email": owner_email},
                 output_path=output_path,
+                skip_static=skip_static,
                 static_path=static_path,
                 collection_path=collection_path,
                 skip_collection=skip_collection,
