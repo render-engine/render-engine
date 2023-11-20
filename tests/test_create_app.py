@@ -1,6 +1,6 @@
 import pathlib
 
-import render_engine.cli as cli
+import render_engine.cli.cli as cli
 
 
 def test_create_site_with_vars():
@@ -22,7 +22,7 @@ def test_create_site_with_vars():
 
 def test_create_folder(mocker):
     """Tests folder can be created"""
-    mocker.patch("render_engine.cli.pathlib.Path.mkdir")
+    mocker.patch("render_engine.cli.cli.pathlib.Path.mkdir")
     app_folder = cli._create_folder(
         folder=pathlib.Path("mytest_folder"),
         overwrite=True,

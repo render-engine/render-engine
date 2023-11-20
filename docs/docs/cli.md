@@ -48,7 +48,7 @@ The path to the folder that will contain your [`templates`](../templates). This 
 
 ## Building your site with `render-engine build`
 
-::: src.render_engine.cli.build
+::: src.render_engine.cli.cli.build
 
 `build` takes the `site_module` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `site_module` parameter would be `app:site`.
 

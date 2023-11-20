@@ -8,9 +8,9 @@ import typer
 from rich.console import Console
 from rich.progress import Progress
 
+from render_engine.cli.event import RegExHandler, get_app
 from render_engine.engine import engine
 from render_engine.site import Site
-from render_engine.watcher import RegExHandler, get_app
 
 app = typer.Typer()
 
