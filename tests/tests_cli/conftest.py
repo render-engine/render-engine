@@ -1,6 +1,6 @@
 import pytest
 
-import render_engine.cli as _cli
+import render_engine.cli.cli as _cli
 
 pytest.fixture()
 
