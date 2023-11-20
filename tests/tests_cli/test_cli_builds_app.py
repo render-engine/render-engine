@@ -25,6 +25,15 @@ def test_cli_static_path(default_cli, tmp_path_factory):
     assert 'app.static_paths.add("static")' in temp_app.read_text()
 
 
+
+def test_cli_skips_static(skip_static_cli, tmp_path_factory):
+    """Asserts the static path is not in the app.py if the skip_static flag is set"""
+    temp_app = tmp_path_factory.getbasetemp() / "test_skip_static_cli_app" / "app.py"
+    assert 'app.static_paths.add("static")' not in temp_app.read_text()
+
+    assert 'static' not in list((tmp_path_factory.getbasetemp() / "test_skip_static_cli_app").iterdir())
+
+
 @pytest.mark.parametrize(
     "cli, exists",
     [
