@@ -29,7 +29,7 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.40
     # via render-engine (pyproject.toml)
-griffe==0.37.0
+griffe==0.38.0
     # via mkdocstrings-python
 idna==3.4
     # via requests
