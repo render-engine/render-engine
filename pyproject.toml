@@ -7,7 +7,7 @@ name = "render_engine"
 dynamic = ["version"]
 description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "dtyper",
     "gitpython",
@@ -52,7 +52,7 @@ documentation = "https://render-engine.readthedocs.io/en/latest/"
 "*" = ["*.html", "*.txt", "*.xml", "*.md"]
 
 [project.scripts]
-render-engine = "render_engine.cli:cli"
+render-engine = "render_engine.cli.cli:cli"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
