@@ -36,12 +36,12 @@ like verbage. Ex:
 Render Engine uses two modules to style code.
 
 - [isort](https://github.com/timothycrosley/isort)
-- [black](https://github.com/psf/black)
+- [ruff](https://github.com/astral-sh/ruff)
 
-Code should follow the stylings from isort and black before merged. This can be
+Code should follow the stylings from isort and ruff before merged. This can be
 done by executing the following command (with both modules installed).
 
-`$render_engine> noisort render_engine --profile=black && black render_engine`
+`$render_engine> noisort render_engine --profile=black && ruff render_engine`
 
 ## Contributing to Documentation
 
