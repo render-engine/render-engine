@@ -35,9 +35,20 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
 This and much of the work that I do is made possible by those that sponsor me
 on github.
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ### Sponsors at the $20/month and higher Level
 - [Brian Douglas](https://github.com/bdougie)
-- [Carol Willing](https://github.com/willingc)
+
 
 Thank you to them and all of those that continue to support this project!
 
