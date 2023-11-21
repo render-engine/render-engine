@@ -1,5 +1,5 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 >**WARNING**
@@ -50,6 +50,7 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
       <td align="center" valign="top" width="14.28%"><a href="https://www.pythonbynight.com"><img src="https://avatars.githubusercontent.com/u/46942991?v=4?s=100" width="100px;" alt="Mario Munoz"/><br /><sub><b>Mario Munoz</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=tataraba" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jlgimeno"><img src="https://avatars.githubusercontent.com/u/17421585?v=4?s=100" width="100px;" alt="Jorge L. Gimeno"/><br /><sub><b>Jorge L. Gimeno</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=jlgimeno" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.jonafato.com"><img src="https://avatars.githubusercontent.com/u/392720?v=4?s=100" width="100px;" alt="Jon Banafato"/><br /><sub><b>Jon Banafato</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=jonafato" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mahhheshh"><img src="https://avatars.githubusercontent.com/u/100200105?v=4?s=100" width="100px;" alt="Mahhheshh"/><br /><sub><b>Mahhheshh</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=Mahhheshh" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
