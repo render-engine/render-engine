@@ -14,8 +14,7 @@
     "customizations": {
         "vscode": {
             "settings": {
-                    "python.formatting.blackPath": "black",
-                    "python.formatting.provider": "black",
+                    "python.formatting.provider": "charliermarsh.ruff",
                     "python.testing.pytestEnabled": true,
                     "python.testing.pytestPath": "pytest",
                     "python.testing.unittestEnabled": false,
@@ -27,7 +26,6 @@
                 },
             "extensions": [
                 "ms-python.python",
-                "ms-python.black-formatter",
                 "charliermarsh.ruff",
                 "github.github-actions",
                 "github.github"
