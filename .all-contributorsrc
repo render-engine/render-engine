@@ -8,15 +8,23 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "LauraLangdon",
+      "name": "Laura Langdon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48335772?v=4",
+      "profile": "http://lauralangdon.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
       "login": "tataraba",
       "name": "Mario Munoz",
       "avatar_url": "https://avatars.githubusercontent.com/u/46942991?v=4",
       "profile": "https://www.pythonbynight.com",
       "contributions": [
         "code"
-      ]
+      ],
     }
-  ],
   "contributorsPerLine": 7,
   "skipCi": true,
   "repoType": "github",
