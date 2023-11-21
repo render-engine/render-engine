@@ -56,7 +56,7 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://tonybaloney.github.io/"><img src="https://avatars.githubusercontent.com/u/1532417?v=4?s=100" width="100px;" alt="Anthony Shaw"/><br /><sub><b>Anthony Shaw</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=tonybaloney" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://webology.dev"><img src="https://avatars.githubusercontent.com/u/50527?v=4?s=100" width="100px;" alt="Jeff Triplett"/><br /><sub><b>Jeff Triplett</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=jefftriplett" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://webology.dev"><img src="https://avatars.githubusercontent.com/u/50527?v=4?s=100" width="100px;" alt="Jeff Triplett"/><br /><sub><b>Jeff Triplett</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=jefftriplett" title="Documentation">📖</a> <a href="#mentoring-jefftriplett" title="Mentoring">🧑‍🏫</a></td>
     </tr>
   </tbody>
 </table>
