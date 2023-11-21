@@ -60,6 +60,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mannyanebi",
+      "name": "Emmanuel Anebi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25439000?v=4",
+      "profile": "https://github.com/mannyanebi",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "contributorsPerLine": 7,
