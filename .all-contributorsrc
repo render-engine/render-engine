@@ -24,6 +24,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jlgimeno",
+      "name": "Jorge L. Gimeno",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17421585?v=4",
+      "profile": "https://github.com/jlgimeno",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
