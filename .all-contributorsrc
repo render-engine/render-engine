@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "LauraLangdon",
+      "name": "Laura Langdon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48335772?v=4",
+      "profile": "http://lauralangdon.io",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "render-engine",
+  "projectOwner": "render-engine"
+}
