@@ -2,7 +2,7 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 100,
+  "imageSize": 57,
   "commit": false,
   "commitType": "docs",
   "commitConvention": "angular",
@@ -104,5 +104,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "render-engine",
-  "projectOwner": "render-engine"
+  "projectOwner": "render-engine",
+  "contributorsSortAlphabetically": true
 }
