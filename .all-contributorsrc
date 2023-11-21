@@ -51,6 +51,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "pamelafox",
+      "name": "Pamela Fox",
+      "avatar_url": "https://avatars.githubusercontent.com/u/297042?v=4",
+      "profile": "https://www.pamelafox.org",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
