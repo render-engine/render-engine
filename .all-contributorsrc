@@ -69,6 +69,15 @@
       "contributions": [
         "plugin"
       ]
+    },
+    {
+      "login": "tonybaloney",
+      "name": "Anthony Shaw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1532417?v=4",
+      "profile": "https://tonybaloney.github.io/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
