@@ -1,6 +1,7 @@
 {
   "files": [
-    "README.md"
+    "README.md",
+    "Contributors.md"
   ],
   "imageSize": 57,
   "commit": false,
@@ -109,6 +110,7 @@
     }
   ],
   "contributorsPerLine": 7,
+  "contributorsSortAlphabetically": true,
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
