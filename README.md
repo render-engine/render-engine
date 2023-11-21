@@ -1,4 +1,7 @@
 >**WARNING**
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 >The 2023.9.1 update changes `site.static_path` to `site.static_paths` any custom output paths will need to be updated to reflect this change. `'output'` is still the default value for `site.static_paths` and will be used if no value is provided.
 
 # Render Engine
@@ -37,6 +40,20 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.pythonbynight.com"><img src="https://avatars.githubusercontent.com/u/46942991?v=4?s=100" width="100px;" alt="Mario Munoz"/><br /><sub><b>Mario Munoz</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=tataraba" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
