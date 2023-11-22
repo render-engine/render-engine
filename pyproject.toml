@@ -9,7 +9,6 @@ description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "dtyper",
     "gitpython",
     "jinja2",
     "markdown2",
