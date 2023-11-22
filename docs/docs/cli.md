@@ -50,15 +50,18 @@ The path to the folder that will contain your [`templates`](../templates). This 
 
 ::: src.render_engine.cli.cli.build
 
-`build` takes the `site_module` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `site_module` parameter would be `app:site`.
+`build` requires a `module_site` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
 
 ## Serving your site (locally) with `render-engine serve`
 
 The `serve` command creates a simple webserver that you can use to view your files. 
 
+`serve` requires a `module_site` argument in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
+
+
 You can also use the `--reload` flag to have the site rebuild when changes are made.
 
 :::src.render_engine.cli.cli.serve
 
-> **NOTE**
-> `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.
+!!! Note
+    `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.
