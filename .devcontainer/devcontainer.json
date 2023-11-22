@@ -25,11 +25,13 @@
                     ]
                 },
             "extensions": [
-                "ms-python.python",
-                "charliermarsh.ruff",
-                "github.github-actions",
-                "github.github"
-            ]
+				"ms-python.python",
+				"charliermarsh.ruff",
+				"github.github-actions",
+				"github.github",
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint"
+			]
         }
     }
 }
