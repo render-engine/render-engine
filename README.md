@@ -11,6 +11,7 @@
 [![Discord](https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple)](https://discord.gg/2xMQ4j4d8m)
 
 ## Learn More
+
 - [Check out the Documentation](https://render-engine.readthedocs.io/en/latest/)
 - [Contributors and Builders, Check out the Wiki](https://github.com/render-engine/.github/wiki)
 - [Join the community!](https://discord.gg/2xMQ4j4d8m)
@@ -19,16 +20,16 @@
 
 ## The _3 layer_ Architecture
 
-* **[Page](.github/render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
-* **[Collection](.github/render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
-* **[Site](.github/render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
+- **[Page](.github/render_engine/page.html)** - A single webpage item built from content, a template, raw data, or a combination of those things.
+- **[Collection](.github/render_engine/collection.html)** - A group of webpages built from the same template, organized in a single directory
+- **[Site](.github/render_engine/site.html)** - The container that helps to render all Pages and Collections in with uniform settigns and variables
 
 ## Installing Render Engine
 
 In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
 
-* Linux/MacOS: [python.org](https://python.org)
-* Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
+- Linux/MacOS: [python.org](https://python.org)
+- Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
 
 Render Engine is available in PyPI and can be installed using pip:
 
@@ -82,4 +83,3 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
 - [Brian Douglas](https://github.com/bdougie)
 
 Thank you to them and all of those that continue to support this project!
-
