@@ -3,11 +3,11 @@
 This document will help you get started in contributing to the Render Engine codebase is open source and contributions are welcome.
 
 > **NOTE**
-> This Document is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom parser or Theme. Please check the [Render Engine Wiki](https://github.com/render-engine/.github/wiki) or the [Render Engine Docs](https://render-engine.readthedocs.org).
+> This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom parser or Theme. Please check the [Render Engine Wiki](https://github.com/render-engine/.github/wiki) or the [Render Engine Docs](https://render-engine.readthedocs.org).
 
-## The Docs
+## Docs
 
-This document is meant to help users get started in contributing to Render-Engine and isn't a replacement for the more in-depth knowledge in the docs. You can found the docs at <https://render-engine.readthedocs.org>
+Docs can be found at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
@@ -15,35 +15,14 @@ Render Engine and all of the packages created under the Render Engine Org follow
 
 ## Instead of Making a Change in Render Engine's Code Consider
 
-Render Engine is working to build a rich ecosystem of products that allow for more customizability within the platform. When suggesting a feature, consider the following:
+When suggesting a feature, consider the following:
 
-### Is this better as a Plugin?
+- Is this better as a Plugin?
+- Would your feature be a good theme?
+- Could this be implemented as a Custom Parsers or Collections
 
-Plugins allow you to add features to render engine that allow for custom functionality in in a site.
+More on when to choose these solutions in our [docs](https://render-engine.readthedocs.io/contributing/CONTRIBUTING).
 
-You can learn more about Plugins and see examples in the [wiki](https://github.com/render-engine/.github/wiki/plugins)
-
-### Would your feature be a good theme?
-
-Themes allow you to create a foundation for the design of the website.
-
-You can learn more about Themes and see examples in the [wiki](https://github.com/render-engine/.github/wiki/themes)
-
-### Are you trying to create support for a new data type?
-
-Custom Parsers & Collections allow you to take all kinds of data types and convert them into one or more HTML pages.
-
-You can learn more about Custom Parsers and Collections and see examples in the [wiki](https://github.com/render-engine/.github/wiki/Custom-Collections-and-Parsers)
-
-### Sometimes the lines blur
-
-Often themes can require plugins and some plugins will work best with custom parsers and collections. There is nothing wrong with making a package that contains more than one of these features.
-
-There is one advantage to a singular package and that is reusability.
-
-For instance instead of including tailwindcss into your project and all the code required to support it. You can just require the [tailwindcss plugin](https://github.com/kjaymiller/render-engine-tailwindcss) in your theme.
-
----
 
 If you submit an issue that could be solved as a plugin, theme, or custom parser or collection, your issue will be closed with a friendly explanation as to why.
 
@@ -53,27 +32,33 @@ If you submit an issue that could be solved as a plugin, theme, or custom parser
 
 If you see or experience a problem, please file an issue. Include any important information as it is relevant such as:
 
-- Operating System - *System and Version (e.g. MacOS Sonoma)*
-- Python Version - *ex. Python 3.12.0*
-- Plugins/Themes/Custom Parsers & Collections Installed - *You can add them as a list*
-- Commands/Code Used - *What did you enter to get the output that you recieved*
-- Output - *Copy the Error or output that you recieve. This can be a screenshot but is more helpful as text*
+```md
+## Summary of Actions
+## Operating System 
+System and Version (e.g. MacOS Sonoma)
+
+## Python Version
+Python 3.12.0
+
+## Plugins/Themes/Custom Parsers & Collections Installed
+
+- Plugin1
+- Theme2
+
+## Commands/Code Used 
+
+What did you enter to get the output that you recieved
+
+## Output
+
+Copy the Error or output that you recieve.
+
+This can be a screenshot but is more helpful as text*
+```
 
 ## Working on an Issue
 
-**EVERY BUG/APPLICABLE FEATURE SHOULD BE FILED AS AN ISSUE** 
-
-### Issue vs Discussion
-
-If you don't know that the **solution** is, that's okay, we can work on getting a solution.
-
-If you aren't sure what the **problem** is should be, create a [discussion](https://github.com/render-engine/render-engine/discussion) post and we can talk about it.
-
-If you aren't sure if it should be a discussion or an issue... That's okay, GitHub allows us to transfer issues into discussions or vice-versa.
-
-The general rule of thumb is don't let, not knowing where it goes, be the thing that prevents you from reporting that something happened. If you create an issue or an discussion, we'll address it/move it to the necessary place!
-
-### Being assigned an issue
+**Every bug/applicable feature should be filed as an Issue. _When in doubt, file an issue_"
 
 It's important to wait to be assigned an issue before starting to work on it. This prevents the following scenarios:
 
@@ -87,92 +72,25 @@ If you want to work on a project simply say "I can work on this" or something to
 
 Once you've been [assigned an issue](#being-assigned-an-issue), you can begin working on an issue either locally with a [manual setup](#developing-locally) or [dev container](#developing-locally) or using [GitHub Codespaces](#using-codespaces).
 
-## Developing Locally
+## Include in Your Contribution
 
-### Install Python
-To develop locally you will need to have Python installed. Make sure you're using `Python 3.10.5` or higher to develop.
+- Your changes linted and formatted using ruff and markdownlint
 
-Visit https://python.org to learn more about installing Python.
+  ```sh
+  python -m ruff lint src --fix
+  python -m ruff format src
+  ```
 
-### Create a Virtual Environment
+  Markdown changes will also be linted using the markdownlint2 github action. If you are using our dev container or code space, the markdownlint extenstion will update changes on save.
 
-Keep your default environment clean by installing a virtual environment.
+- Tests for your code additions and removals
+- features and changes are documented
 
-```sh
-python -m venv .venv
-```
+## Verify Before Submitting
 
-Once your virtual environment is create, you can activate it and install the requirements.
+- changes aren't breaking existing code (failing tests)
+- Ensure that new dependencies are listed, justified, and approved to be added.
 
-```sh
-source .venv/bin/activate
-python -m pip install --update pip
-python -m pip install requirements.txt
-```
-
-  ![creating an virtual environment](https://vhs.charm.sh/vhs-5t8wsdubdq46vrJydWEtOi.gif)
-
-#### Using VS Code
-
-If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable installing the dependencies.
-
-![Creating an Environment using VS Code](<.github/assets/create environment vs code.gif>)
-
-## Using Codespaces
-
-You can create a new codespace to quickly get started with your project. Once you've been [assigned an issue](#being-assigned-an-issue), Head back to the project main and select the _Code_ button.
-
-You can create a codespace on main.
-![Create a Codespace](.github/assets/create-codespace.gif)
-
-This will create a codespace that you can make your changes in. Don't worry they won't let you push your changes directly to the codebase but when you go to make that change it will let you create a fork and submit the PR.
-
-There is a `devcontainer.json` designed to give you a good start on developing for Render Engine, including getting extensions and settings.
-
-## Using Dev Containers
-
-If you don't want to use Codespaces you can still use the pre-configured environment in VS Code using a Dev Container. 
-
-To use dev containers, you will need to have VS Code installed, Docker, and the dev Container extension.
-
-Start with ensuring that the docker daemon is running.
-
-Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: Repopen in Container" and select the option.
-
-This will create a new local environment with the same configuration as the [codespace](#using-codespaces).
-
-![Launching a Dev Container](<.github/assets/launching a dev container.gif>)
-
-## What Should your contribution have
-
-### Your changes linted and formatted using ruff and markdownlint
-
-Render engine's style is defined in the projects `pyproject.toml`. Before submitting your pull request. You should run the following commands. (If you don't a commit will be added to your PR doing so or you will be asked to before commiting.)
-
-```sh
-python -m ruff lint src --fix
-python -m ruff format src
-```
-
-Markdown changes will also be linted using the markdownlint2 github action. If you are using our dev container or code space, the markdownlint extenstion will update changes on save.
-
-### Tests for your code additions and removals
-
-- Include at least one test case using [pytest](https://docs.pytest.org/en/7.1.x/getting-started.html) showing that your code works as intended. More tests should be added as needed.
-
-Additions should have new tests in the appropriate file based on where the change was made.
-
-Removal of code should likely have a regression test (that is a test that ensures the behavior that you're trying to fix does not show back up).
-
-### Make sure your changes aren't breaking existing code
-
-Ensure that all existing tests pass and no new tests are skipped unless expressely told to skip them.
-
-Ensure that new dependencies are listed, justified, and approved to be added.
-
-### Document as much as possible
-
-New Attributes or features should be properly documented using the [Documentation Guidelines](#contributing-to-documentation).
 
 ## Contributing to Documentation
 
@@ -189,18 +107,27 @@ Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 python -m mkdocs serve -f docs/mkdocs.yml
 ``` 
 
+
 ## Formatting your PR
 
 Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR. 
 
 If you're starting from a blank PR be sure to include the following:
 
-### A descriptive name of the changes
+```md
+## Summary
 
-### outline which issue(s) and discussions are being addressed
+A descriptive name of the changes
+
+## issue(s)/discussions being addressed
 
 In most cases each PR should address one issue unless previously discussed with one of the maintainers.
 
-### Mention documentation and tests that were added or updated.
+## Documentation or tests added/updated
 
-Also mention if there are any follow up tasks that still need to happen.
+You can include the filename and links
+
+## Any follow up tasks pending
+
+So we know not to close any issues that need to be left open
+```

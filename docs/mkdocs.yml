@@ -13,8 +13,8 @@ nav:
     - getting-started/creating-a-collection.md
     - getting-started/building-your-site.md
   - Contributing:
-    - contributing/contributing.md
-    - contributing/code-of-conduct.md
+    - contributing/CONTRIBUTING.md
+    - contributing/CODE_OF_CONDUCT.md
   - Components:
     - Page Objects: page.md
     - Collection:

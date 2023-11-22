@@ -7,7 +7,7 @@
 
 ## Installing Render Engine
 
-In order to use render engine, you must have python 3.9+ installed. You can download python from [python.org](https://python.org).
+In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
 
 - Linux/MacOS: [python.org](https://python.org)
 - Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
