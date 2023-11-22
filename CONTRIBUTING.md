@@ -1,36 +1,5 @@
 # Contributing to Render Engine
 
-- [Contributing to Render Engine](#contributing-to-render-engine)
-  - [The Docs](#the-docs)
-  - [Code of Conduct](#code-of-conduct)
-  - [Instead of Making a Change in Render Engine's Code Consider](#instead-of-making-a-change-in-render-engines-code-consider)
-    - [Is this better as a Plugin?](#is-this-better-as-a-plugin)
-    - [Would your feature be a good theme?](#would-your-feature-be-a-good-theme)
-    - [Are you trying to create support for a new data type?](#are-you-trying-to-create-support-for-a-new-data-type)
-    - [Sometimes the lines blur](#sometimes-the-lines-blur)
-  - [Filing an Issue](#filing-an-issue)
-  - [Working on an Issue](#working-on-an-issue)
-    - [Issue vs Discussion](#issue-vs-discussion)
-    - [Being assigned an issue](#being-assigned-an-issue)
-  - [Developing Locally](#developing-locally)
-    - [Install Python](#install-python)
-    - [Create a Virtual Environment](#create-a-virtual-environment)
-      - [Using VS Code](#using-vs-code)
-  - [Using Codespaces](#using-codespaces)
-  - [Using Dev Containers](#using-dev-containers)
-  - [What Should your contribution have](#what-should-your-contribution-have)
-    - [Your changes linted and formatted using ruff and markdownlint](#your-changes-linted-and-formatted-using-ruff-and-markdownlint)
-    - [Tests for your code additions and removals](#tests-for-your-code-additions-and-removals)
-    - [Make sure your changes aren't breaking existing code](#make-sure-your-changes-arent-breaking-existing-code)
-    - [Document as much as possible](#document-as-much-as-possible)
-  - [Contributing to Documentation](#contributing-to-documentation)
-  - [Formatting your PR](#formatting-your-pr)
-    - [A descriptive name of the changes](#a-descriptive-name-of-the-changes)
-    - [outline which issue(s) and discussions are being addressed](#outline-which-issues-and-discussions-are-being-addressed)
-    - [Mention documentation and tests that were added or updated.](#mention-documentation-and-tests-that-were-added-or-updated)
-
-
-
 This document will help you get started in contributing to the Render Engine codebase is open source and contributions are welcome.
 
 > **NOTE**
