@@ -2,7 +2,6 @@ import pytest
 import typer
 from render_engine.cli.cli import split_module_site
 
-
 def test_module_site_raises_error_if_not():
     """Asserts a typer BadParameter is raised if the module_site is not a module"""
     with pytest.raises(typer.BadParameter):
@@ -96,3 +95,16 @@ def test_path_NAVIGATION_includes_collection_if_not_skipped(tmp_path_factory, cl
     app_content = app.read_text()
     assert "NAVIGATION" in app_content
     assert ("/example-page.html" in app_content) == exists
+
+
+def tests_project_folder_not_exists_error():
+    """Asserts that a project folder that does not exist raises an error"""
+    with pytest.raises(FileNotFoundError):
+        cli.init(
+            project_folder="does-not-exist",
+            collection_path="foo",
+            site_title="foo",
+            site_url="foo",
+            owner_email="foo",
+            owner_name="foo",
+        )

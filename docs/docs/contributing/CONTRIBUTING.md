@@ -94,7 +94,7 @@ Once you've been [assigned an issue](./CONTRIBUTING.md/#being-assigned-an-issue)
 Render engine's style is defined in the projects `pyproject.toml`. Before submitting your pull request. You should run the following commands. (If you don't a commit will be added to your PR doing so or you will be asked to before commiting.)
 
 ```sh
-python -m ruff lint src --fix
+python -m ruff check src --fix
 python -m ruff format src
 ```
 

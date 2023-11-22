@@ -1,7 +1,7 @@
 {
   "files": [
     "README.md",
-    "Contributors.md"
+    "CONTRIBUTING.md"
   ],
   "imageSize": 57,
   "commit": false,
@@ -50,7 +50,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/100200105?v=4",
       "profile": "https://github.com/Mahhheshh",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -115,6 +116,5 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "render-engine",
-  "projectOwner": "render-engine",
-  "contributorsSortAlphabetically": true
+  "projectOwner": "render-engine"
 }
