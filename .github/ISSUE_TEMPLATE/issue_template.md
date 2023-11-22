@@ -2,13 +2,13 @@
 name: Bug Report
 about: "File a quick bug report"
 label: bug, triage
-title: "[BUG]"
+title: "[BUG]: <ISSUE SUMMARY>"
 ---
 
 ## Summary of Actions
 <!-- A brief summary of the problem -->
 
-## Operating System 
+## Operating System
 <!-- System and Version (e.g. MacOS Sonoma) -->
 
 ## Python Version
@@ -19,7 +19,7 @@ title: "[BUG]"
 <!-- Plugin1 -->
 <!-- Theme2 -->
 
-## Commands/Code Used 
+## Commands/Code Used
 
 <-- What did you enter to get the output that you recieved -->
 

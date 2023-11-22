@@ -32,6 +32,7 @@ jobs:
         with:
             fix: true
             globs: '**/*.md'
+        continue-on-error: true
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then

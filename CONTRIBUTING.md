@@ -11,7 +11,7 @@ Docs can be found at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
-Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md). 
+Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md).
 
 ## Before you Contribute
 
@@ -25,7 +25,7 @@ More on when to choose these solutions in our [docs](https://render-engine.readt
 
 ## Filing an Issue
 
-**There is no issue too small to be an issue**
+> **There is no issue too small to be an issue**
 
 If you see or experience a problem, please file an issue. Include any important information as it is relevant such as:
 
@@ -43,7 +43,9 @@ It's important to wait to be assigned an issue before starting to work on it. Th
 Comment _I can work on this_ or something to that effect, and wait for one of the maintainers to assign the issue to you.
 
 ## Setup your Environment
+
 Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/latest/contributing/contributing#being-assigned-an-issue), you can begin working on an issue either locally with:
+
 - [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
 - [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
 - [GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces).
@@ -79,12 +81,11 @@ Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 
 ```sh
 python -m mkdocs serve -f docs/mkdocs.yml
-``` 
-
+```
 
 ## Formatting your PR
 
-Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR. 
+Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR.
 
 If you're starting from a blank PR be sure to include the following:
 

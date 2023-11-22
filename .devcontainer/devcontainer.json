@@ -22,7 +22,9 @@
                     "python.editor.codeActionsOnSave": {"source.fixAll": true},
                     "python.testing.pytestArgs": [
                         "tests"
-                    ]
+                    ],
+                    "markdownlint.ignore": ".gitignore"
+
                 },
             "extensions": [
 				"ms-python.python",

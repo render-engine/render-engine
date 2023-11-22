@@ -1,6 +1,6 @@
-## Summary
+<!-- markdownlint-disable MD041-->
 
-<SUMMARY OF THE CHANGES BEING MADE>
+<!-- SUMMARY OF THE CHANGES BEING MADE -->
 
 ## Type of Issue
 
@@ -10,14 +10,10 @@
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
 
-## Issues Referenced
+## Issues/Discussions Referenced
 
 resolves <#ISSUE NUMBER>
 
-## Discussions Referenced
-
-address <#DISCUSSION NUMBER>
-
 ## Next Steps
 
-<ANY FURTHER STEPS TO BE TAKEN>
+<!--ANY FURTHER STEPS TO BE TAKEN-->
