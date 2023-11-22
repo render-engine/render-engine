@@ -75,7 +75,7 @@ def url_for(env: Environment, value: str, page: int = 0) -> str:
     routes = env.globals.get("routes")
     route = value.split(".", maxsplit=1)
 
-    if len(route) == 2 and type(route) == list:
+    if len(route) == 2 and isinstance(route, list):
         collection, route = route
         if collection := routes.get(collection, None):
             for page in collection:
