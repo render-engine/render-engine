@@ -11,9 +11,9 @@ Docs can be found at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
-Render Engine and all of the packages created under the Render Engine Org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md). Contributors to this project are expected to adhere to this code of conduct when working with this project.
+Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md). 
 
-## Instead of Making a Change in Render Engine's Code Consider
+## Before you Contribute
 
 When suggesting a feature, consider the following:
 
@@ -21,7 +21,7 @@ When suggesting a feature, consider the following:
 - Would your feature be a good theme?
 - Could this be implemented as a Custom Parsers or Collections
 
-More on when to choose these solutions in our [docs](https://render-engine.readthedocs.io/contributing/CONTRIBUTING).
+More on when to choose these solutions in our [docs](https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider).
 
 
 If you submit an issue that could be solved as a plugin, theme, or custom parser or collection, your issue will be closed with a friendly explanation as to why.
@@ -70,7 +70,7 @@ It's important to wait to be assigned an issue before starting to work on it. Th
 
 If you want to work on a project simply say "I can work on this" or something to that effect, and wait for one of the maintainers to assign the issue to you.
 
-Once you've been [assigned an issue](#being-assigned-an-issue), you can begin working on an issue either locally with a [manual setup](#developing-locally) or [dev container](#developing-locally) or using [GitHub Codespaces](#using-codespaces).
+Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/latest/contributing/contributing#being-assigned-an-issue), you can begin working on an issue either locally with a [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#developing-locally) or [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#developing-locally) or using [GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#using-codespaces).
 
 ## Include in Your Contribution
 

@@ -85,7 +85,7 @@ It's important to wait to be assigned an issue before starting to work on it. Th
 
 If you want to work on a project simply say "I can work on this" or something to that effect, and wait for one of the maintainers to assign the issue to you.
 
-Once you've been [assigned an issue](#being-assigned-an-issue), you can begin working on an issue either locally with a [manual setup](#developing-locally) or [dev container](#developing-locally) or using [GitHub Codespaces](#using-codespaces).
+Once you've been [assigned an issue](./CONTRIBUTING.md/#being-assigned-an-issue), you can begin working on an issue either locally with a [manual setup](./environment_setup.md#developing-locally) or [dev container](./environment_setup.md#using-dev-containers) or using [GitHub Codespaces](./environment_setup.md#using-codespaces).
 
 ## What Should your contribution have
 
