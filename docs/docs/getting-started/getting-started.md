@@ -1,5 +1,4 @@
-# Getting Started
-
+<!-- markdownlint-disable MD001 -->
 This section will walk you through the basics of Render Engine. It will show you how to create a simple site and how to add pages and collections to your site.
 
 ### Sections
