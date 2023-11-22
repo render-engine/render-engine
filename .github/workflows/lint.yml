@@ -9,13 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: true
-      - name: Configure Git
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
       - name: Install Python
         uses: actions/setup-python@v4
         with:
@@ -32,9 +25,11 @@ jobs:
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
+            git config --global user.name "Ruff"
+            git config --global user.email "ruff-action@users.noreply.github.com"
             git add .
             git commit -m "Format and lint with Ruff"
-            git push origin ${{ github.event.pull_request.head.sha }} 
+            git push 
           fi
           
       
