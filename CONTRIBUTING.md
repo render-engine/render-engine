@@ -44,9 +44,9 @@ Comment _I can work on this_ or something to that effect, and wait for one of th
 
 ## Setup your Environment
 Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/latest/contributing/contributing#being-assigned-an-issue), you can begin working on an issue either locally with:
-- [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#developing-locally)
-- [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#developing-locally)
-- [GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup/#using-codespaces).
+- [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
+- [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
+- [GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces).
 
 ## In Your Contribution
 
