@@ -8,7 +8,6 @@
 # Render Engine
 
 [![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
-
 [![Discord](https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple)](https://discord.gg/2xMQ4j4d8m)
 
 ### [Check out the Documentation](https://render-engine.readthedocs.io/en/latest/)
