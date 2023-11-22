@@ -1,3 +1,5 @@
+# ruff: noqa: F821
+
 import typing
 
 import pluggy

@@ -1,3 +1,5 @@
+# ruff: noqa: F821
+
 from markdown2 import markdown
 
 from ..base_parsers import BasePageParser
