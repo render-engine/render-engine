@@ -89,6 +89,9 @@ def init(
     ),
     project_folder: pathlib.Path = typer.Option(
         pathlib.Path("./"),
+        exists=True,
+        dir_okay=True,
+        writable=True,
         help="path to create the project in",
         rich_help_panel="Path Attributes",
     ),
