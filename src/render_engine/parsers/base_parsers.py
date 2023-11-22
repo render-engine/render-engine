@@ -1,3 +1,5 @@
+# ruff: noqa: F821
+
 import pathlib
 
 import frontmatter
