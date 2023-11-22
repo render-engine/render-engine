@@ -1,5 +1,12 @@
 import pytest
+import typer
+from render_engine.cli.cli import split_module_site
 
+
+def test_module_site_raises_error_if_not():
+    """Asserts a typer BadParameter is raised if the module_site is not a module"""
+    with pytest.raises(typer.BadParameter):
+        split_module_site("Not Correct Format")
 
 def test_cli_author_owner(default_cli, tmp_path_factory):
     """Asserts there is a `OWNER` key"""

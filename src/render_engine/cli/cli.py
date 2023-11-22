@@ -1,18 +1,39 @@
 # ruff: noqa: UP007
 
+import importlib
 import pathlib
+import sys
 import typing
+from typing import Annotated
 
 import dtyper
 import typer
 from rich.console import Console
 from rich.progress import Progress
 
-from render_engine.cli.event import RegExHandler, get_app
+from render_engine.cli.event import RegExHandler
 from render_engine.engine import engine
 from render_engine.site import Site
 
 app = typer.Typer()
+
+
+def split_module_site(module_site: str) -> tuple[str, str]:
+    """splits the module_site into a module and a class name"""
+    try:
+        import_path, app_name = module_site.split(":", 1)
+    except ValueError:
+        raise typer.BadParameter(
+            "module_site must be of the form `module:site`",
+        )
+    return import_path, app_name
+
+
+def get_app(import_path, app_name) -> Site:
+    """Split the site module into a module and a class name"""
+    sys.path.insert(0, ".")
+    importlib.import_module(import_path)
+    return getattr(sys.modules[import_path], app_name)
 
 
 def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
@@ -217,7 +238,7 @@ def init(
 
 
 @app.command()
-def build(site_module: str):
+def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)]):
     """
     CLI for creating a new site
 
@@ -225,18 +246,17 @@ def build(site_module: str):
         site_module: module and class name of the site
 
     """
-    app = get_app(site_module)
+    module, site = module_site
+    app = get_app(module, site)
     app.render()
 
 
 @app.command()
 def serve(
-    module_site: typing.Optional[str] = typer.Option(
-        None,
-        "--build",
-        "-b",
+    module_site: Annotated[str, typer.Argument(
+        callback=split_module_site,
         help="module:site for Build the site prior to serving",
-    ),
+    )],
     reload: typing.Optional[bool] = typer.Option(
         None,
         "--reload",
@@ -273,7 +293,8 @@ def serve(
     """
 
     if module_site:
-        app = get_app(module_site)
+        module, site = module_site
+        app = get_app(module, site)
         app.render()
 
     if not directory:

@@ -1,5 +1,4 @@
 import importlib
-import sys
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -32,14 +31,6 @@ def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHT
         return ThreadingHTTPServer(server_address, _RequestHandler)
 
     return _httpd()
-
-
-def get_app(module_site: str) -> Site:
-    """Split the site module into a module and a class name"""
-    sys.path.insert(0, ".")
-    import_path, app_name = module_site.split(":", 1)
-    importlib.import_module(import_path)
-    return getattr(sys.modules[import_path], app_name)
 
 
 class RegExHandler(RegexMatchingEventHandler):
@@ -100,7 +91,7 @@ class RegExHandler(RegexMatchingEventHandler):
 
     def rebuild(self):
         console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
-        import_path = self.module_site.split(":", 1)[0]
+        import_path = self.module_site[0]
         module = importlib.import_module(import_path)
         importlib.reload(module)
         self.app.render()
