@@ -256,30 +256,42 @@ def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)
 
 @app.command()
 def serve(
-    module_site: Annotated[str, typer.Argument(
-        callback=split_module_site,
-        help="module:site for Build the site prior to serving",
-    )],
-    reload: typing.Optional[bool] = typer.Option(
-        None,
-        "--reload",
-        "-r",
-        help="Reload the server when files change",
-    ),
-    directory: typing.Optional[str] = typer.Option(
-        None,
-        "--directory",
-        "-d",
-        help="Directory to serve",
-        show_default=False,
-    ),
-    port: int = typer.Option(
-        8000,
-        "--port",
-        "-p",
-        help="Port to serve on",
-        show_default=False,
-    ),
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            callback=split_module_site,
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
+    reload: Annotated[
+        bool,
+        typer.Option(
+            None,
+            "--reload",
+            "-r",
+            help="Reload the server when files change",
+        ),
+    ],
+    directory: Annotated[
+        str,
+        typer.Option(
+            None,
+            "--directory",
+            "-d",
+            help="Directory to serve",
+            show_default=False,
+        ),
+    ],
+    port: Annotated[
+        int,
+        typer.Option(
+            8000,
+            "--port",
+            "-p",
+            help="Port to serve on",
+            show_default=False,
+        ),
+    ],
 ):
     """
     Create an HTTP server to serve the site at `localhost`.
