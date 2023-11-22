@@ -3,13 +3,13 @@
 You can get started quickly using the `render-engine init` cli command.
 
 ```bash
-$ render-engine init
+render-engine init
 ```
 
 or
 
 ```bash
-$ python -m render_engine init
+python -m render_engine init
 ```
 
 ## Available Options

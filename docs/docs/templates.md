@@ -9,9 +9,11 @@ Render Engine uses the [Jinja2](https://palletsprojects.com/p/jinja/) templating
 Render Engine provides a few global variables that you can use in your templates.
 
 ### route_list
+
 The route_list global is a list of all the routes that are registered with Render Engine. This is useful if you want to create a navigation bar or a sitemap.
 
 ### Attributes from site_vars
+
 The site_vars global is a dictionary of all the variables that are defined in the `Site.site_vars`file. This is useful if you want to reference a variable site_wide in your templates.
 
 ```python
@@ -23,7 +25,8 @@ site.site_vars["SITE_NAME"] = "My Site"
 site.site_vars["SITE_URL"] = "https://example.com"
 
 ```
-### SITE_TITLE 
+
+### SITE_TITLE
 
 The title of the site. This is useful if you want to reference the site title in your templates.
 

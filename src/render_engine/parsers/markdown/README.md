@@ -6,7 +6,8 @@ This is a parser for the Markdown markup language. This is the default parser fo
 
 The underlying parser is [python-markdown2](https://pypi.org/project/markdown2/).
 
-## Parser Options:
+## Parser Options
+
 These are the options that can be pulled from the page:
 
 | Option | Description |

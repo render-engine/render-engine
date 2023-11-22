@@ -47,7 +47,6 @@ If you want to pass additional objects through the template context (see [Jinja'
 
 For example, if you want to send an attribute called `some_value` with a value of `"42"`, you can assign the dictionary to a `template_vars` attribute within your `Collection` class, and it will be passed to the template through a `collection` attribute that contains the key:value pair (`{"some_value: "42"}`).
 
-
 ```python
 
 # app.py
@@ -71,5 +70,4 @@ The value of `42` can be accessed in your template using `{{collection.some_valu
 
 ### Continue to [Building your Site](../building-your-site/)
 
-[Collection]: ../collection
 [Creating a Page]: /getting-started/creating-a-page

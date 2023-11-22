@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD052 -->
 # Archive
 
 Archives are a [`BasePage`][src.render_engine.page.BasePage] object used to display a list of [`Page`][src.render_engine.page.Page] objects in a [`Collection`][src.render_engine.collection.Collection].
@@ -14,7 +15,6 @@ By default render engine will only create the archive page is either of the foll
 
 - The `Collection.items_per_page` attribute is set to a value greater than 0.
 - The `Collection.has_archive` attribute is set to True.
-
 
 ## Archive Page Numbers
 

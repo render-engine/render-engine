@@ -49,7 +49,7 @@ If you submit an issue that could be solved as a plugin, theme, or custom parser
 
 ## Filing an Issue
 
-**There is no issue too small to be an issue**
+> **There is no issue too small to be an issue**
 
 If you see or experience a problem, please file an issue. Include any important information as it is relevant such as:
 
@@ -61,7 +61,7 @@ If you see or experience a problem, please file an issue. Include any important 
 
 ## Working on an Issue
 
-**EVERY BUG/APPLICABLE FEATURE SHOULD BE FILED AS AN ISSUE** 
+> **EVERY BUG/APPLICABLE FEATURE SHOULD BE FILED AS AN ISSUE**
 
 ### Issue vs Discussion
 
@@ -78,9 +78,7 @@ The general rule of thumb is don't let, not knowing where it goes, be the thing 
 It's important to wait to be assigned an issue before starting to work on it. This prevents the following scenarios:
 
 > Two individuals contribute solutions to the same issue and someone is left with their code not being accepted.
-
-> A contributor does the work to resolve an issue  that is ultimately marked as _closed-Not Planned_. will not be added to the code-base.
-
+> A contributor does the work to resolve an issue  that is ultimately marked as *closed-Not Planned*. will not be added to the code-base.
 > A contributor does work when a different solution is considered, resulting in wasting the contributor's time.
 
 If you want to work on a project simply say "I can work on this" or something to that effect, and wait for one of the maintainers to assign the issue to you.
@@ -129,7 +127,7 @@ If you're documenting a process be sure to include images and gifs where necessa
 
 ## Formatting your PR
 
-Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR. 
+Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR.
 
 If you're starting from a blank PR be sure to include the following:
 
@@ -139,6 +137,6 @@ If you're starting from a blank PR be sure to include the following:
 
 In most cases each PR should address one issue unless previously discussed with one of the maintainers.
 
-### Mention documentation and tests that were added or updated.
+### Mention documentation and tests that were added or updated
 
 Also mention if there are any follow up tasks that still need to happen.

@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD041 -->
 ::: src.render_engine.collection.Collection
 
 # Passing Collection Variables to a Rendered Page
@@ -8,7 +9,7 @@ To do so, you must create an attribute called `template_vars` and populate it wi
 
 In turn, each `Page` in the collection will have a `collection` attribute, similar to `Page.template_vars`. The dictionary includes any additional attributes you have defined within the `Collection` class.
 
-```
+```python
 from render_engine import Site, Collection
 
 site = Site()
@@ -24,6 +25,7 @@ class BasicCollection(Collection):
 
 You can access `some_value` in your template like this:
 
+<!-- markdownlint-disable-next-line -->
 ```
 {{collection.some_value}}
 ```

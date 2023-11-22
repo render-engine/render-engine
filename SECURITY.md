@@ -9,7 +9,6 @@ currently being supported with security updates.
 | ------- | ------------------ |
 | 2023.9.x   | :white_check_mark: |
 
-
 ## Reporting a Vulnerability
 
-Email: kjaymiller@gmail.com
+Email: <kjaymiller@gmail.com>
