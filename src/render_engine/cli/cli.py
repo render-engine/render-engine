@@ -6,7 +6,6 @@ import sys
 import typing
 from typing import Annotated
 
-import dtyper
 import typer
 from rich.console import Console
 from rich.progress import Progress
@@ -83,7 +82,6 @@ def _create_site_with_vars(
     return site
 
 
-@dtyper.function
 @app.command()
 def init(
     collection_path: Annotated[
