@@ -4,7 +4,7 @@ Render Engine comes with a CLI that can be used to create, build, and serve your
 
 ## creating your app with `render-engine init`
 
-::: src.render_engine.cli.init
+::: src.render_engine.cli.cli.init
 
 #### `collection-path` (`Path`: default=`"pages"`)
 
@@ -58,7 +58,7 @@ The `serve` command creates a simple webserver that you can use to view your fil
 
 You can also use the `--reload` flag to have the site rebuild when changes are made.
 
-:::src.render_engine.cli.serve
+:::src.render_engine.cli.cli.serve
 
 > **NOTE**
 > `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.

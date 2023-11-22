@@ -97,9 +97,16 @@ Once you've been [assigned an issue](#being-assigned-an-issue), you can begin wo
 Render Engine uses [readthedocs](https://readthedocs.org) in combination with
 [MkDocs](https://www.mkdocs.org),[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), and [mkdocsstrings](https://mkdocsstrings.readthedocs.io/en/latest/) to generate documentation.
 
-- Ensure docstrings are accurate to your changes.
+When updating a function, method, or class be sure to update the docstring with any necessary changes.
 
-- If you're documenting a process be sure to include images and gifs where necessary. Assets should be stored in the `docs/docs/assets` folder.
+Include images and gifs where necessary. Assets should be stored in the `docs/docs/assets` folder.
+
+Test your docs changes by running the command **FROM THE PROJECT ROOT**.
+
+```sh
+python -m mkdocs serve -f docs/mkdocs.yml
+``` 
+
 
 ## Formatting your PR
 
