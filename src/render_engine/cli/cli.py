@@ -256,10 +256,13 @@ def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)
 
 @app.command()
 def serve(
-    module_site: Annotated[str, typer.Argument(
-        callback=split_module_site,
-        help="module:site for Build the site prior to serving",
-    )],
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            callback=split_module_site,
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
     reload: typing.Optional[bool] = typer.Option(
         None,
         "--reload",
