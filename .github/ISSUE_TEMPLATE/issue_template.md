@@ -6,7 +6,7 @@ title: "[BUG]"
 ---
 
 ## Summary of Actions
-<!-- A brie summary of the problem -->
+<!-- A brief summary of the problem -->
 
 ## Operating System 
 <!-- System and Version (e.g. MacOS Sonoma) -->
