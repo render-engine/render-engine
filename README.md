@@ -9,6 +9,8 @@
 
 [![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
 
+[![Discord](https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple)](https://discord.gg/2xMQ4j4d8m)
+
 ### [Check out the Documentation](https://render-engine.readthedocs.io/en/latest/)
 
 ### [Contributors and Builders, Check out the Wiki](https://github.com/render-engine/.github/wiki)
@@ -23,7 +25,7 @@
 
 ## Installing Render Engine
 
-In order to use render engine, you must have python 3.9+ installed. You can download python from [python.org](https://python.org).
+In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
 
 * Linux/MacOS: [python.org](https://python.org)
 * Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
