@@ -27,11 +27,20 @@ jobs:
             ruff check --fix --output-format=github src
             ruff format src
 
-      - name: Markdown Lint
+      - name: Markdown Lint base-files
         uses: DavidAnson/markdownlint-cli2-action@v13
         with:
             fix: true
-            globs: '**/*.md'
+            globs: |
+              *.md
+              .github/**/*.md
+        continue-on-error: true
+      - name: Markdown Lint Docs
+        uses: DavidAnson/markdownlint-cli2-action@v13
+        with:
+            fix: true
+            globs: docs/**/*.md
+            config: docs/.markdownlint.json
         continue-on-error: true
       - name: Commit changes
         run: |
