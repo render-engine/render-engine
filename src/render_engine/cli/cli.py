@@ -86,93 +86,121 @@ def _create_site_with_vars(
 @dtyper.function
 @app.command()
 def init(
-    collection_path: pathlib.Path = typer.Option(
-        pathlib.Path("pages"),
-        help="create your content folder in a custom location",
-        rich_help_panel="Path Options",
-    ),
-    force: bool = typer.Option(
-        False,
-        "--force",
-        "-f",
-        help="Force overwrite of existing files",
-        rich_help_panel="Flags",
-    ),
-    output_path: pathlib.Path = typer.Option(
-        "output",
-        help="custom output folder location.",
-        rich_help_panel="Path Attributes",
-    ),
-    project_path_name: pathlib.Path = typer.Option(
-        "app.py",
-        help="name of render_engine app name",
-        rich_help_panel="Path Attributes",
-    ),
-    project_folder: pathlib.Path = typer.Option(
-        pathlib.Path("./"),
-        exists=True,
-        dir_okay=True,
-        writable=True,
-        help="path to create the project in",
-        rich_help_panel="Path Attributes",
-    ),
-    owner_name: typing.Optional[str] = typer.Option(
-        ...,
-        prompt="Owner Name",
-        help="Site Owners's Name",
-        rich_help_panel="Site Vars",
-    ),
-    owner_email: typing.Optional[str] = typer.Option(
-        ...,
-        prompt="Owner Email",
-        help="Email of Site's Owner",
-        rich_help_panel="Site Vars",
-    ),
-    site_description: typing.Optional[str] = typer.Option(
-        None,
-        help="(Optional): Site Description",
-        rich_help_panel="Site Vars",
-    ),
-    site_title: typing.Optional[str] = typer.Option(
-        None,
-        "--title",
-        "-t",
-        help="title of the site",
-        rich_help_panel="Site Vars",
-        show_default=False,
-    ),
-    site_url: typing.Optional[str] = typer.Option(
-        None,
-        "--url",
-        "-u",
-        help="URL for the site",
-        rich_help_panel="Site Vars",
-        show_default=False,
-    ),
-    skip_collection: bool = typer.Option(
-        False,
-        "--skip-collection",
-        "-C",
-        help="Skip creating the content folder and a collection",
-        rich_help_panel="Flags",
-    ),
-    skip_static: bool = typer.Option(
-        False,
-        "--skip-static",
-        "-S",
-        help="Skip copying static files",
-        rich_help_panel="Flags",
-    ),
-    static_path: pathlib.Path = typer.Option(
-        pathlib.Path("static"),
-        help="custom static folder",
-        rich_help_panel="Path Attributes",
-    ),
-    templates_path: pathlib.Path = typer.Option(
-        pathlib.Path("templates"),
-        "--templates-path",
-        help="custom templates folder",
-    ),
+    collection_path: Annotated[
+        pathlib.Path,
+        typer.Option(
+            help="create your content folder in a custom location",
+            rich_help_panel="Path Options",
+        ),
+    ] = pathlib.Path("pages"),
+    force: Annotated[
+        bool,
+        typer.Option(
+            "--force",
+            "-f",
+            help="Force overwrite of existing files",
+            rich_help_panel="Flags",
+        ),
+    ] = False,
+    output_path: Annotated[
+        pathlib.Path,
+        typer.Option(
+            help="custom output folder location.",
+            rich_help_panel="Path Attributes",
+        ),
+    ] = "output",
+    project_path_name: Annotated[
+        pathlib.Path,
+        typer.Option(
+            help="name of render_engine app name",
+            rich_help_panel="Path Attributes",
+        ),
+    ] = "app.py",
+    project_folder: Annotated[
+        pathlib.Path,
+        typer.Option(
+            exists=True,
+            dir_okay=True,
+            writable=True,
+            help="path to create the project in",
+            rich_help_panel="Path Attributes",
+        ),
+    ] = pathlib.Path("./"),
+    owner_name: Annotated[
+        typing.Optional[str],
+        typer.Option(
+            prompt="Owner Name",
+            help="Site Owners's Name",
+            rich_help_panel="Site Vars",
+        ),
+    ] = ...,
+    owner_email: Annotated[
+        typing.Optional[str],
+        typer.Option(
+            prompt="Owner Email",
+            help="Email of Site's Owner",
+            rich_help_panel="Site Vars",
+        ),
+    ] = ...,
+    site_description: Annotated[
+        typing.Optional[str],
+        typer.Option(
+            help="(Optional): Site Description",
+            rich_help_panel="Site Vars",
+        ),
+    ] = None,
+    site_title: Annotated[
+        typing.Optional[str],
+        typer.Option(
+            "--title",
+            "-t",
+            help="title of the site",
+            rich_help_panel="Site Vars",
+            show_default=False,
+        ),
+    ] = None,
+    site_url: Annotated[
+        typing.Optional[str],
+        typer.Option(
+            "--url",
+            "-u",
+            help="URL for the site",
+            rich_help_panel="Site Vars",
+            show_default=False,
+        ),
+    ] = None,
+    skip_collection: Annotated[
+        bool,
+        typer.Option(
+            "--skip-collection",
+            "-C",
+            help="Skip creating the content folder and a collection",
+            rich_help_panel="Flags",
+        ),
+    ] = False,
+    skip_static: Annotated[
+        bool,
+        typer.Option(
+            "--skip-static",
+            "-S",
+            help="Skip copying static files",
+            rich_help_panel="Flags",
+        ),
+    ] = False,
+    static_path: Annotated[
+        pathlib.Path,
+        typer.Option(
+            help="custom static folder",
+            rich_help_panel="Path Attributes",
+        ),
+    ] = pathlib.Path("static"),
+    templates_path: Annotated[
+        pathlib.Path,
+        typer.Option(
+            "--templates-path",
+            help="custom templates folder",
+        ),
+    ] = pathlib.Path("templates"),
 ):
     """
     CLI for creating a new site configuration.
