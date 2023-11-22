@@ -1,11 +1,14 @@
 import pytest
 import typer
-from render_engine.cli.cli import split_module_site
+
+from render_engine.cli import cli
+
 
 def test_module_site_raises_error_if_not():
     """Asserts a typer BadParameter is raised if the module_site is not a module"""
     with pytest.raises(typer.BadParameter):
-        split_module_site("Not Correct Format")
+        cli.split_module_site("Not Correct Format")
+
 
 def test_cli_author_owner(default_cli, tmp_path_factory):
     """Asserts there is a `OWNER` key"""
@@ -31,13 +34,12 @@ def test_cli_static_path(default_cli, tmp_path_factory):
     assert 'app.static_paths.add("static")' in temp_app.read_text()
 
 
-
 def test_cli_skips_static(skip_static_cli, tmp_path_factory):
     """Asserts the static path is not in the app.py if the skip_static flag is set"""
     temp_app = tmp_path_factory.getbasetemp() / "test_skip_static_cli_app" / "app.py"
     assert 'app.static_paths.add("static")' not in temp_app.read_text()
 
-    assert 'static' not in list((tmp_path_factory.getbasetemp() / "test_skip_static_cli_app").iterdir())
+    assert "static" not in list((tmp_path_factory.getbasetemp() / "test_skip_static_cli_app").iterdir())
 
 
 @pytest.mark.parametrize(
