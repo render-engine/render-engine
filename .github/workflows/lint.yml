@@ -28,10 +28,10 @@ jobs:
             ruff format src
 
       - name: Markdown Lint
-        - uses: DavidAnson/markdownlint-cli2-action@v13
+        uses: DavidAnson/markdownlint-cli2-action@v13
         with:
-          fix: true
-          globs: '**/*.md'
+            fix: true
+            globs: '**/*.md'
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
