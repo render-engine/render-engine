@@ -12,6 +12,9 @@ nav:
     - getting-started/creating-a-page.md
     - getting-started/creating-a-collection.md
     - getting-started/building-your-site.md
+  - Contributing:
+    - contributing/contributing.md
+    - contributing/code-of-conduct.md
   - Components:
     - Page Objects: page.md
     - Collection:
