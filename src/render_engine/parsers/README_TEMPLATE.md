@@ -7,13 +7,13 @@ Add some information about the type of content
 Let people know what is doing the underlying parsing.
 The underlying parser i
 
-## Parser Options:
+## Parser Options
+
 These are the options that can be pulled from the Page object:
 
 | Option | Description |
 | --- | --- |
 | `<arg1>` | You can add notes about the args here|
-
 
 ## Content Path Type
 

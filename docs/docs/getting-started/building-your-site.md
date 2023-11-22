@@ -1,6 +1,6 @@
 # Building Your Site
 
-Once you've created the [layout](./layout.md) of your site, you can start building it. 
+Once you've created the [layout](./layout.md) of your site, you can start building it.
 
 ## Calling `render()`
 

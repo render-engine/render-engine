@@ -1,9 +1,10 @@
 ## Developing Locally
 
 ### Install Python
+
 To develop locally you will need to have Python installed. Make sure you're using `Python 3.10.5` or higher to develop.
 
-Visit https://python.org to learn more about installing Python.
+Visit <https://python.org> to learn more about installing Python.
 
 ### Create a Virtual Environment
 
@@ -43,7 +44,7 @@ There is a `devcontainer.json` designed to give you a good start on developing f
 
 ## Using Dev Containers
 
-If you don't want to use Codespaces you can still use the pre-configured environment in VS Code using a Dev Container. 
+If you don't want to use Codespaces you can still use the pre-configured environment in VS Code using a Dev Container.
 
 To use dev containers, you will need to have VS Code installed, Docker, and the dev Container extension.
 

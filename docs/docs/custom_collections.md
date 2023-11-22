@@ -4,7 +4,6 @@ Custom collections are a way for you to create collections for distribution.
 
 If you have something that could be represented as a group of individual pages, then potentially you could make a custom collection.
 
-
 ## Creating a Custom Collection
 
 ### Install the render_engine package
@@ -30,8 +29,8 @@ class MyCustomCollection(Collection):
 
 While you can set any of the attributes and override any methods on the Collection object, there are a few exposed specifically for custom collections types.
 
-
 #### Attributes
+
 `content_path: str | Iterable`: Perhaps most important, this is the iterable that will be used to create the collection object. `iter_content_path` is the method that will be used to parse the content path. This method is called in the `__init__` method of the Collection object.
 
 `content_type: Type[Page]`: Some custom collections may want to create a different type of Page object. This attribute allows you to set the type of page that will be created for each item in the collection.

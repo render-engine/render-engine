@@ -1,4 +1,5 @@
 # Simple Site Layout
+
 Render Engine has a very simple site layout. You can see the example site layout below generated via the cli.
 
 ```shell
@@ -22,6 +23,7 @@ python -m render_engine init
 ## Building your Site
 
 ### Creating your Site
+
 Let's look at the `app.py` file and explore the different components.
 
 ```python
@@ -74,7 +76,7 @@ if __name__ == "__main__":
 
 ### Importing Render Engine Components
 
-Render Engine uses classes to create most of the objects for the site. 
+Render Engine uses classes to create most of the objects for the site.
 
 You will need to import the `Site` and `Page`/`Collection` classes you'll need `render_engine`.
 
@@ -86,7 +88,7 @@ from render_engine import Site, Page, Collection
 
 ### Importing parsers needed to generate html
 
-Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](/parsers#BasePageParser) and [MarkdownPageParser](/parsers#MarkdownPageParser)) or create your own. 
+Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](/parsers#BasePageParser) and [MarkdownPageParser](/parsers#MarkdownPageParser)) or create your own.
 
 Custom parsers can be imported and set in the `Parsers` attribute of the `Page` or `Collection` class.
 
@@ -100,10 +102,9 @@ from render_engine_rss import RSSCollection, RSSFeedPageParser
 
 ### Render Engine plugins and themes
 
-Plugins and themes are not required but can be used to quickly get your site's style and functionality up and running quickly. 
+Plugins and themes are not required but can be used to quickly get your site's style and functionality up and running quickly.
 
 To use custom plugins and themes, you will need to import the parsers you want to use.
-
 
 ```python
 from render_engine_kjaymiller_theme import kjaymiller
@@ -167,7 +168,8 @@ would render as:
 <h1>Welcome to my Page!</h1>
 ```
 
-### Adding attributes from a file:
+### Adding attributes from a file
+
 Render Engine can also add attributes to your page from a markdown file. This is useful if you want to add a lot of content to your page. To do this, Render Engine uses [frontmatter](https://pypi.org/project/python-frontmatter/) to parse the attributes at the topc of the markdown file.
 
 ```markdown
@@ -196,6 +198,7 @@ The end result is the same as the previous example. If we want to get the conten
 <h1>{{title}}</h1>
 {{content}}
 ```
+
 The markdown in `content` will converted to html and rendered in the template.
 
 ```html
@@ -203,7 +206,8 @@ The markdown in `content` will converted to html and rendered in the template.
 <p>I'm happy that you are here!</p>
 ```
 
-#### Creating a Collection:
+#### Creating a Collection
+
 Collections are a group of pages that are rendered using the same template and (some) attributes. They are created using the `Collection` class and the `render_collection` decorator.
 
 ```python
