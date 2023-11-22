@@ -1,3 +1,10 @@
+---
+name: Bug Report
+about: "File a quick bug report"
+label: bug, triage
+title: "[BUG]"
+---
+
 ## Summary of Actions
 <!-- A brie summary of the problem -->
 
