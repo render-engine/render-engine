@@ -1,4 +1,4 @@
-name: Format and Lint with Ruff
+name: Format and Lint with Ruff and MarkdownLint
 on: 
     pull_request:
         branches: [main]
@@ -26,6 +26,13 @@ jobs:
         run: |
             ruff check --fix --output-format=github src
             ruff format src
+
+      - name: Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v13
+        with:
+            fix: true
+            globs: '**/*.md'
+        continue-on-error: true
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then

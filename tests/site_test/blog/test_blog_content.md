@@ -1,5 +1,5 @@
 ---
-name: test blog post
+title: test blog post
 date: 2023-04-01T18:52-08:00
 ---
 
