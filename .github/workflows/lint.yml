@@ -3,15 +3,14 @@ on:
     pull_request:
         branches: [main]
     workflow_dispatch:
-
+permissions:
+    contents: write
+    pull-requests: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Install Python
         uses: actions/setup-python@v4
         with:
