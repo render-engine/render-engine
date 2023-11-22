@@ -142,7 +142,8 @@ class Collection(BaseObject):
 
         if not getattr(self, "has_archive", False):
             logging.warning(
-                "`has_archive` is set to `False` for %s. While an archive will be generated. The file will not be saved.",
+                "`has_archive` is set to `False` for %s. While an archive will be generated. \
+                The file will not be saved.",
                 self._title,
             )
             yield from ()
