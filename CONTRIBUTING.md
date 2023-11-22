@@ -53,7 +53,7 @@ Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/lat
 - lint and format code using ruff and markdownlint
 
   ```sh
-  python -m ruff lint src --fix
+  python -m ruff check src --fix
   python -m ruff format src
   ```
 
