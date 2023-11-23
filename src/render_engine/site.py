@@ -11,7 +11,7 @@ from .collection import Collection
 from .engine import engine
 from .hookspecs import _PROJECT_NAME, SiteSpecs
 from .page import Page
-from .utils.themes import Theme, ThemeManager
+from .themes import Theme, ThemeManager
 
 
 class Site(ThemeManager):
