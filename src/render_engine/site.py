@@ -8,8 +8,7 @@ from rich.progress import Progress
 from .collection import Collection
 from .engine import engine
 from .page import Page
-from .plugins import PluginManager
-from .utils.themes import Theme, ThemeManager
+from .themes import Theme, ThemeManager
 
 
 class Site(ThemeManager, PluginManager):

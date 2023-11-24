@@ -2,7 +2,7 @@ Theme Management
 
 Themes are managed by your Site. You can provide your own theme by adding a `templates` folder to your project_path.
 
-::: src.render_engine.utils.themes.ThemeManager
+::: src.render_engine.themes.ThemeManager
 
 ### Adding themes
 
@@ -17,4 +17,4 @@ app.register_theme(SomeTheme)
 
 ## Theme
 
-::: src.render_engine.utils.themes.Theme
+::: src.render_engine.themes.Theme
