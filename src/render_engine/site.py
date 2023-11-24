@@ -1,20 +1,18 @@
 import logging
 import pathlib
-import typing
 from collections import defaultdict
 
-import pluggy
 from jinja2 import Environment, FileSystemLoader
 from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
-from .hookspecs import _PROJECT_NAME, SiteSpecs
 from .page import Page
+from .plugins import PluginManager
 from .utils.themes import Theme, ThemeManager
 
 
-class Site(ThemeManager):
+class Site(ThemeManager, PluginManager):
     """
     The site stores your pages and collections to be rendered.
 
@@ -34,7 +32,6 @@ class Site(ThemeManager):
             settings that will be passed into pages and collections but not into templates
     """
 
-    _pm: pluggy.PluginManager
     partial: bool = False
     site_settings: dict = {"plugins": {}}
     site_vars: dict = {
@@ -57,36 +54,9 @@ class Site(ThemeManager):
         if self.template_path:
             self.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
 
-        # Manage Plugins
-        self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
-        self._pm.add_hookspecs(SiteSpecs)
-
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
         self.engine.globals.update(self.site_vars)
-
-    def register_plugins(self, *plugins, **settings: dict[str, typing.Any]) -> None:
-        """Register plugins with the site
-
-        parameters:
-            plugins: list of plugins to register
-            settings: settings to pass into the plugins
-                settings keys are the plugin names as strings.
-        """
-
-        for plugin in plugins:
-            self._pm.register(plugin)
-            self.site_settings["plugins"][plugin.__name__] = getattr(plugin, "default_settings", {})
-
-        self._pm.hook.add_default_settings(
-            site=self,
-            custom_settings=settings,
-        )
-        self.site_settings["plugins"].update(**settings)
-
-    @property
-    def plugins(self):
-        return self._pm.get_plugins()
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
@@ -181,10 +151,10 @@ class Site(ThemeManager):
         path = pathlib.Path(self.output_path) / pathlib.Path(route) / pathlib.Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
-        self._pm.hook.render_content(page=page, settings=settings)
+        page._pm.hook.render_content(page=page, settings=settings)
         page.rendered_content = page._render_content(engine=self.engine)
         # pass the route to the plugin settings
-        self._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
+        page.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)
 
@@ -251,7 +221,7 @@ class Site(ThemeManager):
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 if isinstance(entry, Page):
                     if getattr(entry, "collection", None):
-                        self._pm.hook.render_content(Page=entry, settings=self.site_settings.get("plugins", None))
+                        Page._pm.hook.render_content(Page=entry, settings=self.site_settings.get("plugins", None))
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
