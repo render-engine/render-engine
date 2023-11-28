@@ -1,28 +1,27 @@
+import copy
 import logging
 import pathlib
 from collections import defaultdict
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import FileSystemLoader, PrefixLoader
 from rich.progress import Progress
 
 from .collection import Collection
 from .engine import engine
 from .page import Page
+from .plugins import PluginManager
 from .themes import Theme, ThemeManager
 
 
-class Site(ThemeManager, PluginManager):
+class Site:
     """
     The site stores your pages and collections to be rendered.
 
     Attributes:
-        engine: Jinja2 Environment used to render pages
         output_path:
             path to write rendered content
         partial:
             if True, only render pages that have been modified. Uses gitPython to check for changes.
-        plugins:
-            list of plugins that will be loaded and passed into each object
         static_paths:
             list of paths for static folders. This will get copied to the output folder. Folders are recursive.
         site_vars:
@@ -32,7 +31,6 @@ class Site(ThemeManager, PluginManager):
     """
 
     partial: bool = False
-    site_settings: dict = {"plugins": {}}
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
@@ -40,29 +38,55 @@ class Site(ThemeManager, PluginManager):
         "head": set(),
         "theme": {},
     }
-    engine: Environment = engine
+    output_path: str = "output"
+    static_paths: set = {"static"}
+    plugin_settings: dict = {"plugins": defaultdict(dict)}
     template_path: str = "templates"
 
     def __init__(
         self,
     ) -> None:
+        self.plugin_manager = PluginManager()
+        self.theme_manager = ThemeManager(
+            engine=engine,
+            output_path=self.output_path,
+            static_paths=self.static_paths,
+        )
         self.route_list = dict()
+        self.site_settings = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
-        self.engine.globals.update(self.site_vars)
+        self.theme_manager.engine.globals.update(self.site_vars)
 
         if self.template_path:
-            self.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
+            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
 
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
-        self.engine.globals.update(self.site_vars)
+        self.theme_manager.engine.globals.update(self.site_vars)
+
+    def register_plugins(self, *plugins):
+        for plugin in plugins:
+            self.plugin_manager.register_plugin(plugin)
+            if plugin_settings := self.plugin_settings.get("plugins"):
+                plugin.default_settings = plugin_settings
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
-        super().register_theme(theme)
+        self.theme_manager.register_theme(theme)
 
         if theme.plugins:
-            self.register_plugins(*theme.plugins)
+            self.plugin_manager._pm.register_plugins(*theme.plugins)
+
+    def register_themes(self, *themes: Theme):
+        """
+        Register multiple themes.
+
+        Args:
+            *themes: Theme objects to register
+        """
+        for theme in themes:
+            self.register_theme(theme)
+
 
     def update_theme_settings(self, **settings):
         for key, value in settings.items():
@@ -94,17 +118,19 @@ class Site(ThemeManager, PluginManager):
         ```
         """
         _Collection = Collection()
+        _Collection._pm = copy.deepcopy(self.plugin_manager._pm)
         self.register_themes(*getattr(_Collection, "required_themes", []))
-        plugins = [*self.plugins, *getattr(_Collection, "plugins", [])]
+
+        for plugin in getattr(_Collection, "plugins", []):
+            _Collection._pm.register(plugin)
 
         for plugin in getattr(_Collection, "ignore_plugins", []):
-            plugins.remove(plugin)
-        _Collection.register_plugins(plugins)
+            _Collection._pm.unregister(plugin)
 
-        self._pm.hook.pre_build_collection(
-            collection=_Collection,
-            settings=self.site_settings.get("plugins", {}),
-        )  # type: ignore
+        # self.plugin_manager._pm.hook.pre_build_collection(
+        #     collection=_Collection,
+        #     settings=self.site_settings.get("plugins", {}),
+        # )  # type: ignore
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
@@ -138,7 +164,10 @@ class Site(ThemeManager, PluginManager):
         page.title = page._title  # Expose _title to the user through `title`
 
         # copy the plugin manager, removing any plugins that the page has ignored
-        page._pm = self._pm
+        page._pm = copy.deepcopy(self.plugin_manager._pm)
+        
+        for plugin in getattr(page, "plugins", []):
+            page._pm.register(plugin)
 
         for plugin in getattr(page, "ignore_plugins", []):
             page._pm.unregister(plugin)
@@ -150,10 +179,14 @@ class Site(ThemeManager, PluginManager):
         path = pathlib.Path(self.output_path) / pathlib.Path(route) / pathlib.Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
-        page._pm.hook.render_content(page=page, settings=settings)
-        page.rendered_content = page._render_content(engine=self.engine)
-        # pass the route to the plugin settings
-        page.hook.post_render_content(page=page.__class__, settings=settings, site=self)
+        
+        if hasattr(page, "collection"):
+            page._pm.hook.render_content(page=page, settings=settings)
+        page.rendered_content = page._render_content(engine=self.theme_manager.engine)
+            # pass the route to the plugin settings
+
+        if hasattr(page, "collection"):
+            page.plugin_manager._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)
 
@@ -176,6 +209,8 @@ class Site(ThemeManager, PluginManager):
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
+            entry._pm = copy.deepcopy(self.plugin_manager._pm)
+
             for route in collection.routes:
                 self._render_output(route, entry)
 
@@ -205,16 +240,18 @@ class Site(ThemeManager, PluginManager):
 
         with Progress() as progress:
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
-            self._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
+            print(self.plugin_manager._pm.hook)
+            self.plugin_manager._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
 
-            self.engine.globals.update(self.site_vars)
+            self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
+            self.theme_manager.engine.globals.update(self.site_vars)
             # Parse Route List
             task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
 
-            self._render_static()
+            self.theme_manager._render_static()
 
-            self.engine.globals["site"] = self
-            self.engine.globals["routes"] = self.route_list
+            self.theme_manager.engine.globals["site"] = self
+            self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
@@ -235,7 +272,7 @@ class Site(ThemeManager, PluginManager):
                         self._render_partial_collection(entry)
 
             progress.add_task("Loading Post-Build Plugins", total=1)
-            self._pm.hook.post_build_site(
+            self.plugin_manager._pm.hook.post_build_site(
                 site=self,
                 settings=self.site_settings.get("plugins", {}),
             )

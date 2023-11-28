@@ -117,7 +117,7 @@ def test_plugin_render_content_runs_from_archive(tmp_path, mocker):
         content_path = tmp_content_path
         has_archive = True
 
-    mock_render_content = mocker.patch.object(site._pm.hook, "render_content")
+    mock_render_content = mocker.patch.object(site.plugin_manager._pm.hook, "render_content")
     site.render()
 
     assert pathlib.Path(tmp_output_path).exists()

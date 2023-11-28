@@ -103,7 +103,7 @@ def test_url_for_Page_in_site(tmp_path):
     test_template = pathlib.Path(tmp_path / "template.html")
     test_template.write_text("The URL is '{{ 'custompage'|url_for }}'")
     site = Site()
-    site.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
     site.output_path = tmp_path
 
     @site.page
@@ -125,7 +125,7 @@ def test_collection_archive_in_route_list(tmp_path):
     test_collection_template.write_text("The collection archive route is at '{{ 'customcollection' |url_for }}'")
 
     site = Site()
-    site.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
     site.output_path = tmp_path
 
     class CustomCollectionPage(Page):
@@ -165,7 +165,7 @@ def test_collection_archive_pages_in_route_list(tmp_path, page_number, expected_
     )
 
     site = Site()
-    site.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
     site.output_path = tmp_path
 
     class CustomCollectionPages1(Page):
@@ -195,7 +195,7 @@ def test_url_for_Collection_in_site(tmp_path):
     test_template.write_text("The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'")
 
     site = Site()
-    site.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
     site.output_path = tmp_path
 
     class CustomCollectionPage(Page):
