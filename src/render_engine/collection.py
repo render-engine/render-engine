@@ -12,6 +12,7 @@ from .feeds import RSSFeed
 from .page import Page
 from .parsers import BasePageParser
 from .parsers.markdown import MarkdownPageParser
+from .plugins import PluginManager
 
 
 class Collection(BaseObject):
@@ -72,6 +73,7 @@ class Collection(BaseObject):
     sort_reverse: bool = False
     template: str | None
     plugins: list[typing.Callable] | None
+    plugin_manager: PluginManager | None
 
     def __init__(
         self,
@@ -164,6 +166,7 @@ class Collection(BaseObject):
                 routes=self.routes,
                 archive_index=index,
                 num_archive_pages=num_archive_pages,
+                plugin_manager=getattr(self, "plugin_manager", None)
             )
 
     @property

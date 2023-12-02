@@ -7,6 +7,7 @@ from jinja2 import (
     Environment,
     FileSystemLoader,
     PackageLoader,
+    PrefixLoader,
     pass_environment,
     select_autoescape,
 )
@@ -15,7 +16,11 @@ from .collection import Collection
 
 render_engine_templates_loader = ChoiceLoader(
     [
+        # Newly Registered Themes 'templates folder' goes here
         FileSystemLoader("templates"),
+        PrefixLoader({
+            # "prefix": theme.loader
+        }),
         PackageLoader("render_engine", "render_engine_templates"),
     ]
 )
