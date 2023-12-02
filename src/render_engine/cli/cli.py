@@ -292,32 +292,29 @@ def serve(
     reload: Annotated[
         bool,
         typer.Option(
-            None,
             "--reload",
             "-r",
             help="Reload the server when files change",
         ),
-    ],
+    ] = None,
     directory: Annotated[
         str,
         typer.Option(
-            None,
             "--directory",
             "-d",
             help="Directory to serve",
             show_default=False,
         ),
-    ],
+    ] = None,
     port: Annotated[
         int,
         typer.Option(
-            8000,
             "--port",
             "-p",
             help="Port to serve on",
             show_default=False,
         ),
-    ],
+    ] = 8000,
 ):
     """
     Create an HTTP server to serve the site at `localhost`.
