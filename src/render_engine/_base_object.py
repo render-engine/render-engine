@@ -2,8 +2,6 @@
 
 from slugify import slugify
 
-from .hookspecs import register_plugins
-
 
 class BaseObject:
     """
@@ -39,9 +37,7 @@ class BaseObject:
     @extension.setter
     def extension(self, extension: str) -> None:
         """Ensures consistency on extension"""
-        if not extension.startswith("."):
-            self._extension = f".{extension}"
-        self._extension = extension
+        self._extension = f".{extension.lstrip('.')}"
 
     @property
     def path_name(self) -> str:
@@ -74,13 +70,3 @@ class BaseObject:
                 base_dict[key] = value
 
         return base_dict
-
-    def register_plugins(self, plugins):
-        """Creates the plugin manager and registers plugins"""
-
-        if getattr("self", "plugins", None):
-            self.plugins.extend(plugins)
-        else:
-            self.plugins = plugins
-
-        self._pm = register_plugins(self.plugins)

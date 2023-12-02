@@ -9,16 +9,6 @@ hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
 
-def register_plugins(plugins):
-    """Register the plugins with the plugin manager"""
-    pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
-    pm.add_hookspecs(SiteSpecs)
-
-    for plugin in plugins:
-        pm.register(plugin)
-    return pm
-
-
 class SiteSpecs:
     """Plugin hook specifications for the Site class"""
 
