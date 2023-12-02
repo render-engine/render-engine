@@ -2,11 +2,13 @@ import pathlib
 
 import pluggy
 import pytest
-from jinja2 import FileSystemLoader
+from jinja2 import FileSystemLoader, DictLoader
 
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
+from render_engine.themes import Theme
+from render_engine.hookspecs import SiteSpecs
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -295,3 +297,21 @@ def test_site_theme_update_settings():
     assert "test" not in site.site_vars
     site.update_theme_settings(test="test")
     assert site.site_vars["theme"]["test"] == "test"
+
+
+def test_plugin_in_theme_added_to_plugins():
+    """Tests that a plugin added to a theme is added to the site"""
+    class plugin(SiteSpecs):
+        pass
+    
+    class theme(Theme):
+        loader = DictLoader({"test.html": "test"})
+        plugins = [plugin]
+        filters = []
+
+
+    site = Site()
+    site.register_theme(
+        theme,
+    )
+    assert plugin in site.plugin_manager.plugins

@@ -83,7 +83,7 @@ class Site:
         self.theme_manager.register_theme(theme)
 
         if theme.plugins:
-            self.plugin_manager._pm.register_plugins(*theme.plugins)
+            self.register_plugins(*theme.plugins)
 
     def register_themes(self, *themes: Theme):
         """
