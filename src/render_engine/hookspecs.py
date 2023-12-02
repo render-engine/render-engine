@@ -8,6 +8,7 @@ _PROJECT_NAME = "render_engine"
 hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
+
 class SiteSpecs:
     """Plugin hook specifications for the Site class"""
 

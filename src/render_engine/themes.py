@@ -1,10 +1,9 @@
-import slugify
 import dataclasses
 import logging
 import pathlib
 import shutil
 
-from .engine import engine
+import slugify
 from jinja2 import BaseLoader, Environment
 
 
@@ -45,7 +44,8 @@ class Theme:
             self.prefix = slugify.slugify(self.prefix.lower())
         else:
             self.prefix = slugify.slugify(self.__class__.__name__.lower())
-        
+
+
 @dataclasses.dataclass
 class ThemeManager:
     """
@@ -65,7 +65,6 @@ class ThemeManager:
     output_path: str
     prefix: dict[str, str] = dataclasses.field(default_factory=dict)
     static_paths: set = dataclasses.field(default_factory=set)
-    
 
     def register_theme(self, theme: Theme):
         """

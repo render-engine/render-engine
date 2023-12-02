@@ -18,9 +18,11 @@ render_engine_templates_loader = ChoiceLoader(
     [
         # Newly Registered Themes 'templates folder' goes here
         FileSystemLoader("templates"),
-        PrefixLoader({
-            # "prefix": theme.loader
-        }),
+        PrefixLoader(
+            {
+                # "prefix": theme.loader
+            }
+        ),
         PackageLoader("render_engine", "render_engine_templates"),
     ]
 )

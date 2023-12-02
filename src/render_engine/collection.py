@@ -166,7 +166,7 @@ class Collection(BaseObject):
                 routes=self.routes,
                 archive_index=index,
                 num_archive_pages=num_archive_pages,
-                plugin_manager=getattr(self, "plugin_manager", None)
+                plugin_manager=getattr(self, "plugin_manager", None),
             )
 
     @property

@@ -63,11 +63,11 @@ class Site:
     @property
     def output_path(self):
         return self.theme_manager.output_path
-    
+
     @output_path.setter
     def output_path(self, output_path: str):
         self.theme_manager.output_path = output_path
-    
+
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
@@ -94,7 +94,6 @@ class Site:
         """
         for theme in themes:
             self.register_theme(theme)
-
 
     def update_theme_settings(self, **settings):
         for key, value in settings.items():
@@ -169,7 +168,7 @@ class Site:
 
         # copy the plugin manager, removing any plugins that the page has ignored
         page._pm = copy.deepcopy(self.plugin_manager._pm)
-        
+
         for plugin in getattr(page, "plugins", []):
             page._pm.register(plugin)
 
@@ -183,11 +182,11 @@ class Site:
         path = pathlib.Path(self.output_path) / pathlib.Path(route) / pathlib.Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
-        
+
         if hasattr(page, "plugin_manager"):
             page.plugin_manager._pm.hook.render_content(page=page, settings=settings)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
-            # pass the route to the plugin settings
+        # pass the route to the plugin settings
 
         if hasattr(page, "plugin_manager"):
             page.plugin_manager._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
