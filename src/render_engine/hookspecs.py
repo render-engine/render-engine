@@ -33,7 +33,6 @@ class SiteSpecs:
     def post_build_site(
         self,
         site: "Site",
-        settings: dict[str, typing.Any],
     ) -> None:
         """Build After Building the site"""
 
