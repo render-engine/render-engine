@@ -80,7 +80,8 @@ class BasePage(BaseObject):
                 return self._content
 
             else:
-                raise ValueError("The returned content attribute must be a string.")
+                raise ValueError(f"Error rendering {self}. \
+                                 The returned content attribute must be a string. Got {type(self._content)}")
 
         except AttributeError:
             raise AttributeError(

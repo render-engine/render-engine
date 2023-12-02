@@ -2,6 +2,8 @@ import pathlib
 
 import jinja2
 
+from render_engine.plugins import PluginManager
+
 from .page import BasePage
 
 
@@ -32,13 +34,15 @@ class Archive(BasePage):
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
         num_archive_pages: int = 1,
+        plugin_manager: PluginManager | None = None,
     ) -> None:
         super().__init__()
-        self.pages = pages
-        self.template = template
-        self.routes = routes
         self.archive_index = archive_index
-        self.title = title
 
         if archive_index:
             self.slug = f"{self._slug}{archive_index}"
+        self.pages = pages
+        self.plugin_manager = plugin_manager
+        self.routes = routes
+        self.template = template
+        self.title = title

@@ -94,5 +94,7 @@ class ThemeManager:
             logging.debug(f"Copying Static Files from {static_path}")
             if pathlib.Path(static_path).exists():
                 shutil.copytree(
-                    static_path, pathlib.Path(self.output_path) / pathlib.Path(static_path).name, dirs_exist_ok=True
+                    static_path,
+                    pathlib.Path(self.output_path) / pathlib.Path(static_path).name,
+                    dirs_exist_ok=True,
                 )

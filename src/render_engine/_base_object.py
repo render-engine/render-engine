@@ -37,9 +37,7 @@ class BaseObject:
     @extension.setter
     def extension(self, extension: str) -> None:
         """Ensures consistency on extension"""
-        if not extension.startswith("."):
-            self._extension = f".{extension}"
-        self._extension = extension
+        self._extension = f".{extension.lstrip('.')}"
 
     @property
     def path_name(self) -> str:

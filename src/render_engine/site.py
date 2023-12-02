@@ -38,7 +38,7 @@ class Site:
         "head": set(),
         "theme": {},
     }
-    output_path: str = "output"
+    _output_path: str = "output"
     static_paths: set = {"static"}
     plugin_settings: dict = {"plugins": defaultdict(dict)}
     template_path: str = "templates"
@@ -49,7 +49,7 @@ class Site:
         self.plugin_manager = PluginManager()
         self.theme_manager = ThemeManager(
             engine=engine,
-            output_path=self.output_path,
+            output_path=self._output_path,
             static_paths=self.static_paths,
         )
         self.route_list = dict()
@@ -60,6 +60,14 @@ class Site:
         if self.template_path:
             self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
 
+    @property
+    def output_path(self):
+        return self.theme_manager.output_path
+    
+    @output_path.setter
+    def output_path(self, output_path: str):
+        self.theme_manager.output_path = output_path
+    
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
@@ -118,19 +126,15 @@ class Site:
         ```
         """
         _Collection = Collection()
-        _Collection._pm = copy.deepcopy(self.plugin_manager._pm)
+        _Collection.plugin_manager = copy.deepcopy(self.plugin_manager)
         self.register_themes(*getattr(_Collection, "required_themes", []))
 
         for plugin in getattr(_Collection, "plugins", []):
-            _Collection._pm.register(plugin)
+            _Collection.plugin_manager._pm.register(plugin)
 
         for plugin in getattr(_Collection, "ignore_plugins", []):
-            _Collection._pm.unregister(plugin)
+            _Collection.plugin_manager._pm.unregister(plugin)
 
-        # self.plugin_manager._pm.hook.pre_build_collection(
-        #     collection=_Collection,
-        #     settings=self.site_settings.get("plugins", {}),
-        # )  # type: ignore
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
@@ -180,12 +184,12 @@ class Site:
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
         
-        if hasattr(page, "collection"):
-            page._pm.hook.render_content(page=page, settings=settings)
+        if hasattr(page, "plugin_manager"):
+            page.plugin_manager._pm.hook.render_content(page=page, settings=settings)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
             # pass the route to the plugin settings
 
-        if hasattr(page, "collection"):
+        if hasattr(page, "plugin_manager"):
             page.plugin_manager._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)

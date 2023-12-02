@@ -34,7 +34,7 @@ class TestBaseObjectProperties:
 
         no_dot_BaseObject = BaseObject()
         no_dot_BaseObject.extension = "xml"
-        assert self.test_object.extension.startswith(".")
+        assert no_dot_BaseObject.extension == ".xml"
 
     def test_base_object_path_name(self):
         """Tests that the path name is returned correctly"""

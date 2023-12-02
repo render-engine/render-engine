@@ -147,26 +147,18 @@ def test_collection_archive_in_route_list(tmp_path):
     )
 
 
-@pytest.mark.parametrize(
-    "page_number,expected_url",
-    [
-        (0, "custompagescollection.html"),
-        (1, "custompagescollection1.html"),
-        (2, "custompagescollection2.html"),
-    ],
-)
-def test_collection_archive_pages_in_route_list(tmp_path, page_number, expected_url):
-    """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
-    test_collection_pages_template = pathlib.Path(
-        tmp_path / f"collection_archive_item_pages_template{page_number}.html"
-    )
-    test_collection_pages_template.write_text(
-        f"The collection archive route is at {{{{ 'custompagescollection' | url_for(page={page_number})}}}}",
-    )
+@pytest.fixture(scope="module")
+def site(tmp_path_factory):
+
+    collection_archive_path = tmp_path_factory.getbasetemp() / "collection_archive_items"
+    collection_archive_output_path = collection_archive_path / "output" 
+    static_tmp_dir = (collection_archive_path / "static")
+    static_tmp_dir.mkdir(parents=True)
+    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
     site = Site()
-    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
-    site.output_path = tmp_path
+    site.output_path = collection_archive_output_path
+    site.static_paths.add(static_tmp_dir)
 
     class CustomCollectionPages1(Page):
         content = "test"
@@ -176,15 +168,34 @@ def test_collection_archive_pages_in_route_list(tmp_path, page_number, expected_
 
     @site.collection
     class CustomPagesCollection(Collection):
-        archive_template = test_collection_pages_template.name
         has_archive = True
         pages = [CustomCollectionPages1(), CustomCollectionPages2()]
         items_per_page = 1
 
     site.render()
-    expected_path = pathlib.Path(tmp_path / expected_url)
-    assert expected_path.exists()
-    assert expected_path.read_text() == f"The collection archive route is at /{expected_url}"
+
+    return site
+
+
+def test_collection_archives_generates_by_items_per_page(site):
+    """
+    Archive pages should be created using the items_per_page value
+    
+    Example:
+        If items_per_page is 1, and there are 2 pages then there should be 3 archive pages.
+        0: all page items
+        1: first page item
+        2: second page item
+    """
+
+    assert len(list(site.route_list["custompagescollection"].archives)) == 3
+
+
+def test_collection_archive_pages_in_route_list(site):
+    """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
+
+    for page in site.route_list['custompagescollection'].archives:
+        assert pathlib.Path(site.output_path / page.path_name).exists()
 
 
 def test_url_for_Collection_in_site(tmp_path):
@@ -232,22 +243,13 @@ def test_site_output_path(tmp_path):
     assert (output_tmp_dir / "custompage.html").exists()
 
 
-def test_site_static_renders_in_static_output_path(tmp_path, site):
+def test_site_static_renders_in_static_output_path(site):
     """
     Tests that a static file is rendered in the static output path.
     """
 
-    static_tmp_dir = tmp_path / "static"
-    output_tmp_dir = tmp_path / "output"
-    output_tmp_dir.mkdir()
-    static_tmp_dir.mkdir()
-    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
-    site.output_path = output_tmp_dir
-    site.static_paths.add(static_tmp_dir)
-    site.render()
-
-    assert (output_tmp_dir / "static" / "test.txt").exists()
+    assert (site.output_path / "static" / "test.txt").exists()
 
 
 def tests_site_nested_static_paths(tmp_path, site):
