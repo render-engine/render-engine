@@ -33,8 +33,6 @@ def test_base_html_body_class(theme_site):
     theme_site.register_themes(bodyClassTheme)
     theme_site._render_output("./", theme_site.route_list["testpage"])
 
-    print(theme_site.theme_manager.engine.globals.keys())
-
     assert '<body class="my-class">' in (theme_site.output_path / "testpage.html").read_text()
 
 

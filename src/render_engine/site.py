@@ -75,8 +75,10 @@ class Site:
     def register_plugins(self, *plugins):
         for plugin in plugins:
             self.plugin_manager.register_plugin(plugin)
-            if plugin_settings := self.plugin_settings.get("plugins"):
-                plugin.default_settings = plugin_settings
+            self.plugin_settings[plugin.__name__] = {
+                **getattr(plugin, "default_settings", {}),
+                **self.plugin_settings.get(plugin.__name__, {}),
+            }
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
@@ -243,7 +245,6 @@ class Site:
 
         with Progress() as progress:
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
-            print(self.plugin_manager._pm.hook)
             self.plugin_manager._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
 
             self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
@@ -277,6 +278,5 @@ class Site:
             progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager._pm.hook.post_build_site(
                 site=self,
-                settings=self.site_settings.get("plugins", {}),
             )
             progress.update(pre_build_task, advance=1)

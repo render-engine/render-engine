@@ -71,6 +71,7 @@ class Collection(BaseObject):
     routes: list[str] = ["./"]
     sort_by: str = "title"
     sort_reverse: bool = False
+    template_vars: dict[str, any]
     template: str | None
     plugins: list[typing.Callable] | None
     plugin_manager: PluginManager | None
@@ -162,6 +163,7 @@ class Collection(BaseObject):
             yield Archive(
                 pages=pages,
                 template=getattr(self, "archive_template", None),
+                template_vars=getattr(self, "template_vars", {}),
                 title=self._title,
                 routes=self.routes,
                 archive_index=index,
