@@ -31,6 +31,7 @@ class Archive(BasePage):
         title: str,
         pages: list[BasePage],
         template: str | jinja2.Template,
+        template_vars: dict[str, any],
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
         num_archive_pages: int = 1,
@@ -46,3 +47,4 @@ class Archive(BasePage):
         self.routes = routes
         self.template = template
         self.title = title
+        self.template_vars = template_vars
