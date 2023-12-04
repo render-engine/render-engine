@@ -12,6 +12,7 @@ def test_archive_slug_name_with_pages():
         routes=["./"],
         archive_index=1,
         num_archive_pages=2,
+        template_vars={}
     )
 
     assert archive.slug == "archive1"
