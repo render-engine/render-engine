@@ -76,7 +76,7 @@ class Site:
         for plugin in plugins:
             self.plugin_manager.register_plugin(plugin)
             self.plugin_settings[plugin.__name__] = {
-                **getattr(plugin, 'default_settings', {}),
+                **getattr(plugin, "default_settings", {}),
                 **self.plugin_settings.get(plugin.__name__, {}),
             }
 
