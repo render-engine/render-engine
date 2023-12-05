@@ -31,7 +31,7 @@ gitpython==3.1.40
     # via render-engine (pyproject.toml)
 griffe==0.38.0
     # via mkdocstrings-python
-idna==3.4
+idna==3.6
     # via requests
 iniconfig==2.0.0
     # via pytest
