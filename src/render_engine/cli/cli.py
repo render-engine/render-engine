@@ -330,10 +330,9 @@ def serve(
         port: Port to serve on
     """
 
-    if module_site:
-        module, site = module_site
-        app = get_app(module, site)
-        app.render()
+    module, site = module_site
+    app = get_app(module, site)
+    app.render()
 
     if not directory:
         if module_site:
