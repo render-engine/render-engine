@@ -1,6 +1,7 @@
-<!-- markdownlint-disable MD041-->
-
-<!-- SUMMARY OF THE CHANGES BEING MADE -->
+<!-- 
+SUMMARY OF THE CHANGES BEING MADE 
+Be sure to include any referenced issues and discussions.
+-->
 
 ## Type of Issue
 
@@ -10,9 +11,13 @@
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
 
-## Issues/Discussions Referenced
+## Changes have been Documented (If Applicable)
 
-resolves <#ISSUE NUMBER>
+- [ ] YES - Changes have been documented
+
+## Changes have been Tested
+
+- [ ] YES - Changes have been tested
 
 ## Next Steps
 
