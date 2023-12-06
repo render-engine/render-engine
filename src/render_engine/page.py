@@ -67,7 +67,7 @@ class BasePage(BaseObject):
     def _render_content(self, engine: jinja2.Environment | None = None, **kwargs) -> str:
         """
         Renders the content of the page.
-        
+
         If there is not content or a template attribute, an error will be raised.
         """
         engine = getattr(self, "engine", engine)
