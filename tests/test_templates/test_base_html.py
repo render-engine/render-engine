@@ -46,6 +46,7 @@ def test_base_html_head_include(theme_site):
         plugins = []
 
     theme_site.register_themes(headIncludeTheme)
+    theme_site.load_themes()
     theme_site._render_output("./", theme_site.route_list["testpage"])
 
     assert "<script>console.log('test')</script>" in (theme_site.output_path / "testpage.html").read_text()
