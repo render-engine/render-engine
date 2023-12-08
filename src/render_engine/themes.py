@@ -85,7 +85,7 @@ class ThemeManager:
 
         if theme.template_globals:
             for key, value in theme.template_globals.items():
-                self.engine.globals.setdefault(key, set()).add(value)
+                self.engine.globals.setdefault(key, set()).add(value if not isinstance(value, list) else tuple(value))
 
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
