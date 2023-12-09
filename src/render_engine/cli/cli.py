@@ -7,8 +7,10 @@ import typing
 from typing import Annotated
 
 import typer
+from rich import print as rprint
 from rich.console import Console
 from rich.progress import Progress
+from rich.table import Table
 
 from render_engine.cli.event import RegExHandler
 from render_engine.engine import engine
@@ -80,6 +82,62 @@ def _create_site_with_vars(
     site_vars = {key: value for key, value in potential_site_vars.items() if value}
     site.site_vars.update(site_vars)
     return site
+
+
+def get_available_themes(console: Console, app: Site, theme_name: str) -> list[str]:
+    """Returns the list of available themes to the Console"""
+    try:
+        return app.theme_manager.prefix[theme_name].list_templates()
+    except KeyError:
+        console.print(f"[bold red]{theme_name} not installed[bold red]")
+        return []
+
+
+def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
+    """Display filtered templates based on a given filter value."""
+    table = Table(title=title)
+    table.add_column("[bold blue]Templates[bold blue]")
+    for template in templates_list:
+        if filter_value in template:
+            table.add_row(f"[cyan]{template}[cyan]")
+    rprint(table)
+
+
+@app.command()
+def templates(
+    module_site: Annotated[str, typer.Argument(callback=split_module_site)],
+    theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
+    filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
+):
+    """
+    CLI for listing available theme templates.
+
+    Params:
+        module_site: Python module and initialize Site class
+        theme_name: Optional. Specifies the theme to list templates from.
+        filter_value: Optional. Filters templates based on provided names.
+    """
+    module, site = module_site
+    app = get_app(module, site)
+    console = Console()
+
+    if theme_name:
+        available_themes = get_available_themes(console, app, theme_name)
+        if available_themes:
+            display_filtered_templates(
+                f"[bold green]Available templates for {theme_name} [bold green]",
+                available_themes,
+                filter_value,
+            )
+    else:
+        console.print("[red]No theme name specified. Listing all installed themes and their templates[red]")
+        for theme_prefix, theme_loader in app.theme_manager.prefix.items():
+            templates_list = theme_loader.list_templates()
+            display_filtered_templates(
+                f"[bold green]Showing templates for {theme_prefix}[bold green]",
+                templates_list,
+                filter_value,
+            )
 
 
 @app.command()
