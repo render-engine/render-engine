@@ -186,7 +186,7 @@ class Site:
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
 
         if hasattr(page, "plugin_manager"):
-            page.plugin_manager._pm.hook.render_content(page=page, settings=settings)
+            page.plugin_manager._pm.hook.render_content(page=page, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
 

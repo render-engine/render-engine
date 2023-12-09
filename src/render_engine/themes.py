@@ -65,6 +65,10 @@ class ThemeManager:
     output_path: str
     prefix: dict[str, str] = dataclasses.field(default_factory=dict)
     static_paths: set = dataclasses.field(default_factory=set)
+    template_globals: dict[str, set] = {
+        "head": set(),
+        "body_class": set()
+    }
 
     def register_theme(self, theme: Theme):
         """
