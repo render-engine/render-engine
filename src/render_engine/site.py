@@ -229,6 +229,18 @@ class Site:
         if hasattr(collection, "Feed"):
             self._render_output("./", collection.feed)
 
+    def load_themes(self) -> None:
+        """
+        function for registering the themes with the theme_manager.
+        Used prior to rendering and cli-tasks
+        """
+        # load themes in the ChoiceLoader/FileLoader
+        for theme_prefix, theme_loader in self.theme_manager.prefix.items():
+            logging.info(f"loading theme: {theme_prefix}")
+            self.theme_manager.engine.loader.loaders.insert(0, theme_loader)
+        # load themes in the PrefixLoader
+        self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
+
     def render(self) -> None:
         """
         Render all pages and collections.
@@ -247,7 +259,7 @@ class Site:
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
             self.plugin_manager._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
 
-            self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
+            self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
             # Parse Route List
             task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
