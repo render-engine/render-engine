@@ -1,0 +1,58 @@
+name: Bug Report
+description: File a auick bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
+projects: ["octo-org/1", "octo-org/44"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: summary-of-actions
+    attributes:
+      label: Summary Of Actions
+      description: A brief summary of the problem
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What Operating System are you using?
+      options:
+        - Windows
+        - Ubuntu
+        - Macos
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: python-version
+    attributes:
+      label: What Python Version are you using?
+      options:
+        - Python 3.12
+        - Python 3.11
+        - Python 3.10
+        - Python 3.9
+  - type: textarea
+    id: additional-installations
+    attributes:
+      label: Have you installed Plugins/Themes/Custom Parsers?
+      description: please list them below
+  - type: textarea
+    id: commands-code-used
+    attributes:
+      label: What did you enter to get the output that you recieved?
+      render: shell
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Copy the Error or output that you recieve.
+      render: shell

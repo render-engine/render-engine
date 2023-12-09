@@ -38,6 +38,8 @@ class Archive(BasePage):
         plugin_manager: PluginManager | None = None,
     ) -> None:
         super().__init__()
+        self.slug = title
+        self.title = title
         self.archive_index = archive_index
 
         if archive_index:
@@ -46,5 +48,4 @@ class Archive(BasePage):
         self.plugin_manager = plugin_manager
         self.routes = routes
         self.template = template
-        self.title = title
         self.template_vars = template_vars

@@ -260,8 +260,6 @@ class Site:
             for slug, entry in self.route_list.items():
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 if isinstance(entry, Page):
-                    if getattr(entry, "collection", None):
-                        Page._pm.hook.render_content(Page=entry, settings=self.site_settings.get("plugins", None))
                     for route in entry.routes:
                         progress.update(
                             task_add_route,
