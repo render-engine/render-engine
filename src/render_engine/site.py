@@ -72,13 +72,11 @@ class Site:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
 
-    def register_plugins(self, *plugins):
+    def register_plugins(self, *plugins, **plugin_settings):
         for plugin in plugins:
             self.plugin_manager.register_plugin(plugin)
-            self.plugin_settings[plugin.__name__] = {
-                **getattr(plugin, "default_settings", {}),
-                **self.plugin_settings.get(plugin.__name__, {}),
-            }
+            self.plugin_manager.plugin_settings[plugin.__class__.__name__] \
+                .update(**plugin_settings.get(plugin.__class__.__name__, {}))
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""

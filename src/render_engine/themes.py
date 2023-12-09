@@ -17,6 +17,7 @@ class Theme:
         loader: Jinja2 Loader for the theme
         filters: dictionary of filters to add to the jinja2 environment
         plugins: list of plugins to add to the site
+        plugin_settings: dictionary of settings to pass to the plugins
         static_dir: path to static folder
         template_globals: dictionary of template globals to add to the jinja2 environment.
             The key is the name of the global and the value is the value of the global.
@@ -35,6 +36,7 @@ class Theme:
     loader: BaseLoader
     filters: dataclasses.field(default_factory=dict)
     plugins: dataclasses.field(default_factory=list)
+    plugin_settings: dataclasses.field(default_factory=dict) = None
     prefix: str | None = None
     static_dir: str | pathlib.Path | None = None
     template_globals: dataclasses.field(default_factory=dict) = None
