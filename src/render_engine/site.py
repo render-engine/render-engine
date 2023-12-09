@@ -230,6 +230,10 @@ class Site:
             self._render_output("./", collection.feed)
 
     def load_themes(self) -> None:
+        """  
+        function for registering the themes with the theme_manager.  
+        Used prior to rendering and cli-tasks  
+        """
         # load themes in the ChoiceLoader/FileLoader
         for theme_prefix, theme_loader in self.theme_manager.prefix.items():
             logging.info(f"loading theme: {theme_prefix}")
