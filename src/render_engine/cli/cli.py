@@ -85,6 +85,7 @@ def _create_site_with_vars(
 
 
 def get_available_themes(console: Console, app: Site, theme_name: str) -> list[str]:
+    """Returns the list of available themes to the Console"""
     try:
         return app.theme_manager.prefix[theme_name].list_templates()
     except KeyError:
@@ -92,7 +93,8 @@ def get_available_themes(console: Console, app: Site, theme_name: str) -> list[s
         return []
 
 
-def display_filtered_templates(title, templates_list, filter_value):
+def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
+    """Display filtered templates based on a given filter value."""
     table = Table(title=title)
     table.add_column("[bold blue]Templates[bold blue]")
     for template in templates_list:
@@ -107,6 +109,14 @@ def templates(
     theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
     filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
 ):
+    """
+    CLI for listing available theme templates.
+
+    Params:
+        module_site: Python module and initialize Site class
+        theme_name: Optional. Specifies the theme to list templates from.
+        filter_value: Optional. Filters templates based on provided names.
+    """
     module, site = module_site
     app = get_app(module, site)
     console = Console()
