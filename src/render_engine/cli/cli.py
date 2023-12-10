@@ -330,7 +330,7 @@ def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)
     CLI for creating a new site
 
     Params:
-        site_module: module and class name of the site
+        module_site: Python module and initialize Site class
 
     """
     module, site = module_site
