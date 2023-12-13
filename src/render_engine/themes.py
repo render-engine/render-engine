@@ -36,10 +36,9 @@ class Theme:
     loader: BaseLoader
     filters: dataclasses.field(default_factory=dict)
     plugins: dataclasses.field(default_factory=list)
-    plugin_settings: dataclasses.field(default_factory=dict) = None
+    template_globals: dataclasses.field(default_factory=dict) = None
     prefix: str | None = None
     static_dir: str | pathlib.Path | None = None
-    template_globals: dataclasses.field(default_factory=dict) = None
 
     def __post_init__(self):
         if self.prefix:
@@ -63,14 +62,18 @@ class ThemeManager:
 
     """
 
+    def default_template_globals():
+        return {
+            "head": set(),
+            "body_class": set(),
+        }
+
+
     engine: Environment
     output_path: str
     prefix: dict[str, str] = dataclasses.field(default_factory=dict)
     static_paths: set = dataclasses.field(default_factory=set)
-    template_globals: dict[str, set] = {
-        "head": set(),
-        "body_class": set()
-    }
+    template_globals: dict[str:set] = dataclasses.field(default_factory=default_template_globals)
 
     def register_theme(self, theme: Theme):
         """
@@ -91,7 +94,17 @@ class ThemeManager:
 
         if theme.template_globals:
             for key, value in theme.template_globals.items():
-                self.engine.globals.setdefault(key, set()).add(value)
+                if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
+                    self.engine.globals.setdefault(key, set()).update(
+                        value
+                    )
+                if isinstance(self.engine.globals.get(key), set):
+                    self.engine.globals[key].add(value)
+
+                else:
+                    self.engine.globals[key] = value
+                    
+
 
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
