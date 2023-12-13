@@ -1,5 +1,6 @@
-import pluggy
 from collections import defaultdict
+
+import pluggy
 
 from .hookspecs import _PROJECT_NAME, SiteSpecs
 
