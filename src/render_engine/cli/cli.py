@@ -9,7 +9,6 @@ from typing import Annotated
 import typer
 from rich import print as rprint
 from rich.console import Console
-from rich.progress import Progress
 from rich.table import Table
 
 from render_engine.cli.event import RegExHandler
@@ -149,23 +148,23 @@ def init(
     extra_context: Annotated[
         str,
         typer.Option(
-            "--extra-context", "-e",
+            "--extra-context",
+            "-e",
             help="Extra context to pass to the cookiecutter template",
             dir_okay=False,
             file_okay=True,
             exists=True,
-
         ),
     ] = None,
     output_dir: Annotated[
         pathlib.Path,
         typer.Option(),
     ] = ".",
-    **kwargs, 
+    **kwargs,
 ):
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
-    
+
     Also any argument that cookiecutter accepts can be passed to this command.
 
     The template can be a local path or a git repository.
@@ -194,6 +193,7 @@ def init(
         accept_hooks=kwargs.get("accept_hooks", True),
         keep_project_on_failure=kwargs.get("keep_priject_on_failure", False),
     )
+
 
 @app.command()
 def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)]):
