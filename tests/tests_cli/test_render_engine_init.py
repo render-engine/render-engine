@@ -16,6 +16,19 @@ def test_template(tmp_path_factory):
     return test_template.resolve()
 
 
+def tests_error_raised_if_cookiecutter_not_installed(test_template, mocker):
+    """Tests that an error is raised if cookiecutter is not installed"""
+
+    # Mock importing cookiecutter
+    mocker.patch("cookiecutter.main.cookiecutter", side_effect=ImportError)
+
+    with pytest.raises(ImportError):
+        cli.init(
+            template=str(test_template),
+            no_input=True,
+            output_dir=test_template,
+        )
+
 def test_init_local_path(test_template, tmp_path):
     """Tests that you can call init using a local path"""
     cli.init(
