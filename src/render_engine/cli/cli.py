@@ -42,7 +42,6 @@ def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     return folder
 
 
-
 def _create_templates_folder(
     *templates,
     project_folder: pathlib.Path,
