@@ -42,8 +42,6 @@ def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     return folder
 
 
-CREATE_APP_PY_TEMPLATE = engine.get_template("create_app_py.txt")
-
 
 def _create_templates_folder(
     *templates,
