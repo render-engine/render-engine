@@ -23,7 +23,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+extras = [
+    "cookiecutter",
+]
 dev = [
+    "cookiecutter",
     "pytest",
     "pytest-mock",
     "pytest-lazy-fixture",
