@@ -39,9 +39,6 @@ dev = [
 local_scheme = "no-local-version"
 # version_scheme = "python-simplified-semver"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
 [project.urls]
 homepage = "https://github.com/kjaymiller/render_engine/"
 repository = "https://github.com/kjaymiller/render_engine/"
