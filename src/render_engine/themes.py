@@ -84,7 +84,6 @@ class ThemeManager:
         """
 
         logging.info(f"Registering theme: {theme}")
-        self.engine.loader.loaders.insert(0, theme.loader)
         self.prefix[theme.prefix] = theme.loader
 
         if theme.static_dir:
@@ -103,8 +102,6 @@ class ThemeManager:
 
                 else:
                     self.engine.globals[key] = value
-                    
-
 
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""
