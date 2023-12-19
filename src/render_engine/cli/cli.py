@@ -161,7 +161,7 @@ def init(
             exists=True,
         ),
     ] = pathlib.Path("./"),
-    cookiecutter_args: Annotated[str, typer.Option(callback=lambda x:json.loads(x))] = {},
+    cookiecutter_args: Annotated[str, typer.Option(callback=lambda x: json.loads(x))] = {},
 ):
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
