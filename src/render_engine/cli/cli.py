@@ -148,17 +148,19 @@ def init(
         typer.Option(
             "--extra-context",
             "-e",
-            help="Extra context to pass to the cookiecutter template",
+            help="Extra context to pass to the cookiecutter template. This must be a JSON string",
         ),
     ] = None,
+    no_input: Annotated[bool, typer.Option("--no-input", help="Do not prompt for parameters")] = False,
     output_dir: Annotated[
         pathlib.Path,
         typer.Option(
-            dir_okay=False,
-            file_okay=True,
+            help="Directory to output the site to",
+            dir_okay=True,
+            file_okay=False,
             exists=True,
         ),
-    ] = ".",
+    ] = pathlib.Path("./"),
     cookiecutter_args: Annotated[str, typer.Option(callback=lambda x:json.loads(x))] = {},
 ):
     """
@@ -180,7 +182,7 @@ def init(
         template=template,
         extra_context=extra_context,
         checkout=cookiecutter_args.get("checkout"),
-        no_input=cookiecutter_args.get("no_input", False),
+        no_input=cookiecutter_args.get("no_input", no_input),
         replay=cookiecutter_args.get("replay"),
         overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
         output_dir=output_dir,
