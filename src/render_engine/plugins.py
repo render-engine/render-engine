@@ -1,9 +1,13 @@
+from collections import defaultdict
+
 import pluggy
 
 from .hookspecs import _PROJECT_NAME, SiteSpecs
 
 
 class PluginManager:
+    plugin_settings = defaultdict(dict)
+
     def __init__(self):
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)
         self._pm.add_hookspecs(SiteSpecs)
