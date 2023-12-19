@@ -16,14 +16,14 @@ class SiteSpecs:
     @hook_spec
     def add_default_settings(
         self,
-        site: "Site",
+        site,
     ) -> None:
         """Add default settings to the site"""
 
     @hook_spec
     def pre_build_site(
         self,
-        site: "Site",
+        site,
         settings: dict[str, typing.Any],
     ) -> None:
         """Steps Prior to Building the site"""
@@ -31,14 +31,14 @@ class SiteSpecs:
     @hook_spec
     def post_build_site(
         self,
-        site: "Site",
+        site,
     ) -> None:
         """Build After Building the site"""
 
     @hook_spec
     def render_content(
         self,
-        page: "page",
+        page,
         settings: dict[str, typing.Any],
     ) -> None:
         """
@@ -48,9 +48,9 @@ class SiteSpecs:
     @hook_spec
     def post_render_content(
         self,
-        page: "page",
+        page,
         settings: dict[str : typing.Any],
-        site: "Site",
+        site,
     ) -> None:
         """
         Augments the content of the page before it is rendered as output.
@@ -59,7 +59,7 @@ class SiteSpecs:
     @hook_spec
     def pre_build_collection(
         self,
-        collection: "Collection",
+        collection,
         settings: dict[str, typing.Any],
     ) -> None:
         """Steps Prior to Building the collection"""
@@ -67,7 +67,7 @@ class SiteSpecs:
     @hook_spec
     def post_build_collection(
         self,
-        site: "Site",
+        site,
         settings: dict[str, typing.Any],
     ) -> None:
         """Build After Building the collection"""
