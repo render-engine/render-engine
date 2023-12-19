@@ -44,7 +44,6 @@ class Collection(BaseObject):
         feed_title: str
         include_suffixes: list[str] = ["*.md", "*.html"]
         items_per_page: int | None
-        PageParser: BasePageParser = BasePageParser # DEPRECATED
         Parser: BasePageParser = BasePageParser
         parser_extras: dict[str, Any]
         required_themes: list[callable]
@@ -65,7 +64,6 @@ class Collection(BaseObject):
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
-    PageParser: BasePageParser = BasePageParser # TODO: DEPRECATE
     Parser: BasePageParser = BasePageParser
     parser_extras: dict[str, any]
     required_themes: list[typing.Callable]
@@ -80,6 +78,11 @@ class Collection(BaseObject):
     def __init__(
         self,
     ) -> None:
+
+        if parser:= getattr(self, "PageParser", None):
+            logging.warning(DeprecationWarning("PageParser is deprecated. Use Parser instead."))
+            self.Parser = parser
+
         if getattr(self, "items_per_page", False):
             self.has_archive = True
 

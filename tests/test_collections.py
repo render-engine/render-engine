@@ -19,7 +19,7 @@ def test_collection_information_parser_passes_to_page(tmp_path):
         pass
 
     class BasicCollection(Collection):
-        PageParser = SimpleBasePageParser
+        Parser = SimpleBasePageParser
         content_type = Page
 
     collection = BasicCollection()
