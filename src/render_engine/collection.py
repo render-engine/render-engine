@@ -44,7 +44,8 @@ class Collection(BaseObject):
         feed_title: str
         include_suffixes: list[str] = ["*.md", "*.html"]
         items_per_page: int | None
-        PageParser: Type[BasePageParser] = MarkdownPageParser
+        PageParser: BasePageParser = BasePageParser # DEPRECATED
+        Parser: BasePageParser = BasePageParser
         parser_extras: dict[str, Any]
         required_themes: list[callable]
         routes: list[str] = ["./"]
@@ -115,7 +116,7 @@ class Collection(BaseObject):
         """Returns the page Object for the specified Content Path"""
         _page = self.content_type(
             content_path=content_path,
-            Parser=self.PageParser,
+            Parser=self.Parser,
         )
 
         if getattr(self, "_pm", None):
@@ -177,7 +178,7 @@ class Collection(BaseObject):
         feed.pages = [page for page in self]
         feed.title = getattr(self, "feed_title", self._title)
         feed.slug = self._slug
-        feed.Parser = self.PageParser
+        feed.Parser = self.Parser
         return feed
 
     @property
