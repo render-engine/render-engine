@@ -17,6 +17,8 @@ dependencies = [
     "python-dateutil",
     "python-frontmatter",
     "python-slugify",
+    "render-engine-parser",
+    "render-engine-markdown",
     "rich",
     "typer",
     "watchdog",

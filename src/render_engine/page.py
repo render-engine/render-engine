@@ -1,9 +1,9 @@
 from typing import Any
 
 import jinja2
+from render_engine_parser.base_parsers import BasePageParser
 
 from ._base_object import BaseObject
-from .parsers.base_parsers import BasePageParser
 
 
 class BasePage(BaseObject):
