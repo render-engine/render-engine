@@ -17,6 +17,8 @@ dependencies = [
     "python-dateutil",
     "python-frontmatter",
     "python-slugify",
+    "render-engine-parser",
+    "render-engine-markdown",
     "rich",
     "typer",
     "watchdog",
@@ -38,9 +40,6 @@ dev = [
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
 # version_scheme = "python-simplified-semver"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
 
 [project.urls]
 homepage = "https://github.com/kjaymiller/render_engine/"
