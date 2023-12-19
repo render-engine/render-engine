@@ -1,6 +1,7 @@
 # ruff: noqa: UP007
 
 import importlib
+import json
 import pathlib
 import sys
 import typing
@@ -141,23 +142,24 @@ def init(
     template: Annotated[
         str,
         typer.Argument(help="Template to use for creating a new site"),
-    ] = "https://github.com/render-engine/cookiecutter-render-engine",
+    ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
     extra_context: Annotated[
         str,
         typer.Option(
             "--extra-context",
             "-e",
             help="Extra context to pass to the cookiecutter template",
-            dir_okay=False,
-            file_okay=True,
-            exists=True,
         ),
     ] = None,
     output_dir: Annotated[
         pathlib.Path,
-        typer.Option(),
+        typer.Option(
+            dir_okay=False,
+            file_okay=True,
+            exists=True,
+        ),
     ] = ".",
-    **kwargs,
+    cookiecutter_args: Annotated[str, typer.Option(callback=lambda x:json.loads(x))] = {},
 ):
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -174,21 +176,20 @@ def init(
         raise typer.Exit(
             "You need to install cookiecutter to use this command. Run `pip install cookiecutter` to install it.",
         )
-
     cookiecutter(
         template=template,
         extra_context=extra_context,
-        checkout=kwargs.get("checkout"),
-        no_input=kwargs.get("no_input", False),
-        replay=kwargs.get("replay"),
-        overwrite_if_exists=kwargs.get("overwrite_if_exists", False),
+        checkout=cookiecutter_args.get("checkout"),
+        no_input=cookiecutter_args.get("no_input", False),
+        replay=cookiecutter_args.get("replay"),
+        overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
         output_dir=output_dir,
-        config_file=kwargs.get("config_file"),
-        default_config=kwargs.get("default_config", False),
-        directory=kwargs.get("directory"),
-        skip_if_file_exists=kwargs.get("skip_if_file_exists", False),
-        accept_hooks=kwargs.get("accept_hooks", True),
-        keep_project_on_failure=kwargs.get("keep_priject_on_failure", False),
+        config_file=cookiecutter_args.get("config_file"),
+        default_config=cookiecutter_args.get("default_config", False),
+        directory=cookiecutter_args.get("directory"),
+        skip_if_file_exists=cookiecutter_args.get("skip_if_file_exists", False),
+        accept_hooks=cookiecutter_args.get("accept_hooks", True),
+        keep_project_on_failure=cookiecutter_args.get("keep_priject_on_failure", False),
     )
 
 
