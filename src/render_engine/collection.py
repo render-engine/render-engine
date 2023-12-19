@@ -65,7 +65,8 @@ class Collection(BaseObject):
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
-    PageParser: BasePageParser = MarkdownPageParser
+    PageParser: BasePageParser = BasePageParser # TODO: DEPRECATE
+    Parser: BasePageParser = BasePageParser
     parser_extras: dict[str, any]
     required_themes: list[typing.Callable]
     routes: list[str] = ["./"]
