@@ -1,12 +1,10 @@
-import logging
-import pathlib
 import typing
 
 import pytest
 
 from render_engine.collection import Collection
-from render_engine.hookspecs import hook_impl
 from render_engine.page import Page
+from render_engine.plugins import hook_impl
 from render_engine.site import Site
 
 

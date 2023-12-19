@@ -2,7 +2,7 @@ import logging
 import pathlib
 
 from render_engine.engine import engine
-from render_engine.hookspecs import hook_impl
+from render_engine.plugins import hook_impl
 from render_engine.site import Site
 
 

@@ -1,1 +1,1 @@
-:::src.render_engine.hookspecs
+:::src.render_engine.plugins
