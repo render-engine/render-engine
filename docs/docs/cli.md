@@ -4,6 +4,12 @@ Render Engine comes with a CLI that can be used to create, build, and serve your
 
 ## creating your app with `render-engine init`
 
+The `init` command is a hook to call [cookiecutter](https://github.com/cookiecutter/cookiecutter).
+
+This allows you to quickly create or augment your render-engine site using a pre-existing cookiecutter template.
+
+The default is the [cookiecutter-render-engine-site](https://github.com/render-engine/cookiecutter-render-engine-site).
+
 ::: src.render_engine.cli.cli.init
 
 ### `collection-path` (`Path`: default=`"pages"`)

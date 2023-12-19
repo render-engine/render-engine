@@ -53,7 +53,6 @@ class Collection(BaseObject):
         sort_reverse: bool = False
         title: str
         template: str | None
-
         archive_template str | None: The template to use for the archive pages.
 
     """
