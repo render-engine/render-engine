@@ -1,6 +1,7 @@
 # ruff: noqa: UP007
 
 import importlib
+import json
 import pathlib
 import sys
 import typing
@@ -9,7 +10,6 @@ from typing import Annotated
 import typer
 from rich import print as rprint
 from rich.console import Console
-from rich.progress import Progress
 from rich.table import Table
 
 from render_engine.cli.event import RegExHandler
@@ -41,9 +41,6 @@ def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
     """Create a folder if it doesn't exist or if overwrite is True"""
     folder.mkdir(parents=True, exist_ok=overwrite)
     return folder
-
-
-CREATE_APP_PY_TEMPLATE = engine.get_template("create_app_py.txt")
 
 
 def _create_templates_folder(
@@ -142,186 +139,58 @@ def templates(
 
 @app.command()
 def init(
-    collection_path: Annotated[
+    template: Annotated[
+        str,
+        typer.Argument(help="Template to use for creating a new site"),
+    ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
+    extra_context: Annotated[
+        str,
+        typer.Option(
+            "--extra-context",
+            "-e",
+            help="Extra context to pass to the cookiecutter template",
+        ),
+    ] = None,
+    output_dir: Annotated[
         pathlib.Path,
         typer.Option(
-            help="create your content folder in a custom location",
-            rich_help_panel="Path Options",
-        ),
-    ] = pathlib.Path("pages"),
-    force: Annotated[
-        bool,
-        typer.Option(
-            "--force",
-            "-f",
-            help="Force overwrite of existing files",
-            rich_help_panel="Flags",
-        ),
-    ] = False,
-    output_path: Annotated[
-        pathlib.Path,
-        typer.Option(
-            help="custom output folder location.",
-            rich_help_panel="Path Attributes",
-        ),
-    ] = "output",
-    project_path_name: Annotated[
-        pathlib.Path,
-        typer.Option(
-            help="name of render_engine app name",
-            rich_help_panel="Path Attributes",
-        ),
-    ] = "app.py",
-    project_folder: Annotated[
-        pathlib.Path,
-        typer.Option(
+            dir_okay=False,
+            file_okay=True,
             exists=True,
-            dir_okay=True,
-            writable=True,
-            help="path to create the project in",
-            rich_help_panel="Path Attributes",
         ),
-    ] = pathlib.Path("./"),
-    owner_name: Annotated[
-        typing.Optional[str],
-        typer.Option(
-            prompt="Owner Name",
-            help="Site Owners's Name",
-            rich_help_panel="Site Vars",
-        ),
-    ] = ...,
-    owner_email: Annotated[
-        typing.Optional[str],
-        typer.Option(
-            prompt="Owner Email",
-            help="Email of Site's Owner",
-            rich_help_panel="Site Vars",
-        ),
-    ] = ...,
-    site_description: Annotated[
-        typing.Optional[str],
-        typer.Option(
-            help="(Optional): Site Description",
-            rich_help_panel="Site Vars",
-        ),
-    ] = None,
-    site_title: Annotated[
-        typing.Optional[str],
-        typer.Option(
-            "--title",
-            "-t",
-            help="title of the site",
-            rich_help_panel="Site Vars",
-            show_default=False,
-        ),
-    ] = None,
-    site_url: Annotated[
-        typing.Optional[str],
-        typer.Option(
-            "--url",
-            "-u",
-            help="URL for the site",
-            rich_help_panel="Site Vars",
-            show_default=False,
-        ),
-    ] = None,
-    skip_collection: Annotated[
-        bool,
-        typer.Option(
-            "--skip-collection",
-            "-C",
-            help="Skip creating the content folder and a collection",
-            rich_help_panel="Flags",
-        ),
-    ] = False,
-    skip_static: Annotated[
-        bool,
-        typer.Option(
-            "--skip-static",
-            "-S",
-            help="Skip copying static files",
-            rich_help_panel="Flags",
-        ),
-    ] = False,
-    static_path: Annotated[
-        pathlib.Path,
-        typer.Option(
-            help="custom static folder",
-            rich_help_panel="Path Attributes",
-        ),
-    ] = pathlib.Path("static"),
-    templates_path: Annotated[
-        pathlib.Path,
-        typer.Option(
-            "--templates-path",
-            help="custom templates folder",
-        ),
-    ] = pathlib.Path("templates"),
+    ] = ".",
+    cookiecutter_args: Annotated[str, typer.Option(callback=lambda x:json.loads(x))] = {},
 ):
     """
-    CLI for creating a new site configuration.
+    Create a new site configuration. You can provide extra_context to the cookiecutter template.
 
-    Params:
-        collection_path: create your content folder in a custom location
-        force: Force overwrite of existing files
-        output_path: custom output folder location
-        project_path_name: name of render_engine app name
-        project_folder: path to create the project
-        owner:  owner of the site
-        site_description: Site Description
-        site_title: title of the site
-        site_url: URL for the site
-        skip_collection: Skip creating the content folder and a collection
-        skip_static: Skip copying static files
-        static_path: custom static folder
-        templates_path: custom templates folder
+    Also any argument that cookiecutter accepts can be passed to this command.
+
+    The template can be a local path or a git repository.
     """
-    # creating the site object and site_vars
 
-    pathlib.Path(project_folder)
-    with Progress() as progress:
-        progress.console.rule("[green][bold]Creating Project")
-        # creating the app.py file from the template
-        project_config_path = pathlib.Path(project_folder).joinpath(project_path_name).with_suffix(".py")
-        task_generate_project_path = progress.add_task(f"Generating App File: [blue]{project_config_path}", total=1)
-
-        project_config_path.write_text(
-            CREATE_APP_PY_TEMPLATE.render(
-                site_title=site_title,
-                site_url=site_url,
-                site_description=site_description,
-                owner={"name": owner_name, "email": owner_email},
-                output_path=output_path,
-                skip_static=skip_static,
-                static_path=static_path,
-                collection_path=collection_path,
-                skip_collection=skip_collection,
-            )
+    # Check if cookiecutter is installed
+    try:
+        from cookiecutter.main import cookiecutter
+    except ImportError:
+        raise typer.Exit(
+            "You need to install cookiecutter to use this command. Run `pip install cookiecutter` to install it.",
         )
-        progress.update(task_generate_project_path, advance=1)
-
-        # Create the templates folder and the index.html file
-        task_templates = progress.add_task(f"Creating Templates Folder: [blue]{templates_path}", total=1)
-        templates = ["index.html"]
-        _create_templates_folder(
-            *templates,
-            project_folder=project_folder,
-            templates_folder_name=templates_path,
-            exists_ok=force,
-        )
-
-        progress.update(task_templates, advance=1)
-
-        # Create the collection
-        if not skip_collection:
-            task_create_collection = progress.add_task(f"Creating Collection: [blue]{collection_path}", total=1)
-            _collection_path = pathlib.Path(project_folder).joinpath(collection_path)
-            _collection_path.mkdir(exist_ok=force)
-            _collection_path.joinpath("sample_page.md").write_text(
-                engine.get_template("base_collection_path.md").render()
-            )
-
-            progress.update(task_create_collection, advance=1)
+    cookiecutter(
+        template=template,
+        extra_context=extra_context,
+        checkout=cookiecutter_args.get("checkout"),
+        no_input=cookiecutter_args.get("no_input", False),
+        replay=cookiecutter_args.get("replay"),
+        overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
+        output_dir=output_dir,
+        config_file=cookiecutter_args.get("config_file"),
+        default_config=cookiecutter_args.get("default_config", False),
+        directory=cookiecutter_args.get("directory"),
+        skip_if_file_exists=cookiecutter_args.get("skip_if_file_exists", False),
+        accept_hooks=cookiecutter_args.get("accept_hooks", True),
+        keep_project_on_failure=cookiecutter_args.get("keep_priject_on_failure", False),
+    )
 
 
 @app.command()
