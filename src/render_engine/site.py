@@ -72,13 +72,16 @@ class Site:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
 
-    def register_plugins(self, *plugins):
+    def register_plugins(self, *plugins, **plugin_settings):
         for plugin in plugins:
+            logging.debug("Registering Plugin: %s", plugin.__name__)
             self.plugin_manager.register_plugin(plugin)
-            self.plugin_settings[plugin.__name__] = {
+            logging.debug("Loading default settings: %s", getattr(plugin, "default_settings", {}))
+            self.plugin_manager.plugin_settings[plugin.__name__].update(
                 **getattr(plugin, "default_settings", {}),
-                **self.plugin_settings.get(plugin.__name__, {}),
-            }
+                **getattr(self.plugin_settings, plugin.__name__, {}),
+                **plugin_settings.get(plugin.__name__, {}),
+            )
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
@@ -186,7 +189,7 @@ class Site:
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
 
         if hasattr(page, "plugin_manager"):
-            page.plugin_manager._pm.hook.render_content(page=page, settings=settings)
+            page.plugin_manager._pm.hook.render_content(page=page, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
 

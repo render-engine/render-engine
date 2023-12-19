@@ -4,14 +4,14 @@ import typing
 
 import git
 from more_itertools import batched, flatten
+from render_engine_markdown import MarkdownPageParser
+from render_engine_parser import BasePageParser
 from slugify import slugify
 
 from ._base_object import BaseObject
 from .archive import Archive
 from .feeds import RSSFeed
 from .page import Page
-from .parsers import BasePageParser
-from .parsers.markdown import MarkdownPageParser
 from .plugins import PluginManager
 
 
