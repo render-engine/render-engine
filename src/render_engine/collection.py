@@ -4,7 +4,6 @@ import typing
 
 import git
 from more_itertools import batched, flatten
-from render_engine_markdown import MarkdownPageParser
 from render_engine_parser import BasePageParser
 from slugify import slugify
 
