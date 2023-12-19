@@ -68,7 +68,6 @@ class ThemeManager:
             "body_class": set(),
         }
 
-
     engine: Environment
     output_path: str
     prefix: dict[str, str] = dataclasses.field(default_factory=dict)
@@ -94,9 +93,7 @@ class ThemeManager:
         if theme.template_globals:
             for key, value in theme.template_globals.items():
                 if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
-                    self.engine.globals.setdefault(key, set()).update(
-                        value
-                    )
+                    self.engine.globals.setdefault(key, set()).update(value)
                 if isinstance(self.engine.globals.get(key), set):
                     self.engine.globals[key].add(value)
 

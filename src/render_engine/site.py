@@ -77,12 +77,11 @@ class Site:
             logging.debug("Registering Plugin: %s", plugin.__name__)
             self.plugin_manager.register_plugin(plugin)
             logging.debug("Loading default settings: %s", getattr(plugin, "default_settings", {}))
-            self.plugin_manager.plugin_settings[plugin.__name__] \
-                .update(
-                    **getattr(plugin, "default_settings", {}),
-                    **getattr(self.plugin_settings, plugin.__name__, {}),
-                    **plugin_settings.get(plugin.__name__, {}),
-                )
+            self.plugin_manager.plugin_settings[plugin.__name__].update(
+                **getattr(plugin, "default_settings", {}),
+                **getattr(self.plugin_settings, plugin.__name__, {}),
+                **plugin_settings.get(plugin.__name__, {}),
+            )
 
     def register_theme(self, theme: Theme):
         """Overrides the ThemeManager register_theme method to add plugins to the site"""

@@ -1,6 +1,7 @@
+from render_engine_markdown import MarkdownPageParser
+
 from .collection import Collection
 from .feeds import RSSFeed
-from render_engine_markdown import MarkdownPageParser
 
 
 class Blog(Collection):
