@@ -7,7 +7,6 @@ from render_engine.engine import (
     to_absolute,
     to_pub_date,
 )
-from render_engine.feeds import RSSFeed
 from render_engine.page import Page
 from render_engine.site import Site
 

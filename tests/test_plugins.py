@@ -99,8 +99,12 @@ gins from the collection"""
     assert site.route_list["fakecollection"].plugin_manager._pm.list_name_plugin()[0][0] == 'FakePlugin'
 
 def test_collection_archive_runs_render_content_calls(site, mocker):
-    mocker_render_content = mocker.patch.object(list(site.route_list['fakecollection'].archives)[0].plugin_manager._pm.hook, "render_content")
-    mocker_post_render_content = mocker.patch.object(list(site.route_list['fakecollection'].archives)[0].plugin_manager._pm.hook, "post_render_content")
+    mocker_render_content = mocker.patch.object(
+        list(site.route_list['fakecollection'].archives)[0].plugin_manager._pm.hook, "render_content"
+    )
+    mocker_post_render_content = mocker.patch.object(
+        list(site.route_list['fakecollection'].archives)[0].plugin_manager._pm.hook, "post_render_content"
+        )
 
     site.render()
     assert mocker_render_content.called
