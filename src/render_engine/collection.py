@@ -78,8 +78,7 @@ class Collection(BaseObject):
     def __init__(
         self,
     ) -> None:
-
-        if parser:= getattr(self, "PageParser", None):
+        if parser := getattr(self, "PageParser", None):
             logging.warning(DeprecationWarning("PageParser is deprecated. Use Parser instead."))
             self.Parser = parser
 
