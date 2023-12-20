@@ -7,6 +7,7 @@ Be sure to include any referenced issues and discussions.
 
 - [ ] :bug: (bug)
 - [ ] :book: (Documentation)
+- [ ] :arrow_up: (Update)
 - [ ] :dizzy: (New Feature)
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
