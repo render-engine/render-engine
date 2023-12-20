@@ -1,3 +1,4 @@
+import importlib
 import typing
 
 import pytest
@@ -110,3 +111,11 @@ def test_collection_archive_runs_render_content_calls(site, mocker):
     site.render()
     assert mocker_render_content.called
     assert mocker_post_render_content.called
+
+
+def test_deperecated_warning():
+    import warnings
+
+    with warnings.catch_warnings(record=True) as w:
+        importlib.import_module("render_engine.hookspecs")
+        assert any(isinstance(i.message, DeprecationWarning) for i in w)

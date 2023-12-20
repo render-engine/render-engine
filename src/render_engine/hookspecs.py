@@ -1,11 +1,16 @@
 # ruff: noqa: F821
 
 import typing
+import warnings
 
 import pluggy
 
 _PROJECT_NAME = "render_engine"
 hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
+warnings.warn(
+    "`render_engine.hookspecs` will be deprecated in version 2024.3.1,  Please use `render_engine.plugins` instead.",
+    DeprecationWarning,
+)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
 
