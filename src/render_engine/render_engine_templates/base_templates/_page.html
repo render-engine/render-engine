@@ -1,0 +1,6 @@
+{% extends 'base_templates/_base.html' %}
+{% block title %}{{title}} - {{super()}}{% endblock %}
+{% block content %}
+<h1>{{title}}</h1>
+{{content}}
+{% endblock %}
