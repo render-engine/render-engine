@@ -37,50 +37,6 @@ def get_app(import_path, app_name) -> Site:
     return getattr(sys.modules[import_path], app_name)
 
 
-def _create_folder(*, folder: pathlib.Path, overwrite: bool) -> pathlib.Path:
-    """Create a folder if it doesn't exist or if overwrite is True"""
-    folder.mkdir(parents=True, exist_ok=overwrite)
-    return folder
-
-
-def _create_templates_folder(
-    *templates,
-    project_folder: pathlib.Path,
-    templates_folder_name: pathlib.Path,
-    exists_ok: bool,
-) -> None:
-    """Create a folder for templates and optionally create an index.html file"""
-    path = project_folder.joinpath(templates_folder_name)
-    path.mkdir(
-        exist_ok=exists_ok,
-    )
-
-    for template in templates:
-        path.joinpath(template).write_text(engine.get_template(template).render())
-
-
-def _create_site_with_vars(
-    *,
-    site_title: typing.Optional[str] = None,  # noqa: UP007
-    site_url: typing.Optional[str] = None,
-    site_description: typing.Optional[str] = None,
-    site_author: typing.Optional[str] = None,
-    collection_path: typing.Optional[str] = None,
-) -> Site:
-    """Create a new site from a template"""
-    site = Site()
-    potential_site_vars = {
-        "site_title": site_title,
-        "site_url": site_url,
-        "site_author": site_author,
-        "site_description": site_description,
-        "collections_path": str(collection_path),
-    }
-    site_vars = {key: value for key, value in potential_site_vars.items() if value}
-    site.site_vars.update(site_vars)
-    return site
-
-
 def get_available_themes(console: Console, app: Site, theme_name: str) -> list[str]:
     """Returns the list of available themes to the Console"""
     try:
