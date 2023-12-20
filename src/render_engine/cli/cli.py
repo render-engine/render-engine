@@ -3,6 +3,7 @@
 import importlib
 import json
 import pathlib
+import shutil
 import sys
 import typing
 from typing import Annotated
@@ -17,6 +18,12 @@ from render_engine.engine import engine
 from render_engine.site import Site
 
 app = typer.Typer()
+
+
+def remove_output_folder(output_path: pathlib.Path) -> None:
+    """Remove the output folder"""
+    if output_path.exists():
+        shutil.rmtree(output_path)
 
 
 def split_module_site(module_site: str) -> tuple[str, str]:
@@ -152,7 +159,23 @@ def init(
 
 
 @app.command()
-def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)]):
+def build(
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            callback=split_module_site,
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
+    clean: Annotated[
+        bool,
+        typer.Option(
+            "--clean",
+            "-c",
+            help="Clean the output folder prior to building",
+        ),
+    ] = False,
+):
     """
     CLI for creating a new site
 
@@ -162,6 +185,8 @@ def build(module_site: Annotated[str, typer.Argument(callback=split_module_site)
     """
     module, site = module_site
     app = get_app(module, site)
+    if clean:
+        remove_output_folder(app.output_path)
     app.render()
 
 
@@ -174,6 +199,14 @@ def serve(
             help="module:site for Build the site prior to serving",
         ),
     ],
+    clean: Annotated[
+        bool,
+        typer.Option(
+            "--clean",
+            "-c",
+            help="Clean the output folder prior to building",
+        ),
+    ] = False,
     reload: Annotated[
         bool,
         typer.Option(
@@ -217,6 +250,9 @@ def serve(
 
     module, site = module_site
     app = get_app(module, site)
+
+    if clean:
+        remove_output_folder(app.output_path)
     app.render()
 
     if not directory:

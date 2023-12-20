@@ -26,6 +26,7 @@ dependencies = [
 
 [project.optional-dependencies]
 extras = [
+    "render-engine-sitemap",
     "cookiecutter",
 ]
 dev = [

@@ -2,13 +2,13 @@ import pathlib
 
 import pluggy
 import pytest
-from jinja2 import FileSystemLoader, DictLoader
+from jinja2 import DictLoader, FileSystemLoader
 
 from render_engine.collection import Collection
 from render_engine.page import Page
+from render_engine.plugins import SiteSpecs
 from render_engine.site import Site
 from render_engine.themes import Theme
-from render_engine.hookspecs import SiteSpecs
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -44,7 +44,7 @@ def test_site_site_vars_orrider_defaults_via_class():
     assert site.site_vars["SITE_URL"] == "https://my-site.com"
 
 
-def test_site_page_in_route_list(tmp_path):
+def test_site_page_in_route_list(tmp_path: pathlib.Path):
     tmp_dir = tmp_path / "content"
     tmp_dir.mkdir()
     file = tmp_dir / "test.md"
@@ -100,7 +100,7 @@ def test_site_page_with_multiple_routes_has_one_entry_in_routes_list():
     assert len(site.route_list) == 1
 
 
-def test_url_for_Page_in_site(tmp_path):
+def test_url_for_Page_in_site(tmp_path: pathlib.Path):
     """Tests that url_for a page is added to a template"""
     test_template = pathlib.Path(tmp_path / "template.html")
     test_template.write_text("The URL is '{{ 'custompage'|url_for }}'")
@@ -118,7 +118,7 @@ def test_url_for_Page_in_site(tmp_path):
     assert custom_page.read_text() == "The URL is '/custompage.html'"
 
 
-def test_collection_archive_in_route_list(tmp_path):
+def test_collection_archive_in_route_list(tmp_path: pathlib.Path):
     """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
     test_collection_archive_template = pathlib.Path(tmp_path / "archive_template.html")
     test_collection_archive_template.write_text("This is the collection archive")
@@ -150,11 +150,10 @@ def test_collection_archive_in_route_list(tmp_path):
 
 
 @pytest.fixture(scope="module")
-def site(tmp_path_factory):
-
+def site(tmp_path_factory: pytest.TempPathFactory):
     collection_archive_path = tmp_path_factory.getbasetemp() / "collection_archive_items"
-    collection_archive_output_path = collection_archive_path / "output" 
-    static_tmp_dir = (collection_archive_path / "static")
+    collection_archive_output_path = collection_archive_path / "output"
+    static_tmp_dir = collection_archive_path / "static"
     static_tmp_dir.mkdir(parents=True)
     pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
@@ -179,10 +178,10 @@ def site(tmp_path_factory):
     return site
 
 
-def test_collection_archives_generates_by_items_per_page(site):
+def test_collection_archives_generates_by_items_per_page(site: Site):
     """
     Archive pages should be created using the items_per_page value
-    
+
     Example:
         If items_per_page is 1, and there are 2 pages then there should be 3 archive pages.
         0: all page items
@@ -193,14 +192,14 @@ def test_collection_archives_generates_by_items_per_page(site):
     assert len(list(site.route_list["custompagescollection"].archives)) == 3
 
 
-def test_collection_archive_pages_in_route_list(site):
+def test_collection_archive_pages_in_route_list(site: Site):
     """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
 
-    for page in site.route_list['custompagescollection'].archives:
+    for page in site.route_list["custompagescollection"].archives:
         assert pathlib.Path(site.output_path / page.path_name).exists()
 
 
-def test_url_for_Collection_in_site(tmp_path):
+def test_url_for_Collection_in_site(tmp_path: pathlib.Path):
     """
     Tests that url_for a page in a collection is added to a template
     """
@@ -225,7 +224,7 @@ def test_url_for_Collection_in_site(tmp_path):
     assert custom_page.read_text() == "The URL is '/customcollectionpage.html'"
 
 
-def test_site_output_path(tmp_path):
+def test_site_output_path(tmp_path: pathlib.Path):
     """Tests site outputs to output_path"""
 
     output_tmp_dir = tmp_path / "output"
@@ -245,16 +244,15 @@ def test_site_output_path(tmp_path):
     assert (output_tmp_dir / "custompage.html").exists()
 
 
-def test_site_static_renders_in_static_output_path(site):
+def test_site_static_renders_in_static_output_path(site: Site):
     """
     Tests that a static file is rendered in the static output path.
     """
 
-
     assert (site.output_path / "static" / "test.txt").exists()
 
 
-def tests_site_nested_static_paths(tmp_path, site):
+def tests_site_nested_static_paths(tmp_path: pathlib.Path, site: Site):
     """given a static path with nested directories, the output should be the same"""
     static_tmp_dir = tmp_path / "static"
     output_tmp_dir = tmp_path / "output"
@@ -271,7 +269,7 @@ def tests_site_nested_static_paths(tmp_path, site):
     assert (output_tmp_dir / "static" / "nested" / "test.txt").exists()
 
 
-def tests_site_multiple_static_paths(tmp_path, site):
+def tests_site_multiple_static_paths(tmp_path: pathlib.Path, site: Site):
     """given a static path with nested directories, the output should be the same"""
     static_tmp_dir = tmp_path / "static"
     output_tmp_dir = tmp_path / "output"
@@ -301,14 +299,14 @@ def test_site_theme_update_settings():
 
 def test_plugin_in_theme_added_to_plugins():
     """Tests that a plugin added to a theme is added to the site"""
+
     class plugin(SiteSpecs):
         pass
-    
+
     class theme(Theme):
         loader = DictLoader({"test.html": "test"})
         plugins = [plugin]
         filters = []
-
 
     site = Site()
     site.register_theme(
