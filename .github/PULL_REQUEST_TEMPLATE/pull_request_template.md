@@ -10,7 +10,7 @@ Be sure to include any referenced issues and discussions.
 - [ ] :dizzy: (New Feature)
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
-
+- [ ] :hammer_and_wrench: (Refactor)
 ## Changes have been Documented (If Applicable)
 
 - [ ] YES - Changes have been documented
