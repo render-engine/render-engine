@@ -2,10 +2,10 @@ import pathlib
 
 import pluggy
 import pytest
+from render_engine_parser import BasePageParser
 
 from render_engine.collection import Collection
 from render_engine.page import Page
-from render_engine_parser import BasePageParser
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -19,7 +19,7 @@ def test_collection_information_parser_passes_to_page(tmp_path):
         pass
 
     class BasicCollection(Collection):
-        PageParser = SimpleBasePageParser
+        Parser = SimpleBasePageParser
         content_type = Page
 
     collection = BasicCollection()

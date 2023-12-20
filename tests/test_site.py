@@ -151,10 +151,9 @@ def test_collection_archive_in_route_list(tmp_path: pathlib.Path):
 
 @pytest.fixture(scope="module")
 def site(tmp_path_factory: pytest.TempPathFactory):
-
     collection_archive_path = tmp_path_factory.getbasetemp() / "collection_archive_items"
-    collection_archive_output_path = collection_archive_path / "output" 
-    static_tmp_dir = (collection_archive_path / "static")
+    collection_archive_output_path = collection_archive_path / "output"
+    static_tmp_dir = collection_archive_path / "static"
     static_tmp_dir.mkdir(parents=True)
     pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
 
@@ -182,7 +181,7 @@ def site(tmp_path_factory: pytest.TempPathFactory):
 def test_collection_archives_generates_by_items_per_page(site: Site):
     """
     Archive pages should be created using the items_per_page value
-    
+
     Example:
         If items_per_page is 1, and there are 2 pages then there should be 3 archive pages.
         0: all page items
@@ -196,7 +195,7 @@ def test_collection_archives_generates_by_items_per_page(site: Site):
 def test_collection_archive_pages_in_route_list(site: Site):
     """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
 
-    for page in site.route_list['custompagescollection'].archives:
+    for page in site.route_list["custompagescollection"].archives:
         assert pathlib.Path(site.output_path / page.path_name).exists()
 
 
@@ -250,7 +249,6 @@ def test_site_static_renders_in_static_output_path(site: Site):
     Tests that a static file is rendered in the static output path.
     """
 
-
     assert (site.output_path / "static" / "test.txt").exists()
 
 
@@ -301,14 +299,14 @@ def test_site_theme_update_settings():
 
 def test_plugin_in_theme_added_to_plugins():
     """Tests that a plugin added to a theme is added to the site"""
+
     class plugin(SiteSpecs):
         pass
-    
+
     class theme(Theme):
         loader = DictLoader({"test.html": "test"})
         plugins = [plugin]
         filters = []
-
 
     site = Site()
     site.register_theme(
