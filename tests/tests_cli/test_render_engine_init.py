@@ -1,13 +1,13 @@
 import pytest
+
 from render_engine.cli import cli
+
 
 @pytest.fixture(scope="module")
 def test_template(tmp_path_factory):
     test_template = tmp_path_factory.getbasetemp().joinpath("test_template")
     test_template.mkdir()
-    test_template.joinpath("cookiecutter.json").write_bytes(
-        b'{"project_slug": "test_template"}'
-    )
+    test_template.joinpath("cookiecutter.json").write_bytes(b'{"project_slug": "test_template"}')
     cc_path = test_template.joinpath("{{cookiecutter.project_slug}}")
     cc_path.mkdir()
     cc_path.joinpath("app.py").write_bytes(
@@ -28,6 +28,7 @@ def tests_error_raised_if_cookiecutter_not_installed(test_template, mocker):
             no_input=True,
             output_dir=test_template,
         )
+
 
 def test_init_local_path(test_template, tmp_path):
     """Tests that you can call init using a local path"""
