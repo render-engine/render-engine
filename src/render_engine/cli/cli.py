@@ -5,7 +5,6 @@ import json
 import pathlib
 import shutil
 import sys
-import typing
 from typing import Annotated
 
 import typer
@@ -14,7 +13,6 @@ from rich.console import Console
 from rich.table import Table
 
 from render_engine.cli.event import RegExHandler
-from render_engine.engine import engine
 from render_engine.site import Site
 
 app = typer.Typer()
