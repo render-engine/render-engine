@@ -79,7 +79,7 @@ class ThemeManager:
         Register a theme.
 
         Args:
-            *themes: Theme objects to register
+            theme: Theme objects to register
         """
 
         logging.info(f"Registering theme: {theme}")
