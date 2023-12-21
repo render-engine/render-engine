@@ -172,4 +172,4 @@ class Page(BasePage):
     @property
     def _content(self):
         """Returns the content of the page."""
-        return self.Parser.parse(self.content, page=self)
+        return self.Parser.parse(self.content, extras=getattr(self, 'parser_extras', {}))
