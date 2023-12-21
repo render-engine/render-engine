@@ -170,7 +170,7 @@ class Collection(BaseObject):
                 archive_index=index,
                 num_archive_pages=num_archive_pages,
                 plugin_manager=getattr(self, "plugin_manager", None),
-                is_index = not index,
+                is_index=not index,
             )
 
     @property

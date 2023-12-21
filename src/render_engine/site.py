@@ -208,7 +208,7 @@ class Site:
             for archive in collection.archives:
                 logging.debug("Adding Archive: %s", archive.__class__.__name__)
                 self._render_output(collection.routes[0], archive)
-                
+
                 if archive.is_index:
                     archive.slug = "index"
                     self._render_output(collection.routes[0], archive)
