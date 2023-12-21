@@ -1,3 +1,4 @@
+import logging
 import typing
 from collections import defaultdict
 
@@ -82,6 +83,9 @@ class PluginManager:
 
     def register_plugin(self, plugin) -> None:
         """Register a plugin with the site"""
+        if self._pm.has_plugin(plugin.__name__):
+            logging.info(f"Plugin {plugin} already registered")
+            return
         self._pm.register(plugin)
 
     @property
