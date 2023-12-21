@@ -7,6 +7,7 @@ from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.plugins import hook_impl
 from render_engine.site import Site
+from render_engine.plugins import PluginManager
 
 
 class FakePlugin:
@@ -119,3 +120,12 @@ def test_deperecated_warning():
     with warnings.catch_warnings(record=True) as w:
         importlib.import_module("render_engine.hookspecs")
         assert any(isinstance(i.message, DeprecationWarning) for i in w)
+
+
+def test_plugin_multiple_plugins():
+    """Asserts that if a plugin is registered multiple times, it is only registered once"""
+
+    plugin_mgr = PluginManager()
+    plugin_mgr.register_plugin(FakePlugin)
+    plugin_mgr.register_plugin(FakePlugin)
+    
