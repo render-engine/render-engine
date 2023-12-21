@@ -108,6 +108,15 @@
       "contributions": [
         "tool"
       ]
+    },
+    {
+      "login": "izaan17",
+      "name": "izaan17",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93177492?v=4",
+      "profile": "https://github.com/Izaan17",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "contributorsPerLine": 7,
