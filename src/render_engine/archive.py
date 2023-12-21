@@ -35,12 +35,14 @@ class Archive(BasePage):
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
         num_archive_pages: int = 1,
+        is_index: bool = False,
         plugin_manager: PluginManager | None = None,
     ) -> None:
         super().__init__()
         self.slug = title
         self.title = title
         self.archive_index = archive_index
+        self.is_index = is_index
 
         if archive_index:
             self.slug = f"{self._slug}{archive_index}"

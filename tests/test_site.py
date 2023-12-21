@@ -313,3 +313,22 @@ def test_plugin_in_theme_added_to_plugins():
         theme,
     )
     assert plugin in site.plugin_manager.plugins
+
+
+def test_collection_archive_0_is_index(tmp_path: pathlib.Path):
+    test_collection_archive = pathlib.Path(tmp_path / "archive_template")
+    site = Site()
+    site.output_path = test_collection_archive
+
+        
+    class CustomCollectionPage(Page):
+        content = "Test"
+
+    @site.collection
+    class CustomCollection(Collection):
+        routes = ["test"]
+        has_archive = True
+        pages = [CustomCollectionPage()] 
+
+    site.render()
+    assert pathlib.Path(test_collection_archive / "test" / "index.html").exists()
