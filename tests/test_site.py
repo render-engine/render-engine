@@ -320,7 +320,6 @@ def test_collection_archive_0_is_index(tmp_path: pathlib.Path):
     site = Site()
     site.output_path = test_collection_archive
 
-        
     class CustomCollectionPage(Page):
         content = "Test"
 
@@ -328,7 +327,7 @@ def test_collection_archive_0_is_index(tmp_path: pathlib.Path):
     class CustomCollection(Collection):
         routes = ["test"]
         has_archive = True
-        pages = [CustomCollectionPage()] 
+        pages = [CustomCollectionPage()]
 
     site.render()
     assert pathlib.Path(test_collection_archive / "test" / "index.html").exists()
