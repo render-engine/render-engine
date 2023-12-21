@@ -83,7 +83,6 @@ class Collection(BaseObject):
 
         if getattr(self, "items_per_page", False):
             self.has_archive = True
-
         self.title = self._title
 
     def iter_content_path(self):
@@ -171,6 +170,7 @@ class Collection(BaseObject):
                 archive_index=index,
                 num_archive_pages=num_archive_pages,
                 plugin_manager=getattr(self, "plugin_manager", None),
+                is_index = not index,
             )
 
     @property
