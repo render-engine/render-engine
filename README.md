@@ -1,5 +1,5 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 >**WARNING**
@@ -62,6 +62,7 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
       <td align="center" valign="top" width="14.28%"><a href="https://www.pythonbynight.com"><img src="https://avatars.githubusercontent.com/u/46942991?v=4?s=57" width="57px;" alt="Mario Munoz"/><br /><sub><b>Mario Munoz</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=tataraba" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.pamelafox.org"><img src="https://avatars.githubusercontent.com/u/297042?v=4?s=57" width="57px;" alt="Pamela Fox"/><br /><sub><b>Pamela Fox</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=pamelafox" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/viktoriussuwandi"><img src="https://avatars.githubusercontent.com/u/68414300?v=4?s=57" width="57px;" alt="Viktorius Suwandi"/><br /><sub><b>Viktorius Suwandi</b></sub></a><br /><a href="https://github.com/render-engine/render-engine/commits?author=viktoriussuwandi" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/VinayakG311"><img src="https://avatars.githubusercontent.com/u/96966973?v=4?s=57" width="57px;" alt="VinayakG311"/><br /><sub><b>VinayakG311</b></sub></a><br /><a href="#plugin-VinayakG311" title="Plugin/utility libraries">🔌</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Izaan17"><img src="https://avatars.githubusercontent.com/u/93177492?v=4?s=57" width="57px;" alt="izaan17"/><br /><sub><b>izaan17</b></sub></a><br /><a href="#plugin-izaan17" title="Plugin/utility libraries">🔌</a></td>
     </tr>
   </tbody>
