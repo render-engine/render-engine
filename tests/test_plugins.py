@@ -5,9 +5,8 @@ import pytest
 
 from render_engine.collection import Collection
 from render_engine.page import Page
-from render_engine.plugins import hook_impl
+from render_engine.plugins import PluginManager, hook_impl
 from render_engine.site import Site
-from render_engine.plugins import PluginManager
 
 
 class FakePlugin:
@@ -129,3 +128,10 @@ def test_plugin_multiple_plugins():
     plugin_mgr.register_plugin(FakePlugin)
     plugin_mgr.register_plugin(FakePlugin)
     
+
+def test_plugin_override_settings_from_site_register_plugins():
+    """Asserts that the settings passed into `register_plugins` override the default settings"""
+
+    site = Site()
+    site.register_plugins(FakePlugin, FakePlugin={"test": "override"})
+    assert site.plugin_manager.plugin_settings.get("FakePlugin")["test"] == "override"
