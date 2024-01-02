@@ -127,7 +127,7 @@ def test_plugin_multiple_plugins():
     plugin_mgr = PluginManager()
     plugin_mgr.register_plugin(FakePlugin)
     plugin_mgr.register_plugin(FakePlugin)
-    
+
 
 def test_plugin_override_settings_from_site_register_plugins():
     """Asserts that the settings passed into `register_plugins` override the default settings"""

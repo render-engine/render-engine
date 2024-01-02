@@ -231,7 +231,7 @@ def serve(
             show_default=False,
         ),
     ] = 8000,
-)-> None:
+) -> None:
     """
     Create an HTTP server to serve the site at `localhost`.
 

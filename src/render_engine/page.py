@@ -30,7 +30,7 @@ class BasePage(BaseObject):
     _reference: str = "_slug"
 
     @property
-    def _content(self) -> Any: 
+    def _content(self) -> Any:
         """Returns the content of the page."""
         return getattr(self, "content", None)
 

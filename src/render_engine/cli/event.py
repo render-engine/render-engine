@@ -64,7 +64,7 @@ class RegExHandler(RegexMatchingEventHandler):
         ignore_patterns: [list[str] | None] = None,
         *args,
         **kwargs,
-    )-> None:
+    ) -> None:
         self.p = None
         self._server = spawn_server
         self.server_address = server_address
@@ -84,7 +84,7 @@ class RegExHandler(RegexMatchingEventHandler):
         self._thread = threading.Thread(target=self._server.serve_forever)
         self._thread.start()
 
-    def stop_server(self)-> None:
+    def stop_server(self) -> None:
         console.print("[bold red]Stopping server[/bold red]")
         self._server.shutdown()
         self._thread.join()
@@ -101,7 +101,7 @@ class RegExHandler(RegexMatchingEventHandler):
             return None
         self.rebuild()
 
-    def watch(self)-> None:
+    def watch(self) -> None:
         """
         This function `watch` starts the server on the output path (`dir_to_serve`)
         and monitors the specified directory (`dir_to_watch`) for changes.
