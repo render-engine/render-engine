@@ -61,18 +61,18 @@ class Site:
             self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
 
     @property
-    def output_path(self):
+    def output_path(self) -> str:
         return self.theme_manager.output_path
 
     @output_path.setter
-    def output_path(self, output_path: str):
+    def output_path(self, output_path: str) -> None:
         self.theme_manager.output_path = output_path
 
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
 
-    def register_plugins(self, *plugins, **plugin_settings):
+    def register_plugins(self, *plugins, **plugin_settings) -> None:
         for plugin in plugins:
             logging.debug("Registering Plugin: %s", plugin.__name__)
             self.plugin_manager.register_plugin(plugin)
@@ -83,14 +83,14 @@ class Site:
                 **plugin_settings.get(plugin.__name__, {}),
             }
 
-    def register_theme(self, theme: Theme):
+    def register_theme(self, theme: Theme) -> None:
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
         self.theme_manager.register_theme(theme)
 
         if theme.plugins:
             self.register_plugins(*theme.plugins)
 
-    def register_themes(self, *themes: Theme):
+    def register_themes(self, *themes: Theme) -> None:
         """
         Register multiple themes.
 
@@ -100,7 +100,7 @@ class Site:
         for theme in themes:
             self.register_theme(theme)
 
-    def update_theme_settings(self, **settings):
+    def update_theme_settings(self, **settings) -> None:
         for key, value in settings.items():
             self.site_vars["theme"].update({key: value})
 
@@ -182,7 +182,7 @@ class Site:
 
         self.route_list[getattr(page, page._reference)] = page
 
-    def _render_output(self, route: str, page: Page):
+    def _render_output(self, route: str, page: Page) -> int:
         """writes the page object to disk"""
         path = pathlib.Path(self.output_path) / pathlib.Path(route) / pathlib.Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
