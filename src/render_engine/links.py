@@ -26,7 +26,7 @@ class Link:
     meta: dict[str, str] = field(default_factory=dict)
     """Meta variables translate to attributes on the html element"""
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.meta:
             attrs = " ".join([f'{k}="{v}"' for k, v in self.meta.items()])
             starting_path = f'<a href="{self.url}" {attrs}>'
@@ -55,7 +55,7 @@ class Image(Link):
         <img src="https://render-engine.site" alt="example image" id="custom-link-id" class="link-class" />
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """prints the image point"""
 
         if self.meta:

@@ -64,7 +64,7 @@ class RegExHandler(RegexMatchingEventHandler):
         ignore_patterns: [list[str] | None] = None,
         *args,
         **kwargs,
-    ):
+    ) -> None:
         self.p = None
         self._server = spawn_server
         self.server_address = server_address
@@ -76,7 +76,7 @@ class RegExHandler(RegexMatchingEventHandler):
         self.ignore_patterns = ignore_patterns
         super().__init__(*args, regexes=patterns, ignore_regexes=ignore_patterns, **kwargs)
 
-    def start_server(self):
+    def start_server(self) -> None:
         console.print(
             f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
         )
@@ -84,24 +84,24 @@ class RegExHandler(RegexMatchingEventHandler):
         self._thread = threading.Thread(target=self._server.serve_forever)
         self._thread.start()
 
-    def stop_server(self):
+    def stop_server(self) -> None:
         console.print("[bold red]Stopping server[/bold red]")
         self._server.shutdown()
         self._thread.join()
 
-    def rebuild(self):
+    def rebuild(self) -> None:
         console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
         import_path = self.module_site[0]
         module = importlib.import_module(import_path)
         importlib.reload(module)
         self.app.render()
 
-    def on_any_event(self, event: FileSystemEvent):
+    def on_any_event(self, event: FileSystemEvent) -> None:
         if event.is_directory:
             return None
         self.rebuild()
 
-    def watch(self):
+    def watch(self) -> None:
         """
         This function `watch` starts the server on the output path (`dir_to_serve`)
         and monitors the specified directory (`dir_to_watch`) for changes.

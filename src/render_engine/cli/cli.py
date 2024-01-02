@@ -123,7 +123,7 @@ def init(
         ),
     ] = pathlib.Path("./"),
     cookiecutter_args: Annotated[str, typer.Option(callback=lambda x: json.loads(x))] = {},
-):
+) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
 
@@ -173,7 +173,7 @@ def build(
             help="Clean the output folder prior to building",
         ),
     ] = False,
-):
+) -> None:
     """
     CLI for creating a new site
 
@@ -231,7 +231,7 @@ def serve(
             show_default=False,
         ),
     ] = 8000,
-):
+) -> None:
     """
     Create an HTTP server to serve the site at `localhost`.
 

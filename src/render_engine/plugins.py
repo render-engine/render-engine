@@ -89,5 +89,5 @@ class PluginManager:
         self._pm.register(plugin)
 
     @property
-    def plugins(self):
+    def plugins(self) -> set[typing.Any]:
         return self._pm.get_plugins()

@@ -19,7 +19,7 @@ class Blog(Collection):
     has_archive = True
     Feed = RSSFeed
 
-    def latest(self, count: int = 1):
+    def latest(self, count: int = 1) -> list[Collection]:
         """Get the latest post from the collection."""
         latest_pages = list(sorted(self.__iter__(), key=lambda x: getattr(x, self.sort_by), reverse=self.sort_reverse))[
             0:count

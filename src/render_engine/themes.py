@@ -40,7 +40,7 @@ class Theme:
     prefix: str | None = None
     static_dir: str | pathlib.Path | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.prefix:
             self.prefix = slugify.slugify(self.prefix.lower())
         else:
@@ -62,7 +62,7 @@ class ThemeManager:
 
     """
 
-    def default_template_globals():
+    def default_template_globals() -> dict[str, set]:
         return {
             "head": set(),
             "body_class": set(),

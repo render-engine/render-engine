@@ -30,7 +30,7 @@ class BasePage(BaseObject):
     _reference: str = "_slug"
 
     @property
-    def _content(self):
+    def _content(self) -> Any:
         """Returns the content of the page."""
         return getattr(self, "content", None)
 
@@ -170,6 +170,6 @@ class Page(BasePage):
             setattr(self, key.lower(), val)
 
     @property
-    def _content(self):
+    def _content(self) -> Any:
         """Returns the content of the page."""
         return self.Parser.parse(self.content, extras=getattr(self, "parser_extras", {}))
