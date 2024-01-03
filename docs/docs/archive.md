@@ -3,7 +3,7 @@
 
 Archives are a [`BasePage`][src.render_engine.page.BasePage] object used to display a list of [`Page`][src.render_engine.page.Page] objects in a [`Collection`][src.render_engine.collection.Collection].
 
-Archive objects create a customizeable page that can be controlled via its parent Collction.
+Archive objects create a customizable page that can be controlled via its parent Collection.
 
 ::: src.render_engine.archive.Archive
 
@@ -11,7 +11,7 @@ Collection.archives yields a generator of Archive objects. Each Archive object w
 
 ## Enabling Archive Pages
 
-By default render engine will only create the archive page is either of the following conditions are met:
+By default render engine will only create the archive page if either of the following conditions are met:
 
 - The `Collection.items_per_page` attribute is set to a value greater than 0.
 - The `Collection.has_archive` attribute is set to True.
