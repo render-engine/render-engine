@@ -41,7 +41,7 @@ my_page._render_content()
 
 ## MarkdownPageParser
 
-In many cases you will want to create rich content. Render Engine comes with a `MarkdownPageParser` that can be used to parse Markdown files. You can also pass in attributes to the page via frontmatter at the top of the markdown file.
+In many cases, you will want to create rich content. Render Engine comes with a `MarkdownPageParser` that can be used to parse Markdown files. You can also pass in attributes to the page via frontmatter at the top of the markdown file.
 
 ```python
 from render_engine.parsers.base_parsers import BasePageParser
@@ -75,7 +75,7 @@ my_page._render_content()
 
 You can create custom parsers by subclassing [`BasePageParser`][src.render_engine.parsers.base_parsers.BasePageParser].
 
-All the static methods for parsers should return a tuple where the first entry is a dictionary of attributes and the sencond entry is the rendered content.
+All the static methods for parsers should return a tuple where the first entry is a dictionary of attributes and the second entry is the rendered content.
 
 !!! Warning
     Custom Parsers do not use frontmatter by default. You would need to ensure that your parser handles frontmatter if you want to use it.
