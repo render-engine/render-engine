@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
 ## Calling `render-engine build`
 
-You can also use the [CLI](../cli.md#building-your-site-with-render-engine-build) `build` command to build your site. It requires you pass in the module and site object `module:object` format.
+You can also use the [CLI](../cli.md#building-your-site-with-render-engine-build) `build` command to build your site. It requires you to pass in the module and site object `module:object` format.
 
 ```bash
 render-engine build app:app

@@ -2,7 +2,7 @@
 
 ## Users use the public systems use the private
 
-It's important to note that while public attributes are used by users, private attributes are used by the system. For example, the `Page._content` attribute is used by the system to build the `str` value of the page. This means that while the user may change the value of `Page.content`, the system has the ability to return a different value based on teh `Page._content` property.
+It's important to note that while public attributes are used by users, private attributes are used by the system. For example, the `Page._content` attribute is used by the system to build the `str` value of the page. This means that while the user may change the value of `Page.content`, the system has the ability to return a different value based on the `Page._content` property.
 
 For Example:
 

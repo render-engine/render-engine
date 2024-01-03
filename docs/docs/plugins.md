@@ -38,7 +38,7 @@ Plugins use the entrypoints defined in `render_engine.hookspecs`. These allow pl
 
 For example the `CleanOutput` plugin uses the `pre_build_site` entrypoint to remove the output directory before rendering.
 
-### Ingnoring Plugins
+### Ignoring Plugins
 
 Pages and collections can ignore plugins by passing a list of plugin names to the `ignore_plugins` attribute.
 

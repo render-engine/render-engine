@@ -27,7 +27,7 @@ class MyCustomCollection(Collection):
 
 ### Collection Attributes and Methods
 
-While you can set any of the attributes and override any methods on the Collection object, there are a few exposed specifically for custom collections types.
+While you can set any of the attributes and override any methods on the Collection object, there are a few exposed specifically for custom collection types.
 
 #### Attributes
 
@@ -53,6 +53,6 @@ While you can set any of the attributes and override any methods on the Collecti
 
 #### Methods
 
-`iter_content_path(self) -> Iterable`: This method is used to parse the `content_path` attribute. By default, this perform a `pathlib.Path.glob` that will use the `include_suffixes` attribute to filter the files.
+`iter_content_path(self) -> Iterable`: This method is used to parse the `content_path` attribute. By default, this performs a `pathlib.Path.glob` that will use the `include_suffixes` attribute to filter the files.
 
 `get_page(self) -> Page`: This method is used when creating a page from the collection. The usual flow is to create an instance of the page object and then add any attributes that you would like to additionally set (perhaps from the collection).

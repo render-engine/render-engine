@@ -7,7 +7,7 @@ This document will help you get started in contributing to the Render Engine cod
 
 ## The Docs
 
-This document is meant to help users get started in contributing to Render-Engine and isn't a replacement for the more in-depth knowledge in the docs. You can found the docs at <https://render-engine.readthedocs.org>
+This document is meant to help users get started in contributing to Render-Engine and isn't a replacement for the more in-depth knowledge in the docs. You can find the docs at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
@@ -56,8 +56,8 @@ If you see or experience a problem, please file an issue. Include any important 
 - Operating System - *System and Version (e.g. MacOS Sonoma)*
 - Python Version - *ex. Python 3.12.0*
 - Plugins/Themes/Custom Parsers & Collections Installed - *You can add them as a list*
-- Commands/Code Used - *What did you enter to get the output that you recieved*
-- Output - *Copy the Error or output that you recieve. This can be a screenshot but is more helpful as text*
+- Commands/Code Used - *What did you enter to get the output that you received*
+- Output - *Copy the Error or output that you receive. This can be a screenshot but is more helpful as text*
 
 ## Working on an Issue
 
@@ -65,20 +65,20 @@ If you see or experience a problem, please file an issue. Include any important 
 
 ### Issue vs Discussion
 
-If you don't know that the **solution** is, that's okay, we can work on getting a solution.
+If you don't know what the **solution** is, that's okay, we can work on getting a solution.
 
-If you aren't sure what the **problem** is should be, create a [discussion](https://github.com/render-engine/render-engine/discussion) post and we can talk about it.
+If you aren't sure what the **problem** is, create a [discussion](https://github.com/render-engine/render-engine/discussion) post and we can talk about it.
 
 If you aren't sure if it should be a discussion or an issue... That's okay, GitHub allows us to transfer issues into discussions or vice-versa.
 
-The general rule of thumb is don't let, not knowing where it goes, be the thing that prevents you from reporting that something happened. If you create an issue or an discussion, we'll address it/move it to the necessary place!
+The general rule of thumb is don't let, not knowing where it goes, be the thing that prevents you from reporting that something happened. If you create an issue or a discussion, we'll address it/move it to the necessary place!
 
 ### Being assigned an issue
 
 It's important to wait to be assigned an issue before starting to work on it. This prevents the following scenarios:
 
 > Two individuals contribute solutions to the same issue and someone is left with their code not being accepted.
-> A contributor does the work to resolve an issue  that is ultimately marked as *closed-Not Planned*. will not be added to the code-base.
+> A contributor does the work to resolve an issue  that is ultimately marked as *closed-Not Planned*. will not be added to the code base.
 > A contributor does work when a different solution is considered, resulting in wasting the contributor's time.
 
 If you want to work on a project simply say "I can work on this" or something to that effect, and wait for one of the maintainers to assign the issue to you.
@@ -89,14 +89,14 @@ Once you've been [assigned an issue](./CONTRIBUTING.md/#being-assigned-an-issue)
 
 ### Your changes linted and formatted using ruff and markdownlint
 
-Render engine's style is defined in the projects `pyproject.toml`. Before submitting your pull request. You should run the following commands. (If you don't a commit will be added to your PR doing so or you will be asked to before commiting.)
+Render engine's style is defined in the projects `pyproject.toml`. Before submitting your pull request. You should run the following commands. (If you don't a commit will be added to your PR doing so or you will be asked to before committing.)
 
 ```sh
 python -m ruff check src --fix
 python -m ruff format src
 ```
 
-Markdown changes will also be linted using the markdownlint2 github action. If you are using our dev container or code space, the markdownlint extenstion will update changes on save.
+Markdown changes will also be linted using the markdownlint2 github action. If you are using our dev container or code space, the markdownlint extension will update changes on save.
 
 ### Tests for your code additions and removals
 
@@ -108,7 +108,7 @@ Removal of code should likely have a regression test (that is a test that ensure
 
 ### Make sure your changes aren't breaking existing code
 
-Ensure that all existing tests pass and no new tests are skipped unless expressely told to skip them.
+Ensure that all existing tests pass and no new tests are skipped unless expressly told to skip them.
 
 Ensure that new dependencies are listed, justified, and approved to be added.
 
@@ -135,7 +135,7 @@ If you're starting from a blank PR be sure to include the following:
 
 ### outline which issue(s) and discussions are being addressed
 
-In most cases each PR should address one issue unless previously discussed with one of the maintainers.
+In most cases, each PR should address one issue unless previously discussed with one of the maintainers.
 
 ### Mention documentation and tests that were added or updated
 

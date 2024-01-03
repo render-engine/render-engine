@@ -149,7 +149,7 @@ app.site_vars.update(
 
 ### Adding Pages and Collections
 
-The page that is created there will generate a file called `index.html` in the output directory. That name comes from the class name but can be defined either in the class itself (using the `slug` attribute) or in an markdown file (defined with the `content_path` attribute).
+The page that is created there will generate a file called `index.html` in the output directory. That name comes from the class name but can be defined either in the class itself (using the `slug` attribute) or in a markdown file (defined with the `content_path` attribute).
 
 The `template` variable is the name of the template file that will be used to render the page. The `title` variable will be passed to the template as `title`.
 
@@ -170,7 +170,7 @@ would render as:
 
 ### Adding attributes from a file
 
-Render Engine can also add attributes to your page from a markdown file. This is useful if you want to add a lot of content to your page. To do this, Render Engine uses [frontmatter](https://pypi.org/project/python-frontmatter/) to parse the attributes at the topc of the markdown file.
+Render Engine can also add attributes to your page from a markdown file. This is useful if you want to add a lot of content to your page. To do this, Render Engine uses [frontmatter](https://pypi.org/project/python-frontmatter/) to parse the attributes at the top of the markdown file.
 
 ```markdown
 # content/index.md
@@ -221,7 +221,7 @@ class Blog(Collection):
 
 The `content_path` attribute is the path to the folder that contains the markdown files for the collection. Every markdown page will be converted into a `Page` object. The `template` attribute is the name of the template that will be used to render each page in the collection.
 
-You an also pass custom attributes to the collection. These attributes will be passed into each page in the collection as well.
+You can also pass custom attributes to the collection. These attributes will be passed onto each page in the collection as well.
 
 #### Custom Collections
 
