@@ -31,7 +31,7 @@ There are plenty of variables that are also inherited from the site as well
 
 ## Pages with Content
 
-If you have some content that you want to use in your page, you can define it in the `content` attribute. This is useful for small pages that don't need a lot of content.
+If you have some content that you want to use on your page, you can define it in the `content` attribute. This is useful for small pages that don't need a lot of content.
 
 ```python
 
@@ -61,7 +61,7 @@ alias: Spiderman
 
 I'm {{name}}. I'm a web developer and I like to write about things.
 
-When there's trouble, I'm there to save the day! As ypour friendly neighborhood {{alias}}!
+When there's trouble, I'm there to save the day! As your friendly neighborhood {{alias}}!
 ```
 
 The top section of the file is the metadata for the `Page`. Most Parsers will use this to set the `Page`'s attributes. The rest of the file is the content of the page. You can add attributes in the content file or in the Page itself.
