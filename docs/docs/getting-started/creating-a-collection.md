@@ -11,7 +11,7 @@ pages
 └── ideas.md
 ```
 
-Each file can have the differing information for each page. For example, the `spiderman.md` file could have the following information:
+Each file can have differing information for each page. For example, the `spiderman.md` file could have the following information:
 
 ```txt
 # content/heroes/spiderman.md
@@ -41,7 +41,7 @@ I'm a scientist. I'm also a superhero.
 
 > ***NOTE***: For more information on how to build pages, see [Creating a Page][Creating a Page].
 
-The collection would have all the information to parse all its pages the same. These could be attributes like the `template` or the `Parser` that is used to parse each page in the collection. The individual pages attributes can  be referenced in the template or used for sorting or other functions.
+The collection would have all the information to parse all its pages the same. These could be attributes like the `template` or the `Parser` that is used to parse each page in the collection. The individual page attributes can be referenced in the template or used for sorting or other functions.
 
 If you want to pass additional objects through the template context (see [Jinja's Template Context](https://jinja.palletsprojects.com/en/3.0.x/api/#the-context)), you can create a dictionary of additional attributes.
 
