@@ -14,7 +14,7 @@ Keep your default environment clean by installing a virtual environment.
 python -m venv .venv
 ```
 
-Once your virtual environment is create, you can activate it and install the requirements.
+Once your virtual environment is created, you can activate it and install the requirements.
 
 ```sh
 source .venv/bin/activate
@@ -26,7 +26,7 @@ python -m pip install requirements.txt
 
 #### Using VS Code
 
-If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable installing the dependencies.
+If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable the installation of the dependencies.
 
 ![Creating an Environment using VS Code](<../assets/create environment vs code.gif>)
 
@@ -38,7 +38,7 @@ You can create a codespace on main.
 
 ![Create a Codespace](../assets/create-codespace.gif)
 
-This will create a codespace that you can make your changes in. Don't worry they won't let you push your changes directly to the codebase but when you go to make that change it will let you create a fork and submit the PR.
+This will create a codespace in which you can make your changes. Don't worry they won't let you push your changes directly to the codebase but when you go to make that change it will let you create a fork and submit the PR.
 
 There is a `devcontainer.json` designed to give you a good start on developing for Render Engine, including getting extensions and settings.
 
