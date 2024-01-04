@@ -80,7 +80,7 @@ class Collection(BaseObject):
         if parser := getattr(self, "PageParser", None):
             logging.warning(
                 DeprecationWarning(
-                    "PageParser is deprecated. Use Parser from `render_engine_parser.base_parsers.BasePageParser`."
+                    f“The deprecated`PageParser` attribute is used in `{self.__class__.name}`. Use the `Parser` attribute instead."
                 )
             )
             self.Parser = parser
