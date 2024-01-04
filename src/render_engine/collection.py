@@ -78,12 +78,7 @@ class Collection(BaseObject):
         self,
     ) -> None:
         if parser := getattr(self, "PageParser", None):
-            logging.warning(
-                DeprecationWarning(
-                    f"The deprecated`PageParser` attribute is used in `{self.__class__.name}`. \
-                        Use the `Parser` attribute instead."
-                )
-            )
+            logging.warning(DeprecationWarning("PageParser is deprecated. Use Parser instead."))
             self.Parser = parser
 
         if getattr(self, "items_per_page", False):
