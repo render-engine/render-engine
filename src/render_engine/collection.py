@@ -80,7 +80,7 @@ class Collection(BaseObject):
         if parser := getattr(self, "PageParser", None):
             logging.warning(
                 DeprecationWarning(
-                    f"The deprecated`PageParser` attribute is used in `{self.__class__.name}`. \
+                    f"The deprecated`PageParser` attribute is used in `{self.__class__.__name__}`. \
                         Use the `Parser` attribute instead."
                 )
             )
