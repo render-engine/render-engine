@@ -11,8 +11,9 @@ python -m render_engine init
 ├── app.py # Logic/Configuration for building your site
 ├── content
 │  ├── pages # collection of files to build similarly styled pages
-│  │  └── about.md
+│  │  ├── about.md
 │  │  └── contact.md
+│  └── blogs
 ├── static # static files (images, css, javascript)
 │  ├── img.jpg
 │  └── style.css
@@ -28,10 +29,12 @@ Let's look at the `app.py` file and explore the different components.
 
 ```python
 # import Render Engine components
-# import render_engine built-in parsers
 # import render engine plugins and themes
-from render_engine import Site, Page, Collection
-from render_engine.parsers.markdown import MarkdownPageParser
+from render_engine import (
+    Site,
+    Page,
+    Collection
+)
 from render_engine_kjaymiller_theme import kjaymiller
 from render_engine_youtube_embed import YouTubeEmbed
 
@@ -48,12 +51,13 @@ app.register_theme(kjaymiller)
 
 # add any custom settings
 settings = {
-   "AUTHOR": {
-      "name": "Peter Parker",
-      "email": "peter@dailybugle.com",
+    "SITE_TITLE":"My Cool Website",
+    "SITE_URL":"http://example.com",
+    "OWNER": {
+        "name": "Peter Parker",
+        "email": "peter@dailybugle.com",
     },
-   "SITE_TITLE": "My Cool Website",
-   "SITE_URL": "http://example.com",
+   "NAVIGATION": [{...}, ...]
    "plugins": "YouTubeEmbed": {...},
    "theme": {...},
 }
@@ -66,8 +70,7 @@ class Index(Page):
 
 @app.collection
 class Pages(Collection):
-    Parser=MarkdownPageParser
-    content_path="content"
+    content_path="content/pages" # path to files to build similarly styled pages
 
 
 if __name__ == "__main__":
@@ -88,7 +91,7 @@ from render_engine import Site, Page, Collection
 
 ### Importing parsers needed to generate html
 
-Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](/parsers#BasePageParser) and [MarkdownPageParser](/parsers#MarkdownPageParser)) or create your own.
+Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](../parsers#basepageparser) and [MarkdownPageParser](../parsers##markdownpageparser)) or create your own.
 
 Custom parsers can be imported and set in the `Parsers` attribute of the `Page` or `Collection` class.
 
@@ -98,7 +101,7 @@ from render_engine_rss import RSSCollection, RSSFeedPageParser
 ```
 
 > **IMPORTANT:**
-> Some custom parsers will only work with [custom collections](/custom_collections). Please refer to the parser's documentation for more information.****
+> Some custom parsers will only work with [custom collections](../custom_collections). Please refer to the parser's documentation for more information.****
 
 ### Render Engine plugins and themes
 
@@ -140,10 +143,10 @@ Render Engine has a few built-in site variables (`site_vars`) that can be used t
 app = Site()
 app.site_vars.update(
   {
-   "AUTHOR": {
-      "name": "Peter Parker",
-      "email": "peter@dailybugle.com"
-   },
+   "OWNER": {
+        "name": "Peter Parker",
+        "email": "peter@dailybugle.com",
+    },
 )
 ```
 

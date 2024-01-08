@@ -10,6 +10,6 @@ The `BasePage` is designed for Render Engine to render common `Page`-like object
 
 ## Page
 
-When you're creating a `Page`. You may want to provide a [`parser`](/parsers) or `content`/`content_path`. To do this, you will need to create a `Page` object.
+When you're creating a `Page`. You may want to provide a [`parser`](./parsers) or `content`/`content_path`. To do this, you will need to create a `Page` object.
 
 ::: src.render_engine.page.Page
