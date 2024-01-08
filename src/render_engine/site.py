@@ -58,7 +58,6 @@ class Site:
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.theme_manager.engine.globals.update(self.site_vars)
 
-
     @property
     def output_path(self) -> str:
         return self.theme_manager.output_path
@@ -250,7 +249,6 @@ class Site:
         # load themes in the PrefixLoader
         self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
 
-    
     @property
     def template_path(self) -> str:
         return self.theme_manager.engine.loader.loaders[0].searchpath[0]
@@ -258,7 +256,6 @@ class Site:
     @template_path.setter
     def template_path(self, template_path: str) -> None:
         self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(template_path))
-
 
     def render(self) -> None:
         """
