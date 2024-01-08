@@ -331,3 +331,22 @@ def test_collection_archive_0_is_index(tmp_path: pathlib.Path):
 
     site.render()
     assert pathlib.Path(test_collection_archive / "test" / "index.html").exists()
+
+
+def test_custom_template_path_assignment(tmp_path):
+    """
+    asserts that you can assign a new template path to an initialized site
+    
+    Template paths are used to find templates when rendering pages.
+
+    The attribute is saved in the template_manager's ChoiceLoader.
+    """
+
+    test_custom_template_path = pathlib.Path(tmp_path / "custom_template_path")
+    test_custom_template_path.mkdir()
+    test_custom_template = test_custom_template_path / "test_custom_template.html"
+    test_custom_template.touch()
+    site = Site()
+    site.template_path = str(test_custom_template_path)
+    assert site.theme_manager.engine.get_template("test_custom_template.html")
+    
