@@ -39,9 +39,9 @@ class Site:
         "theme": {},
     }
     _output_path: str = "output"
+    _template_path: str = "templates"
     static_paths: set = {"static"}
     plugin_settings: dict = {"plugins": defaultdict(dict)}
-    template_path: str = "templates"
 
     def __init__(
         self,
@@ -52,13 +52,12 @@ class Site:
             output_path=self._output_path,
             static_paths=self.static_paths,
         )
+        self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
         self.route_list = dict()
         self.site_settings = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.theme_manager.engine.globals.update(self.site_vars)
 
-        if self.template_path:
-            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self.template_path))
 
     @property
     def output_path(self) -> str:
@@ -250,6 +249,16 @@ class Site:
             self.theme_manager.engine.loader.loaders.insert(0, theme_loader)
         # load themes in the PrefixLoader
         self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
+
+    
+    @property
+    def template_path(self) -> str:
+        return self.theme_manager.engine.loader.loaders[0].searchpath[0]
+
+    @template_path.setter
+    def template_path(self, template_path: str) -> None:
+        self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(template_path))
+
 
     def render(self) -> None:
         """
