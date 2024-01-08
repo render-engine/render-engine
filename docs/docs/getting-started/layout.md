@@ -101,7 +101,7 @@ from render_engine_rss import RSSCollection, RSSFeedPageParser
 ```
 
 > **IMPORTANT:**
-> Some custom parsers will only work with [custom collections](/custom_collections). Please refer to the parser's documentation for more information.****
+> Some custom parsers will only work with [custom collections](../custom_collections). Please refer to the parser's documentation for more information.****
 
 ### Render Engine plugins and themes
 
