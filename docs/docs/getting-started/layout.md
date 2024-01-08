@@ -143,10 +143,10 @@ Render Engine has a few built-in site variables (`site_vars`) that can be used t
 app = Site()
 app.site_vars.update(
   {
-   "AUTHOR": {
-      "name": "Peter Parker",
-      "email": "peter@dailybugle.com"
-   },
+   "OWNER": {
+        "name": "Peter Parker",
+        "email": "peter@dailybugle.com",
+    },
 )
 ```
 
