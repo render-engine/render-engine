@@ -1,8 +1,7 @@
 name: Bug Report
-description: File a auick bug report
+description: File a quick bug report
 title: "[Bug]: "
 labels: ["bug", "triage"]
-projects: ["octo-org/1", "octo-org/44"]
 assignees:
   - octocat
 body:
@@ -48,11 +47,11 @@ body:
   - type: textarea
     id: commands-code-used
     attributes:
-      label: What did you enter to get the output that you recieved?
-      render: shell
+      label: What did you enter to get the output that you received?
+      render: Shell
   - type: textarea
     id: output
     attributes:
       label: Output
-      description: Copy the Error or output that you recieve.
-      render: shell
+      description: Copy the Error or output that you receive.
+      render: Shell
