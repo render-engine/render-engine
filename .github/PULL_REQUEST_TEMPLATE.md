@@ -3,7 +3,7 @@ SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
 -->
 
-## Type of Issue
+# Type of Issue
 
 - [ ] :bug: (bug)
 - [ ] :book: (Documentation)
