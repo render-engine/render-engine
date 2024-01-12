@@ -126,6 +126,15 @@
       "contributions": [
         "plugin"
       ]
+    },
+    {
+      "login": "john0isaac",
+      "name": "John Aziz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64026625?v=4",
+      "profile": "https://linktr.ee/john0isaac",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
