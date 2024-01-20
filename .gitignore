@@ -1,3 +1,4 @@
+docs/output
 tests/test_path
 tests/fakepath
 .envrc
