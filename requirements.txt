@@ -115,7 +115,7 @@ python-dateutil==2.8.2
     # via
     #   ghp-import
     #   render-engine (pyproject.toml)
-python-frontmatter==1.0.1
+python-frontmatter==1.1.0
     # via render-engine (pyproject.toml)
 python-slugify==8.0.1
     # via render-engine (pyproject.toml)
