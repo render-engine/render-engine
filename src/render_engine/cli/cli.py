@@ -184,7 +184,7 @@ def build(
     module, site = module_site
     app = get_app(module, site)
     if clean:
-        remove_output_folder(app.output_path)
+        remove_output_folder(pathlib.Path(app.output_path))
     app.render()
 
 
@@ -250,7 +250,7 @@ def serve(
     app = get_app(module, site)
 
     if clean:
-        remove_output_folder(app.output_path)
+        remove_output_folder(pathlib.Path(app.output_path))
     app.render()
 
     if not directory:
