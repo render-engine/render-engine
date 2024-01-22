@@ -48,7 +48,7 @@ markdown-it-py==3.0.0
     # via rich
 markdown2==2.4.12
     # via render-engine (pyproject.toml)
-markupsafe==2.1.3
+markupsafe==2.1.4
     # via
     #   jinja2
     #   mkdocs
