@@ -28,7 +28,7 @@ jobs:
             ruff format src
 
       - name: Markdown Lint base-files
-        uses: DavidAnson/markdownlint-cli2-action@v14
+        uses: DavidAnson/markdownlint-cli2-action@v15
         with:
             fix: true
             globs: |
@@ -36,7 +36,7 @@ jobs:
               .github/**/*.md
         continue-on-error: true
       - name: Markdown Lint Docs
-        uses: DavidAnson/markdownlint-cli2-action@v14
+        uses: DavidAnson/markdownlint-cli2-action@v15
         with:
             fix: true
             globs: docs/**/*.md
