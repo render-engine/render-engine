@@ -89,7 +89,7 @@ platformdirs==4.1.0
     # via
     #   mkdocs
     #   mkdocstrings
-pluggy==1.3.0
+pluggy==1.4.0
     # via
     #   pytest
     #   render-engine (pyproject.toml)
