@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - 'render_engine_*'
+      - 'pyproject.toml'
 
 jobs:
   test-against-matrix:
