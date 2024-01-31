@@ -198,7 +198,6 @@ def test_url_for_Collection_in_site(site: Site, tmp_path: pathlib.Path):
     test_template.write_text("The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'")
 
     site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
-    site.output_path = tmp_path
 
     class CustomCollectionPage(Page):
         template = test_template.name
@@ -209,7 +208,7 @@ def test_url_for_Collection_in_site(site: Site, tmp_path: pathlib.Path):
         pages = [CustomCollectionPage()]
 
     site.render()
-    custom_page = tmp_path / "customcollectionpage.html"
+    custom_page = site.output_path / "customcollectionpage.html"
     assert custom_page.exists()
     assert custom_page.read_text() == "The URL is '/customcollectionpage.html'"
 
