@@ -6,10 +6,8 @@ on:
     branches:
       - main
   pull_request:
-    paths:
-      - 'render_engine_*'
-      - 'pyproject.toml'
-
+    paths-ignore:
+      - '**/*.md'
 jobs:
   test-against-matrix:
     # Only test all the supported versions when a pull request is made or the workflow is called
