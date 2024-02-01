@@ -33,7 +33,6 @@ dev = [
     "cookiecutter",
     "pytest",
     "pytest-mock",
-    "pytest-lazy-fixtures",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]",
