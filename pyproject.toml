@@ -31,9 +31,9 @@ extras = [
 ]
 dev = [
     "cookiecutter",
-    "pytest<8",
+    "pytest",
     "pytest-mock",
-    "pytest-lazy-fixture",
+    "pytest-lazy-fixtures",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]",
