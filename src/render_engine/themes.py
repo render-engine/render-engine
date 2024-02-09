@@ -35,9 +35,9 @@ class Theme:
 
     loader: BaseLoader
     filters: dataclasses.field(default_factory=dict)
+    prefix: str
     plugins: dataclasses.field(default_factory=list)
     template_globals: dataclasses.field(default_factory=dict) = None
-    prefix: str | None = None
     static_dir: str | pathlib.Path | None = None
 
     def __post_init__(self) -> None:

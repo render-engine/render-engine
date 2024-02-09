@@ -287,6 +287,7 @@ def test_plugin_in_theme_added_to_plugins(site):
 
     class theme(Theme):
         loader = DictLoader({"test.html": "test"})
+        prefix = "test"
         plugins = [plugin]
         filters = []
 
