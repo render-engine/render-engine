@@ -29,6 +29,7 @@ def test_base_html_body_class(theme_site):
         loader = DictLoader({})
         filters = {}
         plugins = []
+        prefix = "test"
 
     theme_site.register_themes(bodyClassTheme)
     theme_site._render_output("./", theme_site.route_list["testpage"])
@@ -44,6 +45,7 @@ def test_base_html_head_include(theme_site):
         loader = DictLoader({"head.html": "<script>console.log('test')</script>"})
         filters = set()
         plugins = []
+        prefix = "test"
 
     theme_site.register_themes(headIncludeTheme)
     theme_site.load_themes()
@@ -60,6 +62,7 @@ def test_base_html_head_reload_theme_count(theme_site):
         loader = DictLoader({"head.html": "<script>console.log('test')</script>"})
         filters = set()
         plugins = []
+        prefix = "test"
 
     theme_site.register_themes(headIncludeTheme)
     theme_site.register_themes(headIncludeTheme)
