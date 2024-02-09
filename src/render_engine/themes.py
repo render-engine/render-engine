@@ -37,7 +37,7 @@ class Theme:
     filters: dataclasses.field(default_factory=dict)
     plugins: dataclasses.field(default_factory=list)
     template_globals: dataclasses.field(default_factory=dict) = None
-    prefix: str | None = None
+    prefix: str
     static_dir: str | pathlib.Path | None = None
 
     def __post_init__(self) -> None:
