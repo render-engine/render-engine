@@ -52,11 +52,11 @@ class Site:
             output_path=self._output_path,
             static_paths=self.static_paths,
         )
-        self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
         self.route_list = dict()
         self.site_settings = dict()
         self.subcollections = defaultdict(lambda: {"pages": []})
         self.theme_manager.engine.globals.update(self.site_vars)
+        self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
 
     @property
     def output_path(self) -> str:
@@ -245,9 +245,9 @@ class Site:
         # load themes in the ChoiceLoader/FileLoader
         for theme_prefix, theme_loader in self.theme_manager.prefix.items():
             logging.info(f"loading theme: {theme_prefix}")
-            self.theme_manager.engine.loader.loaders.insert(0, theme_loader)
+            self.theme_manager.engine.loader.loaders.insert(-1, theme_loader)
         # load themes in the PrefixLoader
-        self.theme_manager.engine.loader.loaders.insert(-2, PrefixLoader(self.theme_manager.prefix))
+        self.theme_manager.engine.loader.loaders.insert(-1, PrefixLoader(self.theme_manager.prefix))
 
     @property
     def template_path(self) -> str:
