@@ -1,22 +1,21 @@
 Plugins are a way to extend the functionality of the render engine site.
 
-Plugins are registered by adding them to the `plugins` list in the site class.
+Plugins are registered by using `register_plugins`
 
 ```python
+from render_engine import Site
+from my_plugin import MyPlugin
 
-from render_engine import Site, Collection, Page
-
-class MySite(Site):
-    plugins = [
-        MyPlugin,
-    ]
-
-my_site = MySite()
+app = Site()
+app.register_plugins(MyPlugin, my_plugin={"foo":"bar"})
 ```
+
+Alternatively, you can pass a list of plugins to the `plugins` attribute of the `Site` class.
 
 Plugins are passed to collections and pages when the `site.collection` and `site.page` methods are called.
 
 ```python
+from render_engine import Site, Collection, Page
 
 @my_site.page # plugins are ran on the page
 class MyPage(Page):
@@ -30,28 +29,39 @@ my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin']
 ```
 
-### Implementing a plugin
+## Single Page/Collection plugins
 
-Plugins are built with pluggy. See the [pluggy documentation](https://pluggy.readthedocs.io/en/latest/#) for more information.
+Plugins can be implemented on a case by case basis by adding them to the objects `plugins` attribute.
 
-Plugins use the entrypoints defined in `render_engine.hookspecs`. These allow plugins to be called at different points in the render engine lifecycle.
+```python
+app.register_plugins(MyPlugin1)
 
-For example the `CleanOutput` plugin uses the `pre_build_site` entrypoint to remove the output directory before rendering.
+@app.page
+class MyPage(Page):
+    plugins = [MyPlugin2]
+
+my_.route_list['mypage']._pm.list_name_plugin()
+>>> ['MyPlugin1', 'MyPlugin2']
+
+```
 
 ### Ignoring Plugins
 
 Pages and collections can ignore plugins by passing a list of plugin names to the `ignore_plugins` attribute.
 
 ```python
-class MySite(Site):
-    plugins = [
-        MyPlugin1,
-        MyPlugin2,
-    ]
+app.register_plugins(MyPlugin1, MyPlugin2)
 
+@app.page
 class MyPage(Page):
     ignore_plugins = [MyPlugin1]
 
 my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin2']
 ```
+
+### Implementing a plugin
+
+Plugins are built with pluggy. See the [pluggy documentation](https://pluggy.readthedocs.io/en/latest/#) for more information.
+
+Plugins use the entrypoints defined in `render_engine.hookspecs`. These allow plugins to be called at different points in the render engine lifecycle.
