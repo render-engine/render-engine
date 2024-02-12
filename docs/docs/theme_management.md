@@ -29,7 +29,7 @@ class  MySite(Site):
 
 Static files can be added to the site as well either by you or a theme. This allows you to import custom css files, images, javascript and more.
 
-Your `static_path` by default is "static" and can be changed similar to the `template_path`.
+Unlike templates you can have more than one static_path you wish to include. You can add mores static paths using `site.static_path.add("<path/to/static>")`.
 
 ```python
 from render_engine import Site

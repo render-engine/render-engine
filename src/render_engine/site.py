@@ -23,7 +23,7 @@ class Site:
         partial:
             if True, only render pages that have been modified. Uses gitPython to check for changes.
         static_paths:
-            list of paths for static folders. This will get copied to the output folder. Folders are recursive.
+            set of paths for static folders. This will get copied to the output folder. Folders are recursive.
         site_vars:
             dictionary that will be passed into page template
         site_settings:
