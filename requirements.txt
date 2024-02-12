@@ -147,7 +147,7 @@ typing-extensions==4.9.0
     # via typer
 urllib3==2.2.0
     # via requests
-watchdog==3.0.0
+watchdog==4.0.0
     # via
     #   mkdocs
     #   render-engine (pyproject.toml)
