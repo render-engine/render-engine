@@ -40,7 +40,7 @@ class Site:
     }
     _output_path: str = "output"
     _template_path: str = "templates"
-    static_paths: set = {"static"}
+    _static_paths: str = "static"
     plugin_settings: dict = {"plugins": defaultdict(dict)}
 
     def __init__(
@@ -50,7 +50,7 @@ class Site:
         self.theme_manager = ThemeManager(
             engine=engine,
             output_path=self._output_path,
-            static_paths=self.static_paths,
+            static_paths=self._static_paths,
         )
         self.route_list = dict()
         self.site_settings = dict()
@@ -65,6 +65,14 @@ class Site:
     @output_path.setter
     def output_path(self, output_path: str) -> None:
         self.theme_manager.output_path = output_path
+
+    @property
+    def static_paths(self) -> str:
+        return self.theme_manager.static_paths
+
+    @static_paths.setter
+    def static_paths(self, static_paths: str) -> None:
+        self.theme_manager.static_paths = static_paths
 
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
