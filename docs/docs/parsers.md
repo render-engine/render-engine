@@ -2,7 +2,7 @@
 
 Parsers control how content is parsed and rendered.
 
-All [`Page`](./page?id=page) and [`Collection`](./collection?id=collection) objects have a `parser`
+All [`Page`](../page?id=page) and [`Collection`](../collection?id=collection) objects have a `parser`
 attribute that is used to parse the content of the object.
 
 Parsers use [staticmethods](https://docs.python.org/3/library/functions.html#staticmethod) to parse content. This allows you to create custom parsers that can be used to parse content in any way you want. Render Engine comes with a [BasePageParser](https://github.com/render-engine/render-engine-parser) and a [MarkdownPageParser](https://github.com/render-engine/render-engine-markdown) that can be used out of the box.
