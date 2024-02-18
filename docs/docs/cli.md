@@ -66,7 +66,6 @@ CLI for creating a new site
 | --- | --- | --- | --- |
 |`module_site`|`Annotated[str, Argument(callback=split_module_site, help='module:site for Build the site prior to serving')]`|Python module and initialize Site class|_required_|
 
-
 `build` requires a `module_site` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
 
 ## Serving your site (locally) with `render-engine serve`
