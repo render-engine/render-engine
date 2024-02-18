@@ -79,7 +79,6 @@ You can also use the `--reload` flag to have the site rebuild when changes are m
 Create an HTTP server to serve the site at `localhost`.
 
 > !!! Warning
-
     This is only for development purposes and should not be used in production.
 
 | Name | Type | Description | Default |
@@ -91,5 +90,4 @@ Create an HTTP server to serve the site at `localhost`.
 | `port` | `Annotated[int, Option(--port, -p, help='Port to serve on', show_default=False)]` |Port to serve on | `8000` |
 
 > !!! Note
-
     `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.

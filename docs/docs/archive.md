@@ -16,13 +16,12 @@ that focuses on presenting the Collection's pages.
 | --- | --- | --- | --- |
 | `pages` | `list[`[`BasePage`](../page?id=basepage)`]` |The list of pages to include in the archive | _required_ |
 | `title` | `str` |The title of the archive | _required_ |
-| `template` | `str \| Template` |The template to use for the archive | _required_ |
-| `routes` | `list[str \|Path]` |The routes for where the archive page should be generated | _required_ |
+| `template` | `str | Template` |The template to use for the archive | _required_ |
+| `routes` | `list[str |Path]` |The routes for where the archive page should be generated | _required_ |
 | `archive_index` | `int` |The index of the page in the series of archive pages | `0` |
 | `num_of_pages` |  |The total number of pages in the series of archive pages | _required_ |
 
 > !!! Warning Not Directly Used
-
     The Archive object is not meant to be used directly.
     It is used by the [Collection](../collection?id=collection) object.
     Attributes can be used to customize.

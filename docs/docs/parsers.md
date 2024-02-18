@@ -80,7 +80,6 @@ You can create custom parsers.
 All the staticmethods for parsers should return a tuple where the first entry is a dictionary of attributes and the second entry is the rendered content.
 
 > !!! Warning
-
     Custom Parsers do not use frontmatter by default. You would need to ensure that your parser handles frontmatter if you want to use it.
 
 For example, to create a parser that renders a dictionary, you could do the following:
