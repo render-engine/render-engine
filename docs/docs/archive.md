@@ -22,7 +22,6 @@ that focuses on presenting the Collection's pages.
 | `num_of_pages` |  |The total number of pages in the series of archive pages | _required_ |
 
 > !!! Warning Not Directly Used
-
     The Archive object is not meant to be used directly.
     It is used by the [Collection](../collection?id=collection) object.
     Attributes can be used to customize.

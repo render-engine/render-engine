@@ -34,7 +34,6 @@ Returns the URL for the page including the first route.
 This gets the relative URL for a page.
 
 > !!! Note
-
     Pages don't have access to the Site attrs. You cannot get an abolute URL from a Page object.
     Use `{{SITE_URL}}` in your templates to get the absolute URL.
 
@@ -51,7 +50,6 @@ The general BasePage object used to make web pages.
 Pages can be rendered directly from a template or generated from a file.
 
 > !!! Note
-
     Not all attributes are defined by default (those that are marked optional) but will be checked for in other areas of the code.
 
 When you create a page, you specify variables passed into rendering template.
