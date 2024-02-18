@@ -33,26 +33,26 @@ Returns the URL for the page including the first route.
 
 This gets the relative URL for a page.
 
-> [!NOTE]
->
-> Pages don't have access to the Site attrs. You cannot get an abolute URL from a Page object.
-> Use `{{SITE_URL}}` in your templates to get the absolute URL.
+> !!! Note
+
+    Pages don't have access to the Site attrs. You cannot get an abolute URL from a Page object.
+    Use `{{SITE_URL}}` in your templates to get the absolute URL.
 
 This is the preferred way to reference a page inside of a template.
 
 ## Page
 
-When you're creating a `Page`. You may want to provide a [`parser`](./parsers) or `content`/`content_path`. To do this, you will need to create a `Page` object.
+When you're creating a `Page`. You may want to provide a [`parser`](../parsers) or `content`/`content_path`. To do this, you will need to create a `Page` object.
 
-Bases: [`BasePage`](./page?id=basepage)
+Bases: [`BasePage`](../page?id=basepage)
 
 The general BasePage object used to make web pages.
 
 Pages can be rendered directly from a template or generated from a file.
 
-> [!NOTE]
->
-> Not all attributes are defined by default (those that are marked optional) but will be checked for in other areas of the code.
+> !!! Note
+
+    Not all attributes are defined by default (those that are marked optional) but will be checked for in other areas of the code.
 
 When you create a page, you specify variables passed into rendering template.
 
