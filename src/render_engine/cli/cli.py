@@ -267,7 +267,7 @@ def serve(
         app=app,
         module_site=module_site,
         patterns=None,
-        ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*+$"],
+        ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*$"],
     )
 
     console = Console()
