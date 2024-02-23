@@ -30,7 +30,7 @@ class Archive(BasePage):
         self,
         title: str,
         pages: list[BasePage],
-        template: str | jinja2.Template,
+        template: str | jinja2.Template = "archive.html",
         template_vars: dict[str, any],
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
