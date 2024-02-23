@@ -30,13 +30,13 @@ class Archive(BasePage):
         self,
         title: str,
         pages: list[BasePage],
-        template: str | jinja2.Template = "archive.html",
         template_vars: dict[str, any],
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
         num_archive_pages: int = 1,
         is_index: bool = False,
         plugin_manager: PluginManager | None = None,
+        template: str | jinja2.Template = "archive.html",
     ) -> None:
         super().__init__()
         self.slug = title

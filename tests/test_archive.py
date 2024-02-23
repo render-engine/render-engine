@@ -47,8 +47,7 @@ def test_archive_template_is_archive_html():
     archive = Archive(
         title="test archive",
         pages=[Page()],
-        template="",
         routes=["./"],
         template_vars={},
     )
-    assert archive._template == "archive.html"
+    assert archive.template == "archive.html"
