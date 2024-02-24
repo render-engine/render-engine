@@ -94,12 +94,7 @@ class Collection(BaseObject):
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
 
-        return flatten(
-            [
-                pathlib.Path(self.content_path).glob(suffix)
-                for suffix in self.include_suffixes
-            ]
-        )
+        return flatten([pathlib.Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
 
     def _generate_content_from_modified_pages(
         self,
