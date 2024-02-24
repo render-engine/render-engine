@@ -10,6 +10,7 @@ on:
       - "render_engine_*"
       - "pyproject.toml"
       - "tests"
+      - "src"
 
 jobs:
   test-against-matrix:
