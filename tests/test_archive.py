@@ -64,3 +64,14 @@ def test_archive_num_of_pages(_items_per_page: int, num_of_pages: int):
         assert (
             list(collection.archives)[2].template_vars["num_of_pages"] == num_of_pages
         )
+
+        
+def test_archive_template_is_archive_html():
+    """Tests that the template is set to archive.html"""
+    archive = Archive(
+        title="test archive",
+        pages=[Page()],
+        routes=["./"],
+        template_vars={},
+    )
+    assert archive.template == "archive.html"
