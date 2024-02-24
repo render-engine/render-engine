@@ -34,7 +34,6 @@ class Archive(BasePage):
         template_vars: dict[str, any],
         routes: list[str | pathlib.Path],
         archive_index: int = 0,
-        num_archive_pages: int = 1,
         is_index: bool = False,
         plugin_manager: PluginManager | None = None,
     ) -> None:
