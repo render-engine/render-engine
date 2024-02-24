@@ -135,6 +135,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "giovannism20",
+      "name": "Giovanni Martins",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7796661?v=4",
+      "profile": "http://giovannimartins.dev",
+      "contributions": [
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
