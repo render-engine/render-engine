@@ -144,6 +144,15 @@
       "contributions": [
         "infra"
       ]
+    },
+    {
+      "login": "MohitKambli",
+      "name": "Mohit Kambli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31406633?v=4",
+      "profile": "https://github.com/MohitKambli",
+      "contributions": [
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
