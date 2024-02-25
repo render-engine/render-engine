@@ -27,7 +27,7 @@ class BaseObject:
             return title
         else:
             warnings.warn(
-                f"No title provided for {self.__class__.__name__}. Using {self.__classs__.__name__} as title.",
+                f"No title provided for {self.__class__.__name__}. Using {self.__class__.__name__} as title.",
                 UserWarning,
             )
             return self.__class__.__name__
