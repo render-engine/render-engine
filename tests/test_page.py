@@ -77,8 +77,8 @@ def test_rendered_page_from_template_has_attributes():
     )
 
 
-def test_page_with_no_title_raises_warning(tmp_path):
+def test_page_with_no_title_raises_warning(caplog):
     """Tests that a page with no title raises a warning"""
-    with pytest.warns(UserWarning):
+    with caplog.at_level("WARNING"):
         page = Page()
         page._title

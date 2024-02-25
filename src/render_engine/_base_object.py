@@ -1,6 +1,6 @@
 """Shared Properties and methods across render_engine objects."""
 
-import warnings
+import logging
 from slugify import slugify
 
 
@@ -26,9 +26,10 @@ class BaseObject:
         if title := getattr(self, "title", None):
             return title
         else:
-            warnings.warn(
-                f'No title provided for {self.__class__.__name__}. Using "{self.__class__.__name__}" as title.',
-                UserWarning,
+            logging.warning(
+                f'No title provided for {self.__class__.__name__}. \
+                Using "{self.__class__.__name__}" as title. \
+                This can cause files to be overwritten'
             )
             return self.__class__.__name__
 
