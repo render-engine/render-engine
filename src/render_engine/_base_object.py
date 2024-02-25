@@ -1,5 +1,6 @@
 """Shared Properties and methods across render_engine objects."""
 
+import logging
 from slugify import slugify
 
 
@@ -22,7 +23,15 @@ class BaseObject:
         The title of the Page
         If no title is provided, use the class name.
         """
-        return getattr(self, "title", self.__class__.__name__)
+        if title := getattr(self, "title", None):
+            return title
+        else:
+            logging.warning(
+                f'No title provided for {self.__class__.__name__}. \
+                Using "{self.__class__.__name__}" as title. \
+                This can cause files to be overwritten'
+            )
+            return self.__class__.__name__
 
     @property
     def _slug(self) -> str:
