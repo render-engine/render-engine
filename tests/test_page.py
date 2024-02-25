@@ -81,4 +81,4 @@ def test_page_with_no_title_raises_warning(tmp_path):
     """Tests that a page with no title raises a warning"""
     with pytest.warns(UserWarning):
         page = Page()
-        page.title
+        page._title
