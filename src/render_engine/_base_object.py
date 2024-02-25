@@ -1,6 +1,7 @@
 """Shared Properties and methods across render_engine objects."""
 
 import logging
+
 from slugify import slugify
 
 
