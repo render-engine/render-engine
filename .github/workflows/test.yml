@@ -7,7 +7,6 @@ on:
       - main
   pull_request:
     paths:
-      - "render_engine_*"
       - "pyproject.toml"
       - "tests"
       - "src"

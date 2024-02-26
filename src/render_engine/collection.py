@@ -89,13 +89,16 @@ class Collection(BaseObject):
         if getattr(self, "items_per_page", False):
             self.has_archive = True
         self.title = self._title
+        self.template_vars = getattr(self, "template_vars", {})
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
 
         return flatten([pathlib.Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
 
-    def _generate_content_from_modified_pages(self) -> typing.Generator[Page, None, None]:
+    def _generate_content_from_modified_pages(
+        self,
+    ) -> typing.Generator[Page, None, None]:
         """
         Check git status for newly created and modified files.
         Returns the Page objects for the files in the content path
@@ -163,17 +166,18 @@ class Collection(BaseObject):
 
         if items_per_page != len(sorted_pages):
             archives.extend(list(batched(sorted_pages, items_per_page)))
-        num_archive_pages = len(archives)
+            self.template_vars["num_of_pages"] = len(archives) - 1 / items_per_page
+        else:
+            self.template_vars["num_of_pages"] = 1
 
         for index, pages in enumerate(archives):
             yield Archive(
                 pages=pages,
                 template=getattr(self, "archive_template", None),
-                template_vars=getattr(self, "template_vars", {}),
+                template_vars=self.template_vars,
                 title=self._title,
                 routes=self.routes,
                 archive_index=index,
-                num_archive_pages=num_archive_pages,
                 plugin_manager=getattr(self, "plugin_manager", None),
                 is_index=not index,
             )

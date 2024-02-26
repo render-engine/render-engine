@@ -51,7 +51,8 @@
       "profile": "https://github.com/Mahhheshh",
       "contributions": [
         "doc",
-        "code"
+        "code",
+        "maintenance"
       ]
     },
     {
@@ -133,7 +134,27 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/64026625?v=4",
       "profile": "https://linktr.ee/john0isaac",
       "contributions": [
-        "doc"
+        "doc",
+        "maintenance",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "giovannism20",
+      "name": "Giovanni Martins",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7796661?v=4",
+      "profile": "http://giovannimartins.dev",
+      "contributions": [
+        "infra"
+      ]
+    },
+    {
+      "login": "MohitKambli",
+      "name": "Mohit Kambli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31406633?v=4",
+      "profile": "https://github.com/MohitKambli",
+      "contributions": [
+        "infra"
       ]
     }
   ],

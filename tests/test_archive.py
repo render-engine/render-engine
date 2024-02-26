@@ -1,5 +1,6 @@
 import pytest
 
+from render_engine.collection import Collection
 from render_engine.archive import Archive
 from render_engine.page import Page
 
@@ -35,13 +36,36 @@ def test_archive_slug_name_with_pages(title, expected_slug):
         template="",
         routes=["./"],
         archive_index=1,
-        num_archive_pages=2,
         template_vars={},
     )
 
     assert archive._slug == expected_slug
 
 
+@pytest.mark.parametrize(
+    "_items_per_page, num_of_pages",
+    [(1, 3), (3, 1)],
+)
+def test_archive_num_of_pages(_items_per_page: int, num_of_pages: int):
+    """Tests that the number of pages in an archive is equal to the number of pages in the archive"""
+
+    class TestCollection(Collection):
+        pages = [Page(), Page(), Page()]
+        has_archive = True
+        items_per_page = _items_per_page
+
+    collection = TestCollection()
+    assert list(collection.archives)[0].template_vars["num_of_pages"] == num_of_pages
+
+    if _items_per_page < 1:
+        assert (
+            list(collection.archives)[1].template_vars["num_of_pages"] == num_of_pages
+        )
+        assert (
+            list(collection.archives)[2].template_vars["num_of_pages"] == num_of_pages
+        )
+
+        
 def test_archive_template_is_archive_html():
     """Tests that the template is set to archive.html"""
     archive = Archive(
