@@ -53,10 +53,6 @@ app.register_theme(kjaymiller)
 settings = {
     "SITE_TITLE":"My Cool Website",
     "SITE_URL":"http://example.com",
-    "OWNER": {
-        "name": "Peter Parker",
-        "email": "peter@dailybugle.com",
-    },
    "NAVIGATION": [{...}, ...]
    "plugins": "YouTubeEmbed": {...},
    "theme": {...},
@@ -143,10 +139,7 @@ Render Engine has a few built-in site variables (`site_vars`) that can be used t
 app = Site()
 app.site_vars.update(
   {
-   "OWNER": {
-        "name": "Peter Parker",
-        "email": "peter@dailybugle.com",
-    },
+   "SITE_TITLE":"My Cool Website",
 )
 ```
 
