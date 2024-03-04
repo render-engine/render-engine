@@ -40,10 +40,6 @@ The name of the folder that will contain your project. This is where your [`proj
 
 A short description of your site.  This will be passed into the [`Site`](../site) object and available in [`site_vars`](../site?id=site_vars).
 
-#### `site-author` - (`str|None` default: `None`)
-
-The author of the site.  This will be passed into the [`Site`](../site) object and available in [`site_vars`](../site?id=site_vars).
-
 #### `skip-collection` (`bool`: default=`False` as `no-skip-collection`)
 
 If `True`, a [`collection-path`](../collection?id=content_path) folder will not be created.
