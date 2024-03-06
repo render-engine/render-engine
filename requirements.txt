@@ -111,7 +111,7 @@ pytest-lazy-fixture==0.6.3
     # via render-engine (pyproject.toml)
 pytest-mock==3.12.0
     # via render-engine (pyproject.toml)
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   ghp-import
     #   render-engine (pyproject.toml)
