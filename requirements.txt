@@ -46,7 +46,7 @@ markdown==3.5.2
     #   pymdown-extensions
 markdown-it-py==3.0.0
     # via rich
-markdown2==2.4.12
+markdown2==2.4.13
     # via render-engine (pyproject.toml)
 markupsafe==2.1.5
     # via
