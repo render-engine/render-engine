@@ -43,7 +43,9 @@ def test_page_from_template(tmp_path: pathlib.Path):
         title = "Test Page"
         template = "test.html"
 
-    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": "{{ title }}"}))
+    environment = jinja2.Environment(
+        loader=jinja2.DictLoader({"test.html": "{{ title }}"})
+    )
 
     page = CustomPage()
     assert page._render_content(engine=environment) == "Test Page"
@@ -69,4 +71,14 @@ def test_rendered_page_from_template_has_attributes():
     class CustomPage(Page):
         template = environment.get_template("test.html")
 
-    assert CustomPage()._render_from_template(template=CustomPage.template) == "CustomPage-custompage-/custompage.html"
+    assert (
+        CustomPage()._render_from_template(template=CustomPage.template)
+        == "CustomPage-custompage-/custompage.html"
+    )
+
+
+def test_page_with_no_title_raises_warning(caplog):
+    """Tests that a page with no title raises a warning"""
+    with caplog.at_level("WARNING"):
+        page = Page()
+        page._title
