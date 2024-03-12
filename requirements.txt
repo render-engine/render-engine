@@ -77,7 +77,7 @@ mkdocstrings-python==1.8.0
     # via mkdocstrings
 more-itertools==10.2.0
     # via render-engine (pyproject.toml)
-packaging==23.2
+packaging==24.0
     # via
     #   mkdocs
     #   pytest
