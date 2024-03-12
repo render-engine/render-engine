@@ -131,7 +131,7 @@ regex==2023.10.3
     # via mkdocs-material
 requests==2.31.0
     # via mkdocs-material
-rich==13.7.0
+rich==13.7.1
     # via render-engine (pyproject.toml)
 ruff==0.2.2
     # via render-engine (pyproject.toml)
