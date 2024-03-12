@@ -63,7 +63,7 @@ mkdocs==1.5.3
     #   mkdocs-material
     #   mkdocstrings
     #   render-engine (pyproject.toml)
-mkdocs-autorefs==0.5.0
+mkdocs-autorefs==1.0.1
     # via mkdocstrings
 mkdocs-material==9.5.12
     # via render-engine (pyproject.toml)
