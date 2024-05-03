@@ -65,7 +65,7 @@ branch = "main"
 
 [tool.ruff]
 lint.select = ["E", "F", "I", "UP"]
-target-version = "py311"
+target-version = "py312"
 lint.pycodestyle.max-line-length = 120
 src = ["src"]
 lint.ignore-init-module-imports = true
