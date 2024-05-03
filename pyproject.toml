@@ -38,6 +38,7 @@ dev = [
     "mkdocstrings[python]",
     "pymdown-extensions",
     "ruff",
+    "pre-commit"
     ]
 
 
@@ -64,8 +65,8 @@ version_toml = "pyproject.toml:project.version"
 branch = "main"
 
 [tool.ruff]
-select = ["E", "F", "I", "UP"]
-target-version = "py311"
-line-length = 120
+lint.select = ["E", "F", "I", "UP"]
+target-version = "py312"
+lint.pycodestyle.max-line-length = 120
 src = ["src"]
-ignore-init-module-imports = true
+lint.ignore-init-module-imports = true

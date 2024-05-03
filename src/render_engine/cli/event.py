@@ -12,7 +12,9 @@ from render_engine import Site
 console = Console()
 
 
-def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHTTPServer:
+def spawn_server(
+    server_address: tuple[str, int], directory: str
+) -> ThreadingHTTPServer:
     """
         Create and return an instance of ThreadingHTTPServer that serves files
     from the specified directory.
@@ -74,7 +76,9 @@ class RegExHandler(RegexMatchingEventHandler):
         self.dir_to_watch = dir_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
-        super().__init__(*args, regexes=patterns, ignore_regexes=ignore_patterns, **kwargs)
+        super().__init__(
+            *args, regexes=patterns, ignore_regexes=ignore_patterns, **kwargs
+        )
 
     def start_server(self) -> None:
         console.print(

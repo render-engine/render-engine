@@ -64,7 +64,9 @@ class BasePage(BaseObject):
             },
         )
 
-    def _render_content(self, engine: jinja2.Environment | None = None, **kwargs) -> str:
+    def _render_content(
+        self, engine: jinja2.Environment | None = None, **kwargs
+    ) -> str:
         """
         Renders the content of the page.
 
@@ -91,7 +93,8 @@ class BasePage(BaseObject):
 
         except AttributeError:
             raise AttributeError(
-                f"{self} does not have a content attribute. " "You must either provide a template or content."
+                f"{self} does not have a content attribute. "
+                "You must either provide a template or content."
             )
 
     def __str__(self):
@@ -172,4 +175,6 @@ class Page(BasePage):
     @property
     def _content(self) -> Any:
         """Returns the content of the page."""
-        return self.Parser.parse(self.content, extras=getattr(self, "parser_extras", {}))
+        return self.Parser.parse(
+            self.content, extras=getattr(self, "parser_extras", {})
+        )

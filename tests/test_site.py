@@ -356,4 +356,3 @@ def test_custom_template_path_assignment(site, tmp_path):
     site = Site()
     site.template_path = str(test_custom_template_path)
     assert site.theme_manager.engine.get_template("test_custom_template.html")
-

@@ -51,7 +51,9 @@ def get_available_themes(console: Console, app: Site, theme_name: str) -> list[s
         return []
 
 
-def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
+def display_filtered_templates(
+    title: str, templates_list: list[str], filter_value: str
+) -> None:
     """Display filtered templates based on a given filter value."""
     table = Table(title=title)
     table.add_column("[bold blue]Templates[bold blue]")
@@ -64,8 +66,12 @@ def display_filtered_templates(title: str, templates_list: list[str], filter_val
 @app.command()
 def templates(
     module_site: Annotated[str, typer.Argument(callback=split_module_site)],
-    theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
-    filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
+    theme_name: Annotated[
+        str, typer.Option("--theme-name", help="Theme to search templates in")
+    ] = "",
+    filter_value: Annotated[
+        str, typer.Option("--filter-value", help="Filter templates based on names")
+    ] = "",
 ):
     """
     CLI for listing available theme templates.
@@ -88,7 +94,9 @@ def templates(
                 filter_value,
             )
     else:
-        console.print("[red]No theme name specified. Listing all installed themes and their templates[red]")
+        console.print(
+            "[red]No theme name specified. Listing all installed themes and their templates[red]"
+        )
         for theme_prefix, theme_loader in app.theme_manager.prefix.items():
             templates_list = theme_loader.list_templates()
             display_filtered_templates(
@@ -112,7 +120,9 @@ def init(
             help="Extra context to pass to the cookiecutter template. This must be a JSON string",
         ),
     ] = None,
-    no_input: Annotated[bool, typer.Option("--no-input", help="Do not prompt for parameters")] = False,
+    no_input: Annotated[
+        bool, typer.Option("--no-input", help="Do not prompt for parameters")
+    ] = False,
     output_dir: Annotated[
         pathlib.Path,
         typer.Option(
@@ -122,7 +132,9 @@ def init(
             exists=True,
         ),
     ] = pathlib.Path("./"),
-    cookiecutter_args: Annotated[str, typer.Option(callback=lambda x: json.loads(x))] = {},
+    cookiecutter_args: Annotated[
+        str, typer.Option(callback=lambda x: json.loads(x))
+    ] = {},
 ) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -273,8 +285,12 @@ def serve(
     console = Console()
 
     if not reload:
-        console.print(f"[bold green]Starting server on http://{server_address[0]}:{server_address[1]}[/bold green]")
-        handler._server(server_address=server_address, directory=directory).serve_forever()
+        console.print(
+            f"[bold green]Starting server on http://{server_address[0]}:{server_address[1]}[/bold green]"
+        )
+        handler._server(
+            server_address=server_address, directory=directory
+        ).serve_forever()
     else:
         console.print("Watching for changes...")
         handler.watch()
