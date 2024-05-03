@@ -1,7 +1,6 @@
 import pathlib
-import pytest
-from render_engine.cli.cli import remove_output_folder
 
+from render_engine.cli.cli import remove_output_folder
 from render_engine.site import Site
 
 
