@@ -1,5 +1,7 @@
 """Shared Properties and methods across render_engine objects."""
 
+from collections import defaultdict
+
 from slugify import slugify
 
 
@@ -15,6 +17,7 @@ class BaseObject:
     title: str
     template_vars: dict
     plugins: list
+    plugin_settings: dict = {"plugins": defaultdict(dict)}
 
     @property
     def _title(self) -> str:
@@ -67,6 +70,11 @@ class BaseObject:
         # Pull out template_vars
         if hasattr(self, "template_vars"):
             for key, value in self.template_vars.items():
+                base_dict[key] = value
+
+        # Pull out template_vars
+        if hasattr(self, "plugin_settings"):
+            for key, value in self.plugin_settings.items():
                 base_dict[key] = value
 
         return base_dict

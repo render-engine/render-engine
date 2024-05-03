@@ -13,6 +13,11 @@ class TestBaseObjectProperties:
 
         assert self.test_object._title == "TestObject"
 
+    def test_base_object_plugin_settings_defaults_to_plugins_dict(self):
+        """assert that the plugin_settings defaults to plugins dict"""
+
+        assert self.test_object.plugin_settings == {"plugins": {}}
+
     def test_base_object__slug_defaults_to_title(self):
         """assert that the slug defaults to a slugified title"""
         assert self.test_object._slug == "testobject"
@@ -47,11 +52,13 @@ class TestBaseObjectProperties:
             "slug": "testobject",
             "url": None,
             "path_name": "testobject.html",
+            "plugins": {},
         }
 
     def test_base_object_to_dict_with_template_vars(self):
         """Tests that the `to_dict` adds template_vars extracted method returns a dict of the object's attributes"""
         self.test_object.template_vars = {"test": "test"}
+        self.test_object.plugin_settings = {"plugins": {"test_plugin": "test"}}
 
         assert self.test_object.to_dict() == {
             "title": "TestObject",
@@ -60,6 +67,9 @@ class TestBaseObjectProperties:
             "test": "test",
             "template_vars": {"test": "test"},
             "path_name": "testobject.html",
+            "plugin_settings": {"plugins": {"test_plugin": "test"}},
+            "plugins": {"test_plugin": "test"},
         }
 
         assert self.test_object.template_vars == {"test": "test"}
+        assert self.test_object.plugin_settings == {"plugins": {"test_plugin": "test"}}

@@ -133,7 +133,7 @@ class Collection(BaseObject):
         )
 
         if getattr(self, "_pm", None):
-            _page.register_plugins(self.plugins)
+            _page.register_plugins(self.plugins, **self.plugin_settings)
         _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
