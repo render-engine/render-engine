@@ -24,8 +24,8 @@ jobs:
       # Update output format to enable automatic inline annotations.
       - name: Run Ruff
         run: |
-            ruff check --fix --output-format=github src
-            ruff format src
+            ruff check . --fix --output-format=github
+            ruff format .
 
       - name: Markdown Lint base-files
         uses: DavidAnson/markdownlint-cli2-action@v16
