@@ -30,10 +30,10 @@ nav:
     - Built-in Plugins: plugins.md
   - Parsers: parsers.md
   - CLI: cli.md
-  - Templates and Themes: 
+  - Templates and Themes:
     - Templates: templates.md
     - ThemeManager: theme_management.md
-    
+
 markdown_extensions:
   - toc
   - codehilite:

@@ -1,5 +1,5 @@
-<!-- 
-SUMMARY OF THE CHANGES BEING MADE 
+<!--
+SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
 -->
 
@@ -12,7 +12,7 @@ Be sure to include any referenced issues and discussions.
 - [ ] :radioactive: (Deprecation)
 - [ ] :no_entry_sign: (Removal)
 - [ ] :hammer_and_wrench: (Refactor)
-  
+
 ## Changes have been Documented (If Applicable)
 
 - [ ] YES - Changes have been documented

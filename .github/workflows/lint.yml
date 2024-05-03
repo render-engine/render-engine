@@ -1,5 +1,5 @@
 name: Format and Lint with Ruff and MarkdownLint
-on: 
+on:
     pull_request:
         branches: [main]
     workflow_dispatch:
@@ -51,6 +51,3 @@ jobs:
             git commit -m "Format and lint with Ruff"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           fi
-          
-      
-        

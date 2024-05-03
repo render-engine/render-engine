@@ -23,7 +23,7 @@ This is built using the built-in `rss2.0.xml` jinja template.
     class MyFeed(RSSFeed):
         extension = "xml"
     site = Site()
-    
+
     @site.collection
     class MyCollection(Collection):
         Feed = MyFeed

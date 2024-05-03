@@ -1,6 +1,6 @@
 name: Build distribution
 
-on: 
+on:
   release:
     types: [created]
 
