@@ -10,6 +10,7 @@ on:
       - "pyproject.toml"
       - "tests"
       - "src"
+      - "requirements.txt"
 
 jobs:
   test-against-matrix:
