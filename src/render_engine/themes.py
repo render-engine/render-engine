@@ -13,31 +13,28 @@ class Theme:
     Base Theme Class for Render Engine
 
     Attributes:
-        prefix: prefix to pass into the prefixLoader
-        loader: Jinja2 Loader for the theme
-        filters: dictionary of filters to add to the jinja2 environment
-        plugins: list of plugins to add to the site
-        plugin_settings: dictionary of settings to pass to the plugins
-        static_dir: path to static folder
-        template_globals: dictionary of template globals to add to the jinja2 environment.
+        loader (BaseLoader): Jinja2 Loader for the theme.
+        filters (dict): Dictionary of filters to add to the jinja2 environment.
+        prefix (str): Prefix to pass into the prefixLoader.
+        plugins (list): List of plugins to add to the site.
+        static_dir (str | pathlib.Path | None): Path to static folder.
+        template_globals (dict): Dictionary of template globals to add to the jinja2 environment.
             The key is the name of the global and the value is the value of the global.
             In many cases, this will be a string path to a template file
             or a string of template content.
 
             Example:
-                ```python
                 {
                     "head": "head.html",
                     "body_class": "my-class",
                 }
-                ```
     """
 
     loader: BaseLoader
-    filters: dataclasses.field(default_factory=dict)
     prefix: str
-    plugins: dataclasses.field(default_factory=list)
-    template_globals: dataclasses.field(default_factory=dict) = None
+    filters: dict = dataclasses.field(default_factory=dict)
+    plugins: list = dataclasses.field(default_factory=list)
+    template_globals: dict = None
     static_dir: str | pathlib.Path | None = None
 
     def __post_init__(self) -> None:
@@ -54,12 +51,16 @@ class ThemeManager:
     The theme manager is responsible for loading the jinja2 environment and copying static files.
 
     Attributes:
-        engine: Jinja2 Environment used to render pages
-        output_path: path to write rendered content
-        static_paths: set of filepaths for static folders.
-            This will get copied to the output folder.
-            Folders are recursive.
+        engine (Environment): Jinja2 Environment used to render pages.
+        output_path (str): Path to write rendered content.
+        prefix (dict[str, str]): Dictionary mapping theme prefixes to loader names.
+        static_paths (set): Set of filepaths for static folders.
+            This will get copied to the output folder. Folders are recursive.
+        template_globals (dict[str, set]): Dictionary mapping template global names to sets of values.
 
+    Methods:
+        default_template_globals() -> dict[str, set]: Returns the default template globals.
+        register_theme(theme: Theme) -> None: Register a theme.
     """
 
     def default_template_globals() -> dict[str, set]:
@@ -81,9 +82,8 @@ class ThemeManager:
         Register a theme.
 
         Args:
-            theme: Theme objects to register
+            theme (Theme): Theme object to register.
         """
-
         logging.info(f"Registering theme: {theme}")
         self.prefix[theme.prefix] = theme.loader
 
@@ -100,7 +100,6 @@ class ThemeManager:
                     self.engine.globals.setdefault(key, set()).update(value)
                 if isinstance(self.engine.globals.get(key), set):
                     self.engine.globals[key].add(value)
-
                 else:
                     self.engine.globals[key] = value
 

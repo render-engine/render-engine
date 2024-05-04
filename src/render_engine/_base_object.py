@@ -12,6 +12,13 @@ class BaseObject:
     This ensures that the behavior around the title, slug, and path_name are consistent
 
     This is not intended to be used directly.
+
+    Attributes:
+        title (str): The title of the object. If no title is provided, the class name is used.
+        template_vars (dict): A dictionary of template variables for the object.
+        plugins (list): A list of plugins associated with the object.
+        plugin_settings (dict): A dictionary of plugin settings for the object.
+
     """
 
     title: str
@@ -22,41 +29,77 @@ class BaseObject:
     @property
     def _title(self) -> str:
         """
-        The title of the Page
-        If no title is provided, use the class name.
+        The title of the object.
+
+        If no title is provided, the class name is used.
+
+        Returns:
+            str: The title of the object.
+
         """
         return getattr(self, "title", self.__class__.__name__)
 
     @property
     def _slug(self) -> str:
-        """The slugified path of the page"""
+        """
+        The slugified path of the object.
+
+        Returns:
+            str: The slugified path of the object.
+
+        """
         return slugify(getattr(self, "slug", self._title))
 
     @property
     def extension(self) -> str:
-        """The extension of the page"""
+        """
+        The extension of the object.
+
+        Returns:
+            str: The extension of the object.
+
+        """
         return getattr(self, "_extension", ".html")
 
     @extension.setter
     def extension(self, extension: str) -> None:
-        """Ensures consistency on extension"""
+        """
+        Set the extension of the object.
+
+        Args:
+            extension (str): The extension to set.
+
+        """
         self._extension = f".{extension.lstrip('.')}"
 
     @property
     def path_name(self) -> str:
         """
-        Returns the [`url_for`][src.render_engine.page.Page.url_for] for the page including the first route.
+        Returns the URL path for the object including the extension.
+
+        Returns:
+            str: The URL path for the object.
+
         """
         return f"{self._slug}{self.extension}"
 
     def url_for(self):
+        """
+        Placeholder method for generating the URL for the object.
+
+        This method should be implemented in subclasses.
+
+        """
         pass
 
     def to_dict(self):
         """
-        Returns a dict of the page's attributes.
+        Returns a dictionary of the object's attributes.
 
-        This is often used to pass attributes into the page's `template`.
+        This method is often used to pass attributes into the object's template.
+
+        Returns:
+            dict: A dictionary of the object's attributes.
 
         """
         base_dict = {
@@ -72,7 +115,7 @@ class BaseObject:
             for key, value in self.template_vars.items():
                 base_dict[key] = value
 
-        # Pull out template_vars
+        # Pull out plugin_settings
         if hasattr(self, "plugin_settings"):
             for key, value in self.plugin_settings.items():
                 base_dict[key] = value

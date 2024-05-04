@@ -62,8 +62,8 @@ class RegExHandler(RegexMatchingEventHandler):
         app: Site,
         module_site: str,
         dir_to_watch: str = ".",
-        patterns: [list[str] | None] = None,
-        ignore_patterns: [list[str] | None] = None,
+        patterns: list[str] | None = None,
+        ignore_patterns: list[str] | None = None,
         *args,
         **kwargs,
     ) -> None:

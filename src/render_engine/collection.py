@@ -54,6 +54,15 @@ class Collection(BaseObject):
         template: str | None
         archive_template str | None: The template to use for the archive pages.
 
+    Methods:
+
+        iter_content_path(): Iterates through the collection's content path.
+        get_page(content_path: str | None = None): Returns the page Object for the specified Content Path.
+        sorted_pages: Returns the sorted pages of the collection.
+        archives: Returns the Archive objects containing the pages from the content path.
+        feed: Returns the Feed object for the collection.
+        slug: Returns the slugified title of the collection.
+
     """
 
     archive_template: str | pathlib.Path = "archive.html"
@@ -93,7 +102,6 @@ class Collection(BaseObject):
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
-
         return flatten(
             [
                 pathlib.Path(self.content_path).glob(suffix)
@@ -108,7 +116,6 @@ class Collection(BaseObject):
         Check git status for newly created and modified files.
         Returns the Page objects for the files in the content path
         """
-
         repo = git.Repo()
 
         changed_files = [
@@ -156,7 +163,6 @@ class Collection(BaseObject):
         Archives are an iterable and the individual pages are built shortly after the collection pages are built.
         This happens when [Site.render][render_engine.Site.render] is called.
         """
-
         if not getattr(self, "has_archive", False):
             logging.warning(
                 "`has_archive` is set to `False` for %s. While an archive will be generated. \
