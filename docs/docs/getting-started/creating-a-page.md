@@ -16,7 +16,7 @@ class Index(Page):
   template="index.html"
 ```
 
-### Page Attributes
+## Page Attributes
 
 Because the template is rendered with [Jinja2], you can use any Jinja2 syntax in the template file. For example, you can use the `title` variable in the template like this:
 
