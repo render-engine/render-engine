@@ -9,16 +9,18 @@ from .page import BasePage
 
 class Archive(BasePage):
     """
-    The Archive is a [Page][src.render_engine.page.Page] object used by the collection
-    that focuses on presenting the Collection's pages.
+    The Archive is a Page object used by the collection that focuses on presenting the Collection's pages.
 
-    Parameters:
-        pages: The list of pages to include in the archive
-        title: The title of the archive
-        template: The template to use for the archive
-        routes: The routes for where the archive page should be generated
-        archive_index: The index of the page in the series of archive pages
-        num_of_pages: The total number of pages in the series of archive pages
+    Attributes:
+        pages (list[BasePage]): The list of pages to include in the archive.
+        title (str): The title of the archive.
+        template_vars (dict[str, any]): The template variables to use for rendering the archive.
+        routes (list[str | pathlib.Path]): The routes for where the archive page should be generated.
+        archive_index (int, optional): The index of the page in the series of archive pages. Defaults to 0.
+        is_index (bool, optional): Indicates whether the archive is the index page. Defaults to False.
+        plugin_manager (PluginManager | None, optional): The plugin manager for the archive. Defaults to None.
+        template (str | jinja2.Template, optional): The template to use for rendering the archive.
+            Defaults to "archive.html".
 
     !!! Warning "Not Directly Used"
         The Archive object is not meant to be used directly.

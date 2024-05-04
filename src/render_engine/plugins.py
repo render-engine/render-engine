@@ -1,6 +1,6 @@
 import logging
-import typing
 from collections import defaultdict
+from typing import Any
 
 import pluggy
 
@@ -10,9 +10,18 @@ hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
 
 class SiteSpecs:
-    """Plugin hook specifications for the Site class"""
+    """
+    Plugin hook specifications for the Site class.
 
-    default_settings: dict[str, typing.Any]
+    This class defines the hook specifications for various stages of site building and rendering.
+    Each hook method represents a specific stage and can be implemented by plugins to customize the behavior.
+
+    Attributes:
+        default_settings (dict[str, Any]): The default settings for the site.
+
+    """
+
+    default_settings: dict[str, Any]
 
     @hook_spec
     def add_default_settings(
@@ -25,7 +34,7 @@ class SiteSpecs:
     def pre_build_site(
         self,
         site,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the site"""
 
@@ -40,7 +49,7 @@ class SiteSpecs:
     def render_content(
         self,
         page,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """
         Augments the content of the page before it is rendered as output.
@@ -50,7 +59,7 @@ class SiteSpecs:
     def post_render_content(
         self,
         page,
-        settings: dict[str : typing.Any],
+        settings: dict[str, Any],
         site,
     ) -> None:
         """
@@ -61,7 +70,7 @@ class SiteSpecs:
     def pre_build_collection(
         self,
         collection,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the collection"""
 
@@ -69,12 +78,19 @@ class SiteSpecs:
     def post_build_collection(
         self,
         site,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Build After Building the collection"""
 
 
 class PluginManager:
+    """
+    Manages the plugins for the site.
+
+    Attributes:
+        plugin_settings (defaultdict): A dictionary that stores the settings for each plugin.
+    """
+
     plugin_settings = defaultdict(dict)
 
     def __init__(self):
@@ -89,5 +105,11 @@ class PluginManager:
         self._pm.register(plugin)
 
     @property
-    def plugins(self) -> set[typing.Any]:
+    def plugins(self) -> set[Any]:
+        """
+        Get the set of registered plugins.
+
+        Returns:
+            set: A set containing the registered plugins.
+        """
         return self._pm.get_plugins()

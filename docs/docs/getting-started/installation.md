@@ -19,6 +19,6 @@ For example, to use the rss parser, you will need to install the [render-engine-
 pip install render-engine render-engine-rss
 ```
 
-### Continue to [Creating Your App](../creating-your-app/)
+## Continue to [Creating Your App](../creating-your-app/)
 
 [render-engine-rss]: https://pypi.org/project/render-engine-rss/

@@ -15,13 +15,14 @@ class BasePage(BaseObject):
     This is not intended to be used directly.
 
     Attributes:
-        slug: The slug of the page. Defaults to the `title` slugified.
-        content: The content to be rendered by the page
-        parser:
-            The Parser used to parse the page's content. Defaults to `BasePageParser`.
-        reference:
-            The attribute to use as the reference for the page in the site's route list.
+        slug (str): The slug of the page. Defaults to the `title` slugified.
+        content: The content to be rendered by the page.
+        parser: The Parser used to parse the page's content. Defaults to `BasePageParser`.
+        reference: The attribute to use as the reference for the page in the site's route list.
             Defaults to `slug`.
+        extension (str): The file extension for the page. Defaults to ".html".
+        routes (list[str]): The list of routes for the page. Defaults to ["./"].
+        template (str | type[jinja2.Template] | None): The template to use for rendering the page.
     """
 
     extension: str = ".html"
@@ -154,6 +155,15 @@ class Page(BasePage):
         content: Any | None = None,
         Parser: type[BasePageParser] | None = None,
     ) -> None:
+        """
+        Initializes a new Page object.
+
+        Args:
+            content_path (str, optional): The path to the file that will be used to generate the Page's `content`.
+            content (Any, optional): The content of the page.
+            Parser (type[BasePageParser], optional): The parser to generate the page's `raw_content`.
+                Defaults to `BasePageParser`.
+        """
         if Parser:
             self.Parser = Parser
 
@@ -174,7 +184,12 @@ class Page(BasePage):
 
     @property
     def _content(self) -> Any:
-        """Returns the content of the page."""
+        """
+        Returns the parsed content of the page.
+
+        Returns:
+            Any: The parsed content of the page.
+        """
         return self.Parser.parse(
             self.content, extras=getattr(self, "parser_extras", {})
         )

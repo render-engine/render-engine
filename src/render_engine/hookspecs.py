@@ -5,6 +5,10 @@ import warnings
 
 import pluggy
 
+from render_engine.collection import Collection
+from render_engine.page import Page
+from render_engine.site import Site
+
 _PROJECT_NAME = "render_engine"
 hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 warnings.warn(
@@ -15,21 +19,28 @@ hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
 
 
 class SiteSpecs:
-    """Plugin hook specifications for the Site class"""
+    """
+    `hookspecs.SiteSpecs` will be deprecated in version 2024.3.1,  Please use `plugins.SiteSpecs` instead.
+
+    Plugin hook specifications for the Site class.
+
+    This class defines the hook specifications for various operations related to the Site class.
+    These hooks can be implemented by plugins to customize the behavior of the site building process.
+    """
 
     default_settings: dict[str, typing.Any]
 
     @hook_spec
     def add_default_settings(
         self,
-        site: "Site",
+        site: Site,
     ) -> None:
         """Add default settings to the site"""
 
     @hook_spec
     def pre_build_site(
         self,
-        site: "Site",
+        site: Site,
         settings: dict[str, typing.Any],
     ) -> None:
         """Steps Prior to Building the site"""
@@ -37,14 +48,14 @@ class SiteSpecs:
     @hook_spec
     def post_build_site(
         self,
-        site: "Site",
+        site: Site,
     ) -> None:
         """Build After Building the site"""
 
     @hook_spec
     def render_content(
         self,
-        page: "page",
+        page: Page,
         settings: dict[str, typing.Any],
     ) -> None:
         """
@@ -54,7 +65,7 @@ class SiteSpecs:
     @hook_spec
     def post_render_content(
         self,
-        page: "page",
+        page: Page,
         settings: dict[str : typing.Any],
         site: "Site",
     ) -> None:
@@ -65,7 +76,7 @@ class SiteSpecs:
     @hook_spec
     def pre_build_collection(
         self,
-        collection: "Collection",
+        collection: Collection,
         settings: dict[str, typing.Any],
     ) -> None:
         """Steps Prior to Building the collection"""

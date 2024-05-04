@@ -4,7 +4,7 @@
 
 ### `PluginManager`
 
-#### Functions
+#### `PluginManager` Functions
 
 ##### `REGISTER_PLUGIN(PLUGIN)`
 
@@ -14,7 +14,7 @@ Register a plugin with the site
 
 Plugin hook specifications for the Site class
 
-#### Functions
+#### `SiteSpecs` Functions
 
 ##### `ADD_DEFAULT_SETTINGS(SITE)`
 
