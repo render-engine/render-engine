@@ -88,10 +88,10 @@ class PluginManager:
     Manages the plugins for the site.
 
     Attributes:
-        plugin_settings (defaultdict): A dictionary that stores the settings for each plugin.
+        plugin_settings (dict): A dictionary that stores the settings for each plugin.
     """
 
-    plugin_settings = defaultdict(dict)
+    plugin_settings: dict = defaultdict(dict)
 
     def __init__(self):
         self._pm = pluggy.PluginManager(project_name=_PROJECT_NAME)

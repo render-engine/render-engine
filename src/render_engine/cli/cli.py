@@ -2,9 +2,9 @@
 
 import importlib
 import json
-import pathlib
 import shutil
 import sys
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -18,7 +18,7 @@ from render_engine.site import Site
 app = typer.Typer()
 
 
-def remove_output_folder(output_path: pathlib.Path) -> None:
+def remove_output_folder(output_path: Path) -> None:
     """Remove the output folder"""
     if output_path.exists():
         shutil.rmtree(output_path)
@@ -65,7 +65,7 @@ def display_filtered_templates(
 
 @app.command()
 def templates(
-    module_site: Annotated[str, typer.Argument(callback=split_module_site)],
+    module_site: Annotated[tuple[str, str], typer.Argument(callback=split_module_site)],
     theme_name: Annotated[
         str, typer.Option("--theme-name", help="Theme to search templates in")
     ] = "",
@@ -119,21 +119,22 @@ def init(
             "-e",
             help="Extra context to pass to the cookiecutter template. This must be a JSON string",
         ),
-    ] = None,
+    ]
+    | None = None,
     no_input: Annotated[
         bool, typer.Option("--no-input", help="Do not prompt for parameters")
     ] = False,
     output_dir: Annotated[
-        pathlib.Path,
+        Path,
         typer.Option(
             help="Directory to output the site to",
             dir_okay=True,
             file_okay=False,
             exists=True,
         ),
-    ] = pathlib.Path("./"),
+    ] = Path("./"),
     cookiecutter_args: Annotated[
-        str, typer.Option(callback=lambda x: json.loads(x))
+        dict, typer.Option(callback=lambda x: json.loads(x))
     ] = {},
 ) -> None:
     """
@@ -171,7 +172,7 @@ def init(
 @app.command()
 def build(
     module_site: Annotated[
-        str,
+        tuple[str, str],
         typer.Argument(
             callback=split_module_site,
             help="module:site for Build the site prior to serving",
@@ -196,14 +197,14 @@ def build(
     module, site = module_site
     app = get_app(module, site)
     if clean:
-        remove_output_folder(pathlib.Path(app.output_path))
+        remove_output_folder(Path(app.output_path))
     app.render()
 
 
 @app.command()
 def serve(
     module_site: Annotated[
-        str,
+        tuple[str, str],
         typer.Argument(
             callback=split_module_site,
             help="module:site for Build the site prior to serving",
@@ -224,7 +225,7 @@ def serve(
             "-r",
             help="Reload the server when files change",
         ),
-    ] = None,
+    ] = False,
     directory: Annotated[
         str,
         typer.Option(
@@ -233,7 +234,7 @@ def serve(
             help="Directory to serve",
             show_default=False,
         ),
-    ] = None,
+    ] = "output",
     port: Annotated[
         int,
         typer.Option(
@@ -262,14 +263,11 @@ def serve(
     app = get_app(module, site)
 
     if clean:
-        remove_output_folder(pathlib.Path(app.output_path))
+        remove_output_folder(Path(app.output_path))
     app.render()
 
-    if not directory:
-        if module_site:
-            directory = app.output_path
-        else:
-            directory = "output"
+    if module_site:
+        directory = str(app.output_path)
 
     server_address = ("127.0.0.1", port)
 

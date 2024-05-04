@@ -57,10 +57,10 @@ class RegExHandler(RegexMatchingEventHandler):
 
     def __init__(
         self,
-        server_address: tuple[int, int],
+        server_address: tuple[str, int],
         dir_to_serve: str,
         app: Site,
-        module_site: str,
+        module_site: tuple[str, str],
         dir_to_watch: str = ".",
         patterns: list[str] | None = None,
         ignore_patterns: list[str] | None = None,
@@ -76,9 +76,7 @@ class RegExHandler(RegexMatchingEventHandler):
         self.dir_to_watch = dir_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
-        super().__init__(
-            *args, regexes=patterns, ignore_regexes=ignore_patterns, **kwargs
-        )
+        super().__init__(*args, **kwargs)
 
     def start_server(self) -> None:
         console.print(

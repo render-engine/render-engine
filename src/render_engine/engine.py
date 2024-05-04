@@ -1,6 +1,6 @@
-import urllib.parse
 from datetime import datetime
 from email import utils
+from urllib.parse import urljoin
 
 from jinja2 import (
     ChoiceLoader,
@@ -47,13 +47,13 @@ engine.filters["to_pub_date"] = to_pub_date
 
 @pass_environment
 def format_datetime(
-    env: Environment, value: str, datetime_format: str | None = None
+    env: Environment, value: datetime, datetime_format: str | None = None
 ) -> str:
     """Parse information from the given class object."""
     if datetime_format:
         format = datetime_format
     else:
-        format = env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z")
+        format = str(env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
     return datetime.strftime(value, format)
 
 
@@ -62,7 +62,7 @@ engine.filters["format_datetime"] = format_datetime
 
 @pass_environment
 def to_absolute(env: Environment, url: str) -> str:
-    return urllib.parse.urljoin(env.globals.get("SITE_URL"), url)
+    return str(urljoin(env.globals.get("SITE_URL"), url))
 
 
 engine.filters["to_absolute"] = to_absolute

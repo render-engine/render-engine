@@ -1,6 +1,7 @@
+from pathlib import Path
 from typing import Any
 
-import jinja2
+from jinja2 import Environment, Template
 from render_engine_parser.base_parsers import BasePageParser
 
 from ._base_object import BaseObject
@@ -21,13 +22,14 @@ class BasePage(BaseObject):
         reference: The attribute to use as the reference for the page in the site's route list.
             Defaults to `slug`.
         extension (str): The file extension for the page. Defaults to ".html".
-        routes (list[str]): The list of routes for the page. Defaults to ["./"].
-        template (str | type[jinja2.Template] | None): The template to use for rendering the page.
+        routes (list[str] | Path): The list of routes for the page. Defaults to ["./"].
+        template (str | Template | None): The template to use for rendering the page.
     """
 
     extension: str = ".html"
-    routes: list[str] = ["./"]
-    template: str | type[jinja2.Template] | None
+    routes: list[str | Path] = ["./"]
+    template: str | Template | None
+    rendered_content: str | None
     _reference: str = "_slug"
 
     @property
@@ -55,7 +57,7 @@ class BasePage(BaseObject):
         else:
             return f"/{route}/{self.path_name}"
 
-    def _render_from_template(self, template: jinja2.Template, **kwargs) -> str:
+    def _render_from_template(self, template: Template, **kwargs) -> str:
         """Renders the page from a template."""
         return template.render(
             **{
@@ -65,9 +67,7 @@ class BasePage(BaseObject):
             },
         )
 
-    def _render_content(
-        self, engine: jinja2.Environment | None = None, **kwargs
-    ) -> str:
+    def _render_content(self, engine: Environment | None = None, **kwargs) -> str:
         """
         Renders the content of the page.
 
@@ -143,7 +143,7 @@ class Page(BasePage):
     """
 
     content: Any
-    content_path: str | None
+    content_path: Path | str | None
     Parser: type[BasePageParser] = BasePageParser
     inherit_plugins: bool
     parser_extras: dict[str, Any] | None
@@ -151,7 +151,7 @@ class Page(BasePage):
 
     def __init__(
         self,
-        content_path: str | None = None,
+        content_path: Path | str | None = None,
         content: Any | None = None,
         Parser: type[BasePageParser] | None = None,
     ) -> None:
@@ -159,7 +159,7 @@ class Page(BasePage):
         Initializes a new Page object.
 
         Args:
-            content_path (str, optional): The path to the file that will be used to generate the Page's `content`.
+            content_path (Path, str, optional): The path to the file that will be used to generate the Page's `content`.
             content (Any, optional): The content of the page.
             Parser (type[BasePageParser], optional): The parser to generate the page's `raw_content`.
                 Defaults to `BasePageParser`.

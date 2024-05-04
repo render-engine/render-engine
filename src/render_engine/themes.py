@@ -2,6 +2,7 @@ import dataclasses
 import logging
 import pathlib
 import shutil
+from pathlib import Path
 
 import slugify
 from jinja2 import BaseLoader, Environment
@@ -34,7 +35,7 @@ class Theme:
     prefix: str
     filters: dict = dataclasses.field(default_factory=dict)
     plugins: list = dataclasses.field(default_factory=list)
-    template_globals: dict = None
+    template_globals: dict | None = None
     static_dir: str | pathlib.Path | None = None
 
     def __post_init__(self) -> None:
@@ -52,7 +53,7 @@ class ThemeManager:
 
     Attributes:
         engine (Environment): Jinja2 Environment used to render pages.
-        output_path (str): Path to write rendered content.
+        output_path (str | Path): Path to write rendered content.
         prefix (dict[str, str]): Dictionary mapping theme prefixes to loader names.
         static_paths (set): Set of filepaths for static folders.
             This will get copied to the output folder. Folders are recursive.
@@ -63,6 +64,7 @@ class ThemeManager:
         register_theme(theme: Theme) -> None: Register a theme.
     """
 
+    @staticmethod
     def default_template_globals() -> dict[str, set]:
         return {
             "head": set(),
@@ -70,10 +72,10 @@ class ThemeManager:
         }
 
     engine: Environment
-    output_path: str
-    prefix: dict[str, str] = dataclasses.field(default_factory=dict)
+    output_path: Path | str
+    prefix: dict[str, BaseLoader] = dataclasses.field(default_factory=dict)
     static_paths: set = dataclasses.field(default_factory=set)
-    template_globals: dict[str:set] = dataclasses.field(
+    template_globals: dict[str, set] = dataclasses.field(
         default_factory=default_template_globals
     )
 

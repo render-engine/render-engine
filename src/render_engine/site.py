@@ -1,11 +1,12 @@
 import copy
 import logging
-import pathlib
 from collections import defaultdict
+from pathlib import Path
 
 from jinja2 import FileSystemLoader, PrefixLoader
 from rich.progress import Progress
 
+from .archive import Archive
 from .collection import Collection
 from .engine import engine
 from .page import Page
@@ -47,8 +48,8 @@ class Site:
         "head": set(),
         "theme": {},
     }
-    _output_path: str = "output"
-    _template_path: str = "templates"
+    _output_path: str | Path = "output"
+    _template_path: str | Path = "templates"
     _static_paths: set = {"static"}
     plugin_settings: dict = {"plugins": defaultdict(dict)}
 
@@ -61,20 +62,21 @@ class Site:
             output_path=self._output_path,
             static_paths=self._static_paths,
         )
-        self.route_list = dict()
-        self.site_settings = dict()
-        self.subcollections = defaultdict(lambda: {"pages": []})
+        self.route_list: dict = {}
+        self.site_settings: dict = {}
+        self.subcollections: dict[str, list] = {"pages": []}
         self.theme_manager.engine.globals.update(self.site_vars)
-        self.theme_manager.engine.loader.loaders.insert(
-            0, FileSystemLoader(self._template_path)
-        )
+        if self.theme_manager.engine.loader is not None:
+            self.theme_manager.engine.loader.loaders.insert(
+                0, FileSystemLoader(self._template_path)
+            )
 
     @property
-    def output_path(self) -> str:
+    def output_path(self) -> Path | str:
         return self.theme_manager.output_path
 
     @output_path.setter
-    def output_path(self, output_path: str) -> None:
+    def output_path(self, output_path: Path | str) -> None:
         self.theme_manager.output_path = output_path
 
     @property
@@ -161,7 +163,7 @@ class Site:
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
-    def page(self, Page: Page) -> Page:
+    def page(self, _page: Page) -> Page:
         """
         Add the page to the route list to be rendered later.
         Also remaps `title` in case the user wants to use it in the template rendering.
@@ -187,7 +189,7 @@ class Site:
         site.page(About) # also works
         ```
         """
-        page = Page()
+        page = _page()
         page.title = page._title  # Expose _title to the user through `title`
 
         # copy the plugin manager, removing any plugins that the page has ignored
@@ -200,25 +202,22 @@ class Site:
             page._pm.unregister(plugin)
 
         self.route_list[getattr(page, page._reference)] = page
+        return page
 
-    def _render_output(self, route: str, page: Page) -> int:
+    def _render_output(self, route: str | Path, page: Page | Archive) -> int:
         """writes the page object to disk"""
-        path = (
-            pathlib.Path(self.output_path)
-            / pathlib.Path(route)
-            / pathlib.Path(page.path_name)
-        )
+        path = Path(self.output_path) / Path(route) / Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
 
-        if hasattr(page, "plugin_manager"):
+        if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
             page.plugin_manager._pm.hook.render_content(
                 page=page, settings=settings, site=self
             )
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
 
-        if hasattr(page, "plugin_manager"):
+        if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
             page.plugin_manager._pm.hook.post_render_content(
                 page=page.__class__, settings=settings, site=self
             )
@@ -274,21 +273,26 @@ class Site:
         # load themes in the ChoiceLoader/FileLoader
         for theme_prefix, theme_loader in self.theme_manager.prefix.items():
             logging.info(f"loading theme: {theme_prefix}")
-            self.theme_manager.engine.loader.loaders.insert(-1, theme_loader)
+            if self.theme_manager.engine.loader is not None:
+                self.theme_manager.engine.loader.loaders.insert(-1, theme_loader)
         # load themes in the PrefixLoader
-        self.theme_manager.engine.loader.loaders.insert(
-            -1, PrefixLoader(self.theme_manager.prefix)
-        )
+        if self.theme_manager.engine.loader is not None:
+            self.theme_manager.engine.loader.loaders.insert(
+                -1, PrefixLoader(self.theme_manager.prefix)
+            )
 
     @property
     def template_path(self) -> str:
-        return self.theme_manager.engine.loader.loaders[0].searchpath[0]
+        if self.theme_manager.engine.loader is not None:
+            return self.theme_manager.engine.loader.loaders[0].searchpath[0]
+        return ""
 
     @template_path.setter
     def template_path(self, template_path: str) -> None:
-        self.theme_manager.engine.loader.loaders.insert(
-            0, FileSystemLoader(template_path)
-        )
+        if self.theme_manager.engine.loader is not None:
+            self.theme_manager.engine.loader.loaders.insert(
+                0, FileSystemLoader(template_path)
+            )
 
     def render(self) -> None:
         """

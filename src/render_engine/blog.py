@@ -1,7 +1,6 @@
 from render_engine_markdown import MarkdownPageParser
 
 from .collection import Collection
-from .feeds import RSSFeed
 
 
 class Blog(Collection):
@@ -30,7 +29,6 @@ class Blog(Collection):
     sort_reverse: bool = True
     sort_by = "date"
     has_archive = True
-    Feed = RSSFeed
 
     def latest(self, count: int = 1) -> list[Collection]:
         """Get the latest post from the collection."""

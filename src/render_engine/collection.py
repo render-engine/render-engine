@@ -1,6 +1,7 @@
 import logging
-import pathlib
-import typing
+from collections.abc import Callable, Generator
+from pathlib import Path
+from typing import Any
 
 import git
 from more_itertools import batched, flatten
@@ -40,14 +41,14 @@ class Collection(BaseObject):
         archive_template: The template to use for the [`Archive`][src.render_engine.archive.Archive] pages.
         content_path: The path to iterate over to generate pages.
         content_type: Type[Page] = Page
-        Feed: Type[RSSFeed]
+        Feed: Type[RSSFeed] = RSSFeed
         feed_title: str
         include_suffixes: list[str] = ["*.md", "*.html"]
         items_per_page: int | None
         Parser: BasePageParser = BasePageParser
         parser_extras: dict[str, Any]
         required_themes: list[callable]
-        routes: list[str] = ["./"]
+        routes: list[str | Path] = ["./"]
         sort_by: str = "title"
         sort_reverse: bool = False
         title: str
@@ -57,7 +58,7 @@ class Collection(BaseObject):
     Methods:
 
         iter_content_path(): Iterates through the collection's content path.
-        get_page(content_path: str | None = None): Returns the page Object for the specified Content Path.
+        get_page(content_path: str | Path | None = None): Returns the page Object for the specified Content Path.
         sorted_pages: Returns the sorted pages of the collection.
         archives: Returns the Archive objects containing the pages from the content path.
         feed: Returns the Feed object for the collection.
@@ -65,22 +66,21 @@ class Collection(BaseObject):
 
     """
 
-    archive_template: str | pathlib.Path = "archive.html"
-    content_path: pathlib.Path | str
-    content_type: Page = Page
-    Feed: RSSFeed
+    archive_template: str | Path | None = "archive.html"
+    content_path: Path | str
+    content_type: type[Page] = Page
+    Feed: type[RSSFeed] = RSSFeed
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
     Parser: BasePageParser = BasePageParser
-    parser_extras: dict[str, any]
-    required_themes: list[typing.Callable]
-    routes: list[str] = ["./"]
+    parser_extras: dict[str, Any]
+    required_themes: list[Callable]
+    routes: list[str | Path] = ["./"]
     sort_by: str = "title"
     sort_reverse: bool = False
-    template_vars: dict[str, any]
+    template_vars: dict[str, Any]
     template: str | None
-    plugins: list[typing.Callable] | None
     plugin_manager: PluginManager | None
 
     def __init__(
@@ -103,15 +103,12 @@ class Collection(BaseObject):
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
         return flatten(
-            [
-                pathlib.Path(self.content_path).glob(suffix)
-                for suffix in self.include_suffixes
-            ]
+            [Path(self.content_path).glob(suffix) for suffix in self.include_suffixes]
         )
 
     def _generate_content_from_modified_pages(
         self,
-    ) -> typing.Generator[Page, None, None]:
+    ) -> Generator[Page, None, None]:
         """
         Check git status for newly created and modified files.
         Returns the Page objects for the files in the content path
@@ -124,15 +121,15 @@ class Collection(BaseObject):
         ]
 
         return (
-            self.get_page(pathlib.Path(changed_path))
+            self.get_page(str(Path(changed_path)))
             for changed_path in changed_files
-            if pathlib.Path(changed_path).parent == pathlib.Path(self.content_path)
+            if Path(changed_path).parent == Path(self.content_path)
         )
 
     def get_page(
         self,
-        content_path: str | None = None,
-    ) -> type[Page]:
+        content_path: str | Path | None = None,
+    ) -> Page:
         """Returns the page Object for the specified Content Path"""
         _page = self.content_type(
             content_path=content_path,
@@ -156,7 +153,7 @@ class Collection(BaseObject):
         )
 
     @property
-    def archives(self) -> typing.Generator[Archive, None, None]:
+    def archives(self) -> Generator[Archive, None, None]:
         """
         Returns a [Archive][src.render_engine.archive.Archive] objects containing the pages from the `content_path` .
 

@@ -1,6 +1,7 @@
 """Shared Properties and methods across render_engine objects."""
 
 from collections import defaultdict
+from collections.abc import Callable
 
 from slugify import slugify
 
@@ -23,7 +24,7 @@ class BaseObject:
 
     title: str
     template_vars: dict
-    plugins: list
+    plugins: list[Callable] | None
     plugin_settings: dict = {"plugins": defaultdict(dict)}
 
     @property

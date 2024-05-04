@@ -1,7 +1,7 @@
 # ruff: noqa: F821
 
-import typing
 import warnings
+from typing import Any
 
 import pluggy
 
@@ -28,7 +28,7 @@ class SiteSpecs:
     These hooks can be implemented by plugins to customize the behavior of the site building process.
     """
 
-    default_settings: dict[str, typing.Any]
+    default_settings: dict[str, Any]
 
     @hook_spec
     def add_default_settings(
@@ -41,7 +41,7 @@ class SiteSpecs:
     def pre_build_site(
         self,
         site: Site,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the site"""
 
@@ -56,7 +56,7 @@ class SiteSpecs:
     def render_content(
         self,
         page: Page,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """
         Augments the content of the page before it is rendered as output.
@@ -66,7 +66,7 @@ class SiteSpecs:
     def post_render_content(
         self,
         page: Page,
-        settings: dict[str : typing.Any],
+        settings: dict[str, Any],
         site: "Site",
     ) -> None:
         """
@@ -77,7 +77,7 @@ class SiteSpecs:
     def pre_build_collection(
         self,
         collection: Collection,
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the collection"""
 
@@ -85,6 +85,6 @@ class SiteSpecs:
     def post_build_collection(
         self,
         site: "Site",
-        settings: dict[str, typing.Any],
+        settings: dict[str, Any],
     ) -> None:
         """Build After Building the collection"""
