@@ -158,3 +158,20 @@ def test_plugin_override_settings_from_site_register_plugins():
     site = Site()
     site.register_plugins(FakePlugin, FakePlugin={"test": "override"})
     assert site.plugin_manager.plugin_settings.get("FakePlugin")["test"] == "override"
+
+
+def test_collection_default_empty_plugin_setting(site: Site):
+    """Asserts that the collection default plugin settings are set to an empty dict"""
+
+    assert site.route_list["fakecollection"].plugin_settings == {"plugins": {}}
+
+
+def test_collection_override_default_plugin_setting(site: Site):
+    """Asserts that the collection default plugin settings are overridden"""
+
+    site.route_list["fakecollection"].plugin_settings = {
+        "FakePlugin": {"test2": "override2"}
+    }
+    assert site.route_list["fakecollection"].plugin_settings.get("FakePlugin") == {
+        "test2": "override2"
+    }
