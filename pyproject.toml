@@ -38,7 +38,8 @@ dev = [
     "mkdocstrings[python]",
     "pymdown-extensions",
     "ruff",
-    "pre-commit"
+    "pre-commit",
+    "mypy"
     ]
 
 

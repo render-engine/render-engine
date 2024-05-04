@@ -17,6 +17,7 @@ class FakePlugin:
     }
 
     @hook_impl
+    @staticmethod
     def pre_build_site(
         site: type[Site],
         settings: dict[str, typing.Any] | None,
@@ -25,6 +26,7 @@ class FakePlugin:
         pass
 
     @hook_impl
+    @staticmethod
     def render_content(
         page: Page,
         settings: dict[str, typing.Any],
@@ -32,6 +34,7 @@ class FakePlugin:
         pass
 
     @hook_impl
+    @staticmethod
     def post_render_content(
         page: Page,
         settings: dict[str, typing.Any],

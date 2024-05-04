@@ -1,6 +1,7 @@
-import pathlib
+from pathlib import Path
+from typing import Any
 
-import jinja2
+from jinja2 import Template
 
 from render_engine.plugins import PluginManager
 
@@ -14,12 +15,12 @@ class Archive(BasePage):
     Attributes:
         pages (list[BasePage]): The list of pages to include in the archive.
         title (str): The title of the archive.
-        template_vars (dict[str, any]): The template variables to use for rendering the archive.
-        routes (list[str | pathlib.Path]): The routes for where the archive page should be generated.
+        template_vars (dict[str, Any]): The template variables to use for rendering the archive.
+        routes (list[str | Path]): The routes for where the archive page should be generated.
         archive_index (int, optional): The index of the page in the series of archive pages. Defaults to 0.
         is_index (bool, optional): Indicates whether the archive is the index page. Defaults to False.
         plugin_manager (PluginManager | None, optional): The plugin manager for the archive. Defaults to None.
-        template (str | jinja2.Template, optional): The template to use for rendering the archive.
+        template (str | Template, optional): The template to use for rendering the archive.
             Defaults to "archive.html".
 
     !!! Warning "Not Directly Used"
@@ -32,12 +33,12 @@ class Archive(BasePage):
         self,
         title: str,
         pages: list[BasePage],
-        template_vars: dict[str, any],
-        routes: list[str | pathlib.Path],
+        template_vars: dict[str, Any],
+        routes: list[str | Path],
         archive_index: int = 0,
         is_index: bool = False,
         plugin_manager: PluginManager | None = None,
-        template: str | jinja2.Template = "archive.html",
+        template: str | Template | None = "archive.html",
     ) -> None:
         super().__init__()
         self.slug = title

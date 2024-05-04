@@ -1,4 +1,4 @@
-import pathlib
+from pathlib import Path
 
 import pluggy
 import pytest
@@ -14,7 +14,7 @@ pm = pluggy.PluginManager("fake_test")
 
 
 @pytest.fixture
-def site(tmp_path: pathlib.Path):
+def site(tmp_path: Path):
     _site = Site()
     _site.output_path = tmp_path / "output"
     _site.static_paths.add(tmp_path / "static")
@@ -49,7 +49,7 @@ def test_site_site_vars_override_defaults_via_class():
     assert site.site_vars["SITE_URL"] == "https://my-site.com"
 
 
-def test_site_page_in_route_list(site, tmp_path: pathlib.Path):
+def test_site_page_in_route_list(site, tmp_path: Path):
     tmp_dir = tmp_path / "content"
     tmp_dir.mkdir()
     file = tmp_dir / "test.md"
@@ -102,9 +102,9 @@ def test_site_page_with_multiple_routes_has_one_entry_in_routes_list(site):
     assert len(site.route_list) == 1
 
 
-def test_url_for_Page_in_site(site, tmp_path: pathlib.Path):
+def test_url_for_Page_in_site(site, tmp_path: Path):
     """Tests that url_for a page is added to a template"""
-    test_template = pathlib.Path(tmp_path / "template.html")
+    test_template = Path(tmp_path / "template.html")
     test_template.write_text("The URL is '{{ 'custompage'|url_for }}'")
     site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
 
@@ -118,14 +118,12 @@ def test_url_for_Page_in_site(site, tmp_path: pathlib.Path):
     assert custom_page.read_text() == "The URL is '/custompage.html'"
 
 
-def test_collection_archive_in_route_list(site, tmp_path: pathlib.Path):
+def test_collection_archive_in_route_list(site, tmp_path: Path):
     """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
-    test_collection_archive_template = pathlib.Path(tmp_path / "archive_template.html")
+    test_collection_archive_template = Path(tmp_path / "archive_template.html")
     test_collection_archive_template.write_text("This is the collection archive")
 
-    test_collection_template = pathlib.Path(
-        tmp_path / "collection_archive_item_template.html"
-    )
+    test_collection_template = Path(tmp_path / "collection_archive_item_template.html")
     test_collection_template.write_text(
         "The collection archive route is at '{{ 'customcollection' |url_for }}'"
     )
@@ -162,7 +160,7 @@ def site_with_collection(tmp_path_factory: pytest.TempPathFactory):
     collection_archive_output_path = collection_archive_path / "output"
     static_tmp_dir = collection_archive_path / "static"
     static_tmp_dir.mkdir(parents=True)
-    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+    Path(static_tmp_dir / Path("test.txt")).write_text("test")
 
     _site = Site()
     _site.output_path = collection_archive_output_path
@@ -205,19 +203,19 @@ def test_collection_archive_pages_in_route_list(site_with_collection: Site):
     """Given a collection with an archive, the archive should be in the route list and accessible with url_for"""
 
     for page in site_with_collection.route_list["custompagescollection"].archives:
-        assert pathlib.Path(site_with_collection.output_path / page.path_name).exists()
+        assert Path(site_with_collection.output_path / page.path_name).exists()
 
 
-def test_url_for_Collection_in_site(site: Site, tmp_path: pathlib.Path):
+def test_url_for_Collection_in_site(site: Site, tmp_path: Path):
     """
     Tests that url_for a page in a collection is added to a template
     """
-    test_template = pathlib.Path(tmp_path / "custom_template.html")
+    test_template = Path(tmp_path / "custom_template.html")
     test_template.write_text(
         "The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'"
     )
-
-    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    if site.theme_manager.engine.loader is not None:
+        site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
 
     class CustomCollectionPage(Page):
         template = test_template.name
@@ -233,7 +231,7 @@ def test_url_for_Collection_in_site(site: Site, tmp_path: pathlib.Path):
     assert custom_page.read_text() == "The URL is '/customcollectionpage.html'"
 
 
-def test_site_output_path(site, tmp_path: pathlib.Path):
+def test_site_output_path(site, tmp_path: Path):
     """Tests site outputs to output_path"""
 
     @site.page
@@ -250,24 +248,18 @@ def test_site_static_renders_in_static_output_path(site_with_collection: Site):
     Tests that a static file is rendered in the static output path.
     """
 
-    assert (
-        site_with_collection.output_path.joinpath("static")
-        .joinpath("test.txt")
-        .exists()
-    )
+    assert Path(site_with_collection.output_path, "static", "test.txt").exists()
 
 
-def tests_site_nested_static_paths(tmp_path: pathlib.Path, site: Site):
+def tests_site_nested_static_paths(tmp_path: Path, site: Site):
     """given a static path with nested directories, the output should be the same"""
     static_tmp_dir = tmp_path / "static"
     output_tmp_dir = tmp_path / "output"
     output_tmp_dir.mkdir()
     static_tmp_dir.mkdir()
-    pathlib.Path(static_tmp_dir / "nested").mkdir()
-    pathlib.Path(static_tmp_dir / "nested" / pathlib.Path("test.txt")).write_text(
-        "test"
-    )
-    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+    Path(static_tmp_dir / "nested").mkdir()
+    Path(static_tmp_dir / "nested" / Path("test.txt")).write_text("test")
+    Path(static_tmp_dir / Path("test.txt")).write_text("test")
 
     site.output_path = output_tmp_dir
     site.static_paths.add(static_tmp_dir)
@@ -276,17 +268,17 @@ def tests_site_nested_static_paths(tmp_path: pathlib.Path, site: Site):
     assert (output_tmp_dir / "static" / "nested" / "test.txt").exists()
 
 
-def tests_site_multiple_static_paths(tmp_path: pathlib.Path, site: Site):
+def tests_site_multiple_static_paths(tmp_path: Path, site: Site):
     """given a static path with nested directories, the output should be the same"""
     static_tmp_dir = tmp_path / "static"
     output_tmp_dir = tmp_path / "output"
     output_tmp_dir.mkdir()
     static_tmp_dir.mkdir()
-    pathlib.Path(static_tmp_dir / pathlib.Path("test.txt")).write_text("test")
+    Path(static_tmp_dir / Path("test.txt")).write_text("test")
 
     second_static_tmp_dir = tmp_path / "static2"
     second_static_tmp_dir.mkdir()
-    pathlib.Path(second_static_tmp_dir / pathlib.Path("test2.txt")).write_text("test")
+    Path(second_static_tmp_dir / Path("test2.txt")).write_text("test")
 
     site.output_path = output_tmp_dir
     site.static_paths.update([static_tmp_dir, second_static_tmp_dir])
@@ -295,7 +287,7 @@ def tests_site_multiple_static_paths(tmp_path: pathlib.Path, site: Site):
     assert (output_tmp_dir / "static2" / "test2.txt").exists()
 
 
-def test_site_theme_update_settings(site, tmp_path: pathlib.Path):
+def test_site_theme_update_settings(site, tmp_path: Path):
     """Tests that the theme manager updates the settings"""
     site = Site()
 
@@ -323,8 +315,8 @@ def test_plugin_in_theme_added_to_plugins(site):
     assert plugin in site.plugin_manager.plugins
 
 
-def test_collection_archive_0_is_index(site, tmp_path: pathlib.Path):
-    test_collection_archive = pathlib.Path(tmp_path / "archive_template")
+def test_collection_archive_0_is_index(site, tmp_path: Path):
+    test_collection_archive = Path(tmp_path / "archive_template")
     site.output_path = test_collection_archive
 
     class CustomCollectionPage(Page):
@@ -337,7 +329,7 @@ def test_collection_archive_0_is_index(site, tmp_path: pathlib.Path):
         pages = [CustomCollectionPage()]
 
     site.render()
-    assert pathlib.Path(test_collection_archive / "test" / "index.html").exists()
+    assert Path(test_collection_archive / "test" / "index.html").exists()
 
 
 def test_custom_template_path_assignment(site, tmp_path):
@@ -349,7 +341,7 @@ def test_custom_template_path_assignment(site, tmp_path):
     The attribute is saved in the template_manager's ChoiceLoader.
     """
 
-    test_custom_template_path = pathlib.Path(tmp_path / "custom_template_path")
+    test_custom_template_path = Path(tmp_path / "custom_template_path")
     test_custom_template_path.mkdir()
     test_custom_template = test_custom_template_path / "test_custom_template.html"
     test_custom_template.touch()
