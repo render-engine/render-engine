@@ -166,7 +166,7 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2024.5.10
+regex==2024.5.15
     # via mkdocs-material
 render-engine-markdown==2023.12.1
     # via render_engine (pyproject.toml)
