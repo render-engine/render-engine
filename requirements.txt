@@ -174,7 +174,7 @@ render-engine-parser==2023.12.3
     # via
     #   render-engine-markdown
     #   render_engine (pyproject.toml)
-requests==2.31.0
+requests==2.32.0
     # via
     #   cookiecutter
     #   mkdocs-material
