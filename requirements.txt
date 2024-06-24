@@ -203,7 +203,7 @@ typing-extensions==4.12.2
     #   typer
 urllib3==2.2.2
     # via requests
-virtualenv==20.26.2
+virtualenv==20.26.3
     # via pre-commit
 watchdog==4.0.1
     # via
