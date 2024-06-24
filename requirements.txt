@@ -183,7 +183,7 @@ rich==13.7.1
     #   cookiecutter
     #   render_engine (pyproject.toml)
     #   typer
-ruff==0.4.7
+ruff==0.4.10
     # via render_engine (pyproject.toml)
 shellingham==1.5.4
     # via typer
