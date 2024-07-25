@@ -6,9 +6,9 @@ Feed Objects for Generating RSS Feeds
 
 `RSSFeed`
 
-Bases: [`BasePage`](../page?id=basepage)
+Bases: [`BasePage`](page.md?id=basepage)
 
-Creates an RSS feed [Page](../page) Object.
+Creates an RSS feed [Page](page.md) Object.
 
 > !!! Note
     This is the base object type and should only contain the params identified by the standards defined in the [RSS 2.0 Specification](http://www.rssboard.org/rss-specification).

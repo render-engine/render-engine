@@ -41,9 +41,9 @@ This is the preferred way to reference a page inside of a template.
 
 ## Page
 
-When you're creating a `Page`. You may want to provide a [`parser`](../parsers) or `content`/`content_path`. To do this, you will need to create a `Page` object.
+When you're creating a `Page`. You may want to provide a [`parser`](parsers.md) or `content`/`content_path`. To do this, you will need to create a `Page` object.
 
-Bases: [`BasePage`](../page?id=basepage)
+Bases: [`BasePage`](page.md?id=basepage)
 
 The general BasePage object used to make web pages.
 
@@ -66,3 +66,34 @@ When you create a page, you specify variables passed into rendering template.
 | `template` | `str | None` |The template used to render the page. If not provided, the `Site`'s `content`will be used. |
 | `Parser` | `type[BasePageParser]` |The parser to generate the page's `raw_content`. Defaults to `BasePageParser`. |
 | `title` | `str` |The title of the page. Defaults to the class name. |
+
+## About Page Attributes
+
+### Users use the public systems use the private
+
+It's important to note that while public attributes are used by users, private attributes are used by the system. For example, the `Page._content` attribute is used by the system to build the `str` value of the page. This means that while the user may change the value of `Page.content`, the system has the ability to return a different value based on the `Page._content` property.
+
+For Example:
+
+```python
+class CustomPage(Page):
+    @property
+    def _content(self):
+        return self.content + "!"
+
+
+class MyPage(CustomPage):
+    content = "Hello World"
+```
+
+The Content that will be passed to Markup will be "Hello World!".
+
+### Page Content
+
+Page.content and be anything but Page._content must be a `str`.
+
+By default Page._content will return the result of `Page.Parser.parse(Page.content)`.
+
+### Page Templates
+
+`Page.template` should always be a `str`. `Page.template` refers to the template name that will be passed to the engine given to `Page.render()`.

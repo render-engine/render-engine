@@ -68,6 +68,6 @@ class Heroes(Collection):
 
 The value of `42` can be accessed in your template using `{{collection.some_value}}`.
 
-## Continue to [Building your Site](../building-your-site/)
+## Continue to [Building your Site](building-your-site.md)
 
-[Creating a Page]: /getting-started/creating-a-page
+[Creating a Page]: creating-a-page.md

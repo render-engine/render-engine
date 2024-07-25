@@ -29,4 +29,4 @@ You can view the options using the `--help` flag.
 
 Visit the [CLI - init](../cli.md) page for more information.
 
-### Continue to [Simple Site Layout](../layout/)
+### Continue to [Simple Site Layout](layout.md)
