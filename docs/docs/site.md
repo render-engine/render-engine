@@ -88,10 +88,10 @@ Register multiple themes.
 Render all pages and collections.
 
 These are pages and collections that have been added to the site using
-the [`Site.page`](../site?id=page)
-and [`Site.collection`](../site?id=collection) methods.
+the [`Site.page`](site.md?id=page)
+and [`Site.collection`](site.md?id=collection) methods.
 
 Render should be called after all pages and collections have been added to the site.
 
 You can choose to call it manually in your file or
-use the CLI command [`render-engine build`](../cli?id=build)
+use the CLI command [`render-engine build`](cli.md?id=build)

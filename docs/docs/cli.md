@@ -18,7 +18,7 @@ The template can be a local path or a git repository.
 
 ### `collection-path` (`Path`: default=`"pages"`)
 
-The path to the folder that will contain your [collections](../collection). This is where you will put your data files to be processed.
+The path to the folder that will contain your [collections](collection.md). This is where you will put your data files to be processed.
 
 ### `force` (`bool`: default=`False` as `no-force`)
 
@@ -26,11 +26,11 @@ Overwrite existing files and folders. If `no-force`, an error will be raised if 
 
 ### `output-path` (`Path`: default=`"output"`)
 
-The path to the [`output`](../site?id=output_path) directory. This is where your rendered site will be served.
+The path to the [`output`](site.md?id=output_path) directory. This is where your rendered site will be served.
 
 ### `project-path-name` (`Path`: default=`"app.py"`)
 
-The name of the python file that will contain the Render Engine setup. This is where you will define your [site](../site), [pages](../page) and [collections](../collection).
+The name of the python file that will contain the Render Engine setup. This is where you will define your [site](site.md), [pages](page.md) and [collections](collection.md).
 
 ### `project-folder` (`Path`: default=`"."`)
 
@@ -38,19 +38,19 @@ The name of the folder that will contain your project. This is where your [`proj
 
 #### `site-description` (`str|None`: default=`None`)
 
-A short description of your site.  This will be passed into the [`Site`](../site) object and available in [`site_vars`](../site?id=site_vars).
+A short description of your site.  This will be passed into the [`Site`](site.md) object and available in [`site_vars`](site.md?id=site_vars).
 
 #### `skip-collection` (`bool`: default=`False` as `no-skip-collection`)
 
-If `True`, a [`collection-path`](../collection?id=content_path) folder will not be created.
+If `True`, a [`collection-path`](collection.md?id=content_path) folder will not be created.
 
 #### `skip-static` - (`bool`: default: `False` as `no-skip-static`)
 
-If `True`, will not create the [`static`](../site?id=static_path) folder. This is where you will put your static files (images, css, js, etc).
+If `True`, will not create the [`static`](site.md?id=static_path) folder. This is where you will put your static files (images, css, js, etc).
 
 #### `templates-path` (`Path`: default=`"templates"`)
 
-The path to the folder that will contain your [`templates`](../templates). This is where you will put your Jinja2 templates.
+The path to the folder that will contain your [`templates`](templates.md). This is where you will put your Jinja2 templates.
 
 ## Building your site with `render-engine build`
 

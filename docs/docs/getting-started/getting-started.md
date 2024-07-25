@@ -2,18 +2,18 @@ This section will walk you through the basics of Render Engine. It will show you
 
 ### Sections
 
-#### [Installation](./installation.md)
+#### [Installation](installation.md)
 
-#### [Creating your app](./creating-your-app.md)
+#### [Creating your app](creating-your-app.md)
 
-#### [Simple Site Layout](./layout.md)
+#### [Simple Site Layout](layout.md)
 
-#### [Creating a Page](./creating-a-page.md)
+#### [Creating a Page](creating-a-page.md)
 
-#### [Creating a Collection](./creating-a-collection.md)
+#### [Creating a Collection](creating-a-collection.md)
 
-#### [Building your Site](./building-your-site.md)
+#### [Building your Site](building-your-site.md)
 
 ---
 
-### Continue to [Installation](./installation.md)
+### Continue to [Installation](installation.md)

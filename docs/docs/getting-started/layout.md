@@ -87,7 +87,7 @@ from render_engine import Site, Page, Collection
 
 ### Importing parsers needed to generate html
 
-Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](../parsers#basepageparser) and [MarkdownPageParser](../parsers##markdownpageparser)) or create your own.
+Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](../parsers.md#basepageparser) and [MarkdownPageParser](../parsers.md#markdownpageparser)) or create your own.
 
 Custom parsers can be imported and set in the `Parsers` attribute of the `Page` or `Collection` class.
 
@@ -96,8 +96,8 @@ Custom parsers can be imported and set in the `Parsers` attribute of the `Page` 
 from render_engine_rss import RSSCollection, RSSFeedPageParser
 ```
 
-> **IMPORTANT:**
-> Some custom parsers will only work with [custom collections](../custom_collections). Please refer to the parser's documentation for more information.****
+!!! IMPORTANT
+    Some custom parsers will only work with [custom collections](../custom_collections.md). Please refer to the parser's documentation for more information.****
 
 ### Render Engine plugins and themes
 
@@ -117,8 +117,8 @@ app.register_plugins(YouTubeEmbed)
 app.register_theme(kjaymiller)
 ```
 
-> **IMPORTANT:**
-> You can register multiple themes but be careful of the order as theme files are looked up in REVERSE order they are added (LIFO - Last in, First out)
+!!! IMPORTANT
+    You can register multiple themes but be careful of the order as theme files are looked up in REVERSE order they are added (LIFO - Last in, First out)
 
 ```python
 from render_engine_kjaymiller_theme import kjaymiller
@@ -140,6 +140,7 @@ app = Site()
 app.site_vars.update(
   {
    "SITE_TITLE":"My Cool Website",
+  }
 )
 ```
 
@@ -234,4 +235,4 @@ class Blog(Blog):
   content_path="content/blog"
 ```
 
-### Continue to [Creating a Page](../creating-a-page/)
+### Continue to [Creating a Page](creating-a-page.md)

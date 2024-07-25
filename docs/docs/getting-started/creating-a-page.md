@@ -79,7 +79,7 @@ class About(Page):
 
 ```
 
-### Continue to [Creating a Collection](../creating-a-collection/)
+### Continue to [Creating a Collection](creating-a-collection.md)
 
 [Jinja2]: https://palletsprojects.com/p/jinja/
-[Parser]: ../parsers
+[Parser]: ../parsers.md

@@ -20,14 +20,13 @@ nav:
     - Page Objects: page.md
     - Collection:
       - Collection: collection.md
+      - Custom Collection: custom_collections.md
       - Archive: archive.md
       - RSS Feed: feeds.md
     - Site:
       - Site: site.md
   - Extending Render Engine:
     - Plugins: plugins.md
-    - Plugins Entrypoints: plugins.md
-    - Built-in Plugins: plugins.md
   - Parsers: parsers.md
   - CLI: cli.md
   - Templates and Themes:

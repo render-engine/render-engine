@@ -50,7 +50,7 @@ To use dev containers, you will need to have VS Code installed, Docker, and the 
 
 Start with ensuring that the docker daemon is running.
 
-Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: Repopen in Container" and select the option.
+Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: ReOpen in Container" and select the option.
 
 This will create a new local environment with the same configuration as the [codespace](#using-codespaces).
 
