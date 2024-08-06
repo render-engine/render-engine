@@ -60,6 +60,7 @@ render-engine = "render_engine.cli.cli:cli"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+addopts = ["--cov=src", "--cov-report=term-missing", "-ra", "-q"]
 
 [tool.semantic_release]
 version_toml = "pyproject.toml:project.version"
