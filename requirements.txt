@@ -155,7 +155,7 @@ python-slugify==8.0.4
     # via
     #   cookiecutter
     #   render_engine (pyproject.toml)
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   cookiecutter
     #   mkdocs
