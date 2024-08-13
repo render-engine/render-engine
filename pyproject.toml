@@ -21,7 +21,7 @@ dependencies = [
     "render-engine-markdown",
     "rich",
     "typer",
-    "watchdog",
+    "watchfiles",
 ]
 
 [project.optional-dependencies]
