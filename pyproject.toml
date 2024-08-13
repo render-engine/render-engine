@@ -31,6 +31,7 @@ extras = [
 ]
 dev = [
     "cookiecutter",
+    "httpx",
     "pytest",
     "pytest-cov",
     "pytest-mock",
