@@ -1,16 +1,12 @@
-import signal
-import time
 import importlib
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
+import watchfiles
 from rich.console import Console
-from watchdog.events import FileSystemEvent, RegexMatchingEventHandler
-from watchdog.observers import Observer
 
 from render_engine import Site
-
 
 console = Console()
 
@@ -37,14 +33,14 @@ def spawn_server(
     return _httpd()
 
 
-class RegExHandler(RegexMatchingEventHandler):
+class ServerEventHandler:
     """
-    Initializes a handler that looks for file changes in a directory (`dir_to_watch`), as
+    Initializes a handler that looks for file changes in a directory (`dirs_to_watch`), as
     well as creates a server to serve files in a given directory (`dir_to_serve`). The
     class contains helper methods to manage server events in a thread.
 
     Meanwhile, the `watch` method uses an instance of this handler class to monitor for file
-    changes. The files to be monitored are all files/directories within the `dir_to_watch`,
+    changes. The files to be monitored are all files/directories within the `dirs_to_watch`,
     which defaults to the project root directory. The `patterns` and `ignore_patterns` are used
     to filter the files to be monitored using regular expressions.
 
@@ -52,7 +48,7 @@ class RegExHandler(RegexMatchingEventHandler):
         server_address: A tuple of the form (host, port)
         dir_to_serve: The directory to serve
         site: A Site instance
-        dir_to_watch: The directory to watch
+        dirs_to_watch: The directories to watch
         patterns: A list of regular expressions to filter files
         ignore_patterns: A list of regular expressions to ignore
     """
@@ -63,7 +59,7 @@ class RegExHandler(RegexMatchingEventHandler):
         dir_to_serve: str,
         import_path: str,
         site: Site,
-        dir_to_watch: str = ".",
+        dirs_to_watch: str | None = None,
         patterns: list[str] | None = None,
         ignore_patterns: list[str] | None = None,
         *args,
@@ -74,10 +70,9 @@ class RegExHandler(RegexMatchingEventHandler):
         self.import_path = import_path
         self.dir_to_serve = dir_to_serve
         self.site = site
-        self.dir_to_watch = dir_to_watch
+        self.dirs_to_watch = dirs_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
-        super().__init__(*args, **kwargs)
 
     def start_server(self) -> None:
         if not getattr(self, "server", False):
@@ -99,11 +94,6 @@ class RegExHandler(RegexMatchingEventHandler):
         importlib.reload(module)
         self.site.render()
 
-    def on_any_event(self, event: FileSystemEvent) -> None:
-        if event.is_directory:
-            return None
-        self.rebuild()
-
     def stop_watcher(self) -> bool:
         """
         logic to stop the watcher.
@@ -121,7 +111,7 @@ class RegExHandler(RegexMatchingEventHandler):
     def watch(self) -> None:
         """
         This function `watch` starts the server on the output path (`dir_to_serve`)
-        and monitors the specified directory (`dir_to_watch`) for changes.
+        and monitors the specified directories in (`dirs_to_watch`) for changes.
 
         After it starts the server, it "waits" and monitors the directory for
         changes. If a change is detected, the `on_any_event` method is called,
@@ -131,30 +121,24 @@ class RegExHandler(RegexMatchingEventHandler):
         If a KeyboardInterrupt is raised, it stops the observer and server.
         """
 
-        observer = Observer()
-
         console.print(f"[yellow]Serving {self.site.output_path}[/yellow]")
-        observer.schedule(self, self.dir_to_watch, recursive=True)
-        self.start_server()
-        observer.start()
-
         while not self.stop_watcher():
-            pass
-
-        observer.stop()
-        self.stop_server()
-        observer.join()
-        console.print("[bold red]FIN![/bold red]")
+            if self.dirs_to_watch:
+                for _ in watchfiles.watch(*self.dirs_to_watch):
+                    self.rebuild()
 
     def __enter__(self) -> "self":
-        """Starting Context manager for the RegExHandler class"""
+        """Starting Context manager for the class"""
         try:
             self._thread.server_close()
         except AttributeError:
             pass
         self.start_server()
+        self.watch()
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
-        """Stopping Context manager for the RegExHandler class"""
-        self.watch()
+        """Stopping Context manager for the class"""
+
+        self.stop_server()
+        console.print("[bold red]FIN![/bold red]")
         return None

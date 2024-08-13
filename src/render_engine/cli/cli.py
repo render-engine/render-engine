@@ -1,8 +1,8 @@
 # ruff: noqa: UP007
 import importlib
-import sys
 import json
 import shutil
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -11,10 +11,19 @@ from rich import print as rprint
 from rich.console import Console
 from rich.table import Table
 
-from render_engine.cli.event import RegExHandler
+from render_engine.cli.event import ServerEventHandler
 from render_engine.site import Site
 
 app = typer.Typer()
+
+
+def get_site_content_paths(site: Site) -> list[Path | None]:
+    """Get the content paths from the route_list in the Site"""
+
+    base_paths = map(
+        lambda x: getattr(x, "content_path", None), site.route_list.values()
+    )
+    return list(filter(lambda x: x is not None, base_paths))
 
 
 def get_site(import_path: str, site: str) -> Site:
@@ -135,7 +144,7 @@ def init(
         ),
     ] = Path("./"),
     cookiecutter_args: Annotated[
-        dict, typer.Option(callback=lambda x: json.loads(x))
+        Path, typer.Option(callback=lambda x: json.loads(x))
     ] = {},
 ) -> None:
     """
@@ -173,7 +182,7 @@ def init(
 @app.command()
 def build(
     module_site: Annotated[
-        tuple[str, str],
+        str,
         typer.Argument(
             callback=split_module_site,
             help="module:site for Build the site prior to serving",
@@ -205,7 +214,7 @@ def build(
 @app.command()
 def serve(
     module_site: Annotated[
-        tuple[str, str],
+        str,
         typer.Argument(
             callback=split_module_site,
             help="module:site for Build the site prior to serving",
@@ -267,32 +276,24 @@ def serve(
         remove_output_folder(Path(site.output_path))
     site.render()
 
-    if module_site:
-        directory = str(site.output_path)
+    directory = str(site.output_path)
 
     server_address = ("127.0.0.1", port)
 
-    handler = RegExHandler(
+    handler = ServerEventHandler(
+        import_path=module,
         server_address=server_address,
         dir_to_serve=directory,
+        dirs_to_watch=get_site_content_paths(site) if reload else None,
         site=site,
-        module_site=module_site,
         patterns=None,
         ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*$"],
     )
 
     console = Console()
 
-    if not reload:
-        console.print(
-            f"[bold green]Starting server on http://{server_address[0]}:{server_address[1]}[/bold green]"
-        )
-        handler._server(
-            server_address=server_address, directory=directory
-        ).serve_forever()
-    else:
-        console.print("Watching for changes...")
-        handler.watch()
+    with handler:
+        pass
 
 
 def cli():
