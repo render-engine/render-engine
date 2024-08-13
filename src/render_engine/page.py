@@ -94,8 +94,7 @@ class BasePage(BaseObject):
 
         except AttributeError:
             raise AttributeError(
-                f"{self} does not have a content attribute. "
-                "You must either provide a template or content."
+                f"{self} does not have a content attribute. " "You must either provide a template or content."
             )
 
     def __str__(self):
@@ -190,6 +189,4 @@ class Page(BasePage):
         Returns:
             Any: The parsed content of the page.
         """
-        return self.Parser.parse(
-            self.content, extras=getattr(self, "parser_extras", {})
-        )
+        return self.Parser.parse(self.content, extras=getattr(self, "parser_extras", {}))

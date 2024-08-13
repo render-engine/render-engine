@@ -1,5 +1,4 @@
 import pytest
-
 from render_engine.archive import Archive
 from render_engine.collection import Collection
 from render_engine.page import Page
@@ -58,12 +57,8 @@ def test_archive_num_of_pages(_items_per_page: int, num_of_pages: int):
     assert list(collection.archives)[0].template_vars["num_of_pages"] == num_of_pages
 
     if _items_per_page < 1:
-        assert (
-            list(collection.archives)[1].template_vars["num_of_pages"] == num_of_pages
-        )
-        assert (
-            list(collection.archives)[2].template_vars["num_of_pages"] == num_of_pages
-        )
+        assert list(collection.archives)[1].template_vars["num_of_pages"] == num_of_pages
+        assert list(collection.archives)[2].template_vars["num_of_pages"] == num_of_pages
 
 
 def test_archive_template_is_archive_html():

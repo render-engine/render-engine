@@ -4,7 +4,6 @@ import pluggy
 import pytest
 from conftest_feed import feed_test_site
 from jinja2 import StrictUndefined
-
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
@@ -48,10 +47,7 @@ def test_rss_feed_item_url(feed_test_site):
 
 def test_rss_feed_item_has_guid(feed_test_site):
     """Test that the feed item url is set correctly"""
-    assert (
-        '<guid isPermaLink="true">http://localhost:8000/page.html</guid>'
-        in feed_test_site
-    )
+    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in feed_test_site
 
 
 @pytest.mark.skip("Invalid Test")

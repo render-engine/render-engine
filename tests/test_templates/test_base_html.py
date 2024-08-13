@@ -1,6 +1,5 @@
 import pytest
 from jinja2 import DictLoader
-
 from render_engine.page import Page
 from render_engine.site import Site
 from render_engine.themes import Theme
@@ -34,10 +33,7 @@ def test_base_html_body_class(theme_site):
     theme_site.register_themes(bodyClassTheme)
     theme_site._render_output("./", theme_site.route_list["testpage"])
 
-    assert (
-        '<body class="my-class">'
-        in (theme_site.output_path / "testpage.html").read_text()
-    )
+    assert '<body class="my-class">' in (theme_site.output_path / "testpage.html").read_text()
 
 
 def test_base_html_head_include(theme_site):
@@ -54,10 +50,7 @@ def test_base_html_head_include(theme_site):
     theme_site.load_themes()
     theme_site._render_output("./", theme_site.route_list["testpage"])
 
-    assert (
-        "<script>console.log('test')</script>"
-        in (theme_site.output_path / "testpage.html").read_text()
-    )
+    assert "<script>console.log('test')</script>" in (theme_site.output_path / "testpage.html").read_text()
 
 
 def test_base_html_head_reload_theme_count(theme_site):

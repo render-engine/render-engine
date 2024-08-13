@@ -2,7 +2,6 @@ import pathlib
 
 import jinja2
 import pytest
-
 from render_engine import Page
 
 
@@ -43,9 +42,7 @@ def test_page_from_template(tmp_path: pathlib.Path):
         title = "Test Page"
         template = "test.html"
 
-    environment = jinja2.Environment(
-        loader=jinja2.DictLoader({"test.html": "{{ title }}"})
-    )
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": "{{ title }}"}))
 
     page = CustomPage()
     assert page._render_content(engine=environment) == "Test Page"
@@ -71,7 +68,4 @@ def test_rendered_page_from_template_has_attributes():
     class CustomPage(Page):
         template = environment.get_template("test.html")
 
-    assert (
-        CustomPage()._render_from_template(template=CustomPage.template)
-        == "CustomPage-custompage-/custompage.html"
-    )
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "CustomPage-custompage-/custompage.html"

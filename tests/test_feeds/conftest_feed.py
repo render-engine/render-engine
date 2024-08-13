@@ -1,5 +1,4 @@
 import pytest
-
 from render_engine import Collection, Page, Site
 from render_engine.feeds import RSSFeed
 
@@ -38,7 +37,5 @@ def feed_test_site(tmp_path):
         routes = ["feed"]
 
     feed = site.route_list["testcollection"].feed
-    feed_content = feed._render_content(
-        engine=site.theme_manager.engine, SITE_URL="http://localhost:8000"
-    )
+    feed_content = feed._render_content(engine=site.theme_manager.engine, SITE_URL="http://localhost:8000")
     return feed_content

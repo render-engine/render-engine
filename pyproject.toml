@@ -68,8 +68,9 @@ version_toml = "pyproject.toml:project.version"
 branch = "main"
 
 [tool.ruff]
-lint.select = ["E", "F", "I", "UP"]
+line-length = 120
+indent-width = 4
 target-version = "py312"
-lint.pycodestyle.max-line-length = 120
-src = ["src"]
-lint.ignore-init-module-imports = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
