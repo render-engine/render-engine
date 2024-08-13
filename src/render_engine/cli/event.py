@@ -127,7 +127,7 @@ class ServerEventHandler:
                 for _ in watchfiles.watch(*self.dirs_to_watch):
                     self.rebuild()
 
-    def __enter__(self) -> "self":
+    def __enter__(self):
         """Starting Context manager for the class"""
         try:
             self._thread.server_close()

@@ -290,7 +290,6 @@ def serve(
         ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*$"],
     )
 
-    console = Console()
 
     with handler:
         pass
