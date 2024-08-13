@@ -1,9 +1,8 @@
 # ruff: noqa: UP007
-
 import importlib
+import sys
 import json
 import shutil
-import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -18,6 +17,13 @@ from render_engine.site import Site
 app = typer.Typer()
 
 
+def get_site(import_path: str, site: str) -> Site:
+    """Split the site module into a module and a class name"""
+    sys.path.insert(0, ".")
+    importlib.import_module(import_path)
+    return getattr(sys.modules[import_path], site)
+
+
 def remove_output_folder(output_path: Path) -> None:
     """Remove the output folder"""
     if output_path.exists():
@@ -27,25 +33,18 @@ def remove_output_folder(output_path: Path) -> None:
 def split_module_site(module_site: str) -> tuple[str, str]:
     """splits the module_site into a module and a class name"""
     try:
-        import_path, app_name = module_site.split(":", 1)
+        import_path, site = module_site.split(":", 1)
     except ValueError:
         raise typer.BadParameter(
             "module_site must be of the form `module:site`",
         )
-    return import_path, app_name
+    return import_path, site
 
 
-def get_app(import_path, app_name) -> Site:
-    """Split the site module into a module and a class name"""
-    sys.path.insert(0, ".")
-    importlib.import_module(import_path)
-    return getattr(sys.modules[import_path], app_name)
-
-
-def get_available_themes(console: Console, app: Site, theme_name: str) -> list[str]:
+def get_available_themes(console: Console, site: Site, theme_name: str) -> list[str]:
     """Returns the list of available themes to the Console"""
     try:
-        return app.theme_manager.prefix[theme_name].list_templates()
+        return site.theme_manager.prefix[theme_name].list_templates()
     except KeyError:
         console.print(f"[bold red]{theme_name} not installed[bold red]")
         return []
@@ -82,11 +81,11 @@ def templates(
         filter_value: Optional. Filters templates based on provided names.
     """
     module, site = module_site
-    app = get_app(module, site)
+    site = get_site(module, site)
     console = Console()
 
     if theme_name:
-        available_themes = get_available_themes(console, app, theme_name)
+        available_themes = get_available_themes(console, site, theme_name)
         if available_themes:
             display_filtered_templates(
                 f"[bold green]Available templates for {theme_name} [bold green]",
@@ -97,7 +96,7 @@ def templates(
         console.print(
             "[red]No theme name specified. Listing all installed themes and their templates[red]"
         )
-        for theme_prefix, theme_loader in app.theme_manager.prefix.items():
+        for theme_prefix, theme_loader in site.theme_manager.prefix.items():
             templates_list = theme_loader.list_templates()
             display_filtered_templates(
                 f"[bold green]Showing templates for {theme_prefix}[bold green]",
@@ -112,15 +111,17 @@ def init(
         str,
         typer.Argument(help="Template to use for creating a new site"),
     ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
-    extra_context: Annotated[
-        str,
-        typer.Option(
-            "--extra-context",
-            "-e",
-            help="Extra context to pass to the cookiecutter template. This must be a JSON string",
-        ),
-    ]
-    | None = None,
+    extra_context: (
+        Annotated[
+            str,
+            typer.Option(
+                "--extra-context",
+                "-e",
+                help="Extra context to pass to the cookiecutter template. This must be a JSON string",
+            ),
+        ]
+        | None
+    ) = None,
     no_input: Annotated[
         bool, typer.Option("--no-input", help="Do not prompt for parameters")
     ] = False,
@@ -195,10 +196,10 @@ def build(
 
     """
     module, site = module_site
-    app = get_app(module, site)
+    site = get_site(module, site)
     if clean:
-        remove_output_folder(Path(app.output_path))
-    app.render()
+        remove_output_folder(Path(site.output_path))
+    site.render()
 
 
 @app.command()
@@ -260,21 +261,21 @@ def serve(
     """
 
     module, site = module_site
-    app = get_app(module, site)
+    site = get_site(module, site)
 
     if clean:
-        remove_output_folder(Path(app.output_path))
-    app.render()
+        remove_output_folder(Path(site.output_path))
+    site.render()
 
     if module_site:
-        directory = str(app.output_path)
+        directory = str(site.output_path)
 
     server_address = ("127.0.0.1", port)
 
     handler = RegExHandler(
         server_address=server_address,
         dir_to_serve=directory,
-        app=app,
+        site=site,
         module_site=module_site,
         patterns=None,
         ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*$"],

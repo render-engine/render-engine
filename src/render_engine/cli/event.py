@@ -1,3 +1,5 @@
+import signal
+import time
 import importlib
 import threading
 import time
@@ -8,6 +10,7 @@ from watchdog.events import FileSystemEvent, RegexMatchingEventHandler
 from watchdog.observers import Observer
 
 from render_engine import Site
+
 
 console = Console()
 
@@ -20,9 +23,8 @@ def spawn_server(
     from the specified directory.
 
     Params:
-            server_address: A tuple of a string and integer representing the server address (host, port).
-            directory: A string representing the directory from which the server should serve files.
-
+        server_address: A tuple of a string and integer representing the server address (host, port).
+        directory: A string representing the directory from which the server should serve files.
     """
 
     class _RequestHandler(SimpleHTTPRequestHandler):
@@ -49,7 +51,7 @@ class RegExHandler(RegexMatchingEventHandler):
     Params:
         server_address: A tuple of the form (host, port)
         dir_to_serve: The directory to serve
-        app: A Site instance
+        site: A Site instance
         dir_to_watch: The directory to watch
         patterns: A list of regular expressions to filter files
         ignore_patterns: A list of regular expressions to ignore
@@ -59,8 +61,8 @@ class RegExHandler(RegexMatchingEventHandler):
         self,
         server_address: tuple[str, int],
         dir_to_serve: str,
-        app: Site,
-        module_site: tuple[str, str],
+        import_path: str,
+        site: Site,
         dir_to_watch: str = ".",
         patterns: list[str] | None = None,
         ignore_patterns: list[str] | None = None,
@@ -68,40 +70,53 @@ class RegExHandler(RegexMatchingEventHandler):
         **kwargs,
     ) -> None:
         self.p = None
-        self._server = spawn_server
         self.server_address = server_address
-        self.dir_to_serve = (dir_to_serve,)
-        self.app = app
-        self.module_site = module_site
+        self.import_path = import_path
+        self.dir_to_serve = dir_to_serve
+        self.site = site
         self.dir_to_watch = dir_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
         super().__init__(*args, **kwargs)
 
     def start_server(self) -> None:
-        console.print(
-            f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
-        )
-        self._server = spawn_server(self.server_address, self.dir_to_serve[0])
-        self._thread = threading.Thread(target=self._server.serve_forever)
+        if not getattr(self, "server", False):
+            console.print(
+                f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
+            )
+            self.server = spawn_server(self.server_address, self.dir_to_serve)
+        self._thread = threading.Thread(target=self.server.serve_forever)
         self._thread.start()
 
     def stop_server(self) -> None:
         console.print("[bold red]Stopping server[/bold red]")
-        self._server.shutdown()
+        self.server.shutdown()
         self._thread.join()
 
     def rebuild(self) -> None:
         console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
-        import_path = self.module_site[0]
-        module = importlib.import_module(import_path)
+        module = importlib.import_module(self.import_path)
         importlib.reload(module)
-        self.app.render()
+        self.site.render()
 
     def on_any_event(self, event: FileSystemEvent) -> None:
         if event.is_directory:
             return None
         self.rebuild()
+
+    def stop_watcher(self) -> bool:
+        """
+        logic to stop the watcher.
+
+        By default this code looks for the KeyboardInterrupt
+        """
+
+        # return if keyboard interrupt is raised
+        try:
+            time.sleep(1)
+            return False
+        except KeyboardInterrupt:
+            return True
 
     def watch(self) -> None:
         """
@@ -116,19 +131,30 @@ class RegExHandler(RegexMatchingEventHandler):
         If a KeyboardInterrupt is raised, it stops the observer and server.
         """
 
-        console.print(f"[yellow]Serving {self.app.output_path}[/yellow]")
-
         observer = Observer()
+
+        console.print(f"[yellow]Serving {self.site.output_path}[/yellow]")
         observer.schedule(self, self.dir_to_watch, recursive=True)
         self.start_server()
         observer.start()
 
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            console.print("watcher terminated by keystroke")
-            observer.stop()
-            self.stop_server()
+        while not self.stop_watcher():
+            pass
+
+        observer.stop()
+        self.stop_server()
         observer.join()
         console.print("[bold red]FIN![/bold red]")
+
+    def __enter__(self) -> "self":
+        """Starting Context manager for the RegExHandler class"""
+        try:
+            self._thread.server_close()
+        except AttributeError:
+            pass
+        self.start_server()
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        """Stopping Context manager for the RegExHandler class"""
+        self.watch()
+        return None
