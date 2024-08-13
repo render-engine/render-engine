@@ -47,10 +47,7 @@ def test_rss_feed_item_url(feed_test_site):
 
 def test_rss_feed_item_has_guid(feed_test_site):
     """Test that the feed item url is set correctly"""
-    assert (
-        '<guid isPermaLink="true">http://localhost:8000/page.html</guid>'
-        in feed_test_site
-    )
+    assert '<guid isPermaLink="true">http://localhost:8000/page.html</guid>' in feed_test_site
 
 
 @pytest.mark.skip("Invalid Test")

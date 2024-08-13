@@ -11,9 +11,7 @@ from render_engine import Site
 console = Console()
 
 
-def spawn_server(
-    server_address: tuple[str, int], directory: str
-) -> ThreadingHTTPServer:
+def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHTTPServer:
     """
         Create and return an instance of ThreadingHTTPServer that serves files
     from the specified directory.

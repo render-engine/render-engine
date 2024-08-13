@@ -25,9 +25,7 @@ def site(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def event_handler(site):
-
     class Handler(ServerEventHandler):
-
         def stop_watcher(self):  # Stop the
             time.sleep(2)
             return True

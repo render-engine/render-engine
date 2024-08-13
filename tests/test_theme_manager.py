@@ -33,9 +33,7 @@ def test_ThemeManager_registers_theme():
     )
 
     thememgr = ThemeManager(
-        engine=Environment(
-            loader=ChoiceLoader([FileSystemLoader("templates"), PrefixLoader({})])
-        ),
+        engine=Environment(loader=ChoiceLoader([FileSystemLoader("templates"), PrefixLoader({})])),
         output_path="test",
     )
     for x in (loader2theme, loader3theme, loader4theme):

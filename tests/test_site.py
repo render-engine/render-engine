@@ -84,9 +84,7 @@ def test_site_collection_in_route_list(site):
 
     assert site.route_list["collection"] == collection
     assert len(site.route_list) == 1
-    assert "custompage1" in [
-        getattr(page, page._reference) for page in site.route_list["collection"]
-    ]
+    assert "custompage1" in [getattr(page, page._reference) for page in site.route_list["collection"]]
 
 
 def test_site_page_with_multiple_routes_has_one_entry_in_routes_list(site):
@@ -123,9 +121,7 @@ def test_collection_archive_in_route_list(site, tmp_path: Path):
     test_collection_archive_template.write_text("This is the collection archive")
 
     test_collection_template = Path(tmp_path / "collection_archive_item_template.html")
-    test_collection_template.write_text(
-        "The collection archive route is at '{{ 'customcollection' |url_for }}'"
-    )
+    test_collection_template.write_text("The collection archive route is at '{{ 'customcollection' |url_for }}'")
 
     site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
 
@@ -141,10 +137,7 @@ def test_collection_archive_in_route_list(site, tmp_path: Path):
     site.render()
     assert site.output_path.joinpath("customcollection.html").exists()
     assert site.output_path.joinpath("customcollectionpage.html").exists()
-    assert (
-        site.output_path.joinpath("customcollection.html").read_text()
-        == "This is the collection archive"
-    )
+    assert site.output_path.joinpath("customcollection.html").read_text() == "This is the collection archive"
     assert (
         site.output_path.joinpath("customcollectionpage.html").read_text()
         == "The collection archive route is at '/customcollection.html'"
@@ -153,9 +146,7 @@ def test_collection_archive_in_route_list(site, tmp_path: Path):
 
 @pytest.fixture(scope="module")
 def site_with_collection(tmp_path_factory: pytest.TempPathFactory):
-    collection_archive_path = (
-        tmp_path_factory.getbasetemp() / "collection_archive_items"
-    )
+    collection_archive_path = tmp_path_factory.getbasetemp() / "collection_archive_items"
     collection_archive_output_path = collection_archive_path / "output"
     static_tmp_dir = collection_archive_path / "static"
     static_tmp_dir.mkdir(parents=True)
@@ -192,10 +183,7 @@ def test_collection_archives_generates_by_items_per_page(site_with_collection: S
         2: second page item
     """
 
-    assert (
-        len(list(site_with_collection.route_list["custompagescollection"].archives))
-        == 3
-    )
+    assert len(list(site_with_collection.route_list["custompagescollection"].archives)) == 3
 
 
 def test_collection_archive_pages_in_route_list(site_with_collection: Site):
@@ -210,9 +198,7 @@ def test_url_for_Collection_in_site(site: Site, tmp_path: Path):
     Tests that url_for a page in a collection is added to a template
     """
     test_template = Path(tmp_path / "custom_template.html")
-    test_template.write_text(
-        "The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'"
-    )
+    test_template.write_text("The URL is '{{ 'customcollection.customcollectionpage' | url_for }}'")
     if site.theme_manager.engine.loader is not None:
         site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
 
