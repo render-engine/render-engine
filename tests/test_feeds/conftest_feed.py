@@ -1,5 +1,4 @@
 import pytest
-
 from render_engine import Collection, Page, Site
 from render_engine.feeds import RSSFeed
 

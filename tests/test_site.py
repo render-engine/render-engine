@@ -3,7 +3,6 @@ from pathlib import Path
 import pluggy
 import pytest
 from jinja2 import DictLoader, FileSystemLoader
-
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.plugins import SiteSpecs
