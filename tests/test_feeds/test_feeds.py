@@ -4,6 +4,7 @@ import pluggy
 import pytest
 from conftest_feed import feed_test_site
 from jinja2 import StrictUndefined
+
 from render_engine.collection import Collection
 from render_engine.feeds import RSSFeed
 from render_engine.page import Page
