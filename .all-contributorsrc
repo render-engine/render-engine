@@ -156,6 +156,15 @@
       "contributions": [
         "infra"
       ]
+    },
+    {
+      "login": "OsamaRab3",
+      "name": "Osama Rabea ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159753803?v=4",
+      "profile": "https://github.com/OsamaRab3",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
