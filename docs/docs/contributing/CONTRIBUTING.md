@@ -1,3 +1,10 @@
+---
+title: "Contributing to Render Engine"
+description: "This document will help you get started in contributing to the Render Engine codebase is open source and contributions are welcome."
+date: August 22, 2024
+tags: ["contribution", "guide", "open-source", "render-engine"]
+---
+
 # Contributing to Render Engine
 
 This document will help you get started in contributing to the Render Engine codebase is open source and contributions are welcome.
