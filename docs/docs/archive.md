@@ -1,3 +1,9 @@
+---
+title: "Archive"
+description: "Guide to Archive objects used to display and manage a list of pages in a collection."
+date: August 22, 2024
+tags: ["archive", "parameters", "collection"]
+---
 <!-- markdownlint-disable MD052 -->
 
 # Archive
