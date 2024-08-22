@@ -1,3 +1,9 @@
+---
+title: "Installing Render Engine"
+description: "Instructions for installing Render Engine, including dependencies and additional modules."
+date: August 22, 2024
+tags: ["installation", "render engine"]
+---
 # Installing Render Engine
 
 In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
