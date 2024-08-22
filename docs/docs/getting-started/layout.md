@@ -1,4 +1,9 @@
-# Simple Site Layout
+---
+title: "Simple Site Layout"
+description: "Learn the basic structure of a Render Engine site, including file layout, site configuration, and adding pages and collections."
+date: August 22, 2024
+tags: ["site", "layout", "render-engine"]
+---
 
 Render Engine has a very simple site layout. You can see the example site layout below generated via the cli.
 

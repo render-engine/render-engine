@@ -1,4 +1,9 @@
-# Site
+---
+title: "Site"
+description: "Overview of the Site class in Render Engine, including attributes, functions for managing pages and collections, and rendering content."
+date: August 22, 2024
+tags: ["site", "pages", "collections", "rendering"]
+---
 
 The site stores your pages and collections to be rendered.
 

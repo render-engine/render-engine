@@ -1,4 +1,9 @@
-# Creating a Collection
+---
+title: "Creating a Collection"
+description: "Learn how to create and configure collections in Render Engine, including setting up page attributes, templates, and using the `Collection` class."
+date: August 22, 2024
+tags: ["collections", "page-configuration", "template-variables", "render-engine"]
+---
 
 [Collection](../collection.md) objects allow you to build multiple Pages from a single configuration. They are rendered using the site's `collection` decorator.
 

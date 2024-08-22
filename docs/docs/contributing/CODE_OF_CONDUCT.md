@@ -1,4 +1,9 @@
-# Contributor Covenant Code of Conduct
+---
+title: "Contributor Covenant Code of Conduct"
+description: "This document outlines the code of conduct for contributors, promoting a harassment-free and inclusive community environment."
+date: August 22, 2024
+tags:  ["code-of-conduct", "community", "guidelines"]
+---
 
 ## Our Pledge
 

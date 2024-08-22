@@ -1,4 +1,9 @@
-Theme Management
+---
+title: "Theme Management"
+description: "Guide to managing themes in Render Engine, including adding custom templates, handling static files, and integrating third-party themes."
+date: August 22, 2024
+tags: ["themes", "static-files", "custom-templates", "theme-management"]
+---
 
 Themes are managed by your Site.
 

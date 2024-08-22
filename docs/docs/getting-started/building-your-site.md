@@ -1,4 +1,9 @@
-# Building Your Site
+---
+title: "Building your Site"
+description: "Instructions on how to build your site using Render Engine, including using the `render()` method and the CLI `build` command."
+date: August 22, 2024
+tags: ["building", "site-generation", "render-engine"]
+---
 
 Once you've created the [layout](layout.md) of your site, you can start building it.
 

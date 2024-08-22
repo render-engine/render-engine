@@ -1,4 +1,9 @@
-# Templates
+---
+title: "Templates"
+description: "Guide to using templates in Render Engine with Jinja2, including global variables, filters, and formatting options."
+date: August 22, 2024
+tags: ["jinja2", "templates", "filters", "site-variables","route-list"]
+---
 
 Like most Python web frameworks, Render Engine also supports templating.
 

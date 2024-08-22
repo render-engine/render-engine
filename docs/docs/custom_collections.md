@@ -1,4 +1,9 @@
-# Custom collections
+---
+title: "Custom Collections"
+description: "Guide to creating and managing custom collections in Render Engine, including attributes, methods, and installation steps."
+date: August 22, 2024
+tags: ["collection", "render-engine", "custom-collections"]
+---
 
 Custom collections are a way for you to create collections for distribution.
 
