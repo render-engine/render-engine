@@ -2,9 +2,8 @@
 title: "Creating a Page"
 description: "Guide to creating and configuring `Page` objects in Render Engine, including setting attributes, handling content, and using `Parser` for content files."
 date: August 22, 2024
-tags: ["pages", "jinja2", "content management", "render engine"]
+tags: ["pages", "jinja2", "content-management", "render-engine"]
 ---
-# Creating a Page
 
 `Page` objects represent a single webpage on your site. They are rendered using the site's `page` decorator. You can pass any attributes into the `Page` class that you want to be available in your template. There are also some special variables that are used by Render Engine.
 

@@ -5,8 +5,6 @@ date: August 22, 2024
 tags: ["site", "pages", "collections", "rendering"]
 ---
 
-# Site
-
 The site stores your pages and collections to be rendered.
 
 **Attributes:**

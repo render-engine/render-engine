@@ -2,9 +2,9 @@
 title: "Page Objects"
 description: "Overview of Page Objects in Render Engine, including BasePage and Page classes, their attributes, and how they fit into the 3-layer architecture"
 date: August 22, 2024
-tags: ["basepage", "page objects", "installation"]
+tags: ["basepage", "page-objects", "installation"]
 ---
-# Page Objects
+<!-- markdownlint-disable MD056 -->
 
 At Render Engine's core is the page. A page is a single unit of content. Pages are the building blocks of your site. If you want to display information on your site, you will need to create a page.
 

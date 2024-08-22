@@ -2,9 +2,8 @@
 title: "Collection"
 description: "Guide to creating and managing collections in Render Engine, including attributes, functions, and archives."
 date: August 22, 2024
-tags: ["collection", "render engine", "archive"]
+tags: ["collection", "render-engine", "archive"]
 ---
-# Collection
 
 Bases: `BaseObject`
 

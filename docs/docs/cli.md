@@ -2,9 +2,8 @@
 title: "Render Engine CLI"
 description: "Guide to using Render Engine CLI for creating, building, and serving your site."
 date: August 22, 2024
-tags: ["render engine", "cli", "site setup", "build", "serve"]
+tags: ["render-engine", "cli", "site-setup", "build", "serve"]
 ---
-# Render Engine CLI
 
 Render Engine comes with a CLI that can be used to create, build, and serve your site.
 

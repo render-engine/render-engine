@@ -2,8 +2,9 @@
 title: "Enhancing Functionality with Plugins"
 description: "Guide to using and managing plugins in Render Engine. Learn how to register plugins, apply them to pages and collections, and exclude specific plugins."
 date: August 22, 2024
-tags: ["plugins", "render engine", "customization"]
+tags: ["plugins", "render-engine", "customization"]
 ---
+
 Plugins are a way to extend the functionality of the render engine site.
 
 Plugins are registered by using `register_plugins`

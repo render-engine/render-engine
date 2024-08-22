@@ -1,10 +1,9 @@
 ---
-title: "Create Your Site File"
+title: "Create your site file"
 description: "Instructions for initializing a site using the `render-engine init` CLI command, including installation of `cookiecutter` and customization options."
 date: August 22, 2024
-tags: ["initialization", "cli", "cookiecutter", "render engine"]
+tags: ["initialization", "cli", "cookiecutter", "render-engine"]
 ---
-## Create your site file
 
 You can get started quickly using the `render-engine init` cli command.
 

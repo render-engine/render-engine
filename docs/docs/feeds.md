@@ -2,9 +2,8 @@
 title: "RSS Feed"
 description: "Guide to creating and managing RSS feeds using Render Engine, including the base RSSFeed class and custom feed configurations."
 date: August 22, 2024
-tags: ["rss feed", "render_engine package", "custom Feed"]
+tags: ["rss", feed", "render-engine", "custom"]
 ---
-# RSS Feed
 
 Feed Objects for Generating RSS Feeds
 

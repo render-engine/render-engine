@@ -4,9 +4,6 @@ description: "Guide to Archive objects used to display and manage a list of page
 date: August 22, 2024
 tags: ["archive", "parameters", "collection"]
 ---
-<!-- markdownlint-disable MD052 -->
-
-# Archive
 
 Archives are a [`BasePage`](page.md?id=basepage) object used to display a list of [`Page`](page.md?id=page) objects in a [`Collection`](collection.md?id=collection).
 
