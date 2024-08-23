@@ -38,7 +38,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.12"]
       fail-fast: true
     runs-on: ${{ matrix.os }}
     steps:
