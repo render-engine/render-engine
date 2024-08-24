@@ -7,13 +7,14 @@ on:
       - main
   pull_request:
     paths:
+      - ".github/workflows/test.yml"
       - "src/**"
       - "tests/**"
       - "pyproject.toml"
       - "requirements.txt"
 
 jobs:
-  test-against-matrix:
+  test-against-python-matrix:
     # Only test all the supported versions when a pull request is made or the workflow is called
     if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
@@ -33,11 +34,11 @@ jobs:
         run: |
           python -m pytest
 
-  test-against-latest:
-    # Always run against the latest version on both Windows and Linux
+  test-against-latest-os:
+    # Always run against the latest version on both Windows, Linux, MacOS
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: true
     runs-on: ${{ matrix.os }}
     steps:
@@ -54,30 +55,6 @@ jobs:
       - name: coverage
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report-${{ github.run_id }}
+          name: code-coverage-report-${{ matrix.os }}
           path: .coverage
-
-  test-against-macos:
-  # Test against the latest version on macOS (both Intel and Apple Silicon)
-    if: github.event_name == 'release' && github.event.action == 'published'
-    strategy:
-      matrix:
-        os: [macos-latest]
-      fail-fast: true
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install requirements
-        run: |
-          python -m pip install -e .[dev]
-      - name: Run tests
-        run: |
-          python -m pytest
-      - name: coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report-${{ github.run_id }}
-          path: .coverage
+          overwrite: true
