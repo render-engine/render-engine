@@ -15,7 +15,7 @@ on:
 jobs:
   test-against-matrix:
     # Only test all the supported versions when a pull request is made or the workflow is called
-    if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'pull_request'}}
+    if: ${{ github.event_name == 'workflow_call' }} || ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -54,11 +54,11 @@ jobs:
       - name: coverage
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report-${{ github.run_id }}
+          name: -${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}
           path: .coverage
 
   test-against-macos:
-  # Test against the latest version on macOS (both Intel and Apple Silicon)
+    # Test against the latest version on macOS (both Intel and Apple Silicon)
     if: github.event_name == 'release' && github.event.action == 'published'
     strategy:
       matrix:
@@ -79,5 +79,5 @@ jobs:
       - name: coverage
         uses: actions/upload-artifact@v4
         with:
-          name: code-coverage-report-${{ github.run_id }}
+          name: -${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}cle
           path: .coverage
