@@ -1,4 +1,9 @@
-# Parsers
+---
+title: "Parsers"
+description: "Overview of content parsers in Render Engine, including BasePageParser, MarkdownPageParser, and custom parsers."
+date: August 22, 2024
+tags: ["basepageparser", "markdownpageparser", "custom-parsers", "rendering"]
+---
 
 Parsers control how content is parsed and rendered.
 

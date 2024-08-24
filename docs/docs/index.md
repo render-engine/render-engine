@@ -1,12 +1,19 @@
+---
+title: "What is RenderEngine"
+description: "Overview of Render Engine, its 3-layer architecture, installation instructions, and initial setup."
+date: August 22, 2024
+tags: ["render-engine", "3-layer-architecture", "installation", "getting-started"]
+---
+
 ## What is RenderEngine
 
-## The _3 layer_ Architecture
+### The _3 layer_ Architecture
 
 * **[Page](page.md)** - A single webpage item built from content, a template, raw data, or a combination of those things.
 * **[Collection](collection.md)** - A group of webpages built from the same template, organized in a single directory
 * **[Site](site.md)** - The container that helps to render all Pages and Collections in with uniform settings and variables
 
-## Installing Render Engine
+### Installing Render Engine
 
 In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
 

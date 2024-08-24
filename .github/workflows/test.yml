@@ -34,7 +34,6 @@ jobs:
           python -m pytest
 
   test-against-latest:
-    # Always run against the latest version on both Windows and Linux
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -54,11 +53,10 @@ jobs:
       - name: coverage
         uses: actions/upload-artifact@v4
         with:
-          name: -${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}
+          name: code-coverage-${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}
           path: .coverage
 
   test-against-macos:
-    # Test against the latest version on macOS (both Intel and Apple Silicon)
     if: github.event_name == 'release' && github.event.action == 'published'
     strategy:
       matrix:
@@ -79,5 +77,5 @@ jobs:
       - name: coverage
         uses: actions/upload-artifact@v4
         with:
-          name: -${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}cle
+          name: code-coverage-${{ github.run_id }}-${{ matrix.os }}-${{ matrix.python-version }}-${{ github.run_number }}
           path: .coverage

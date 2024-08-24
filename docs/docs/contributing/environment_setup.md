@@ -1,4 +1,9 @@
-## Developing Locally
+---
+title: "Developing Locally"
+description: "This document guides you through setting up a local development environment using Python, virtual environments, VS Code, Codespaces, and Dev Containers."
+date: August 22, 2024
+tags: ["setup", "python", "virtual-environment", "vs-code", "codespaces", "dev-containers"]
+---
 
 ### Install Python
 
