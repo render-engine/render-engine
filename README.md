@@ -1,5 +1,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 > **WARNING**
@@ -26,7 +28,7 @@
 
 ## Installing Render Engine
 
-To use the render engine, you must have Python 3.10 installed. You can download Python from [python.org](https://python.org).
+To use the render engine, you must have Python 3.10 or greater installed. You can download Python from [python.org](https://python.org).
 
 - Linux/MacOS: [python.org](https://python.org)
 - Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
@@ -35,6 +37,12 @@ Render Engine is available in PyPI and can be installed using pip:
 
 ```bash
 pip install render-engine
+```
+
+To use the cli, install the cli extras
+
+```bash
+pip install render-engine[cli]
 ```
 
 ## Getting Started
