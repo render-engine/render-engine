@@ -4,9 +4,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-> **WARNING**
-> The 2023.9.1 update changes `site.static_path` to `site.static_paths` any custom output paths will need to be updated to reflect this change. `'output'` is still the default value for `site.static_paths` and will be used if no value is provided.
-
 # Render Engine
 
 [![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
