@@ -16,6 +16,12 @@ Render Engine is available in PyPI and can be installed using pip:
 pip install render-engine
 ```
 
+To use the cli, install the cli extras
+
+```bash
+pip install render-engine[cli]
+```
+
 Render Engine also supports multiple parsers and modules. You will need to install them separately.
 
 For example, to use the rss parser, you will need to install the [render-engine-rss] module:
