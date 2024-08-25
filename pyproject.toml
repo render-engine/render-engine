@@ -19,18 +19,23 @@ dependencies = [
     "python-slugify",
     "render-engine-parser",
     "render-engine-markdown",
+]
+
+[project.optional-dependencies]
+cli = [
+    "cookiecutter",
     "rich",
     "typer",
     "watchfiles",
 ]
-
-[project.optional-dependencies]
 extras = [
-    "render-engine-sitemap",
-    "cookiecutter",
+  "render-engine-sitemap"
 ]
 dev = [
     "cookiecutter",
+    "rich",
+    "typer",
+    "watchfiles",
     "httpx",
     "pytest",
     "pytest-cov",
