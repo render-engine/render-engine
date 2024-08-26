@@ -59,7 +59,7 @@ httpx==0.27.0
     # via render_engine (pyproject.toml)
 identify==2.6.0
     # via pre-commit
-idna==3.7
+idna==3.8
     # via
     #   anyio
     #   httpx
