@@ -120,7 +120,7 @@ mkdocstrings-python==1.10.8
     # via mkdocstrings
 more-itertools==10.4.0
     # via render_engine (pyproject.toml)
-mypy==1.11.1
+mypy==1.11.2
     # via render_engine (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
