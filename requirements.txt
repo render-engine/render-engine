@@ -104,7 +104,7 @@ mkdocs==1.6.0
     #   mkdocs-material
     #   mkdocstrings
     #   render_engine (pyproject.toml)
-mkdocs-autorefs==1.0.1
+mkdocs-autorefs==1.1.0
     # via mkdocstrings
 mkdocs-get-deps==0.2.0
     # via mkdocs
