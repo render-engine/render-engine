@@ -199,7 +199,7 @@ requests==2.32.3
     # via
     #   cookiecutter
     #   mkdocs-material
-rich==13.7.1
+rich==13.8.0
     # via
     #   cookiecutter
     #   render_engine (pyproject.toml)
