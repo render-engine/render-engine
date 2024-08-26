@@ -130,7 +130,7 @@ packaging==24.1
     # via
     #   mkdocs
     #   pytest
-paginate==0.5.6
+paginate==0.5.7
     # via mkdocs-material
 pathspec==0.12.1
     # via mkdocs
