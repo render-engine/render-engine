@@ -1,6 +1,5 @@
 import pytest
 from jinja2 import Environment, select_autoescape
-
 from render_engine.collection import Collection
 from render_engine.engine import (
     render_engine_templates_loader,

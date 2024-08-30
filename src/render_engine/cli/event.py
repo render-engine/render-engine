@@ -54,7 +54,6 @@ class ServerEventHandler:
     def __init__(
         self,
         server_address: tuple[str, int],
-        dir_to_serve: str,
         import_path: str,
         site: Site,
         dirs_to_watch: str | None = None,
@@ -66,7 +65,6 @@ class ServerEventHandler:
         self.p = None
         self.server_address = server_address
         self.import_path = import_path
-        self.dir_to_serve = dir_to_serve
         self.site = site
         self.dirs_to_watch = dirs_to_watch
         self.patterns = patterns
@@ -77,7 +75,7 @@ class ServerEventHandler:
             console.print(
                 f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
             )
-            self.server = spawn_server(self.server_address, self.dir_to_serve)
+            self.server = spawn_server(self.server_address, self.site.output_path)
         self._thread = threading.Thread(target=self.server.serve_forever)
         self._thread.start()
 
