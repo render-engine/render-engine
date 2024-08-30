@@ -33,6 +33,8 @@ def get_site(import_path: str, site: str) -> Site:
 
 def remove_output_folder(output_path: Path) -> None:
     """Remove the output folder"""
+
+    # TODO: #778 Should we check for Operating System
     if output_path.exists():
         shutil.rmtree(output_path)
 
