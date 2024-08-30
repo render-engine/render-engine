@@ -2,6 +2,7 @@ import datetime
 
 import jinja2
 import pytest
+
 from render_engine.engine import format_datetime
 
 
