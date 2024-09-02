@@ -33,7 +33,6 @@ def event_handler(site):
 
     handler = Handler(
         server_address=("localhost", 8000),
-        dir_to_serve=site.output_path,
         import_path="tests.tests_cli.test_render_engine_cli",
         site=site,
         dirs_to_watch=None,

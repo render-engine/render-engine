@@ -264,14 +264,11 @@ def serve(
         remove_output_folder(Path(site.output_path))
     site.render()
 
-    directory = str(site.output_path)
-
     server_address = ("127.0.0.1", port)
 
     handler = ServerEventHandler(
         import_path=module,
         server_address=server_address,
-        dir_to_serve=directory,
         dirs_to_watch=get_site_content_paths(site) if reload else None,
         site=site,
         patterns=None,

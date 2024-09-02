@@ -34,7 +34,7 @@ def spawn_server(server_address: tuple[str, int], directory: str) -> ThreadingHT
 class ServerEventHandler:
     """
     Initializes a handler that looks for file changes in a directory (`dirs_to_watch`), as
-    well as creates a server to serve files in a given directory (`dir_to_serve`). The
+    well as creates a server to serve files in a given directory. The
     class contains helper methods to manage server events in a thread.
 
     Meanwhile, the `watch` method uses an instance of this handler class to monitor for file
@@ -44,7 +44,6 @@ class ServerEventHandler:
 
     Params:
         server_address: A tuple of the form (host, port)
-        dir_to_serve: The directory to serve
         site: A Site instance
         dirs_to_watch: The directories to watch
         patterns: A list of regular expressions to filter files
@@ -106,7 +105,7 @@ class ServerEventHandler:
 
     def watch(self) -> None:
         """
-        This function `watch` starts the server on the output path (`dir_to_serve`)
+        This function `watch` starts the server on the output path
         and monitors the specified directories in (`dirs_to_watch`) for changes.
 
         After it starts the server, it "waits" and monitors the directory for
