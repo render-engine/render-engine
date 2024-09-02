@@ -278,8 +278,6 @@ def serve(
         remove_output_folder(Path(site.output_path))
     site.render()
 
-    directory = str(site.output_path)
-
     server_address = ("127.0.0.1", port)
 
     handler = ServerEventHandler(
