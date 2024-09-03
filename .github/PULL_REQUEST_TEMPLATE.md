@@ -3,7 +3,7 @@ SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
 -->
 
-# Type of Issue
+#### Type of Issue
 
 - [ ] :bug: (bug)
 - [ ] :book: (Documentation)
@@ -13,14 +13,14 @@ Be sure to include any referenced issues and discussions.
 - [ ] :no_entry_sign: (Removal)
 - [ ] :hammer_and_wrench: (Refactor)
 
-## Changes have been Documented (If Applicable)
+#### Changes have been Documented (If Applicable)
 
 - [ ] YES - Changes have been documented
 
-## Changes have been Tested
+#### Changes have been Tested
 
 - [ ] YES - Changes have been tested
 
-## Next Steps
+#### Next Steps
 
 <!--ANY FURTHER STEPS TO BE TAKEN-->
