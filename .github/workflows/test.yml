@@ -36,7 +36,7 @@ jobs:
 
   test-against-latest-os:
     # Always run against the latest version on both Windows, Linux, MacOS
-    if: github.event.pull_request.user.login != "dependabot[bot]"
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
