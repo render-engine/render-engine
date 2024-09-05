@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
       fail-fast: true
     steps:
       - uses: actions/checkout@v4
@@ -36,9 +36,10 @@ jobs:
 
   test-against-latest-os:
     # Always run against the latest version on both Windows, Linux, MacOS
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest, macos-latest]
       fail-fast: true
     runs-on: ${{ matrix.os }}
     steps:
