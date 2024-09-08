@@ -62,9 +62,11 @@ def get_available_themes(console: Console, site: Site, theme_name: str) -> list[
         return []
 
 
-def create_collection_entry(collection: Collection, **context):
+def create_collection_entry(content: str, collection: Collection, **context):
     """Creates a new entry for a collection"""
-    return collection.Parser.create_entry(**collection._metadata_attrs(), **context)
+    return collection.Parser.create_entry(
+        content=content, **collection._metadata_attrs(), **context
+    )
 
 
 def split_args(args: list[str] | None) -> dict[str, str]:
@@ -309,6 +311,10 @@ def new_entry(
             help="The filename in which to save the path. Will be saved in the collection's `content_path`"
         ),
     ],
+    content: Annotated[
+        typing.Optional[str],
+        typer.Option(),
+    ] = None,
     args: Annotated[
         Optional[list[str]],
         typer.Option(
@@ -325,9 +331,9 @@ def new_entry(
         for coll in site.route_list.values()
         if type(coll).__name__.lower() == collection.lower()
     )
-    content = create_collection_entry(collection=_collection, **args)
+    entry = create_collection_entry(content=content, collection=_collection, **args)
     filepath = Path(_collection.content_path).joinpath(filename)
-    filepath.write_text(content)
+    filepath.write_text(entry)
     Console().print(f'New {collection} entry created at "{filepath}"')
 
     if editor := os.getenv("EDITOR", None):
