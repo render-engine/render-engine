@@ -102,7 +102,9 @@ class Collection(BaseObject):
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
-        return flatten([Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
+        return flatten(
+            [Path(self.content_path).glob(suffix) for suffix in self.include_suffixes]
+        )
 
     def _generate_content_from_modified_pages(
         self,
@@ -202,10 +204,10 @@ class Collection(BaseObject):
         return slugify(self.title)
 
     def __repr__(self):
-        return f"{self}: {__class__.__name__}"
+        return f"{self}: {__name__}"
 
     def __str__(self):
-        return f"{__class__.__name__}"
+        return f"{__name__}"
 
     def __iter__(self):
         if not hasattr(self, "pages"):

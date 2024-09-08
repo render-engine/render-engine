@@ -1,8 +1,9 @@
 # ruff: noqa: UP007
 import importlib
+import os
 import shutil
+import subprocess
 import sys
-import typing
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -11,8 +12,8 @@ from rich import print as rprint
 from rich.console import Console
 from rich.table import Table
 
+from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
-from render_engine.site import Site
 
 app = typer.Typer()
 
@@ -20,7 +21,9 @@ app = typer.Typer()
 def get_site_content_paths(site: Site) -> list[Path | None]:
     """Get the content paths from the route_list in the Site"""
 
-    base_paths = map(lambda x: getattr(x, "content_path", None), site.route_list.values())
+    base_paths = map(
+        lambda x: getattr(x, "content_path", None), site.route_list.values()
+    )
     return list(filter(lambda x: x is not None, base_paths))
 
 
@@ -59,7 +62,18 @@ def get_available_themes(console: Console, site: Site, theme_name: str) -> list[
         return []
 
 
-def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
+def create_collection_entry(collection: Collection, **context):
+    """Creates a new entry for a collection"""
+    return collection.Parser.create_entry(**collection._metadata_attrs(), **context)
+
+
+def split_args(args: list[str] | None) -> dict[str, str]:
+    return {value.split("=")[0]: value.split("=")[1] for value in args if args}
+
+
+def display_filtered_templates(
+    title: str, templates_list: list[str], filter_value: str
+) -> None:
     """Display filtered templates based on a given filter value."""
     table = Table(title=title)
     table.add_column("[bold blue]Templates[bold blue]")
@@ -72,8 +86,12 @@ def display_filtered_templates(title: str, templates_list: list[str], filter_val
 @app.command()
 def templates(
     module_site: Annotated[tuple[str, str], typer.Argument(callback=split_module_site)],
-    theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
-    filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
+    theme_name: Annotated[
+        str, typer.Option("--theme-name", help="Theme to search templates in")
+    ] = "",
+    filter_value: Annotated[
+        str, typer.Option("--filter-value", help="Filter templates based on names")
+    ] = "",
 ):
     """
     CLI for listing available theme templates.
@@ -96,7 +114,9 @@ def templates(
                 filter_value,
             )
     else:
-        console.print("[red]No theme name specified. Listing all installed themes and their templates[red]")
+        console.print(
+            "[red]No theme name specified. Listing all installed themes and their templates[red]"
+        )
         for theme_prefix, theme_loader in site.theme_manager.prefix.items():
             templates_list = theme_loader.list_templates()
             display_filtered_templates(
@@ -114,7 +134,7 @@ def init(
     ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
     extra_context: (
         Annotated[
-            typing.Optional[str],
+            Optional[str],
             typer.Option(
                 "--extra-context",
                 "-e",
@@ -123,7 +143,9 @@ def init(
         ]
         | None
     ) = None,
-    no_input: Annotated[bool, typer.Option("--no-input", help="Do not prompt for parameters")] = False,
+    no_input: Annotated[
+        bool, typer.Option("--no-input", help="Do not prompt for parameters")
+    ] = False,
     output_dir: Annotated[
         Path,
         typer.Option(
@@ -266,6 +288,50 @@ def serve(
 
     with handler:
         pass
+
+
+@app.command()
+def new_entry(
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            callback=split_module_site,
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
+    collection: Annotated[
+        str,
+        typer.Argument(help="The Collection from which youre metadata is defined"),
+    ],
+    filename: Annotated[
+        str,
+        typer.Option(
+            help="The filename in which to save the path. Will be saved in the collection's `content_path`"
+        ),
+    ],
+    args: Annotated[
+        Optional[list[str]],
+        typer.Option(
+            help="key value attrs to include in your entry use the format `--args key=value`",
+        ),
+    ] = None,
+):
+    """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
+    module, site = module_site
+    args = split_args(args) if args else {}
+    site = get_site(module, site)
+    _collection = next(
+        coll
+        for coll in site.route_list.values()
+        if type(coll).__name__.lower() == collection.lower()
+    )
+    content = create_collection_entry(collection=_collection, **args)
+    filepath = Path(_collection.content_path).joinpath(filename)
+    filepath.write_text(content)
+    Console().print(f'New {collection} entry created at "{filepath}"')
+
+    if editor := os.getenv("EDITOR", None):
+        subprocess.run([editor, filepath])
 
 
 def cli():

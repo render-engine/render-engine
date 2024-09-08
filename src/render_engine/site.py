@@ -67,7 +67,9 @@ class Site:
         self.subcollections: dict[str, list] = {"pages": []}
         self.theme_manager.engine.globals.update(self.site_vars)
         if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
+            self.theme_manager.engine.loader.loaders.insert(
+                0, FileSystemLoader(self._template_path)
+            )
 
     @property
     def output_path(self) -> Path | str:
@@ -93,7 +95,9 @@ class Site:
         for plugin in plugins:
             logging.debug("Registering Plugin: %s", plugin.__name__)
             self.plugin_manager.register_plugin(plugin)
-            logging.debug("Loading default settings: %s", getattr(plugin, "default_settings", {}))
+            logging.debug(
+                "Loading default settings: %s", getattr(plugin, "default_settings", {})
+            )
             self.plugin_manager.plugin_settings[plugin.__name__] = {
                 **getattr(plugin, "default_settings", {}),
                 **getattr(self.plugin_settings, plugin.__name__, {}),
@@ -207,12 +211,16 @@ class Site:
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
 
         if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            page.plugin_manager._pm.hook.render_content(page=page, settings=settings, site=self)
+            page.plugin_manager._pm.hook.render_content(
+                page=page, settings=settings, site=self
+            )
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
 
         if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            page.plugin_manager._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
+            page.plugin_manager._pm.hook.post_render_content(
+                page=page.__class__, settings=settings, site=self
+            )
 
         return path.write_text(page.rendered_content)
 
@@ -269,7 +277,9 @@ class Site:
                 self.theme_manager.engine.loader.loaders.insert(-1, theme_loader)
         # load themes in the PrefixLoader
         if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(-1, PrefixLoader(self.theme_manager.prefix))
+            self.theme_manager.engine.loader.loaders.insert(
+                -1, PrefixLoader(self.theme_manager.prefix)
+            )
 
     @property
     def template_path(self) -> str:
@@ -280,7 +290,9 @@ class Site:
     @template_path.setter
     def template_path(self, template_path: str) -> None:
         if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(template_path))
+            self.theme_manager.engine.loader.loaders.insert(
+                0, FileSystemLoader(template_path)
+            )
 
     def render(self) -> None:
         """
@@ -303,7 +315,9 @@ class Site:
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
             # Parse Route List
-            task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
+            task_add_route = progress.add_task(
+                "[blue]Adding Routes", total=len(self.route_list)
+            )
 
             self.theme_manager._render_static()
 
@@ -311,7 +325,9 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
-                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
+                progress.update(
+                    task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}"
+                )
                 if isinstance(entry, Page):
                     for route in entry.routes:
                         progress.update(
