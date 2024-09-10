@@ -2,7 +2,6 @@
 
 from collections import defaultdict
 from collections.abc import Callable
-from typing import Literal
 
 from slugify import slugify
 
@@ -52,7 +51,7 @@ class BaseObject:
         return slugify(getattr(self, "slug", self._title))
 
     @staticmethod
-    def _metadata_attrs() -> dict[Literal["title"] : Literal["Untitled Entry"]]:
+    def _metadata_attrs() -> dict[str, str]:
         """attrs used as metadata by the parser"""
         return {"title": "Untitled Entry"}
 

@@ -1,7 +1,9 @@
-import os
-from render_engine_markdown import MarkdownPageParser
 import datetime
+import os
 import zoneinfo
+from typing import Any
+
+from render_engine_markdown import MarkdownPageParser
 
 from .collection import Collection
 
@@ -34,11 +36,11 @@ class Blog(Collection):
     has_archive = True
 
     @staticmethod
-    def _metadata_attrs(**kwargs) -> dict[str, any]:
+    def _metadata_attrs(**kwargs) -> dict[str, Any]:
         timezone = zoneinfo.ZoneInfo(
             os.environ.get(
                 "RENDER_ENGINE_DEFAULT_TIMEZONE",
-                "Etc/UTC",
+                "UTC",
             )
         )
         return {

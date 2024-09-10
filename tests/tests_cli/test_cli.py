@@ -1,5 +1,6 @@
 import frontmatter
 import pytest
+
 from render_engine import Page, Site
 from render_engine.cli.cli import create_collection_entry, get_site_content_paths
 from render_engine.collection import Collection
@@ -46,9 +47,7 @@ def test_import_lib_gets_site():
 def test_collection_call():
     """Tests that you can get content from the parser using `new_entry`"""
     test_collection = Collection()
-    content = create_collection_entry(
-        content=None, collection=test_collection, foo="bar"
-    )
+    content = create_collection_entry(content=None, collection=test_collection, foo="bar")
     post = frontmatter.loads(content)
 
     assert post["title"] == "Untitled Entry"
@@ -58,9 +57,7 @@ def test_collection_call():
 def test_collection_call_with_content():
     """Tests that you can get content from the parser using `new_entry`"""
     test_collection = Collection()
-    content = create_collection_entry(
-        content="This is a test", collection=test_collection, foo="bar"
-    )
+    content = create_collection_entry(content="This is a test", collection=test_collection, foo="bar")
     post = frontmatter.loads(content)
 
     assert post["title"] == "Untitled Entry"
