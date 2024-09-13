@@ -4,7 +4,7 @@ import json
 import shutil
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 
 import typer
 from rich import print as rprint
@@ -20,7 +20,9 @@ app = typer.Typer()
 def get_site_content_paths(site: Site) -> list[Path | None]:
     """Get the content paths from the route_list in the Site"""
 
-    base_paths = map(lambda x: getattr(x, "content_path", None), site.route_list.values())
+    base_paths = map(
+        lambda x: getattr(x, "content_path", None), site.route_list.values()
+    )
     return list(filter(lambda x: x is not None, base_paths))
 
 
@@ -59,7 +61,9 @@ def get_available_themes(console: Console, site: Site, theme_name: str) -> list[
         return []
 
 
-def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
+def display_filtered_templates(
+    title: str, templates_list: list[str], filter_value: str
+) -> None:
     """Display filtered templates based on a given filter value."""
     table = Table(title=title)
     table.add_column("[bold blue]Templates[bold blue]")
@@ -72,8 +76,12 @@ def display_filtered_templates(title: str, templates_list: list[str], filter_val
 @app.command()
 def templates(
     module_site: Annotated[tuple[str, str], typer.Argument(callback=split_module_site)],
-    theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
-    filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
+    theme_name: Annotated[
+        str, typer.Option("--theme-name", help="Theme to search templates in")
+    ] = "",
+    filter_value: Annotated[
+        str, typer.Option("--filter-value", help="Filter templates based on names")
+    ] = "",
 ):
     """
     CLI for listing available theme templates.
@@ -96,7 +104,9 @@ def templates(
                 filter_value,
             )
     else:
-        console.print("[red]No theme name specified. Listing all installed themes and their templates[red]")
+        console.print(
+            "[red]No theme name specified. Listing all installed themes and their templates[red]"
+        )
         for theme_prefix, theme_loader in site.theme_manager.prefix.items():
             templates_list = theme_loader.list_templates()
             display_filtered_templates(
@@ -123,7 +133,9 @@ def init(
         ]
         | None
     ) = None,
-    no_input: Annotated[bool, typer.Option("--no-input", help="Do not prompt for parameters")] = False,
+    no_input: Annotated[
+        bool, typer.Option("--no-input", help="Do not prompt for parameters")
+    ] = False,
     output_dir: Annotated[
         Path,
         typer.Option(
@@ -133,7 +145,7 @@ def init(
             exists=True,
         ),
     ] = Path("./"),
-    cookiecutter_args: Annotated[Path, typer.Option(callback=lambda x: json.loads(x))] = {},
+    config_file: Annotated[Optional[Path], typer.Option("--config-file", "-c")] = None,
 ) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -144,26 +156,15 @@ def init(
     """
 
     # Check if cookiecutter is installed
-    try:
-        from cookiecutter.main import cookiecutter
-    except ImportError:
-        raise typer.Exit(
-            "You need to install cookiecutter to use this command. Run `pip install cookiecutter` to install it.",
-        )
+
+    from cookiecutter.main import cookiecutter
+
     cookiecutter(
         template=template,
         extra_context=extra_context,
-        checkout=cookiecutter_args.get("checkout"),
-        no_input=cookiecutter_args.get("no_input", no_input),
-        replay=cookiecutter_args.get("replay"),
-        overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
         output_dir=output_dir,
-        config_file=cookiecutter_args.get("config_file"),
-        default_config=cookiecutter_args.get("default_config", False),
-        directory=cookiecutter_args.get("directory"),
-        skip_if_file_exists=cookiecutter_args.get("skip_if_file_exists", False),
-        accept_hooks=cookiecutter_args.get("accept_hooks", True),
-        keep_project_on_failure=cookiecutter_args.get("keep_priject_on_failure", False),
+        config_file=config_file,
+        no_input=no_input,
     )
 
 
