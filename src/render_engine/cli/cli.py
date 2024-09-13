@@ -145,9 +145,7 @@ def init(
             exists=True,
         ),
     ] = Path("./"),
-    cookiecutter_args_file: Annotated[
-        Optional[Path], typer.Option("--config-file", "-c")
-    ] = None,
+    config_file: Annotated[Optional[Path], typer.Option("--config-file", "-c")] = None,
 ) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -161,24 +159,12 @@ def init(
 
     from cookiecutter.main import cookiecutter
 
-    cookiecutter_args = (
-        json.loads(cookiecutter_args_file.read_text()) if cookiecutter_args_file else {}
-    )
-
     cookiecutter(
         template=template,
         extra_context=extra_context,
-        checkout=cookiecutter_args.get("checkout", None),
-        no_input=cookiecutter_args.get("no_input", no_input),
-        replay=cookiecutter_args.get("replay"),
-        overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
         output_dir=output_dir,
-        config_file=cookiecutter_args.get("config_file"),
-        default_config=cookiecutter_args.get("default_config", False),
-        directory=cookiecutter_args.get("directory"),
-        skip_if_file_exists=cookiecutter_args.get("skip_if_file_exists", False),
-        accept_hooks=cookiecutter_args.get("accept_hooks", True),
-        keep_project_on_failure=cookiecutter_args.get("keep_priject_on_failure", False),
+        config_file=config_file,
+        no_input=no_input,
     )
 
 
