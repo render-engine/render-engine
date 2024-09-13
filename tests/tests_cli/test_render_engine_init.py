@@ -1,5 +1,5 @@
-from _pytest.tmpdir import tmp_path
 import pytest
+
 from render_engine.cli import cli
 
 
