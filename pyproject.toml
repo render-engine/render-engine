@@ -19,6 +19,7 @@ dependencies = [
     "python-slugify",
     "render-engine-parser",
     "render-engine-markdown",
+    "tzdata",
 ]
 
 [project.optional-dependencies]

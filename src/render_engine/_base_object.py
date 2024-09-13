@@ -36,7 +36,6 @@ class BaseObject:
 
         Returns:
             str: The title of the object.
-
         """
         return getattr(self, "title", self.__class__.__name__)
 
@@ -50,6 +49,11 @@ class BaseObject:
 
         """
         return slugify(getattr(self, "slug", self._title))
+
+    @staticmethod
+    def _metadata_attrs() -> dict[str, str]:
+        """attrs used as metadata by the parser"""
+        return {"title": "Untitled Entry"}
 
     @property
     def extension(self) -> str:

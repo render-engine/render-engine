@@ -1,8 +1,9 @@
 # ruff: noqa: UP007
 import importlib
+import os
 import shutil
+import subprocess
 import sys
-import typing
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -11,8 +12,8 @@ from rich import print as rprint
 from rich.console import Console
 from rich.table import Table
 
+from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
-from render_engine.site import Site
 
 app = typer.Typer()
 
@@ -59,6 +60,15 @@ def get_available_themes(console: Console, site: Site, theme_name: str) -> list[
         return []
 
 
+def create_collection_entry(content: str | None, collection: Collection, **context):
+    """Creates a new entry for a collection"""
+    return collection.Parser.create_entry(content=content, **collection._metadata_attrs(), **context)
+
+
+def split_args(args: list[str] | None) -> dict[str, str]:
+    return {value.split("=")[0]: value.split("=")[1] for value in args if args}
+
+
 def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
     """Display filtered templates based on a given filter value."""
     table = Table(title=title)
@@ -83,8 +93,8 @@ def templates(
         theme_name: Optional. Specifies the theme to list templates from.
         filter_value: Optional. Filters templates based on provided names.
     """
-    module, site = module_site
-    site = get_site(module, site)
+    module, site_name = module_site
+    site = get_site(module, site_name)
     console = Console()
 
     if theme_name:
@@ -114,7 +124,7 @@ def init(
     ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
     extra_context: (
         Annotated[
-            typing.Optional[str],
+            Optional[str],
             typer.Option(
                 "--extra-context",
                 "-e",
@@ -144,9 +154,14 @@ def init(
     """
 
     # Check if cookiecutter is installed
-
-    from cookiecutter.main import cookiecutter
-
+    try:
+        from cookiecutter.main import cookiecutter
+    except ImportError:
+        typer.echo(
+            "You need to install cookiecutter to use this command. Run `pip install cookiecutter` to install it.",
+            err=True,
+        )
+        raise typer.Exit(0)
     cookiecutter(
         template=template,
         extra_context=extra_context,
@@ -161,7 +176,6 @@ def build(
     module_site: Annotated[
         str,
         typer.Argument(
-            callback=split_module_site,
             help="module:site for Build the site prior to serving",
         ),
     ],
@@ -181,8 +195,8 @@ def build(
         module_site: Python module and initialize Site class
 
     """
-    module, site = module_site
-    site = get_site(module, site)
+    module, site_name = split_module_site(module_site)
+    site = get_site(module, site_name)
     if clean:
         remove_output_folder(Path(site.output_path))
     site.render()
@@ -193,7 +207,6 @@ def serve(
     module_site: Annotated[
         str,
         typer.Argument(
-            callback=split_module_site,
             help="module:site for Build the site prior to serving",
         ),
     ],
@@ -246,8 +259,8 @@ def serve(
         port: Port to serve on
     """
 
-    module, site = module_site
-    site = get_site(module, site)
+    module, site_name = split_module_site(module_site)
+    site = get_site(module, site_name)
 
     if clean:
         remove_output_folder(Path(site.output_path))
@@ -266,6 +279,47 @@ def serve(
 
     with handler:
         pass
+
+
+@app.command()
+def new_entry(
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
+    collection: Annotated[
+        str,
+        typer.Argument(help="The Collection from which youre metadata is defined"),
+    ],
+    filename: Annotated[
+        str,
+        typer.Option(help="The filename in which to save the path. Will be saved in the collection's `content_path`"),
+    ],
+    content: Annotated[
+        Optional[str],
+        typer.Option(),
+    ] = None,
+    args: Annotated[
+        Optional[list[str]],
+        typer.Option(
+            help="key value attrs to include in your entry use the format `--args key=value`",
+        ),
+    ] = None,
+):
+    """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
+    module, site_name = split_module_site(module_site)
+    parsed_args = split_args(args) if args else {}
+    site = get_site(module, site_name)
+    _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
+    entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
+    filepath = Path(_collection.content_path).joinpath(filename)
+    filepath.write_text(entry)
+    Console().print(f'New {collection} entry created at "{filepath}"')
+
+    if editor := os.getenv("EDITOR", None):
+        subprocess.run([editor, filepath])
 
 
 def cli():

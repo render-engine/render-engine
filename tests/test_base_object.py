@@ -73,3 +73,7 @@ class TestBaseObjectProperties:
 
         assert self.test_object.template_vars == {"test": "test"}
         assert self.test_object.plugin_settings == {"plugins": {"test_plugin": "test"}}
+
+
+def test_base_object():
+    assert BaseObject._metadata_attrs()["title"] == "Untitled Entry"

@@ -202,10 +202,10 @@ class Collection(BaseObject):
         return slugify(self.title)
 
     def __repr__(self):
-        return f"{self}: {__class__.__name__}"
+        return f"{self}: {__name__}"
 
     def __str__(self):
-        return f"{__class__.__name__}"
+        return f"{__name__}"
 
     def __iter__(self):
         if not hasattr(self, "pages"):
