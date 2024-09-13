@@ -1,10 +1,10 @@
 # ruff: noqa: UP007
 import importlib
-import json
 import shutil
 import sys
+import typing
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 
 import typer
 from rich import print as rprint
@@ -114,7 +114,7 @@ def init(
     ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
     extra_context: (
         Annotated[
-            str,
+            typing.Optional[str],
             typer.Option(
                 "--extra-context",
                 "-e",
@@ -133,7 +133,7 @@ def init(
             exists=True,
         ),
     ] = Path("./"),
-    cookiecutter_args: Annotated[Path, typer.Option(callback=lambda x: json.loads(x))] = {},
+    config_file: Annotated[Optional[Path], typer.Option("--config-file", "-c")] = None,
 ) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -144,26 +144,15 @@ def init(
     """
 
     # Check if cookiecutter is installed
-    try:
-        from cookiecutter.main import cookiecutter
-    except ImportError:
-        raise typer.Exit(
-            "You need to install cookiecutter to use this command. Run `pip install cookiecutter` to install it.",
-        )
+
+    from cookiecutter.main import cookiecutter
+
     cookiecutter(
         template=template,
         extra_context=extra_context,
-        checkout=cookiecutter_args.get("checkout"),
-        no_input=cookiecutter_args.get("no_input", no_input),
-        replay=cookiecutter_args.get("replay"),
-        overwrite_if_exists=cookiecutter_args.get("overwrite_if_exists", False),
         output_dir=output_dir,
-        config_file=cookiecutter_args.get("config_file"),
-        default_config=cookiecutter_args.get("default_config", False),
-        directory=cookiecutter_args.get("directory"),
-        skip_if_file_exists=cookiecutter_args.get("skip_if_file_exists", False),
-        accept_hooks=cookiecutter_args.get("accept_hooks", True),
-        keep_project_on_failure=cookiecutter_args.get("keep_priject_on_failure", False),
+        config_file=config_file,
+        no_input=no_input,
     )
 
 
