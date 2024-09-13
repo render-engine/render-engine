@@ -32,8 +32,12 @@ def tests_error_raised_if_cookiecutter_not_installed(request, mocker):
         )
 
 
-def test_init_local_path(request, tmp_path, get_test_template):
-    """Tests that you can call init using a local path"""
+def test_init_local_path_extra_context(request, tmp_path, get_test_template):
+    """
+    Tests that you can call init using a local path
+
+    It also tests that the extra_context is passed to the template.
+    """
 
     cli.init(
         extra_context={"project_slug": request.node.originalname},
@@ -47,8 +51,10 @@ def test_init_local_path(request, tmp_path, get_test_template):
     assert app_py.read_bytes() == b"hello world"
 
 
-def test_init_called_with_context(request, tmp_path, tmp_path_factory):
-    """Tests that you can call init using a local path"""
+def test_init_called_with_config(request, tmp_path, tmp_path_factory):
+    """
+    Tests that you can call init with cookiecutter configs passed in through a config file.
+    """
     temp_file = tmp_path.joinpath("test_cookiecutter_args.json")
     temp_file.write_text(
         f"""
