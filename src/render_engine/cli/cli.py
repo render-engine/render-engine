@@ -174,9 +174,8 @@ def init(
 @app.command()
 def build(
     module_site: Annotated[
-        tuple[str, str],
+        str,
         typer.Argument(
-            callback=split_module_site,
             help="module:site for Build the site prior to serving",
         ),
     ],
@@ -196,7 +195,7 @@ def build(
         module_site: Python module and initialize Site class
 
     """
-    module, site_name = module_site
+    module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
     if clean:
         remove_output_folder(Path(site.output_path))
@@ -206,9 +205,8 @@ def build(
 @app.command()
 def serve(
     module_site: Annotated[
-        tuple[str, str],
+        str,
         typer.Argument(
-            callback=split_module_site,
             help="module:site for Build the site prior to serving",
         ),
     ],
@@ -261,7 +259,7 @@ def serve(
         port: Port to serve on
     """
 
-    module, site_name = module_site
+    module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
 
     if clean:
@@ -286,9 +284,8 @@ def serve(
 @app.command()
 def new_entry(
     module_site: Annotated[
-        tuple[str, str],
+        str,
         typer.Argument(
-            callback=split_module_site,
             help="module:site for Build the site prior to serving",
         ),
     ],
@@ -312,7 +309,7 @@ def new_entry(
     ] = None,
 ):
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
-    module, site_name = module_site
+    module, site_name = split_module_site(module_site)
     parsed_args = split_args(args) if args else {}
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
