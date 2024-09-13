@@ -11,8 +11,7 @@ def get_test_template(tmp_path_factory):
     project_slug = path.joinpath("{{cookiecutter.project_slug}}")
     project_slug.mkdir()
     project_slug.joinpath("app.py").write_text("hello {{cookiecutter.world}}")
-    path.joinpath("cookiecutter.json").write_text(json.dumps({"world": "world",
-        "project_slug": "testslug"}))
+    path.joinpath("cookiecutter.json").write_text(json.dumps({"world": "world", "project_slug": "testslug"}))
 
     return path.resolve()
 
@@ -45,7 +44,7 @@ def test_init_local_path(request, tmp_path, get_test_template):
     template_path = tmp_path.joinpath(request.node.originalname)
     app_py = template_path.joinpath("app.py")
     assert app_py.exists()
-    assert app_py.read_bytes() == b'hello world'
+    assert app_py.read_bytes() == b"hello world"
 
 
 def test_init_called_with_context(request, tmp_path, tmp_path_factory):
@@ -68,4 +67,4 @@ default_context:
     output_path = tmp_path.joinpath(request.node.originalname)
     app_py = output_path.joinpath("app.py")
     assert app_py.exists()
-    assert app_py.read_bytes() == b'hello Earth'
+    assert app_py.read_bytes() == b"hello Earth"
