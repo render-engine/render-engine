@@ -2,6 +2,7 @@
 import importlib
 import shutil
 import sys
+import typing
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -113,7 +114,7 @@ def init(
     ] = "https://github.com/render-engine/cookiecutter-render-engine-site",
     extra_context: (
         Annotated[
-            str,
+            typing.Optional[str],
             typer.Option(
                 "--extra-context",
                 "-e",
