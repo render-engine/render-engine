@@ -3,6 +3,7 @@ import time
 import ephemeral_port_reserve
 import httpx
 import pytest
+
 from render_engine.cli.event import ServerEventHandler
 from render_engine.page import Page
 from render_engine.site import Site
@@ -60,8 +61,6 @@ def test_server_build(event_handler):
 def test_as_a_context_manager(event_handler):
     """Asserts you can start and stop the server with a context manager"""
     with event_handler["handler"]:
-        response = httpx.get(
-            f'http://{event_handler["hostname"]}:{event_handler["port"]}'
-        )
+        response = httpx.get(f'http://{event_handler["hostname"]}:{event_handler["port"]}')
     assert response.status_code == 200
     assert response.text
