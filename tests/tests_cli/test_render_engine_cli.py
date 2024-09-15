@@ -2,7 +2,10 @@ import time
 
 import httpx
 import pytest
+import ephemeral_port_reserve
 
+
+from render_engine.cli import event
 from render_engine.cli.event import ServerEventHandler
 from render_engine.page import Page
 from render_engine.site import Site
@@ -26,34 +29,42 @@ def site(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def event_handler(site):
+    hostname = ephemeral_port_reserve.LOCALHOST
+    free_port = ephemeral_port_reserve.reserve(hostname)
+
     class Handler(ServerEventHandler):
-        def stop_watcher(self):  # Stop the
+        def stop_watcher(self):
             time.sleep(2)
             return True
 
     handler = Handler(
-        server_address=("localhost", 8000),
+        server_address=(hostname, free_port),
         import_path="tests.tests_cli.test_render_engine_cli",
         site=site,
         dirs_to_watch=None,
     )
 
-    return handler
+    return {
+        "hostname": hostname,
+        "port": free_port,
+        "handler": handler,
+    }
 
 
 def test_server_build(event_handler):
     """Asserts you can start and stop the server"""
-    event_handler.start_server()
-    response = httpx.get("http://localhost:8000")
-    event_handler.stop_server()
+    event_handler["handler"].start_server()
+    response = httpx.get(f'http://{event_handler["hostname"]}:{event_handler["port"]}')
+    event_handler["handler"].stop_server()
     assert response.status_code == 200
     assert response.text == "Hello World!"
 
 
-# @pytest.mark.skip("This cannot be tested with pytest")
 def test_as_a_context_manager(event_handler):
     """Asserts you can start and stop the server with a context manager"""
-    with event_handler:
-        response = httpx.get("http://localhost:8000")
-        assert response.status_code == 200
-        assert response.text
+    with event_handler["handler"] as handler:
+        response = httpx.get(
+            f'http://{event_handler["hostname"]}:{event_handler["port"]}'
+        )
+    assert response.status_code == 200
+    assert response.text
