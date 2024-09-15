@@ -34,20 +34,21 @@ extras = [
 ]
 dev = [
     "cookiecutter",
-    "rich",
-    "typer",
-    "watchfiles",
+    "ephemeral-port-reserve",
     "httpx",
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]",
-    "pymdown-extensions",
-    "ruff",
+    "mypy",
     "pre-commit",
-    "mypy"
+    "pymdown-extensions",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "rich",
+    "ruff",
+    "typer",
+    "watchfiles",
     ]
 
 
