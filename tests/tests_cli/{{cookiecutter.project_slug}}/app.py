@@ -1,1 +1,0 @@
-Hello {{cookiecutter.world}}
