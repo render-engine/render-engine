@@ -8,8 +8,8 @@ def lint(session, python="3.12"):
     """Lint using ruff"""
 
     session.install("ruff")
-    session.run("ruff", "check", "--fix", "src")
-    session.run("ruff", "format", "src")
+    session.run("ruff", "check", "--fix", ".")
+    session.run("ruff", "format", ".")
 
 
 @nox.session(python=PYTHON_VERSIONS)
