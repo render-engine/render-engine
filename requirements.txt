@@ -43,7 +43,7 @@ distlib==0.3.8
     # via virtualenv
 ephemeral-port-reserve==1.1.4
     # via render_engine (pyproject.toml)
-filelock==3.16.0
+filelock==3.16.1
     # via virtualenv
 ghp-import==2.1.0
     # via mkdocs
