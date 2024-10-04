@@ -81,7 +81,12 @@ def display_filtered_templates(title: str, templates_list: list[str], filter_val
 
 @app.command()
 def templates(
-    module_site: Annotated[tuple[str, str], typer.Argument(callback=split_module_site)],
+    module_site: Annotated[
+        str,
+        typer.Argument(
+            help="module:site for Build the site prior to serving",
+        ),
+    ],
     theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
     filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
 ):
@@ -93,7 +98,7 @@ def templates(
         theme_name: Optional. Specifies the theme to list templates from.
         filter_value: Optional. Filters templates based on provided names.
     """
-    module, site_name = module_site
+    module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
     console = Console()
 

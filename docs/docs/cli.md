@@ -65,7 +65,7 @@ CLI for creating a new site
 
 | Name | Type | Description | Default |
 | --- | --- | --- | --- |
-|`module_site`|`Annotated[str, Argument(callback=split_module_site, help='module:site for Build the site prior to serving')]`|Python module and initialize Site class|_required_|
+|`module_site`|`Annotated[str, Argument(help='module:site for Build the site prior to serving')]`|Python module and initialize Site class|_required_|
 
 `build` requires a `module_site` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
 
@@ -84,7 +84,7 @@ Create an HTTP server to serve the site at `localhost`.
 
 | Name | Type | Description | Default |
 | --- | --- | --- | --- |
-| `module_site` | `Annotated[str, Argument(callback=split_module_site, help='module:site for Build the site prior to serving')]` |Python module and initialize Site class | _required_ |
+| `module_site` | `Annotated[str, Argument(help='module:site for Build the site prior to serving')]` |Python module and initialize Site class | _required_ |
 | `reload` | `Annotated[bool, Option(--reload, -r, help='Reload the server when files change')]` |Use to reload server on file change | `None` |
 | `build` |  |flag to build the site prior to serving the app | _required_ |
 | `directory` | `Annotated[str, Option(--directory, -d, help='Directory to serve', show_default=False)]` |Directory to serve. If `module_site`is provided, this will be the `output_path`of the site. | `None` |
