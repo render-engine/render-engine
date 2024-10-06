@@ -7,10 +7,10 @@
         "dockerfile": "Dockerfile",
         "context": "..",
         "args": {
-            "IMAGE": "python:3.12"
+            "IMAGE": "thekevjames/nox"
         }
     },
-    "postCreateCommand": ". .devcontainer/setup.sh",
+    "postCreateCommand": ". .devcontainer/setup.sh && nox -s setup",
     "customizations": {
         "vscode": {
             "settings": {

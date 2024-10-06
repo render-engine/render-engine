@@ -18,3 +18,8 @@ def test(session):
     session.install("pytest")
     session.install("-r", "requirements.txt")
     session.run("pytest", "tests")
+
+
+@nox.session
+def setup(session):
+    session.run("pip", "install", "-r", "requirements.txt")
