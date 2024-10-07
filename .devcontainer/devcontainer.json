@@ -7,7 +7,7 @@
         "dockerfile": "Dockerfile",
         "context": "..",
         "args": {
-            "IMAGE": "thekevjames/nox"
+            "IMAGE": "thekevjames/nox:2019.11.9"
         }
     },
     "postCreateCommand": ". .devcontainer/setup.sh && nox -s setup",
