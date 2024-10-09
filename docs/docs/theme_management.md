@@ -50,7 +50,7 @@ class MySite(Site):
 
 Static files can be added at any level under the `static_path` directory.
 
-static_paths are copied recursively meaning that all files and folders under a static_path path will be copied to the output_path
+`static_paths` are copied recursively meaning that all files and folders under a `static_path` path will be copied to the `output_path`
 
 ## Adding third-party themes
 
