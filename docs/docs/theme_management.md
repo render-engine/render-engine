@@ -39,12 +39,8 @@ Unlike templates you can have more than one static_path you wish to include. You
 ```python
 from render_engine import Site
 
-class MySite(Site):
-    static_path = "my_static"
-
-# You can also set this after you've initialized the class
-# app = MySite()
-# app.static_path = "my_static"
+app = MySite()
+app.static_paths.add = "my_static"
 
 ```
 
