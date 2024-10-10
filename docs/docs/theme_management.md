@@ -41,7 +41,11 @@ from render_engine import Site
 
 class MySite(Site):
     static_path = "my_static"
-    
+```
+Another option is to apply the static path after initialization as the paths are not merged until `Site.render()` is called.
+
+```python
+
 app = MySite()
 app.static_paths.add = "my_static"
 
