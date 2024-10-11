@@ -2,7 +2,6 @@ import pathlib
 
 import jinja2
 import pytest
-
 from render_engine import Page
 
 

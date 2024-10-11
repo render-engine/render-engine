@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 <!--
 SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
