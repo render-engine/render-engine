@@ -1,5 +1,6 @@
 import frontmatter
 import pytest
+
 from render_engine import Page, Site
 from render_engine.cli.cli import create_collection_entry, get_site_content_paths
 from render_engine.collection import Collection
