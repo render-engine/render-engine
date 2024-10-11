@@ -2,7 +2,15 @@
 title: "Developing Locally"
 description: "This document guides you through setting up a local development environment using Python, virtual environments, VS Code, Codespaces, and Dev Containers."
 date: August 22, 2024
-tags: ["setup", "python", "virtual-environment", "vs-code", "codespaces", "dev-containers"]
+tags:
+  [
+    "setup",
+    "python",
+    "virtual-environment",
+    "vs-code",
+    "codespaces",
+    "dev-containers",
+  ]
 ---
 
 ### Install Python
@@ -11,23 +19,31 @@ To develop locally you will need to have Python installed. Make sure you're usin
 
 Visit <https://python.org> to learn more about installing Python.
 
-### Create a Virtual Environment
+### Setup Environment with Nox
 
-Keep your default environment clean by installing a virtual environment.
+This project uses [Nox](nox documentation). While you can run these steps manually, we will provide the nox instructions to help create consistent environments for developers.
+
+We recommend installing nox with.
+
+See <https://pipx.pypa.io/latest/installation/> for more information.
 
 ```sh
-python -m venv .venv
+pipx run nox -s
+```
+
+### Create a Virtual Environment
+
+Keep your default environment clean by installing a virtual environment and installing your requirements in that environment.
+
+#### Using nox
+
+```sh
+nox -s develop
 ```
 
 Once your virtual environment is created, you can activate it and install the requirements.
 
-```sh
-source .venv/bin/activate
-python -m pip install --update pip
-python -m pip install requirements.txt
-```
-
-  ![creating an virtual environment](https://vhs.charm.sh/vhs-5t8wsdubdq46vrJydWEtOi.gif)
+![creating an virtual environment](https://vhs.charm.sh/vhs-5t8wsdubdq46vrJydWEtOi.gif)
 
 #### Using VS Code
 
@@ -35,11 +51,11 @@ If you're using [Visual Studio Code](https://code.visualstudio.com/) you can als
 
 ![Creating an Environment using VS Code](<../assets/create environment vs code.gif>)
 
+This will create the environment and also install the requirements.
+
 ## Using Codespaces
 
-You can create a new codespace to quickly get started with your project.
-
-You can create a codespace on main.
+You can also use [Github Codespaces](https://docs.github.com/en/codespaces) to quickly get started with your project.
 
 ![Create a Codespace](../assets/create-codespace.gif)
 

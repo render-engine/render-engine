@@ -158,3 +158,4 @@ poetry.lock
 
 docs/site
 .vscode
+*.bak
