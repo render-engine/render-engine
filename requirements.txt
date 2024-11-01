@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=dev
 #
-anyio==4.4.0
+anyio==4.6.2.post1
     # via
     #   httpx
     #   watchfiles
