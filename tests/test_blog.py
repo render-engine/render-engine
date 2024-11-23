@@ -1,13 +1,13 @@
-import pytest
 import datetime
 
-from render_engine.page import Page
+import pytest
+
 from render_engine.blog import Blog
+from render_engine.page import Page
 
 
 @pytest.fixture()
 def blog_with_pages():
-
     class Page1(Page):
         title = "Older Blog Post"
         date = datetime.datetime(2024, 1, 1)
