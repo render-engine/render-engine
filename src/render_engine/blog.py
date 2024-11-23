@@ -31,9 +31,9 @@ class Blog(Collection):
     """
 
     BasePageParser = MarkdownPageParser
-    sort_reverse: bool = True
     sort_by = "date"
     has_archive = True
+    sort_reverse = True
 
     @staticmethod
     def _metadata_attrs(**kwargs) -> dict[str, Any]:

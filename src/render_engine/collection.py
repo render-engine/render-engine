@@ -102,7 +102,9 @@ class Collection(BaseObject):
 
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
-        return flatten([Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
+        return flatten(
+            [Path(self.content_path).glob(suffix) for suffix in self.include_suffixes]
+        )
 
     def _generate_content_from_modified_pages(
         self,
@@ -191,7 +193,7 @@ class Collection(BaseObject):
     @property
     def feed(self):
         feed = self.Feed()
-        feed.pages = [page for page in self]
+        feed.pages = self.sorted_pages
         feed.title = getattr(self, "feed_title", self._title)
         feed.slug = self._slug
         feed.Parser = self.Parser
