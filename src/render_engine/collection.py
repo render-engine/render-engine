@@ -191,7 +191,7 @@ class Collection(BaseObject):
     @property
     def feed(self):
         feed = self.Feed()
-        feed.pages = [page for page in self]
+        feed.pages = self.sorted_pages
         feed.title = getattr(self, "feed_title", self._title)
         feed.slug = self._slug
         feed.Parser = self.Parser
