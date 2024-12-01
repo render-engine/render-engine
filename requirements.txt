@@ -163,7 +163,7 @@ pytest==8.3.3
     #   pytest-cov
     #   pytest-mock
     #   render_engine (pyproject.toml)
-pytest-cov==5.0.0
+pytest-cov==6.0.0
     # via render_engine (pyproject.toml)
 pytest-mock==3.14.0
     # via render_engine (pyproject.toml)
