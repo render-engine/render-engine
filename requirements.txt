@@ -84,7 +84,7 @@ markdown==3.7
     #   pymdown-extensions
 markdown-it-py==3.0.0
     # via rich
-markdown2==2.5.0
+markdown2==2.5.1
     # via
     #   render-engine-markdown
     #   render_engine (pyproject.toml)
