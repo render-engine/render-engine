@@ -1,13 +1,16 @@
-name: Format and Lint with Ruff and MarkdownLint
+name: Format and Lint
 on:
-    pull_request:
-        branches: [main]
-    workflow_dispatch:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
+
 jobs:
-  build:
+  lint-python:
+    name: Format and Lint Python
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,33 +24,25 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ruff
-      # Update output format to enable automatic inline annotations.
-      - name: Run Ruff
-        run: |
-            ruff check . --fix --output-format=github
-            ruff format .
+      - name: Check Linting
+        run: ruff check . --output-format=github
+      - name: Check formatting
+        run: ruff format . --check
 
+  lint-docs:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Markdown Lint base-files
         uses: DavidAnson/markdownlint-cli2-action@v18
         with:
-            fix: true
-            globs: |
-              *.md
-              .github/**/*.md
-        continue-on-error: true
+          globs: |
+            *.md
+            .github/**/*.md
+          config: ./.markdownlint.json
       - name: Markdown Lint Docs
         uses: DavidAnson/markdownlint-cli2-action@v18
         with:
-            fix: true
-            globs: docs/**/*.md
-            config: docs/.markdownlint.json
-        continue-on-error: true
-      - name: Commit changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config --global user.name "Ruff"
-            git config --global user.email "ruff-action@users.noreply.github.com"
-            git add -A
-            git commit -m "Format and lint with Ruff"
-            git push origin HEAD:${{ github.event.pull_request.head.ref }}
-          fi
+          globs: docs/**/*.md
+          config: docs/.markdownlint.json
