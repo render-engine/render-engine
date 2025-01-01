@@ -236,7 +236,7 @@ urllib3==2.2.3
     # via requests
 virtualenv==20.27.1
     # via pre-commit
-watchdog==5.0.2
+watchdog==6.0.0
     # via mkdocs
 watchfiles==0.24.0
     # via render_engine (pyproject.toml)
