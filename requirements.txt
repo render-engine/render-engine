@@ -37,7 +37,7 @@ colorama==0.4.6
     #   mkdocs-material
 cookiecutter==2.6.0
     # via render_engine (pyproject.toml)
-coverage[toml]==7.6.1
+coverage[toml]==7.6.12
     # via pytest-cov
 distlib==0.3.8
     # via virtualenv
