@@ -52,7 +52,7 @@ def event_handler(site):
 def test_server_build(event_handler):
     """Asserts you can start and stop the server"""
     event_handler["handler"].start_server()
-    response = httpx.get(f'http://{event_handler["hostname"]}:{event_handler["port"]}')
+    response = httpx.get(f"http://{event_handler['hostname']}:{event_handler['port']}")
     event_handler["handler"].stop_server()
     assert response.status_code == 200
     assert response.text == "Hello World!"
@@ -61,6 +61,6 @@ def test_server_build(event_handler):
 def test_as_a_context_manager(event_handler):
     """Asserts you can start and stop the server with a context manager"""
     with event_handler["handler"]:
-        response = httpx.get(f'http://{event_handler["hostname"]}:{event_handler["port"]}')
+        response = httpx.get(f"http://{event_handler['hostname']}:{event_handler['port']}")
     assert response.status_code == 200
     assert response.text

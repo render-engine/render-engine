@@ -94,7 +94,7 @@ class BasePage(BaseObject):
 
         except AttributeError:
             raise AttributeError(
-                f"{self} does not have a content attribute. " "You must either provide a template or content."
+                f"{self} does not have a content attribute. You must either provide a template or content."
             )
 
     def __str__(self):
