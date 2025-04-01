@@ -231,7 +231,7 @@ tzdata==2025.1
     # via render_engine (pyproject.toml)
 urllib3==2.3.0
     # via requests
-virtualenv==20.29.3
+virtualenv==20.30.0
     # via pre-commit
 watchdog==6.0.0
     # via mkdocs
