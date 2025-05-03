@@ -144,11 +144,25 @@ class Collection(BaseObject):
 
     @property
     def sorted_pages(self):
-        return sorted(
-            (page for page in self.__iter__()),
-            key=lambda page: getattr(page, self.sort_by),
-            reverse=self.sort_reverse,
-        )
+        """
+        Returns pages in the collection sorted by the `self.sort_by` attribute.
+
+        Exceptions:
+            AttributeError: This is raised when the attribute is missing from one or more pages
+            TypeError: This happens when the values being compared are of two different types
+
+        """
+        try:
+            return sorted(
+                (page for page in self.__iter__()),
+                key=lambda page: getattr(page, self.sort_by),
+                reverse=self.sort_reverse,
+            )
+        except AttributeError as e:
+            raise AttributeError(
+                f"Cannot sort pages: '{self.sort_by}' attribute is missing from one or more pages."
+                f"Make sure all pages in collection '{self._title}' have the '{self.sort_by}' attribute defined."
+            ) from e
 
     @property
     def archives(self) -> Generator[Archive, None, None]:

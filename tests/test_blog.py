@@ -19,7 +19,7 @@ def blog_with_pages():
         content = """Newer Page"""
 
     class CustomBlog(Blog):
-        pages = [Page1, Page2]
+        pages = [Page1(), Page2()]
 
     return CustomBlog()
 
