@@ -261,7 +261,7 @@ def test_collection_sort_by_error_missing():
     custom_collection = SortByErrorCollection()
 
     with pytest.raises(AttributeError) as excinfo:
-        print(custom_collection.sorted_pages)
+        custom_collection.sorted_pages
 
     # Check that the error message contains helpful information
     assert "Cannot sort pages" in str(excinfo.value)
