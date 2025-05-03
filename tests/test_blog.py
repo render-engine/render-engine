@@ -19,7 +19,7 @@ def blog_with_pages():
         content = """Newer Page"""
 
     class CustomBlog(Blog):
-        pages = [Page1, Page2]
+        pages = [Page1(), Page2()]
 
     return CustomBlog()
 
@@ -31,7 +31,7 @@ def test_blog_has_feed():
     assert hasattr(blog, "Feed")
 
 
-def test_blog_post_must_have_date():
+def test_sorting_blog_posts_with_no_date_raises_error():
     """
     Tests that blog posts that don't have date attributes
     raise an error when trying to sort

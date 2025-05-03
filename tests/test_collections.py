@@ -153,3 +153,117 @@ def test_collection_attrs_pass_to_page(tmp_path, attr: str, attrval: str | list[
     page = collection.get_page()
 
     assert getattr(page, attr) == attrval
+
+
+def test_collection_sort_by__title():
+    """
+    Tests that collections are sorted by their `_title`
+    """
+
+    class PageA(Page):
+        title = "Page A"
+        content = "This Page should list first"
+
+    class PageB(Page):
+        title = "Page B"
+        content = "This Page should list second"
+
+    class PageC(Page):
+        title = "Page C"
+        content = "This Page should list third"
+
+    # Create instances of the page classes
+    page_a = PageA()
+    page_b = PageB()
+    page_c = PageC()
+
+    # Expected sorted order
+    expected_pages = [page_a, page_b, page_c]
+
+    # Create a mixed order of pages to test sorting
+    mixed_pages = [page_c, page_a, page_b]
+
+    class CustomCollection(Collection):
+        pages = mixed_pages
+
+    custom_collection = CustomCollection()
+    sorted_pages = list(custom_collection.sorted_pages)
+
+    # Verify the sorted order matches expected order by checking titles
+    assert [page.title for page in sorted_pages] == [page.title for page in expected_pages]
+
+
+def test_collection_custom_sort_by():
+    """
+    Tests that the sort_by can be changed
+    """
+
+    class PageA(Page):
+        title = "Page A"
+        content = "This Page should list first"
+        custom_sort_content = "z"
+
+    class PageB(Page):
+        title = "Page B"
+        content = "This Page should list second"
+        custom_sort_content = "4"
+
+    class PageC(Page):
+        title = "Page C"
+        content = "This Page should list third"
+        custom_sort_content = "b"
+
+    # Create instances of the page classes
+    page_a = PageA()
+    page_b = PageB()
+    page_c = PageC()
+
+    # Expected order based on custom_sort_content: 4, b, z
+    expected_pages = [page_b, page_c, page_a]
+
+    # Create a mixed order of pages
+    mixed_pages = [page_a, page_c, page_b]
+
+    class CustomCollection(Collection):
+        sort_by = "custom_sort_content"
+        pages = mixed_pages
+
+    custom_collection = CustomCollection()
+    sorted_pages = list(custom_collection.sorted_pages)
+
+    # Verify the sorted order by checking custom_sort_content values
+    assert [page.custom_sort_content for page in sorted_pages] == [page.custom_sort_content for page in expected_pages]
+
+
+def test_collection_sort_by_error_missing():
+    """
+    Tests that a custom error message is raised when pages are missing
+    the attribute specified in sort_by.
+    """
+
+    class PageA(Page):
+        title = "Page A"
+        content = "This Page is fine"
+        custom_sort_content = "z"
+
+    class PageB(Page):
+        title = "Page B"
+        content = "This Page should error because it is missing the sort_by"
+
+    # Create instances of the page classes
+    page_a = PageA()
+    page_b = PageB()
+
+    class SortByErrorCollection(Collection):
+        sort_by = "custom_sort_content"
+        pages = [page_b, page_a]
+
+    custom_collection = SortByErrorCollection()
+
+    with pytest.raises(AttributeError) as excinfo:
+        print(custom_collection.sorted_pages)
+
+    # Check that the error message contains helpful information
+    assert "Cannot sort pages" in str(excinfo.value)
+    assert "custom_sort_content" in str(excinfo.value)
+    assert "SortByErrorCollection" in str(excinfo.value)
