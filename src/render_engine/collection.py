@@ -149,7 +149,7 @@ class Collection(BaseObject):
 
         Exceptions:
             AttributeError: This is raised when the attribute is missing from one or more pages
-            TypeError: This is happens when the values being compared are of two different types
+            TypeError: This happens when the values being compared are of two different types
 
         """
         try:
