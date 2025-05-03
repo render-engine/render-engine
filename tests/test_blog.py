@@ -33,9 +33,7 @@ def blog_with_time_zones():
 
     class Page2(Page):
         title = "Newer Blog Post"
-        date = datetime.datetime(
-            2024, 1, 1, 12, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=-1))
-        )
+        date = datetime.datetime(2024, 1, 1, 12, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=-1)))
         content = """Newer Page"""
 
     class CustomBlog(Blog):
