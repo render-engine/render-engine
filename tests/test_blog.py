@@ -11,11 +11,31 @@ def blog_with_pages():
     class Page1(Page):
         title = "Older Blog Post"
         date = datetime.datetime(2024, 1, 1)
-        content = """Newer Page"""
+        content = """Older Page"""
 
     class Page2(Page):
         title = "Newer Blog Post"
         date = datetime.datetime(2024, 1, 2)
+        content = """Newer Page"""
+
+    class CustomBlog(Blog):
+        pages = [Page1, Page2]
+
+    return CustomBlog()
+
+
+@pytest.fixture()
+def blog_with_time_zones():
+    class Page1(Page):
+        title = "Older Blog Post"
+        date = datetime.datetime(2024, 1, 1, 12, 0, 0, tzinfo=datetime.UTC)
+        content = """Older Page"""
+
+    class Page2(Page):
+        title = "Newer Blog Post"
+        date = datetime.datetime(
+            2024, 1, 1, 12, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=-1))
+        )
         content = """Newer Page"""
 
     class CustomBlog(Blog):
@@ -30,12 +50,23 @@ def test_blog_has_feed():
     assert hasattr(blog, "Feed")
 
 
-def test_blog_metadata():
-    metadata = Blog._metadata_attrs()
-    # title should not be affected
-    assert metadata["title"] == "Untitled Entry"
-    # metadata should have date now
-    assert isinstance(metadata["date"], datetime.datetime)
+def test_blog_post_must_have_date():
+    class Page1(Page):
+        title = "Older Blog Post"
+        content = """Older Page"""
+
+    class Page2(Page):
+        title = "Newer Blog Post"
+        content = """Newer Page"""
+
+    class CustomBlog(Blog):
+        pages = [Page1, Page2]
+
+    blog = CustomBlog()
+
+    with pytest.raises(AttributeError):
+        print(blog.sorted_pages)
+        assert blog.sort_by == "date"
 
 
 def test_blog_sorted_pages_is_in_reverse(blog_with_pages):

@@ -35,19 +35,6 @@ class Blog(Collection):
     has_archive = True
     sort_reverse = True
 
-    @staticmethod
-    def _metadata_attrs(**kwargs) -> dict[str, Any]:
-        timezone = zoneinfo.ZoneInfo(
-            os.environ.get(
-                "RENDER_ENGINE_DEFAULT_TIMEZONE",
-                "UTC",
-            )
-        )
-        return {
-            **Collection._metadata_attrs(),
-            **{"date": datetime.datetime.now(tz=timezone)},
-        }
-
     def latest(self, count: int = 1) -> list[Collection]:
         """Get the latest post from the collection."""
         latest_pages = list(
