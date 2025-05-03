@@ -160,7 +160,7 @@ class Collection(BaseObject):
             )
         except AttributeError as e:
             raise AttributeError(
-                f"Cannot sort pages: '{self.sort_by}' attribute is missing from one or more pages. "
+                f"Cannot sort pages: '{self.sort_by}' attribute is missing from one or more pages."
                 f"Make sure all pages in collection '{self._title}' have the '{self.sort_by}' attribute defined."
             ) from e
 
