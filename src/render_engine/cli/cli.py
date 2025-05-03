@@ -246,18 +246,9 @@ def serve(
             "--port",
             "-p",
             help="Port to serve on",
-            show_default=True,
+            show_default=False,
         ),
     ] = 8000,
-    server_uri: Annotated[
-        str,
-        typer.Option(
-            "--uri",
-            "-u",
-            help="address to connect to",
-            show_default=True,
-        ),
-    ] = "127.0.0.1",
 ) -> None:
     """
     Create an HTTP server to serve the site at `localhost`.
@@ -280,7 +271,7 @@ def serve(
         remove_output_folder(Path(site.output_path))
     site.render()
 
-    server_address = (server_uri, port)
+    server_address = ("127.0.0.1", port)
 
     handler = ServerEventHandler(
         import_path=module,
