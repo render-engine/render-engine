@@ -148,7 +148,7 @@ class Collection(BaseObject):
         Returns pages in the collection sorted by the `self.sort_by` attribute.
 
         Exceptions:
-            AttributeError: This is raised when the attribute is misisng from one or more pages
+            AttributeError: This is raised when the attribute is missing from one or more pages
             TypeError: This is happens when the values being compared are of two different types
 
         """
