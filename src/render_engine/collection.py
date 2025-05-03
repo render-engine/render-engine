@@ -77,7 +77,7 @@ class Collection(BaseObject):
     parser_extras: dict[str, Any]
     required_themes: list[Callable]
     routes: list[str | Path] = ["./"]
-    sort_by: str = "title"
+    sort_by: str = "_title"
     sort_reverse: bool = False
     template_vars: dict[str, Any]
     template: str | None
@@ -146,7 +146,7 @@ class Collection(BaseObject):
     def sorted_pages(self):
         return sorted(
             (page for page in self.__iter__()),
-            key=lambda page: getattr(page, self.sort_by, self._title),
+            key=lambda page: getattr(page, self.sort_by),
             reverse=self.sort_reverse,
         )
 
