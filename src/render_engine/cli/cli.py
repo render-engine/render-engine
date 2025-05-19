@@ -329,13 +329,15 @@ def new_entry(
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
     module, site_name = split_module_site(module_site)
     parsed_args = split_args(args) if args else {}
-    # There is an issue with including `title` in the context to the parser that causes an exception. We can fix this by popping it out of the arguments here and using regex to push it back in later.
+    # There is an issue with including `title` in the context to the parser that causes an exception. We can fix
+    # this by popping it out of the arguments here and using regex to push it back in later.
     title = parsed_args.pop("title", None)
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
     entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
     if title:
-        # If we had a title earlier this is where we replace the default that is added by the template handler with the one supplied by the user.
+        # If we had a title earlier this is where we replace the default that is added by the template handler with
+        # the one supplied by the user.
         entry = re.sub(r'title: Untitled Entry', f'title: {title}', entry)
     filepath = Path(_collection.content_path).joinpath(filename)
     filepath.write_text(entry)
