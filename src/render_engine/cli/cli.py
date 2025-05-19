@@ -72,13 +72,16 @@ def split_args(args: list[str] | None) -> dict[str, str]:
     split_arguments = {}
     for arg in args:
         # Accept arguments that are split with either `:` or `=`. Raise a ValueError if neither is found
-        split_arg = re.split(r'[:=]', arg, maxsplit=1)
+        split_arg = re.split(r"[:=]", arg, maxsplit=1)
         if len(split_arg) != 2:
-            raise ValueError(f"Invalid argument: {repr(arg)}. Arguments must have the key, value pair separated by either an = or a :")
+            raise ValueError(
+                f"Invalid argument: {repr(arg)}. Arguments must have the "
+                f"key, value pair separated by either an = or a :"
+            )
         k, v = map(str.strip, split_arg)
         if k in split_arguments:
             # Do not allow redefinition of arguments
-            raise ValueError(f'Key {repr(k)} is already defined.')
+            raise ValueError(f"Key {repr(k)} is already defined.")
         split_arguments[k] = v
     return split_arguments
 
@@ -339,7 +342,7 @@ def new_entry(
     if title:
         # If we had a title earlier this is where we replace the default that is added by the template handler with
         # the one supplied by the user.
-        entry = re.sub(r'title: Untitled Entry', f'title: {title}', entry)
+        entry = re.sub(r"title: Untitled Entry", f"title: {title}", entry)
     filepath = Path(_collection.content_path).joinpath(filename)
     filepath.write_text(entry)
     Console().print(f'New {collection} entry created at "{filepath}"')
