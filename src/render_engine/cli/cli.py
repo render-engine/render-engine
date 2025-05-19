@@ -345,13 +345,13 @@ def new_entry(
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
     if content and content_file:
-        raise TypeError('Both content and content_file provided. At most one may be provided.')
+        raise TypeError("Both content and content_file provided. At most one may be provided.")
     if content_file:
         try:
             with open(content_file) as f:
                 content = f.read()
         except FileNotFoundError:
-            raise FileNotFoundError(f'Content file {repr(content_file)} not found.')
+            raise FileNotFoundError(f"Content file {repr(content_file)} not found.")
     entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
     if title:
         # If we had a title earlier this is where we replace the default that is added by the template handler with
