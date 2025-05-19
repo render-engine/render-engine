@@ -72,7 +72,8 @@ def split_args(args: list[str] | None) -> dict[str, str]:
     split_arguments = {}
     for arg in args:
         # Accept arguments that are split with either `:` or `=`. Raise a ValueError if neither is found
-        if not (split_arg := re.split(r'[:=]', arg, maxsplit=1)):
+        split_arg = re.split(r'[:=]', arg, maxsplit=1)
+        if len(split_arg) != 2:
             raise ValueError(f"Invalid argument: {repr(arg)}. Arguments must have the key, value pair separated by either an = or a :")
         k, v = map(str.strip, split_arg)
         if k in split_arguments:
