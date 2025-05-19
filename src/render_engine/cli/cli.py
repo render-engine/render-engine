@@ -347,8 +347,11 @@ def new_entry(
     if content and content_file:
         raise TypeError('Both content and content_file provided. At most one may be provided.')
     if content_file:
-        with open(content_file) as f:
-            content = f.read()
+        try:
+            with open(content_file) as f:
+                content = f.read()
+        except FileNotFoundError:
+            raise FileNotFoundError(f'Content file {repr(content_file)} not found.')
     entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
     if title:
         # If we had a title earlier this is where we replace the default that is added by the template handler with
