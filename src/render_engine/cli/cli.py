@@ -306,6 +306,12 @@ def new_entry(
         Optional[str],
         typer.Option(),
     ] = None,
+    content_file: Annotated[
+        Optional[str],
+        typer.Option(
+            help="Path to a file containing the desired content.",
+        ),
+    ] = None,
     args: Annotated[
         Optional[list[str]],
         typer.Option(
@@ -318,6 +324,11 @@ def new_entry(
     parsed_args = split_args(args) if args else {}
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
+    if content and content_file:
+        raise TypeError('Both content and content_file provided. At most one may be provided.')
+    if content_file:
+        with open(content_file) as f:
+            content = f.read()
     entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
     filepath = Path(_collection.content_path).joinpath(filename)
     filepath.write_text(entry)
