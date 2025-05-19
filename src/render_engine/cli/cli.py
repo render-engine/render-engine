@@ -1,5 +1,6 @@
 # ruff: noqa: UP007
 import importlib
+import json
 import os
 import re
 import shutil
@@ -15,6 +16,43 @@ from rich.table import Table
 
 from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
+
+# Load the config file. The config file is a flat JSON file that looks like:
+# {
+#   "module": "app",
+#   "site": "app",
+#   "collection": "Blog"
+# }
+CONFIG_FILE_NAME = ".render-engine-config.json"
+try:
+    with open(CONFIG_FILE_NAME) as stored_config_file:
+        stored_config = json.load(stored_config_file)
+    print(f"Config loaded from {CONFIG_FILE_NAME}")
+except FileNotFoundError:
+    print(f"No config file found at {CONFIG_FILE_NAME}")
+    stored_config = {}
+
+# Initialize the arguments and default values
+module_site_arg, collection_arg = None, None
+default_module_site, default_collection = None, None
+
+if stored_config:
+    # Populate the argument variables and default values from the config
+    if (module := stored_config.get("module")) and (site := stored_config.get("site")):
+        module_site_arg = typer.Option(
+            help="module:site for Build the site prior to serving",
+        )
+        default_module_site = f"{module}:{site}"
+    if default_collection := stored_config.get("collection"):
+        collection_arg = typer.Option(
+            help="The Collection from which your metadata is defined",
+        )
+
+# If there is no config, use the positional arguments.
+if not module_site_arg:
+    module_site_arg = typer.Argument(help="module:site for Build the site prior to serving [REQUIRED]")
+if not collection_arg:
+    collection_arg = typer.Argument(help="The Collection from which your metadata is defined [REQUIRED]")
 
 app = typer.Typer()
 
@@ -100,10 +138,8 @@ def display_filtered_templates(title: str, templates_list: list[str], filter_val
 def templates(
     module_site: Annotated[
         str,
-        typer.Argument(
-            help="module:site for Build the site prior to serving",
-        ),
-    ],
+        module_site_arg,
+    ] = default_module_site,
     theme_name: Annotated[str, typer.Option("--theme-name", help="Theme to search templates in")] = "",
     filter_value: Annotated[str, typer.Option("--filter-value", help="Filter templates based on names")] = "",
 ):
@@ -115,6 +151,8 @@ def templates(
         theme_name: Optional. Specifies the theme to list templates from.
         filter_value: Optional. Filters templates based on provided names.
     """
+    if not module_site:
+        raise typer.BadParameter("You need to specify module:site")
     module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
     console = Console()
@@ -197,10 +235,8 @@ def init(
 def build(
     module_site: Annotated[
         str,
-        typer.Argument(
-            help="module:site for Build the site prior to serving",
-        ),
-    ],
+        module_site_arg,
+    ] = default_module_site,
     clean: Annotated[
         bool,
         typer.Option(
@@ -217,6 +253,8 @@ def build(
         module_site: Python module and initialize Site class
 
     """
+    if not module_site:
+        raise typer.BadParameter("You need to specify module:site")
     module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
     if clean:
@@ -228,10 +266,8 @@ def build(
 def serve(
     module_site: Annotated[
         str,
-        typer.Argument(
-            help="module:site for Build the site prior to serving",
-        ),
-    ],
+        module_site_arg,
+    ] = default_module_site,
     clean: Annotated[
         bool,
         typer.Option(
@@ -280,7 +316,8 @@ def serve(
         directory: Directory to serve. If `module_site` is provided, this will be the `output_path` of the site.
         port: Port to serve on
     """
-
+    if not module_site:
+        raise typer.BadParameter("You need to specify module:site")
     module, site_name = split_module_site(module_site)
     site = get_site(module, site_name)
 
@@ -305,20 +342,22 @@ def serve(
 
 @app.command()
 def new_entry(
+    # In order to preserve the position if the defaults are not set from a config file we need to give them all a
+    # default value. This means that Typer does not see them as required.
     module_site: Annotated[
-        str,
-        typer.Argument(
-            help="module:site for Build the site prior to serving",
-        ),
-    ],
+        Optional[str] if default_module_site else str,
+        module_site_arg,
+    ] = default_module_site,
     collection: Annotated[
-        str,
-        typer.Argument(help="The Collection from which youre metadata is defined"),
-    ],
+        Optional[str] if default_collection else str,
+        collection_arg,
+    ] = default_collection,
     filename: Annotated[
         str,
-        typer.Argument(help="The filename in which to save the path. Will be saved in the collection's `content_path`"),
-    ],
+        typer.Argument(
+            help="The filename in which to save the path. Will be saved in the collection's `content_path` [REQUIRED]"
+        ),
+    ] = None,
     content: Annotated[
         Optional[str],
         typer.Option(
@@ -352,6 +391,10 @@ def new_entry(
     ] = None,
 ):
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
+    if not module_site or not collection or not filename:
+        # Since some of the variables may come from the config and they all now have a default value we must check to
+        # make sure all are set and error out correctly.
+        raise typer.BadParameter("All required argements (module-site, collection, and filename) are required")
     module, site_name = split_module_site(module_site)
     parsed_args = split_args(args) if args else {}
     # There is an issue with including `title` in the context to the parser that causes an exception. We can fix
