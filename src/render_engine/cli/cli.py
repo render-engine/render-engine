@@ -317,16 +317,31 @@ def new_entry(
     ],
     filename: Annotated[
         str,
-        typer.Option(help="The filename in which to save the path. Will be saved in the collection's `content_path`"),
+        typer.Argument(help="The filename in which to save the path. Will be saved in the collection's `content_path`"),
     ],
     content: Annotated[
         Optional[str],
-        typer.Option(),
+        typer.Option(
+            help="The content to include in the page. Either this or `--content-file` may be provided but not both"
+        ),
     ] = None,
     content_file: Annotated[
         Optional[str],
         typer.Option(
-            help="Path to a file containing the desired content.",
+            help="Path to a file containing the desired content. "
+            "Either this or `--content` may be provided but not both",
+        ),
+    ] = None,
+    title: Annotated[
+        Optional[str],
+        typer.Option(
+            help="Title for the new page. If this is also provided via `--args` this will be preferred.",
+        ),
+    ] = None,
+    slug: Annotated[
+        Optional[str],
+        typer.Option(
+            help="Slug for the new page. If this is also provided via `--args` this will be preferred.",
         ),
     ] = None,
     args: Annotated[
@@ -341,7 +356,13 @@ def new_entry(
     parsed_args = split_args(args) if args else {}
     # There is an issue with including `title` in the context to the parser that causes an exception. We can fix
     # this by popping it out of the arguments here and using regex to push it back in later.
-    title = parsed_args.pop("title", None)
+    _title = parsed_args.pop("title", None)
+    # Prefer the title keyword from the one provided in `--args` in case someone does both.
+    title = title or _title
+    if slug:
+        # If `slug` is provided as a keyword add it to the `parsed_args` to be included in the rendering.
+        # Prefer the keyword to what is passed via `--args`
+        parsed_args["slug"] = slug
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
     if content and content_file:
