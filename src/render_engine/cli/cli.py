@@ -1,6 +1,7 @@
 # ruff: noqa: UP007
 import importlib
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -66,7 +67,23 @@ def create_collection_entry(content: str | None, collection: Collection, **conte
 
 
 def split_args(args: list[str] | None) -> dict[str, str]:
-    return {value.split("=")[0]: value.split("=")[1] for value in args if args}
+    if not args:
+        return {}
+    split_arguments = {}
+    for arg in args:
+        # Accept arguments that are split with either `:` or `=`. Raise a ValueError if neither is found
+        split_arg = re.split(r"[:=]", arg, maxsplit=1)
+        if len(split_arg) != 2:
+            raise ValueError(
+                f"Invalid argument: {repr(arg)}. Arguments must have the "
+                f"key, value pair separated by either an = or a :"
+            )
+        k, v = map(str.strip, split_arg)
+        if k in split_arguments:
+            # Do not allow redefinition of arguments
+            raise ValueError(f"Key {repr(k)} is already defined.")
+        split_arguments[k] = v
+    return split_arguments
 
 
 def display_filtered_templates(title: str, templates_list: list[str], filter_value: str) -> None:
@@ -315,13 +332,16 @@ def new_entry(
     args: Annotated[
         Optional[list[str]],
         typer.Option(
-            help="key value attrs to include in your entry use the format `--args key=value`",
+            help="key value attrs to include in your entry use the format `--args key=value` or `--args key:value`",
         ),
     ] = None,
 ):
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
     module, site_name = split_module_site(module_site)
     parsed_args = split_args(args) if args else {}
+    # There is an issue with including `title` in the context to the parser that causes an exception. We can fix
+    # this by popping it out of the arguments here and using regex to push it back in later.
+    title = parsed_args.pop("title", None)
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
     if content and content_file:
@@ -330,6 +350,10 @@ def new_entry(
         with open(content_file) as f:
             content = f.read()
     entry = create_collection_entry(content=content, collection=_collection, **parsed_args)
+    if title:
+        # If we had a title earlier this is where we replace the default that is added by the template handler with
+        # the one supplied by the user.
+        entry = re.sub(r"title: Untitled Entry", f"title: {title}", entry)
     filepath = Path(_collection.content_path).joinpath(filename)
     filepath.write_text(entry)
     Console().print(f'New {collection} entry created at "{filepath}"')
