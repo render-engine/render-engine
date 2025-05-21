@@ -27,9 +27,9 @@ CONFIG_FILE_NAME = ".render-engine-config.json"
 try:
     with open(CONFIG_FILE_NAME) as stored_config_file:
         stored_config = json.load(stored_config_file)
-    print(f"Config loaded from {CONFIG_FILE_NAME}")
+    typer.echo(f"Config loaded from {CONFIG_FILE_NAME}")
 except FileNotFoundError:
-    print(f"No config file found at {CONFIG_FILE_NAME}")
+    typer.echo(f"No config file found at {CONFIG_FILE_NAME}")
     stored_config = {}
 
 # Initialize the arguments and default values
