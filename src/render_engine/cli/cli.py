@@ -1,6 +1,5 @@
 # ruff: noqa: UP007
 import importlib
-import json
 import os
 import re
 import shutil
@@ -26,17 +25,17 @@ CONFIG_FILE_NAME = "pyproject.toml"
 module_site_arg, collection_arg = None, None
 default_module_site, default_collection = None, None
 
+
 def load_config(config_file: str = CONFIG_FILE_NAME):
     """Load the config from the file"""
     global module_site_arg, collection_arg, default_module_site, default_collection
     try:
         with open(config_file) as stored_config_file:
-            stored_config = toml.load(stored_config_file).get('render-engine', {}).get('cli', {})
+            stored_config = toml.load(stored_config_file).get("render-engine", {}).get("cli", {})
         typer.echo(f"Config loaded from {config_file}")
     except FileNotFoundError:
         typer.echo(f"No config file found at {config_file}")
         stored_config = {}
-
 
     if stored_config:
         # Populate the argument variables and default values from the config
@@ -48,13 +47,14 @@ def load_config(config_file: str = CONFIG_FILE_NAME):
         if default_collection := stored_config.get("collection"):
             collection_arg = typer.Option(
                 help="The Collection from which your metadata is defined",
-                )
+            )
 
     # If there is no config, use the positional arguments.
     if not module_site_arg:
         module_site_arg = typer.Argument(help="module:site for Build the site prior to serving [REQUIRED]")
     if not collection_arg:
         collection_arg = typer.Argument(help="The Collection from which your metadata is defined [REQUIRED]")
+
 
 load_config()
 
