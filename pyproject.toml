@@ -39,6 +39,7 @@ dev = [
   "pytest-mock",
   "rich",
   "ruff",
+  "toml",
   "typer",
   "watchfiles",
 ]
