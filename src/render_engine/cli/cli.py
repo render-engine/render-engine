@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Annotated, Optional
 
+import toml
 import typer
 from rich import print as rprint
 from rich.console import Console
@@ -17,42 +18,45 @@ from rich.table import Table
 from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
 
-# Load the config file. The config file is a flat JSON file that looks like:
-# {
-#   "module": "app",
-#   "site": "app",
-#   "collection": "Blog"
-# }
-CONFIG_FILE_NAME = ".render-engine-config.json"
-try:
-    with open(CONFIG_FILE_NAME) as stored_config_file:
-        stored_config = json.load(stored_config_file)
-    typer.echo(f"Config loaded from {CONFIG_FILE_NAME}")
-except FileNotFoundError:
-    typer.echo(f"No config file found at {CONFIG_FILE_NAME}")
-    stored_config = {}
+# Load the config file. The config the pyproject.toml. CLI config is in `render-engine.cli`
+
+CONFIG_FILE_NAME = "pyproject.toml"
 
 # Initialize the arguments and default values
 module_site_arg, collection_arg = None, None
 default_module_site, default_collection = None, None
 
-if stored_config:
-    # Populate the argument variables and default values from the config
-    if (module := stored_config.get("module")) and (site := stored_config.get("site")):
-        module_site_arg = typer.Option(
-            help="module:site for Build the site prior to serving",
-        )
-        default_module_site = f"{module}:{site}"
-    if default_collection := stored_config.get("collection"):
-        collection_arg = typer.Option(
-            help="The Collection from which your metadata is defined",
-        )
+def load_config(config_file: str = CONFIG_FILE_NAME):
+    """Load the config from the file"""
+    global module_site_arg, collection_arg, default_module_site, default_collection
+    try:
+        with open(config_file) as stored_config_file:
+            stored_config = toml.load(stored_config_file).get('render-engine', {}).get('cli', {})
+        typer.echo(f"Config loaded from {config_file}")
+    except FileNotFoundError:
+        typer.echo(f"No config file found at {config_file}")
+        stored_config = {}
 
-# If there is no config, use the positional arguments.
-if not module_site_arg:
-    module_site_arg = typer.Argument(help="module:site for Build the site prior to serving [REQUIRED]")
-if not collection_arg:
-    collection_arg = typer.Argument(help="The Collection from which your metadata is defined [REQUIRED]")
+
+    if stored_config:
+        # Populate the argument variables and default values from the config
+        if (module := stored_config.get("module")) and (site := stored_config.get("site")):
+            module_site_arg = typer.Option(
+                help="module:site for Build the site prior to serving",
+            )
+            default_module_site = f"{module}:{site}"
+        if default_collection := stored_config.get("collection"):
+            collection_arg = typer.Option(
+                help="The Collection from which your metadata is defined",
+                )
+
+    # If there is no config, use the positional arguments.
+    if not module_site_arg:
+        module_site_arg = typer.Argument(help="module:site for Build the site prior to serving [REQUIRED]")
+    if not collection_arg:
+        collection_arg = typer.Argument(help="The Collection from which your metadata is defined [REQUIRED]")
+
+load_config()
 
 app = typer.Typer()
 
