@@ -147,7 +147,7 @@ pluggy==1.5.0
     # via
     #   pytest
     #   render_engine (pyproject.toml)
-pre-commit==4.1.0
+pre-commit==4.2.0
     # via render_engine (pyproject.toml)
 pygments==2.19.1
     # via
