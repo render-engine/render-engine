@@ -7,88 +7,220 @@ tags: ["render-engine", "cli", "site-setup", "build", "serve"]
 
 Render Engine comes with a CLI that can be used to create, build, and serve your site.
 
-## creating your app with `render-engine init`
+## pyproject.toml Configuration
 
-The `init` command is a hook to call [cookiecutter](https://github.com/cookiecutter/cookiecutter).
+The Render Engine CLI can be configured through your `pyproject.toml` file to set default values and avoid repetitive command-line arguments.
 
-This allows you to quickly create or augment your render-engine site using a pre-existing cookiecutter template.
+### Configuration Structure
 
-The default is the [cookiecutter-render-engine-site](https://github.com/render-engine/cookiecutter-render-engine-site).
+```toml
+[render-engine.cli]
+module = "your_module"
+site = "YourSiteClass"
+collection = "blog"  # optional
+```
 
-Create a new site configuration. You can provide extra_context to the cookiecutter template.
+### Configuration Options
 
-Also any argument that cookiecutter accepts can be passed to this command.
+- **module**: The Python module containing your Site class
+- **site**: The name of your Site class within the module
+- **collection**: Default collection name for the `new-entry` command
 
-The template can be a local path or a git repository.
+### Example Configuration
 
-### `collection-path` (`Path`: default=`"pages"`)
+```toml
+[render-engine.cli]
+module = "my_site"
+site = "MySite"
+collection = "posts"
+```
 
-The path to the folder that will contain your [collections](collection.md). This is where you will put your data files to be processed.
+With this configuration, commands that normally require `module:site` can be run without arguments:
 
-### `force` (`bool`: default=`False` as `no-force`)
+- `render-engine build` instead of `render-engine build my_site:MySite`
+- `render-engine serve` instead of `render-engine serve my_site:MySite`
 
-Overwrite existing files and folders. If `no-force`, an error will be raised if **ANY** of the files already exist.
+## CLI Commands
 
-### `output-path` (`Path`: default=`"output"`)
+### init
 
-The path to the [`output`](site.md?id=output_path) directory. This is where your rendered site will be served.
+Create a new Render Engine site from a template.
 
-### `project-path-name` (`Path`: default=`"app.py"`)
+```bash
+render-engine init [TEMPLATE] [OPTIONS]
+```
 
-The name of the python file that will contain the Render Engine setup. This is where you will define your [site](site.md), [pages](page.md) and [collections](collection.md).
+**Arguments:**
 
-### `project-folder` (`Path`: default=`"."`)
+- `TEMPLATE`: Template URL or path (default: <https://github.com/render-engine/cookiecutter-render-engine-site>)
 
-The name of the folder that will contain your project. This is where your [`project-path-name`](#project-path-name-path-defaultapppy), [`output-path`](#output-path-path-defaultoutput), [`templates-path`](#templates-path-path-defaulttemplates), and [`collection-path`](#collection-path-path-defaultpages) will be created.
+**Options:**
 
-#### `site-description` (`str|None`: default=`None`)
+- `--extra-context, -e`: Extra context as JSON string
+- `--no-input`: Skip all prompts
+- `--output-dir`: Output directory (default: ./)
+- `--config-file, -c`: Path to cookiecutter config file
 
-A short description of your site.  This will be passed into the [`Site`](site.md) object and available in [`site_vars`](site.md?id=site_vars).
+**Examples:**
 
-#### `skip-collection` (`bool`: default=`False` as `no-skip-collection`)
+```bash
+# Use default template
+render-engine init
 
-If `True`, a [`collection-path`](collection.md?id=content_path) folder will not be created.
+# Use custom template with no prompts
+render-engine init https://github.com/myuser/mytemplate --no-input
 
-#### `skip-static` - (`bool`: default: `False` as `no-skip-static`)
+# Provide extra context
+render-engine init --extra-context '{"project_name": "My Blog"}'
+```
 
-If `True`, will not create the [`static`](site.md?id=static_path) folder. This is where you will put your static files (images, css, js, etc).
+### build
 
-#### `templates-path` (`Path`: default=`"templates"`)
+Build your static site.
 
-The path to the folder that will contain your [`templates`](templates.md). This is where you will put your Jinja2 templates.
+```bash
+render-engine build [MODULE:SITE] [OPTIONS]
+```
 
-## Building your site with `render-engine build`
+**Arguments:**
 
-CLI for creating a new site
+- `MODULE:SITE`: Module path and site class (e.g., `my_site:MySite`)
 
-**Parameters:**
+**Options:**
 
-| Name | Type | Description | Default |
-| --- | --- | --- | --- |
-|`module_site`|`Annotated[str, Argument(help='module:site for Build the site prior to serving')]`|Python module and initialize Site class|_required_|
+- `--clean, -c`: Remove output folder before building
 
-`build` requires a `module_site` parameter in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
+**Examples:**
 
-## Serving your site (locally) with `render-engine serve`
+```bash
+# Basic build
+render-engine build my_site:MySite
 
-The `serve` command creates a simple webserver that you can use to view your files.
+# Build with clean
+render-engine build my_site:MySite --clean
 
-`serve` requires a `module_site` argument in the format of `module:site`. `module` is the name of the python file that contains the `site` variable you've initialized. If the site `site` variable is in the `app.py` file, then the `module_site` parameter would be `app:site`.
+# Using config defaults
+render-engine build
+```
 
-You can also use the `--reload` flag to have the site rebuild when changes are made.
+### serve
 
-Create an HTTP server to serve the site at `localhost`.
+Serve your site locally with auto-reload capability.
 
-> !!! Warning
-    This is only for development purposes and should not be used in production.
+```bash
+render-engine serve [MODULE:SITE] [OPTIONS]
+```
 
-| Name | Type | Description | Default |
-| --- | --- | --- | --- |
-| `module_site` | `Annotated[str, Argument(help='module:site for Build the site prior to serving')]` |Python module and initialize Site class | _required_ |
-| `reload` | `Annotated[bool, Option(--reload, -r, help='Reload the server when files change')]` |Use to reload server on file change | `None` |
-| `build` |  |flag to build the site prior to serving the app | _required_ |
-| `directory` | `Annotated[str, Option(--directory, -d, help='Directory to serve', show_default=False)]` |Directory to serve. If `module_site`is provided, this will be the `output_path`of the site. | `None` |
-| `port` | `Annotated[int, Option(--port, -p, help='Port to serve on', show_default=False)]` |Port to serve on | `8000` |
+**Arguments:**
 
-> !!! Note
-    `--reload` triggers a rebuild after re-importing the site object. Certain changes will not be picked up in the rebuild and reload.
+- `MODULE:SITE`: Module path and site class
+
+**Options:**
+
+- `--clean, -c`: Clean output folder before building
+- `--reload, -r`: Auto-reload on file changes
+- `--directory, -d`: Directory to serve (default: output)
+- `--port, -p`: Port number (default: 8000)
+
+**Examples:**
+
+```bash
+# Basic serve
+render-engine serve my_site:MySite
+
+# Serve with auto-reload on port 3000
+render-engine serve my_site:MySite --reload --port 3000
+
+# Clean build and serve
+render-engine serve my_site:MySite --clean --reload
+```
+
+### templates
+
+List available templates from installed themes.
+
+```bash
+render-engine templates [MODULE:SITE] [OPTIONS]
+```
+
+**Arguments:**
+
+- `MODULE:SITE`: Module path and site class
+
+**Options:**
+
+- `--theme-name`: Specific theme to list templates from
+- `--filter-value`: Filter templates by name
+
+**Examples:**
+
+```bash
+# List all templates
+render-engine templates my_site:MySite
+
+# List templates from specific theme
+render-engine templates my_site:MySite --theme-name bootstrap
+
+# Filter templates containing "post"
+render-engine templates my_site:MySite --filter-value post
+```
+
+### new-entry
+
+Create a new collection entry (blog post, page, etc.).
+
+```bash
+render-engine new-entry [MODULE:SITE] [COLLECTION] [FILENAME] [OPTIONS]
+```
+
+**Arguments:**
+
+- `MODULE:SITE`: Module path and site class
+- `COLLECTION`: Collection name (e.g., "blog", "pages")
+- `FILENAME`: Output filename for the new entry
+
+**Options:**
+
+- `--content`: Content string for the entry
+- `--content-file`: Path to file containing content
+- `--title`: Entry title
+- `--slug`: URL slug for the entry
+- `--args`: Additional metadata as key=value or key:value pairs
+
+**Examples:**
+
+```bash
+# Create a basic blog post
+render-engine new-entry my_site:MySite blog my-first-post.md --title "My First Post"
+
+# Create post with content
+render-engine new-entry my_site:MySite blog hello.md --content "Hello, world!" --title "Hello"
+
+# Create post from file with metadata
+render-engine new-entry my_site:MySite blog review.md \
+    --content-file draft.txt \
+    --title "Product Review" \
+    --args author="John Doe" \
+    --args category=reviews \
+    --args tags="product,tech"
+
+# Using slug
+render-engine new-entry my_site:MySite pages about.md \
+    --title "About Us" \
+    --slug "about-us"
+```
+
+**Notes:**
+
+- The `--args` option can be used multiple times
+- Arguments can use either `=` or `:` as separator
+- If `EDITOR` environment variable is set, the file opens automatically after creation
+- Cannot use both `--content` and `--content-file` options
+
+## Usage Tips
+
+1. **Configuration First**: Set up your `pyproject.toml` to avoid typing module:site repeatedly
+2. **Development Workflow**: Use `serve --reload` during development for instant feedback
+3. **Clean Builds**: Use `--clean` flag when switching between major changes
+4. **Template Discovery**: Use `templates --filter-value` to find specific template types
+5. **Batch Entry Creation**: Combine `new-entry` with shell scripts for bulk content creation
