@@ -5,8 +5,6 @@ date: August 22, 2024
 tags: ["render-engine", "cli", "site-setup", "build", "serve"]
 ---
 
-# Render Engine CLI Configuration and Commands
-
 ## pyproject.toml Configuration
 
 The Render Engine CLI can be configured through your `pyproject.toml` file to set default values and avoid repetitive command-line arguments.
