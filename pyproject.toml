@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-cli = ["cookiecutter", "rich", "typer", "watchfiles"]
+cli = ["cookiecutter", "rich", "typer", "watchfiles", "toml"]
 extras = ["render-engine-sitemap"]
 dev = [
   "cookiecutter",
@@ -39,6 +39,7 @@ dev = [
   "pytest-mock",
   "rich",
   "ruff",
+  "toml",
   "typer",
   "watchfiles",
 ]
