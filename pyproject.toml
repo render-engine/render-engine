@@ -50,8 +50,8 @@ local_scheme = "no-local-version"
 # version_scheme = "python-simplified-semver"
 
 [project.urls]
-homepage = "https://github.com/kjaymiller/render_engine/"
-repository = "https://github.com/kjaymiller/render_engine/"
+homepage = "https://github.com/render-engine/render-engine/"
+repository = "https://github.com/render-engine/render-engine/"
 documentation = "https://render-engine.readthedocs.io/en/latest/"
 
 [tool.setuptools.package-data]
