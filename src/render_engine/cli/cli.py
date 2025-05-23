@@ -16,6 +16,7 @@ from rich.table import Table
 
 from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
+from toml import TomlDecodeError
 
 # Load the config file. The config the pyproject.toml. CLI config is in `render-engine.cli`
 
@@ -29,13 +30,17 @@ default_module_site, default_collection = None, None
 def load_config(config_file: str = CONFIG_FILE_NAME):
     """Load the config from the file"""
     global module_site_arg, collection_arg, default_module_site, default_collection
+    stored_config = {}
     try:
         with open(config_file) as stored_config_file:
-            stored_config = toml.load(stored_config_file).get("render-engine", {}).get("cli", {})
-        typer.echo(f"Config loaded from {config_file}")
+            try:
+                stored_config = toml.load(stored_config_file).get("render-engine", {}).get("cli", {})
+            except TomlDecodeError as exc:
+                typer.echo(f'Encountered an error while parsing {config_file} - {exc}.')
+            else:
+                typer.echo(f"Config loaded from {config_file}")
     except FileNotFoundError:
         typer.echo(f"No config file found at {config_file}")
-        stored_config = {}
 
     if stored_config:
         # Populate the argument variables and default values from the config
