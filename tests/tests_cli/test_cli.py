@@ -124,6 +124,19 @@ def test_config_loading_missing_file(tmp_path, monkeypatch, capsys):
     assert "No config file found" in captured.out
 
 
+def test_config_loading_invalid_file(tmp_path, monkeypatch, capsys):
+    """Tests config loading behavior when pyproject.toml is malformed"""
+
+    config_file = tmp_path / "pyproject.toml"
+    config_file.write_text("Lorem ipsum")
+
+    # Change to temp directory for config loading test
+    monkeypatch.chdir(tmp_path)
+
+    # Test that load_config doesn't raise an exception
+    load_config(str(config_file))
+
+
 def test_collection_entry_with_custom_attributes():
     """Tests that custom attributes are passed through to collection entry"""
     test_collection = Collection()

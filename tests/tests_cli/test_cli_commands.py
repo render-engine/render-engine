@@ -1,10 +1,11 @@
+import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 from typer.testing import CliRunner
 
-from render_engine.cli.cli import app
+from render_engine.cli.cli import app, new_entry
 
 
 @pytest.fixture
@@ -121,11 +122,11 @@ def test_templates_command_no_theme_specified(runner, test_site_module, monkeypa
         assert "No theme name specified" in result.output
 
 
-@pytest.mark.skip("hanging")
 def test_new_entry_command_success(runner, test_site_module, monkeypatch):
     """Tests new_entry command with valid parameters"""
     tmp_path, module_site = test_site_module
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("render_engine.cli.cli.os.getenv", lambda *_: {})
 
     # Create content directory
     content_dir = tmp_path / "content"
@@ -163,11 +164,11 @@ def test_new_entry_command_success(runner, test_site_module, monkeypatch):
         assert created_file.exists()
 
 
-@pytest.mark.skip("hanging")
 def test_new_entry_command_with_args(runner, test_site_module, monkeypatch):
     """Tests new_entry command with --args parameter"""
     tmp_path, module_site = test_site_module
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("render_engine.cli.cli.os.getenv", lambda *_: {})
 
     content_dir = tmp_path / "content"
     content_dir.mkdir()
@@ -205,6 +206,105 @@ def test_new_entry_command_with_args(runner, test_site_module, monkeypatch):
 def test_new_entry_command_missing_required_args(runner):
     """Tests new_entry command with missing required arguments"""
     result = runner.invoke(app, ["new-entry"])
+
+    assert result.exit_code != 0
+
+
+@pytest.mark.parametrize(
+    "options, expected",
+    [
+        (
+            {
+                "collection": "testcollection",
+                "filename": "test.md",
+                "args": ["date=May 23, 2025"],
+                "title": "New Entry",
+                "slug": "slug1",
+                "content": "content",
+            },
+            {"date": "2025-05-23T00:00:00", "slug": "slug1", "content": "content"},
+        ),
+        (
+            {
+                "collection": "testcollection",
+                "filename": "test.md",
+                "args": ["date=May 23, 2025"],
+                "title": "New Entry",
+                "slug": "slug1",
+                "content": "content",
+                "include_date": True,
+            },
+            {"date": "2025-05-23T00:00:00", "slug": "slug1", "content": "content"},
+        ),
+        (
+            {
+                "collection": "testcollection",
+                "filename": "test.md",
+                "title": "New Entry",
+                "slug": "slug1",
+                "content": "content",
+            },
+            {"slug": "slug1", "content": "content"},
+        ),
+    ],
+)
+def test_new_entry_date_options(options, expected, monkeypatch, test_site_module, runner):
+    """Test arg parsing and handling is correct"""
+    passed_args = {}
+
+    def mock_create_collection_entry(**kwargs):
+        """Preserve the arguments passed to create_collection_entry for inspection"""
+        nonlocal passed_args
+        passed_args = kwargs
+        return "---\ntitle: Custom Title\nauthor: Test Author\n---\nTest content"
+
+    tmp_path, module_site = test_site_module
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("render_engine.cli.cli.os.getenv", lambda *_: {})
+    monkeypatch.setattr("render_engine.cli.cli.create_collection_entry", mock_create_collection_entry)
+    content_dir = tmp_path / "content"
+    content_dir.mkdir()
+
+    with (
+        patch("render_engine.cli.cli.get_site") as mock_get_site,
+    ):
+        mock_site = Mock()
+        mock_collection = Mock()
+        mock_collection.content_path = str(content_dir)
+        type(mock_collection).__name__ = "TestCollection"
+        mock_site.route_list = {"test": mock_collection}
+        mock_get_site.return_value = mock_site
+
+        new_entry(module_site=module_site, **options)
+        # Pop the collection from the passed arguments since it's not relevant.
+        passed_args.pop("collection")
+
+        # include_date needs some special handling.
+        if "include_date" in options:
+            if not any(arg.startswith("date=") or arg.startswith("date:") for arg in options.get("args", [])):
+                assert "date" in passed_args
+                assert (
+                    datetime.datetime.fromisoformat(passed_args.pop("date")).date() == datetime.datetime.today().date()
+                )
+
+        assert passed_args == expected
+
+
+def test_new_entry_content_and_content_file(runner):
+    """Test failure with both content and content-file"""
+    result = runner.invoke(
+        app,
+        [
+            "new-entry",
+            "app:app",
+            "testcollection",
+            "test.md",
+            "--content",
+            "lorem ipsum",
+            "--content-file",
+            "llama.txt",
+        ],
+    )
 
     assert result.exit_code != 0
 

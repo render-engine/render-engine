@@ -1,4 +1,5 @@
 # ruff: noqa: UP007
+import datetime
 import importlib
 import os
 import re
@@ -10,13 +11,15 @@ from typing import Annotated, Optional
 
 import toml
 import typer
+from dateutil import parser as dateparser
+from dateutil.parser import ParserError
 from rich import print as rprint
 from rich.console import Console
 from rich.table import Table
+from toml import TomlDecodeError
 
 from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
-from toml import TomlDecodeError
 
 # Load the config file. The config the pyproject.toml. CLI config is in `render-engine.cli`
 
@@ -36,7 +39,7 @@ def load_config(config_file: str = CONFIG_FILE_NAME):
             try:
                 stored_config = toml.load(stored_config_file).get("render-engine", {}).get("cli", {})
             except TomlDecodeError as exc:
-                typer.echo(f'Encountered an error while parsing {config_file} - {exc}.')
+                typer.echo(f"Encountered an error while parsing {config_file} - {exc}.")
             else:
                 typer.echo(f"Config loaded from {config_file}")
     except FileNotFoundError:
@@ -398,6 +401,13 @@ def new_entry(
             help="key value attrs to include in your entry use the format `--args key=value` or `--args key:value`",
         ),
     ] = None,
+    include_date: Annotated[
+        Optional[bool],
+        typer.Option(
+            help="Include today's date in your entry.",
+            is_flag=True,
+        ),
+    ] = False,
 ):
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
     if not module_site or not collection or not filename:
@@ -415,6 +425,17 @@ def new_entry(
         # If `slug` is provided as a keyword add it to the `parsed_args` to be included in the rendering.
         # Prefer the keyword to what is passed via `--args`
         parsed_args["slug"] = slug
+    # Verify that we have a valid date should it be supplied or requested
+    if date := parsed_args.pop("date", None):
+        try:
+            date = dateparser.parse(date).isoformat()
+        except ParserError:
+            raise ValueError(f"Invalid date: {repr(date)}.") from None
+    elif include_date:
+        date = datetime.datetime.today().isoformat()
+    if date:
+        parsed_args["date"] = date
+
     site = get_site(module, site_name)
     _collection = next(coll for coll in site.route_list.values() if type(coll).__name__.lower() == collection.lower())
     if content and content_file:
