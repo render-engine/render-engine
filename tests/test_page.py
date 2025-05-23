@@ -70,3 +70,29 @@ def test_rendered_page_from_template_has_attributes():
         template = environment.get_template("test.html")
 
     assert CustomPage()._render_from_template(template=CustomPage.template) == "CustomPage-custompage-/custompage.html"
+
+
+def test_rendered_page_from_template_has_content():
+    """Tests that selected page attributes are available in a template"""
+    template = "{{content}}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        content = "This is a custom page"
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "This is a custom page"
+
+
+def test_rendered_page_from_template_has_data():
+    """Tests that selected page attributes are available in a template"""
+    template = "{% for d in data %}{{d}}{% endfor %}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        data = [1, 2, 3, 4]
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "1234"
