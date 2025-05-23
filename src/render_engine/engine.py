@@ -1,5 +1,5 @@
-from datetime import datetime
-from email import utils
+import datetime
+from email.utils import format_datetime as fmt_datetime
 from urllib.parse import urljoin
 
 from jinja2 import (
@@ -35,24 +35,29 @@ engine = Environment(
 )
 
 
-def to_pub_date(value: datetime):
+def to_pub_date(value: datetime.datetime):
     """
     Parse information from the given class object.
     """
-    return utils.format_datetime(value)
+    return fmt_datetime(value)
 
 
 engine.filters["to_pub_date"] = to_pub_date
 
 
 @pass_environment
-def format_datetime(env: Environment, value: datetime, datetime_format: str | None = None) -> str:
+def format_datetime(
+    env: Environment,
+    value: datetime.datetime | datetime.date,
+    datetime_format: str | None = None,
+) -> str:
     """Parse information from the given class object."""
     if datetime_format:
         format = datetime_format
     else:
-        format = str(env.globals.get("DATETIME_FORMAT", "%d %b %Y %H:%M %Z"))
-    return datetime.strftime(value, format)
+        format = env.globals.get("DATETIME_FORMAT", "%Y-%m-%d")
+
+    return value.strftime(format)
 
 
 engine.filters["format_datetime"] = format_datetime
@@ -70,7 +75,12 @@ engine.filters["to_absolute"] = to_absolute
 def feed_url(env: Environment, value: str) -> str:
     """Returns the URL for the collections feed"""
     routes = env.globals.get("routes")
-    return routes[value].feed.url_for()
+
+    if routes:
+        return routes[value].feed.url_for()
+
+    else:
+        raise ValueError("No Route Found")
 
 
 engine.filters["feed_url"] = feed_url

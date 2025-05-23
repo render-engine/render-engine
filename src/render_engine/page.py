@@ -33,9 +33,14 @@ class BasePage(BaseObject):
     _reference: str = "_slug"
 
     @property
-    def _content(self) -> Any:
-        """Returns the content of the page."""
+    def _content(self) -> any:
+        """returns the content of the page."""
         return getattr(self, "content", None)
+
+    @property
+    def _data(self) -> any:
+        """returns the content of the page."""
+        return getattr(self, "data", None)
 
     def url_for(self) -> str:
         """
@@ -62,7 +67,7 @@ class BasePage(BaseObject):
         return template.render(
             **{
                 **self.to_dict(),
-                **{"content": self._content},
+                **{"content": self._content, "data": self._data},
                 **kwargs,
             },
         )
