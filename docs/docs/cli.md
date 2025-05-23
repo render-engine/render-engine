@@ -186,7 +186,7 @@ render-engine new-entry [MODULE:SITE] [COLLECTION] [FILENAME] [OPTIONS]
 - `--title`: Entry title
 - `--slug`: URL slug for the entry
 - `--args`: Additional metadata as key=value or key:value pairs
-- `--include-date`: Add today's date to the entry. NOTE: If this is set and a 
+- `--include-date`: Add today's date to the entry. NOTE: If this is set and a
 date is included in the `--args` the one from the `--args` will be used.
 
 **Examples:**
