@@ -68,3 +68,25 @@ def test_blog_feed_is_sorted_in_reverse(blog_with_pages):
     """
 
     assert blog_with_pages.feed.pages[0].title == "Newer Blog Post"
+
+
+def test_blog_works_with_datetime_dates():
+    class Page1(Page):
+        date = datetime.date(2025, 1, 1)
+        title = "Older Blog Post"
+        content = """Older Page"""
+
+    class Page2(Page):
+        date = datetime.date(2025, 1, 2)
+        title = "Newer Blog Post"
+        content = """Newer Page"""
+
+    class CustomBlog(Blog):
+        pages = [Page1, Page2]
+
+    blog = CustomBlog()
+
+    assert [page.title for page in blog.sorted_pages] == [
+        "Newer Blog Post",
+        "Older Blog Post",
+    ]
