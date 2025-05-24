@@ -222,7 +222,7 @@ def test_new_entry_command_missing_required_args(runner):
                 "slug": "slug1",
                 "content": "content",
             },
-            {"date": "2025-05-23T00:00:00", "slug": "slug1", "content": "content"},
+            {"date": datetime.datetime.fromisoformat("2025-05-23T00:00:00"), "slug": "slug1", "content": "content"},
         ),
         (
             {
@@ -234,7 +234,7 @@ def test_new_entry_command_missing_required_args(runner):
                 "content": "content",
                 "include_date": True,
             },
-            {"date": "2025-05-23T00:00:00", "slug": "slug1", "content": "content"},
+            {"date": datetime.datetime.fromisoformat("2025-05-23T00:00:00"), "slug": "slug1", "content": "content"},
         ),
         (
             {

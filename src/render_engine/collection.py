@@ -159,7 +159,7 @@ class Collection(BaseObject):
         """
         date = getattr(page, "date")
         _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
-        return _date.replace(tzinfo=None)
+        return _date.replace(tzinfo=None) if isinstance(_date, datetime.datetime) else _date
 
     @property
     def sorted_pages(self):
