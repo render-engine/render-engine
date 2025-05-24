@@ -163,3 +163,5 @@ tools
 
 # So we can have a site that won't get nuked or committed by accident
 untitled-site/
+
+.DS_Store
