@@ -428,11 +428,11 @@ def new_entry(
     # Verify that we have a valid date should it be supplied or requested
     if date := parsed_args.pop("date", None):
         try:
-            date = dateparser.parse(date).isoformat()
+            date = dateparser.parse(date)
         except ParserError:
             raise ValueError(f"Invalid date: {repr(date)}.") from None
     elif include_date:
-        date = datetime.datetime.today().isoformat()
+        date = datetime.datetime.today()
     if date:
         parsed_args["date"] = date
 
