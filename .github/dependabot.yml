@@ -7,13 +7,20 @@ updates:
   - package-ecosystem: "pip"
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/"
-    ignore:
-      - dependency-name: "Markdown"
-      # For Markdown, ignore all updates for version 3.4.X
-        versions: ["3.4.x"]
     # Check the pypi registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
+    # Group dependencies by type production, development, and render-engine
+    # This will create a single PR for each group
+    groups:
+      # [project.dependencies] and [project.optional-dependencies].cli, needs to be confirmed
+      production:
+        dependency-type: "production"
+      development:
+        dependency-type: "development"
+      render-engine:
+        patterns:
+          - "render-engine-*"
 
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
