@@ -1,8 +1,11 @@
+import copy
+import datetime
 import logging
 from collections.abc import Callable, Generator
 from pathlib import Path
 from typing import Any
 
+import dateutil.parser as dateparse
 import git
 from more_itertools import batched, flatten
 from render_engine_parser import BasePageParser
@@ -140,7 +143,23 @@ class Collection(BaseObject):
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
         _page.collection = self.to_dict()
+
         return _page
+
+    @staticmethod
+    def _date_key(page: Page) -> datetime.datetime:
+        """
+        Key for ensuring proper handling of dates for sorting
+        There are 2 issues here:
+        1. We need to convert a string to a datetime for proper sorting
+        2. We need to strip the timezone so that we are consistently dealing with timezone naive objects
+
+        :param page: The Page object to handle the date for
+        :return: Timezone naive datetime object
+        """
+        date = getattr(page, "date")
+        _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
+        return _date.replace(tzinfo=None) if isinstance(_date, datetime.datetime) else _date
 
     @property
     def sorted_pages(self):
@@ -152,10 +171,12 @@ class Collection(BaseObject):
             TypeError: This happens when the values being compared are of two different types
 
         """
+        # Dates need special handling so figure out if that's needed and set it here
+        sort_key = self._date_key if self.sort_by == "date" else lambda page: getattr(page, self.sort_by)
         try:
             return sorted(
                 (page for page in self.__iter__()),
-                key=lambda page: getattr(page, self.sort_by),
+                key=sort_key,
                 reverse=self.sort_reverse,
             )
         except AttributeError as e:
