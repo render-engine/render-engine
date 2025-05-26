@@ -2,6 +2,7 @@ import datetime
 from email.utils import format_datetime as fmt_datetime
 from urllib.parse import urljoin
 
+from dateutil.parser import parse
 from jinja2 import (
     ChoiceLoader,
     Environment,
@@ -35,10 +36,13 @@ engine = Environment(
 )
 
 
-def to_pub_date(value: datetime.datetime):
+def to_pub_date(value: datetime.datetime | datetime.date):
     """
     Parse information from the given class object.
     """
+
+    if isinstance(value, datetime.date):
+        value = parse(value.isoformat())
     return fmt_datetime(value)
 
 

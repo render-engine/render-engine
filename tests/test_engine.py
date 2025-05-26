@@ -3,7 +3,7 @@ import datetime
 import jinja2
 import pytest
 
-from render_engine.engine import format_datetime
+from render_engine.engine import format_datetime, to_pub_date
 
 
 @pytest.mark.parametrize(
@@ -34,3 +34,18 @@ def test_format_datetime(format, override, expected):
         value=datetime.datetime(2023, 9, 27, 14, 0, 0),
         datetime_format=override,
     )
+
+
+@pytest.mark.parametrize(
+    "pubdate",
+    (
+        (datetime.date(2025, 1, 1)),  # Test given value in jinja global
+        (datetime.datetime(2025, 1, 1)),  # Test given value in jinja global
+    ),
+)
+def test_to_pubdate(pubdate):
+    """
+    Tests that the datetime filter works with the following format:
+
+    """
+    assert to_pub_date(pubdate) == "Wed, 01 Jan 2025 00:00:00 -0000"
