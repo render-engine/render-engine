@@ -36,7 +36,7 @@ engine = Environment(
 )
 
 
-def to_pub_date(value: datetime.datetime | datetime.date):
+def to_pub_date(value: datetime.datetime | datetime.date) -> str:
     """
     Parse information from the given class object.
     """
