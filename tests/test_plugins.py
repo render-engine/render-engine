@@ -118,6 +118,21 @@ def test_collection_archive_runs_render_content_calls(site, mocker):
     assert mocker_post_render_content.called
 
 
+def test_collection_runs_render_pre_and_post_build_plugins(site, mocker):
+    mocker_render_content = mocker.patch.object(
+        site.route_list["fakecollection"].plugin_manager._pm.hook,
+        "pre_build_collection",
+    )
+    mocker_post_render_content = mocker.patch.object(
+        site.route_list["fakecollection"].plugin_manager._pm.hook,
+        "post_build_collection",
+    )
+
+    site.render()
+    assert mocker_render_content.called
+    assert mocker_post_render_content.called
+
+
 def test_page_plugins_registered():
     app = Site()
 
