@@ -244,11 +244,25 @@ class Collection(BaseObject):
 
     def __iter__(self):
         if not hasattr(self, "pages"):
-            for page in self.iter_content_path():
-                yield self.get_page(page)
-        else:
-            for page in self.pages:
-                yield page
+            self.pages = [self.get_page(page) for page in self.iter_content_path()]
+        for page in self.pages:  # noqa: UP028
+            yield page
+
+    def run_collection_plugins(self, settings: dict, hook_type: str):
+        """
+        Run plugins for a collection
+
+        :param settings: Dictionary of plugin settings
+        :param hook_type: The hook to run
+        """
+        if not getattr(self.plugin_manager, "_pm", None) or not self.plugin_manager.plugins:
+            return
+        try:
+            method = getattr(self.plugin_manager._pm.hook, hook_type)
+        except AttributeError:
+            logging.error(f"Unknown {hook_type=}")
+            return
+        method(collection=self, settings=settings)
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:
