@@ -70,6 +70,7 @@ class SiteSpecs:
     def pre_build_collection(
         self,
         collection,
+        site,
         settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the collection"""

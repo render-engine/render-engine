@@ -325,6 +325,7 @@ class Site:
                     entry.run_collection_plugins(
                         settings=self.site_settings.get("plugins", {}),
                         hook_type="pre_build_collection",
+                        site=self,
                     )
                     progress.update(pre_build_collection_task, advance=1)
 
@@ -334,11 +335,13 @@ class Site:
                         self._render_partial_collection(entry)
 
                     post_build_collection_task = progress.add_task(
-                        "Loading Post-Build-Collection Plugins", total=len(entry.plugin_manager.plugins)
+                        "Loading Post-Build-Collection Plugins",
+                        total=len(entry.plugin_manager.plugins),
                     )
                     entry.run_collection_plugins(
                         settings=self.site_settings.get("plugins", {}),
                         hook_type="post_build_collection",
+                        site=self,
                     )
                     progress.update(post_build_collection_task, advance=1)
 
