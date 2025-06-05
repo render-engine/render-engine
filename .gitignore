@@ -165,3 +165,4 @@ tools
 untitled-site/
 
 .DS_Store
+.python-version
