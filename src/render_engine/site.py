@@ -297,13 +297,13 @@ class Site:
         """
 
         with Progress() as progress:
-            pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=len(self.plugin_manager.plugins))
+            pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
             self.plugin_manager._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
 
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
             # Parse Route List
-            task_add_route = progress.add_task("[blue]Adding Routes", total=1)
+            task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
 
             self.theme_manager._render_static()
 
@@ -321,8 +321,12 @@ class Site:
                         self._render_output(route, entry)
 
                 if isinstance(entry, Collection):
+                    progress.update(
+                        task_add_route,
+                        description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
+                    )
                     pre_build_collection_task = progress.add_task("Loading Pre-Build-Collection Plugins", total=1)
-                    entry.run_collection_plugins(
+                    entry._run_collection_plugins(
                         settings=self.site_settings.get("plugins", {}),
                         hook_type="pre_build_collection",
                         site=self,
@@ -338,12 +342,13 @@ class Site:
                         "Loading Post-Build-Collection Plugins",
                         total=len(entry.plugin_manager.plugins),
                     )
-                    entry.run_collection_plugins(
+                    entry._run_collection_plugins(
                         settings=self.site_settings.get("plugins", {}),
                         hook_type="post_build_collection",
                         site=self,
                     )
                     progress.update(post_build_collection_task, advance=1)
+                progress.update(task_add_route, advance=1)
 
             progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager._pm.hook.post_build_site(

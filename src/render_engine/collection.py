@@ -248,7 +248,7 @@ class Collection(BaseObject):
         for page in self.pages:  # noqa: UP028
             yield page
 
-    def run_collection_plugins(self, *, settings: dict, hook_type: str, site):
+    def _run_collection_plugins(self, settings: dict, hook_type: str):
         """
         Run plugins for a collection
 
