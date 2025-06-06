@@ -70,6 +70,7 @@ class SiteSpecs:
     def pre_build_collection(
         self,
         collection,
+        site,
         settings: dict[str, Any],
     ) -> None:
         """Steps Prior to Building the collection"""
@@ -77,6 +78,7 @@ class SiteSpecs:
     @hook_spec
     def post_build_collection(
         self,
+        collection,
         site,
         settings: dict[str, Any],
     ) -> None:

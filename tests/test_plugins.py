@@ -9,6 +9,23 @@ from render_engine.plugins import PluginManager, hook_impl
 from render_engine.site import Site
 
 
+class FakeLegacyPlugin:
+    """
+    Tests Plugins
+
+    This ensures that developers can install as much of the needs they have.
+    This is to check compatibility with legacy plugins.
+    """
+
+    @hook_impl
+    def pre_build_collection(site):
+        print("Pre Build Collection Called!")
+
+    @hook_impl
+    def post_build_collection(collection):
+        print("Post Build Collection Called!")
+
+
 class FakePlugin:
     """Clean the output folder before rendering"""
 
@@ -178,3 +195,46 @@ def test_collection_override_default_plugin_setting(site: Site):
 
     site.route_list["fakecollection"].plugin_settings = {"FakePlugin": {"test2": "override2"}}
     assert site.route_list["fakecollection"].plugin_settings.get("FakePlugin") == {"test2": "override2"}
+
+
+def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, capsys, mocker):
+    """
+    Tests that you can run
+    the specific calls for modules
+
+    You can omit args but you can't include ones that are not provided in the spec.
+
+    `pluggy._manager.PluginValidationError: Plugin 'FakeLegacyPlugin' for hook 'pre_build_collection'
+     hookimpl definition: pre_build_collection(a)
+     Argument(s) {'a'} are declared in the hookimpl but can not be found in the hookspec
+    `
+    """
+
+    _output_path = tmp_path / "plugins_optional_plugins"
+
+    class TestSite(Site):
+        output_path = _output_path
+
+    site = TestSite()
+
+    class Page1(Page):
+        content = "this is a page"
+
+    plugin_mgr = PluginManager()
+    plugin_mgr.register_plugin(FakeLegacyPlugin)
+
+    class LegacyPluginCollection(Collection):
+        pages = [Page1]
+        plugin_manager = plugin_mgr
+
+    collection = LegacyPluginCollection()
+
+    collection._run_collection_plugins({}, site, "pre_build_collection")
+    collection._run_collection_plugins({}, site, "post_build_collection")
+
+    # Capture the output
+    captured = capsys.readouterr()
+
+    # Verify the expected output was printed
+    assert "Pre Build Collection Called!" in captured.out
+    assert "Post Build Collection Called!" in captured.out
