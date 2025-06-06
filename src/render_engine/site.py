@@ -19,7 +19,6 @@ class Site:
     The site stores your pages and collections to be rendered.
 
     Attributes:
-        partial (bool): Indicates whether the site is a partial site or not.
         site_vars (dict): A dictionary containing site-wide variables and their values.
         plugin_settings (dict): A dictionary containing plugin settings.
 
@@ -40,7 +39,6 @@ class Site:
         template_path: The path to the template files used for rendering.
     """
 
-    partial: bool = False
     site_vars: dict = {
         "SITE_TITLE": "Untitled Site",
         "SITE_URL": "http://localhost:8000/",
@@ -216,24 +214,6 @@ class Site:
 
         return path.write_text(page.rendered_content)
 
-    def _render_partial_collection(self, collection: Collection) -> None:
-        """Iterate through the Changed Pages and Check for Collections and Feeds"""
-        for entry in collection._generate_content_from_modified_pages():
-            for route in collection.routes:
-                self._render_output(route, entry)
-
-        if getattr(collection, "has_archive", False):
-            for archive in collection.archives:
-                logging.debug("Adding Archive: %s", archive.__class__.__name__)
-                self._render_output(collection.routes[0], archive)
-
-                if archive.is_index:
-                    archive.slug = "index"
-                    self._render_output(collection.routes[0], archive)
-
-        if hasattr(collection, "Feed"):
-            self._render_output("./", collection.feed)
-
     def _render_full_collection(self, collection: Collection) -> None:
         """Iterate through Pages and Check for Collections and Feeds"""
 
@@ -333,10 +313,7 @@ class Site:
                     )
                     progress.update(pre_build_collection_task, advance=1)
 
-                    if not self.partial:
-                        self._render_full_collection(entry)
-                    else:
-                        self._render_partial_collection(entry)
+                    self._render_full_collection(entry)
 
                     post_build_collection_task = progress.add_task(
                         "Loading Post-Build-Collection Plugins",
