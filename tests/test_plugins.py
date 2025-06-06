@@ -197,7 +197,7 @@ def test_collection_override_default_plugin_setting(site: Site):
     assert site.route_list["fakecollection"].plugin_settings.get("FakePlugin") == {"test2": "override2"}
 
 
-def test_collection__run_collectiohn_plugins_can_handle_optional_plugins(tmp_path, mocker):
+def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, mocker):
     """
     Tests that you can run
     the specific calls for modules
