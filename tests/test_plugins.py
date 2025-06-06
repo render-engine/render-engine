@@ -197,7 +197,7 @@ def test_collection_override_default_plugin_setting(site: Site):
     assert site.route_list["fakecollection"].plugin_settings.get("FakePlugin") == {"test2": "override2"}
 
 
-def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, mocker):
+def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, capsys, mocker):
     """
     Tests that you can run
     the specific calls for modules
@@ -205,8 +205,8 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
     You can omit args but you can't include ones that are not provided in the spec.
 
     `pluggy._manager.PluginValidationError: Plugin 'FakeLegacyPlugin' for hook 'pre_build_collection'
-     hookimpl definition: pre_build_collection(a, b, c, d, e, f)
-     Argument(s) {'f', 'c', 'b', 'a', 'e', 'd'} are declared in the hookimpl but can not be found in the hookspec
+     hookimpl definition: pre_build_collection(a)
+     Argument(s) {'a'} are declared in the hookimpl but can not be found in the hookspec
     `
     """
 
@@ -231,3 +231,10 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
 
     collection._run_collection_plugins({}, site, "pre_build_collection")
     collection._run_collection_plugins({}, site, "post_build_collection")
+
+    # Capture the output
+    captured = capsys.readouterr()
+
+    # Verify the expected output was printed
+    assert "Pre Build Collection Called!" in captured.out
+    assert "Post Build Collection Called!" in captured.out
