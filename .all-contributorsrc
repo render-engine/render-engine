@@ -166,6 +166,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "brass75",
+      "name": "Dan Shernicoff",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1806946?v=4",
+      "profile": "https://brassnet.biz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
