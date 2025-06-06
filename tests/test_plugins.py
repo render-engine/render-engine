@@ -18,11 +18,11 @@ class FakeLegacyPlugin:
     """
 
     @hook_impl
-    def pre_build_collection():
+    def pre_build_collection(site):
         print("Pre Build Collection Called!")
 
     @hook_impl
-    def post_build_collection():
+    def post_build_collection(collection):
         print("Post Build Collection Called!")
 
 
@@ -201,6 +201,13 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
     """
     Tests that you can run
     the specific calls for modules
+
+    You can omit args but you can't include ones that are not provided in the spec.
+
+    `pluggy._manager.PluginValidationError: Plugin 'FakeLegacyPlugin' for hook 'pre_build_collection'
+     hookimpl definition: pre_build_collection(a, b, c, d, e, f)
+     Argument(s) {'f', 'c', 'b', 'a', 'e', 'd'} are declared in the hookimpl but can not be found in the hookspec
+    `
     """
 
     _output_path = tmp_path / "plugins_optional_plugins"
@@ -221,15 +228,6 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
         plugin_manager = plugin_mgr
 
     collection = LegacyPluginCollection()
-
-    #    mocker_pre_build_collection = mocker.patch.object(
-    #        FakeLegacyPlugin,
-    #        "pre_build_collection",
-    #    )
-    #    mocker_post_build_collection = mocker.patch.object(
-    #        FakeLegacyPlugin,
-    #        "post_build_collection",
-    #    )
 
     collection._run_collection_plugins({}, site, "pre_build_collection")
     collection._run_collection_plugins({}, site, "post_build_collection")
