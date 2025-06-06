@@ -19,6 +19,7 @@ dependencies = [
   "python-slugify",
   "render-engine-parser",
   "render-engine-markdown",
+  "rich",
 ]
 
 [project.optional-dependencies]
@@ -37,7 +38,6 @@ dev = [
   "pytest",
   "pytest-cov",
   "pytest-mock",
-  "rich",
   "ruff",
   "toml",
   "typer",
