@@ -9,13 +9,12 @@ The site stores your pages and collections to be rendered.
 
 **Attributes:**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `output_path` | `str` |path to write rendered content |
-| `partial` | `bool` |if True, only render pages that have been modified. Uses gitPython to check for changes. |
-| `static_paths` | `set` |set of paths for static folders. This will get copied to the output folder. Folders are recursive. |
-| `site_vars` | `dict` |dictionary that will be passed into page template |
-| `site_settings` |  |settings that will be passed into pages and collections but not into templates |
+| Name            | Type   | Description                                                                                        |
+| --------------- | ------ | -------------------------------------------------------------------------------------------------- |
+| `output_path`   | `str`  | path to write rendered content                                                                     |
+| `static_paths`  | `set`  | set of paths for static folders. This will get copied to the output folder. Folders are recursive. |
+| `site_vars`     | `dict` | dictionary that will be passed into page template                                                  |
+| `site_settings` |        | settings that will be passed into pages and collections but not into templates                     |
 
 ## Functions
 
@@ -84,9 +83,9 @@ Register multiple themes.
 
 **Parameters:**
 
-| Name | Type | Description | Default |
-| --- | --- | --- | --- |
-| `*themes` | `Theme` |Theme objects to register | `()` |
+| Name      | Type    | Description               | Default |
+| --------- | ------- | ------------------------- | ------- |
+| `*themes` | `Theme` | Theme objects to register | `()`    |
 
 ### `render()`
 
