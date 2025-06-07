@@ -1,4 +1,4 @@
-from src.render_engine.plugins import hook_impl---
+---
 title: "Enhancing Functionality with Plugins"
 description: "Guide to using and managing plugins in Render Engine. Learn how to register plugins, apply them to pages and collections, and exclude specific plugins."
 date: August 22, 2024
