@@ -1,4 +1,4 @@
----
+from src.render_engine.plugins import hook_impl---
 title: "Enhancing Functionality with Plugins"
 description: "Guide to using and managing plugins in Render Engine. Learn how to register plugins, apply them to pages and collections, and exclude specific plugins."
 date: August 22, 2024
@@ -67,8 +67,63 @@ my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin2']
 ```
 
+### Overriding and Augmenting Plugin Settings
+
+Plugins are implemented with a dictionary of default settings. These settings can be overridden and/or augmented
+when we register the plugin.
+
+```python
+# Add a keyword parameter where the key is the plugin class name and the value is the new settings
+app.register_plugins(MyPlugin1, MyPlugin2, MyPlugin1={'settings': 'overide'})
+```
+
+Alternatively when adding a plugin to a collection or page:
+
+```python
+
+@app.page
+class MyPage(Page):
+    plugins = [(MyPlugin, {'settings': 'override'})]
+```
+
+**Note**: Registering a plugin with settings will merge the default settings with the overridden settings. If you
+register a plugin that has default settings of `{'setting1': 'a'}` with settings `{'setting2': 'b'}` the
+settings sent to the plugin will be `{'setting1': 'a', 'setting2': 'b'}`.
+
 ### Implementing a plugin
 
 Plugins are built with pluggy. See the [pluggy documentation](https://pluggy.readthedocs.io/en/latest/#) for more information.
 
-Plugins use the entrypoints defined in `render_engine.hookspecs`. These allow plugins to be called at different points in the render engine lifecycle.
+Plugins use the entrypoints defined in `render_engine.plugins`. These allow plugins to be called at different
+points in the render engine lifecycle.
+
+Currently supported hooks are:
+
+| hook | parameters |
+| ____ | __________ |
+| pre_build_site | `site: Site, settings: dict` |
+| post_build_site | `site: Site, settings: dict` |
+| pre_build_collection | `collection: Collection, site: Site, settings: dict` |
+| post_build_collection | `collection: Collection, site: Site, settings: dict` |
+| render_content | `page: Page, settings: dict, site: Site` |
+| post_render_content | `page: Page, settings: dict, site: Site` |
+
+All plugin classes must include a dictionary of `default_settings`. All of the hooks take a `site: Site`
+and a `settings: dict` parameter. The `pre_build_collection` and `post_build_collection` also take a
+`collection: Collection` parameter. The `render_content` and `post_render_content` take a
+`page: Page` parameter in addition to the
+
+**Plugin hooks must be `staticmethod` and do not take `self` as a parameter.**
+
+To access the settings in your plugin you need to use `settings[<PluginClassName>]`:
+
+```python
+class MyPlugin:
+    default_settings = {}
+
+    @staticmethod
+    @hook_impl
+    def pre_build_site(site; Site, settings: dict):
+        my_settings = settings['MyPlugin']
+        ...
+```

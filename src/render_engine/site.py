@@ -298,7 +298,10 @@ class Site:
 
         with Progress() as progress:
             pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
-            self.plugin_manager._pm.hook.pre_build_site(site=self, settings=self.site_settings.get("plugins", {}))  # type: ignore
+            self.plugin_manager.hook.pre_build_site(
+                site=self,
+                settings=self.plugin_manager.plugin_settings,
+            )  # type: ignore
 
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
@@ -327,7 +330,6 @@ class Site:
                     )
                     pre_build_collection_task = progress.add_task("Loading Pre-Build-Collection Plugins", total=1)
                     entry._run_collection_plugins(
-                        settings=self.site_settings.get("plugins", {}),
                         hook_type="pre_build_collection",
                         site=self,
                     )
@@ -343,7 +345,6 @@ class Site:
                         total=len(entry.plugin_manager.plugins),
                     )
                     entry._run_collection_plugins(
-                        settings=self.site_settings.get("plugins", {}),
                         hook_type="post_build_collection",
                         site=self,
                     )
@@ -351,7 +352,8 @@ class Site:
                 progress.update(task_add_route, advance=1)
 
             progress.add_task("Loading Post-Build Plugins", total=1)
-            self.plugin_manager._pm.hook.post_build_site(
+            self.plugin_manager.hook.post_build_site(
                 site=self,
+                settings=self.plugin_manager.plugin_settings,
             )
             progress.update(pre_build_task, advance=1)

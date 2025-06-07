@@ -248,21 +248,21 @@ class Collection(BaseObject):
         for page in self.pages:  # noqa: UP028
             yield page
 
-    def _run_collection_plugins(self, settings: dict, site, hook_type: str):
+    def _run_collection_plugins(self, site, hook_type: str):
         """
         Run plugins for a collection
 
-        :param settings: Dictionary of plugin settings
+        :param site: The site object triggering the call
         :param hook_type: The hook to run
         """
         if not getattr(self.plugin_manager, "_pm", None) or not self.plugin_manager.plugins:
             return
         try:
-            method = getattr(self.plugin_manager._pm.hook, hook_type)
+            method = getattr(self.plugin_manager.hook, hook_type)
         except AttributeError:
             logging.error(f"Unknown {hook_type=}")
             return
-        method(collection=self, site=site, settings=settings)
+        method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
 
 def render_archives(archive, **kwargs) -> list[Archive]:

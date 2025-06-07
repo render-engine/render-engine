@@ -1,4 +1,5 @@
 import importlib
+import json
 import typing
 
 import pytest
@@ -88,7 +89,7 @@ def site(tmp_path_factory):
         ]
         content = "test"
 
-    return site
+    yield site
 
 
 def test_plugin_is_registered(site: Site):
@@ -197,7 +198,7 @@ def test_collection_override_default_plugin_setting(site: Site):
     assert site.route_list["fakecollection"].plugin_settings.get("FakePlugin") == {"test2": "override2"}
 
 
-def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, capsys, mocker):
+def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path, capsys):
     """
     Tests that you can run
     the specific calls for modules
@@ -229,8 +230,8 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
 
     collection = LegacyPluginCollection()
 
-    collection._run_collection_plugins({}, site, "pre_build_collection")
-    collection._run_collection_plugins({}, site, "post_build_collection")
+    collection._run_collection_plugins(site, "pre_build_collection")
+    collection._run_collection_plugins(site, "post_build_collection")
 
     # Capture the output
     captured = capsys.readouterr()
@@ -238,3 +239,86 @@ def test_collection__run_collection_plugins_can_handle_optional_plugins(tmp_path
     # Verify the expected output was printed
     assert "Pre Build Collection Called!" in captured.out
     assert "Post Build Collection Called!" in captured.out
+
+
+class TestPlugin:
+    default_settings = {"settings": "default"}
+
+    @staticmethod
+    @hook_impl
+    def pre_build_site(site: Site, settings: dict):
+        class PreBuild(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "prebuild"
+
+        print("PreBuild")
+        site._render_output(site.output_path, PreBuild())
+
+    @staticmethod
+    @hook_impl
+    def post_build_site(site: Site, settings: dict):
+        class PostBuild(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "postbuild"
+
+        print("PostBuild")
+        site._render_output(site.output_path, PostBuild())
+
+    @staticmethod
+    @hook_impl
+    def pre_build_collection(site: Site, settings: dict):
+        class PreBuildCollection(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "prebuildcollection"
+
+        print("PreBuildCollection")
+        site._render_output(site.output_path, PreBuildCollection())
+
+    @staticmethod
+    @hook_impl
+    def post_build_collection(site: Site, settings: dict):
+        class PostBuildCollection(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "postbuildcollection"
+
+        print("PostBuildCollection")
+        site._render_output(site.output_path, PostBuildCollection())
+
+
+@pytest.fixture(scope="function")
+def plugin_test_site(tmp_path):
+    """Fixture for site to test plugins"""
+    _output_path = tmp_path / "plugin_test_site"
+
+    class TestSite(Site):
+        output_path = _output_path
+
+    site = TestSite()
+
+    yield site
+
+
+@pytest.mark.parametrize(
+    "settings, expected",
+    [
+        ({}, TestPlugin.default_settings),
+        ({"settings": "override"}, {"settings": "override"}),
+        ({"new_setting": "new"}, {"new_setting": "new", **TestPlugin.default_settings}),
+    ],
+)
+def test_plugin_settings_are_passed_properly(plugin_test_site, settings, expected):
+    """Test that plugins are properly passed"""
+    plugin_test_site.register_plugins(TestPlugin, TestPlugin=settings)
+
+    class Page1(Page):
+        content = "this is a page"
+
+    @plugin_test_site.collection
+    class LegacyPluginCollection(Collection):
+        pages = [Page1()]
+
+    plugin_test_site.render()
+    for hook in ["prebuild", "postbuild", "prebuildcollection", "postbuildcollection"]:
+        path = plugin_test_site.output_path / f"{hook}.html"
+        with open(path) as f:
+            assert json.load(f) == expected, f"Failed to match {settings=} to {expected=}"
