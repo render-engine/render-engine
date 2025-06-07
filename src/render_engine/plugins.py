@@ -42,6 +42,7 @@ class SiteSpecs:
     def post_build_site(
         self,
         site,
+        settings: dict[str, Any],
     ) -> None:
         """Build After Building the site"""
 
@@ -50,6 +51,7 @@ class SiteSpecs:
         self,
         page,
         settings: dict[str, Any],
+        site,
     ) -> None:
         """
         Augments the content of the page before it is rendered as output.
@@ -115,3 +117,13 @@ class PluginManager:
             set: A set containing the registered plugins.
         """
         return self._pm.get_plugins()
+
+    @property
+    def hook(self):
+        """
+        Give access to the hook to run plugins.
+
+        Returns:
+            HookRelay: The hook to actually trigger the plugins.
+        """
+        return self._pm.hook
