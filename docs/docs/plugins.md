@@ -99,8 +99,8 @@ points in the render engine lifecycle.
 
 Currently supported hooks are:
 
-| hook | parameters |
-| ____ | __________ |
+| Hook | Parameters |
+| ---- | ---- |
 | pre_build_site | `site: Site, settings: dict` |
 | post_build_site | `site: Site, settings: dict` |
 | pre_build_collection | `collection: Collection, site: Site, settings: dict` |
