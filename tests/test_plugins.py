@@ -106,7 +106,7 @@ def test_pages_in_collection_inherit_pugins(site: Site):
 def test_page_ignores_plugin(site: Site):
     """Check that the plugin is not registered in the page if it is ignored"""
 
-    assert site.route_list["testpage"]._pm.list_name_plugin() == []
+    assert site.route_list["testpage"].plugin_manager._pm.list_name_plugin() == []
 
 
 def test_collection_ignores_plugin(site):
@@ -158,7 +158,7 @@ def test_page_plugins_registered():
     class TestPage(Page):
         plugins = [FakePlugin]
 
-    assert app.route_list["testpage"]._pm.list_name_plugin()[0][0] == "FakePlugin"
+    assert app.route_list["testpage"].plugin_manager._pm.list_name_plugin()[0][0] == "FakePlugin"
 
 
 def test_deperecated_warning():
@@ -308,7 +308,6 @@ def plugin_test_site(tmp_path):
 )
 def test_plugin_settings_are_passed_properly(plugin_test_site, settings, expected):
     """Test that plugins are properly passed"""
-    plugin_test_site.register_plugins(TestPlugin, TestPlugin=settings)
 
     class Page1(Page):
         content = "this is a page"
@@ -316,6 +315,9 @@ def test_plugin_settings_are_passed_properly(plugin_test_site, settings, expecte
     @plugin_test_site.collection
     class LegacyPluginCollection(Collection):
         pages = [Page1()]
+        plugins = [(TestPlugin, settings)] if settings else [TestPlugin]
+
+    plugin_test_site.register_plugins(TestPlugin, TestPlugin=settings)
 
     plugin_test_site.render()
     for hook in ["prebuild", "postbuild", "prebuildcollection", "postbuildcollection"]:

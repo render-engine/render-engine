@@ -5,6 +5,7 @@ from jinja2 import Environment, Template
 from render_engine_parser.base_parsers import BasePageParser
 
 from ._base_object import BaseObject
+from .plugins import PluginManager
 
 
 class BasePage(BaseObject):
@@ -31,6 +32,7 @@ class BasePage(BaseObject):
     template: str | Template | None
     rendered_content: str | None
     _reference: str = "_slug"
+    plugin_manager: PluginManager | None
 
     @property
     def _content(self) -> any:
