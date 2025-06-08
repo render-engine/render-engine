@@ -208,9 +208,10 @@ class Site:
         """writes the page object to disk"""
         path = Path(self.output_path) / Path(route) / Path(page.path_name)
         path.parent.mkdir(parents=True, exist_ok=True)
-        settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
+        settings = dict()
 
         if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
+            settings = {**self.plugin_manager.plugin_settings, "route": route}
             page.plugin_manager.hook.render_content(page=page, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
