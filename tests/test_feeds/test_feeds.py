@@ -1,4 +1,5 @@
 import datetime
+from datetime import timezone
 
 import pluggy
 import pytest
@@ -78,7 +79,7 @@ def test_rss_feed_template_with_strictundefined(engine, tmp_path):
 @pytest.mark.parametrize(
     "date",
     [
-        datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.UTC),
+        datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=timezone.utc),
         datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=None),
         datetime.date(2024, 4, 15),
     ],
@@ -87,7 +88,7 @@ def test_rss_feed_template_parses_date_correctly(engine, date):
     """Tests that a feed parses the page date in RFC2822 Format"""
 
     class TestPage(Page):
-        date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.UTC)  # noqa: UP017
+        date = datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=timezone.utc)  # noqa: UP017
 
     class TestCollection(Collection):
         Feed = RSSFeed
