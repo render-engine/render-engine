@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 import dateutil.parser as dateparse
-import git
 from more_itertools import batched, flatten
 from render_engine_parser import BasePageParser
 from slugify import slugify
@@ -106,26 +105,6 @@ class Collection(BaseObject):
     def iter_content_path(self):
         """Iterate through in the collection's content path."""
         return flatten([Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
-
-    def _generate_content_from_modified_pages(
-        self,
-    ) -> Generator[Page, None, None]:
-        """
-        Check git status for newly created and modified files.
-        Returns the Page objects for the files in the content path
-        """
-        repo = git.Repo()
-
-        changed_files = [
-            *repo.untracked_files,  # new files not yet in git's index
-            *repo.index.diff(),  # modified files in git index
-        ]
-
-        return (
-            self.get_page(str(Path(changed_path)))
-            for changed_path in changed_files
-            if Path(changed_path).parent == Path(self.content_path)
-        )
 
     def get_page(
         self,

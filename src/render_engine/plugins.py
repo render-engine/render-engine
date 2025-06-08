@@ -1,5 +1,6 @@
 import logging
 from collections import defaultdict
+from collections.abc import Iterable
 from typing import Any
 
 import pluggy
@@ -102,11 +103,16 @@ class PluginManager:
         self._pm.add_hookspecs(SiteSpecs)
 
     def register_plugin(self, plugin) -> None:
-        """Register a plugin with the site"""
+        """Register a plugin with the plugin manager"""
         if self._pm.has_plugin(plugin.__name__):
             logging.info(f"Plugin {plugin} already registered")
             return
         self._pm.register(plugin)
+
+    def unregister_plugin(self, plugin):
+        """Unregister a plugin with the plugin manager"""
+        if self._pm.has_plugin(plugin.__name__):
+            self._pm.unregister(plugin)
 
     @property
     def plugins(self) -> set[Any]:
@@ -127,3 +133,41 @@ class PluginManager:
             HookRelay: The hook to actually trigger the plugins.
         """
         return self._pm.hook
+
+
+def handle_plugin_registration(
+    plugin_manager: PluginManager,
+    plugins: Iterable[tuple[type, dict]] | type,
+    current_settings: dict,
+):
+    """
+    Register plugins to a plugin_manager
+
+    :param plugin_manager: The plugin manager to register the plugins
+    :param plugins: List of tuples containing the plugin and settings:
+        [(Plugin1, {}), (Plugin2, {'setting': 'updated'})]
+    :param current_settings: Dictionary of current settings
+    """
+    for plugin_definition in plugins:
+        if isinstance(plugin_definition, tuple):
+            if len(plugin_definition) == 2:
+                plugin, settings = plugin_definition
+            else:
+                plugin, settings = plugin_definition[0], dict()
+        else:
+            plugin, settings = plugin_definition, dict()
+
+        plugin_name = plugin.__name__
+        logging.debug(f"Registering Plugin {plugin_name}")
+        plugin_manager.register_plugin(plugin)
+        default_settings = getattr(plugin, "default_settings", dict())
+        logging.debug(
+            f"Registering settings: default: {default_settings} "
+            f"current: {current_settings.get(plugin_name, dict())} "
+            f"overrides: {settings}"
+        )
+        plugin_manager.plugin_settings[plugin_name] = {
+            **default_settings,
+            **current_settings.get(plugin_name, dict()),
+            **settings,
+        }
