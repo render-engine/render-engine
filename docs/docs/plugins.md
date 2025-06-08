@@ -7,6 +7,8 @@ tags: ["plugins", "render-engine", "customization"]
 
 Plugins are a way to extend the functionality of the render engine site.
 
+## Registering Plugins
+
 Plugins are registered by using `register_plugins`
 
 ```python
@@ -34,6 +36,29 @@ class MyCollection(Collection):
 
 my_site.route_list['mypage']._pm.list_name_plugin()
 >>> ['MyPlugin']
+```
+
+When the `site.collection` and `site.page` methods are called the collection/page is populated with all currently
+registered plugins. Additional calls to `site.register_plugins` after the call to `site.collection` or
+`site.page` will **not** register the new plugin with the collection/page.
+
+```python
+from render_engine import Site, Collection, Page
+from my_plugins import Plugin1, Plugin2
+
+app = Site()
+app.register_plugins(Plugin1)
+
+
+@my_site.page # Plugin1 is registered here.
+class MyPage(Page):
+    pass
+
+@site.collection # Plugin1 is registered here.
+class MyCollection(Collection):
+    pass
+
+app.register_plugins(Plugin2) # Plugin2 is only registered for the site and not for MyPage or MyCollection
 ```
 
 ## Single Page/Collection plugins
