@@ -62,7 +62,6 @@ Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/lat
 
 Our DevContainer is built primarily from a dockerfile. You can build from our Dockerfile directly which would ensure the manual configuration is ran (You will still need to fork and clone).
 
-
 ## Verify Before Submitting
 
 Render Engine uses nox to text against all supported versions. PRs will not be approved without tests passing on all supported versions.
