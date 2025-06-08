@@ -33,6 +33,7 @@ dev = [
   "mkdocs-material",
   "mkdocstrings[python]",
   "mypy",
+  "nox",
   "pre-commit",
   "pymdown-extensions",
   "pytest",
