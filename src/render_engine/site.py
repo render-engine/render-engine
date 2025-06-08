@@ -10,7 +10,7 @@ from .archive import Archive
 from .collection import Collection
 from .engine import engine
 from .page import Page
-from .plugins import PluginManager
+from .plugins import PluginManager, handle_plugin_registration
 from .themes import Theme, ThemeManager
 
 
@@ -88,15 +88,17 @@ class Site:
         self.theme_manager.engine.globals.update(self.site_vars)
 
     def register_plugins(self, *plugins, **plugin_settings) -> None:
-        for plugin in plugins:
-            logging.debug("Registering Plugin: %s", plugin.__name__)
-            self.plugin_manager.register_plugin(plugin)
-            logging.debug("Loading default settings: %s", getattr(plugin, "default_settings", {}))
-            self.plugin_manager.plugin_settings[plugin.__name__] = {
-                **getattr(plugin, "default_settings", {}),
-                **getattr(self.plugin_settings, plugin.__name__, {}),
-                **plugin_settings.get(plugin.__name__, {}),
-            }
+        """
+        Register plugins for the site
+
+        :param plugins: List of plugins to register
+        :param plugin_settings: KW arguments where the key is the plugin name and the value is a dictionary of settings.
+        """
+        handle_plugin_registration(
+            self.plugin_manager,
+            [(plugin, plugin_settings.get(plugin.__name__, dict())) for plugin in plugins],
+            self.plugin_settings,
+        )
 
     def register_theme(self, theme: Theme) -> None:
         """Overrides the ThemeManager register_theme method to add plugins to the site"""
@@ -148,11 +150,15 @@ class Site:
         _Collection.plugin_manager = copy.deepcopy(self.plugin_manager)
         self.register_themes(*getattr(_Collection, "required_themes", []))
 
-        for plugin in getattr(_Collection, "plugins", []):
-            _Collection.plugin_manager._pm.register(plugin)
+        if plugins := getattr(_Collection, "plugins", []):
+            handle_plugin_registration(
+                _Collection.plugin_manager,
+                plugins,
+                getattr(_Collection, "plugin_settings", dict()),
+            )
 
         for plugin in getattr(_Collection, "ignore_plugins", []):
-            _Collection.plugin_manager._pm.unregister(plugin)
+            _Collection.plugin_manager.unregister_plugin(plugin)
 
         self.route_list[_Collection._slug] = _Collection
         return _Collection
@@ -187,13 +193,13 @@ class Site:
         page.title = page._title  # Expose _title to the user through `title`
 
         # copy the plugin manager, removing any plugins that the page has ignored
-        page._pm = copy.deepcopy(self.plugin_manager._pm)
+        page.plugin_manager = copy.deepcopy(self.plugin_manager)
 
-        for plugin in getattr(page, "plugins", []):
-            page._pm.register(plugin)
+        if plugins := getattr(page, "plugins", []):
+            handle_plugin_registration(page.plugin_manager, plugins, getattr(page, "plugin_settings", dict()))
 
         for plugin in getattr(page, "ignore_plugins", []):
-            page._pm.unregister(plugin)
+            page.plugin_manager.unregister_plugin(plugin)
 
         self.route_list[getattr(page, page._reference)] = page
         return page
@@ -205,12 +211,12 @@ class Site:
         settings = {**self.site_settings.get("plugins", {}), **{"route": route}}
 
         if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            page.plugin_manager._pm.hook.render_content(page=page, settings=settings, site=self)
+            page.plugin_manager.hook.render_content(page=page, settings=settings, site=self)
         page.rendered_content = page._render_content(engine=self.theme_manager.engine)
         # pass the route to the plugin settings
 
         if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            page.plugin_manager._pm.hook.post_render_content(page=page.__class__, settings=settings, site=self)
+            page.plugin_manager.hook.post_render_content(page=page.__class__, settings=settings, site=self)
 
         return path.write_text(page.rendered_content)
 
