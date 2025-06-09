@@ -47,24 +47,24 @@ Comment _I can work on this_ or something to that effect, and wait for one of th
 Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/latest/contributing/contributing#being-assigned-an-issue), you can begin working on an issue either locally with:
 
 - [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
-- [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
-- [GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces).
+- [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)/[GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces).
+- from dockerfile
 
-## In Your Contribution
+### Manual Configuration
 
-- lint and format code using ruff and markdownlint
+- fork and clone
+- create virtual environment and connect to virtual environment
+- create local installation with dev tooling
+  `python -m pip install -e .[dev]`
+- run pre-commit (it will install all of its needed deps)
 
-  ```sh
-  python -m ruff check src --fix
-  python -m ruff format src
-  ```
+### Dockerfile
 
-- markdownlint extenstion will update changes on save.
-
-- test your code additions and removals
-- features and changes are documented
+Our DevContainer is built primarily from a dockerfile. You can build from our Dockerfile directly which would ensure the manual configuration is ran (You will still need to fork and clone).
 
 ## Verify Before Submitting
+
+Render Engine uses nox to text against all supported versions. PRs will not be approved without tests passing on all supported versions.
 
 - 🚫 changes aren't breaking existing code (failing tests)
 - 🚫 Ensure new dependencies are listed, justified, and approved to be added.

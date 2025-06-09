@@ -210,7 +210,7 @@ render-engine new-entry my_site:MySite blog review.md \
 render-engine new-entry my_site:MySite pages about.md \
     --title "About Us" \
     --slug "about-us"
-    
+
 # With --include-date
 render-engine new-entry my_site:MySite pages about.md \
     --include-date
