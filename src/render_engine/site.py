@@ -284,7 +284,7 @@ class Site:
         """
 
         with Progress() as progress:
-            pre_build_task = progress.add_task("Loading Pre-Build Plugins", total=1)
+            pre_build_task = progress.add_task("Loading Pre-Build Plugins and themes", total=1)
             self.plugin_manager.hook.pre_build_site(
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
@@ -292,6 +292,7 @@ class Site:
 
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
+            progress.update(pre_build_task, advance=1)
             # Parse Route List
             task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
 
@@ -340,4 +341,4 @@ class Site:
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
             )
-            progress.update(pre_build_task, advance=1)
+            progress.update(post_build_task, advance=1)
