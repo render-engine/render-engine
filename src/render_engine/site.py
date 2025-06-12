@@ -336,7 +336,7 @@ class Site:
                     progress.update(post_build_collection_task, advance=1)
                 progress.update(task_add_route, advance=1)
 
-            progress.add_task("Loading Post-Build Plugins", total=1)
+            post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
