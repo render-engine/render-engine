@@ -284,7 +284,7 @@ class Site:
         """
 
         with Progress() as progress:
-            pre_build_task = progress.add_task("Loading Pre-Build Plugins and themes", total=1)
+            pre_build_task = progress.add_task("Loading Pre-Build Plugins and Themes", total=1)
             self.plugin_manager.hook.pre_build_site(
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
