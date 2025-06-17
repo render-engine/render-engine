@@ -204,7 +204,7 @@ def init(
             ),
         ]
         | None
-    ) = None,
+    ) = None,  # noqa: UP045
     no_input: Annotated[bool, typer.Option("--no-input", help="Do not prompt for parameters")] = False,
     output_dir: Annotated[
         Path,
@@ -215,7 +215,7 @@ def init(
             exists=True,
         ),
     ] = Path("./"),
-    config_file: Annotated[Optional[Path], typer.Option("--config-file", "-c")] = None,
+    config_file: Annotated[Optional[Path], typer.Option("--config-file", "-c")] = None,  # noqa: UP045
 ) -> None:
     """
     Create a new site configuration. You can provide extra_context to the cookiecutter template.
@@ -359,11 +359,11 @@ def new_entry(
     module_site: Annotated[
         Optional[str] if default_module_site else str,
         module_site_arg,
-    ] = default_module_site,
+    ] = default_module_site,  # noqa: UP045
     collection: Annotated[
         Optional[str] if default_collection else str,
         collection_arg,
-    ] = default_collection,
+    ] = default_collection,  # noqa: UP045
     filename: Annotated[
         str,
         typer.Argument(
@@ -375,7 +375,7 @@ def new_entry(
         typer.Option(
             help="The content to include in the page. Either this or `--content-file` may be provided but not both"
         ),
-    ] = None,
+    ] = None,  # noqa: UP045
     content_file: Annotated[
         Optional[str],
         typer.Option(
@@ -388,26 +388,26 @@ def new_entry(
         typer.Option(
             help="Title for the new page. If this is also provided via `--args` this will be preferred.",
         ),
-    ] = None,
+    ] = None,  # noqa: UP045
     slug: Annotated[
         Optional[str],
         typer.Option(
             help="Slug for the new page. If this is also provided via `--args` this will be preferred.",
         ),
-    ] = None,
+    ] = None,  # noqa: UP045
     args: Annotated[
         Optional[list[str]],
         typer.Option(
             help="key value attrs to include in your entry use the format `--args key=value` or `--args key:value`",
         ),
-    ] = None,
+    ] = None,  # noqa: UP045
     include_date: Annotated[
         Optional[bool],
         typer.Option(
             help="Include today's date in your entry.",
             is_flag=True,
         ),
-    ] = False,
+    ] = False,  # noqa: UP045
 ):
     """Creates a new collection entry based on the parser. Entries are added to the Collections content_path"""
     if not module_site or not collection or not filename:
