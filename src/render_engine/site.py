@@ -225,9 +225,9 @@ class Site:
         """Iterate through Pages and Check for Collections and Feeds"""
 
         for entry in collection:
-            entry._pm = copy.deepcopy(self.plugin_manager._pm)
+            entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
-            for route in collection.routes:
+            for route in entry.routes:
                 self._render_output(route, entry)
 
         if getattr(collection, "has_archive", False):
@@ -316,7 +316,10 @@ class Site:
                         task_add_route,
                         description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
                     )
-                    pre_build_collection_task = progress.add_task("Loading Pre-Build-Collection Plugins", total=1)
+                    pre_build_collection_task = progress.add_task(
+                        "Loading Pre-Build-Collection Plugins",
+                        total=1,
+                    )
                     entry._run_collection_plugins(
                         hook_type="pre_build_collection",
                         site=self,
@@ -327,7 +330,7 @@ class Site:
 
                     post_build_collection_task = progress.add_task(
                         "Loading Post-Build-Collection Plugins",
-                        total=len(entry.plugin_manager.plugins),
+                        total=1,
                     )
                     entry._run_collection_plugins(
                         hook_type="post_build_collection",
