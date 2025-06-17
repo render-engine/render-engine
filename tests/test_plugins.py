@@ -266,6 +266,26 @@ class TestPlugin:
 
     @staticmethod
     @hook_impl
+    def render_content(site: Site, settings: dict):
+        class RenderContent(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "renddercontent"
+
+        print("RenderContent")
+        site._render_output(site.output_path, RenderContent())
+
+    @staticmethod
+    @hook_impl
+    def post_render_content(site: Site, settings: dict):
+        class PostRenderContent(Page):
+            content = json.dumps(settings.get("TestPlugin"))
+            name = "postrendercontent"
+
+        print("PostRenderContent")
+        site._render_output(site.output_path, PostRenderContent())
+
+    @staticmethod
+    @hook_impl
     def pre_build_collection(site: Site, settings: dict):
         class PreBuildCollection(Page):
             content = json.dumps(settings.get("TestPlugin"))
@@ -320,7 +340,14 @@ def test_plugin_settings_are_passed_properly(plugin_test_site, settings, expecte
     plugin_test_site.register_plugins(TestPlugin, TestPlugin=settings)
 
     plugin_test_site.render()
-    for hook in ["prebuild", "postbuild", "prebuildcollection", "postbuildcollection"]:
+    for hook in [
+        "prebuild",
+        "postbuild",
+        "prebuildcollection",
+        "postbuildcollection",
+        "rendercontent",
+        "postrendercontent",
+    ]:
         path = plugin_test_site.output_path / f"{hook}.html"
         with open(path) as f:
             assert json.load(f) == expected, f"Failed to match {settings=} to {expected=}"
