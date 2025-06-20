@@ -68,14 +68,15 @@ load_config()
 app = typer.Typer()
 
 
-def get_site_content_paths(site: Site) -> list[Path | None]:
+def get_site_content_paths(site: Site) -> list[Path | str | None]:
     """Get the content paths from the route_list in the Site"""
 
     base_paths = map(lambda x: getattr(x, "content_path", None), site.route_list.values())
-    base_paths = list(filter(lambda x: x is not None, base_paths))
+    base_paths = list(filter(None, base_paths))
     base_paths.extend(site.static_paths)
-    base_paths.append(site.template_path)
-    return base_paths
+    if site.template_path:
+        base_paths.append(site.template_path)
+    return list(filter(None, base_paths))
 
 
 def remove_output_folder(output_path: Path) -> None:
