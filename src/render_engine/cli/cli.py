@@ -1,11 +1,9 @@
 # ruff: noqa: UP007
 import datetime
-import importlib
 import os
 import re
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -20,6 +18,7 @@ from toml import TomlDecodeError
 
 from render_engine import Collection, Site
 from render_engine.cli.event import ServerEventHandler
+from render_engine.cli.utils import get_site
 
 # Load the config file. The config the pyproject.toml. CLI config is in `render-engine.cli`
 
@@ -69,18 +68,15 @@ load_config()
 app = typer.Typer()
 
 
-def get_site_content_paths(site: Site) -> list[Path | None]:
+def get_site_content_paths(site: Site) -> list[Path | str | None]:
     """Get the content paths from the route_list in the Site"""
 
     base_paths = map(lambda x: getattr(x, "content_path", None), site.route_list.values())
-    return list(filter(lambda x: x is not None, base_paths))
-
-
-def get_site(import_path: str, site: str) -> Site:
-    """Split the site module into a module and a class name"""
-    sys.path.insert(0, ".")
-    importlib.import_module(import_path)
-    return getattr(sys.modules[import_path], site)
+    base_paths = list(filter(None, base_paths))
+    base_paths.extend(site.static_paths)
+    if site.template_path:
+        base_paths.append(site.template_path)
+    return list(filter(None, base_paths))
 
 
 def remove_output_folder(output_path: Path) -> None:
@@ -343,7 +339,8 @@ def serve(
         import_path=module,
         server_address=server_address,
         dirs_to_watch=get_site_content_paths(site) if reload else None,
-        site=site,
+        site=site_name,
+        output_path=site.output_path,
         patterns=None,
         ignore_patterns=[r".*output\\*.+$", r"\.\\\..+$", r".*__.*$"],
     )

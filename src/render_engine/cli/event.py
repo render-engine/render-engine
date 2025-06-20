@@ -1,12 +1,12 @@
-import importlib
 import threading
 import time
+import traceback
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 import watchfiles
 from rich.console import Console
 
-from render_engine import Site
+from render_engine.cli.utils import get_site
 
 console = Console()
 
@@ -54,7 +54,8 @@ class ServerEventHandler:
         self,
         server_address: tuple[str, int],
         import_path: str,
-        site: Site,
+        site: str,
+        output_path: str,
         dirs_to_watch: str | None = None,
         patterns: list[str] | None = None,
         ignore_patterns: list[str] | None = None,
@@ -65,6 +66,7 @@ class ServerEventHandler:
         self.server_address = server_address
         self.import_path = import_path
         self.site = site
+        self.output_path = output_path
         self.dirs_to_watch = dirs_to_watch
         self.patterns = patterns
         self.ignore_patterns = ignore_patterns
@@ -74,7 +76,7 @@ class ServerEventHandler:
             console.print(
                 f"[bold green]Spawning server on http://{self.server_address[0]}:{self.server_address[1]}[/bold green]"
             )
-            self.server = spawn_server(self.server_address, self.site.output_path)
+            self.server = spawn_server(self.server_address, self.output_path)
         self._thread = threading.Thread(target=self.server.serve_forever)
         self._thread.start()
 
@@ -85,9 +87,13 @@ class ServerEventHandler:
 
     def rebuild(self) -> None:
         console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
-        module = importlib.import_module(self.import_path)
-        importlib.reload(module)
-        self.site.render()
+        site = get_site(self.import_path, self.site, reload=True)
+        try:
+            site.render()
+        except Exception:
+            console.print("[bold red]Failed to render site[/bold red]")
+            console.print(traceback.format_exc())
+            pass
 
     def stop_watcher(self) -> bool:
         """
@@ -116,7 +122,7 @@ class ServerEventHandler:
         If a KeyboardInterrupt is raised, it stops the observer and server.
         """
 
-        console.print(f"[yellow]Serving {self.site.output_path}[/yellow]")
+        console.print(f"[yellow]Serving {self.output_path}[/yellow]")
         while not self.stop_watcher():
             if self.dirs_to_watch:
                 for _ in watchfiles.watch(*self.dirs_to_watch):

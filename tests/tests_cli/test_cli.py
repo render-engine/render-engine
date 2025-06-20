@@ -45,7 +45,10 @@ def test_get_site_content_path(site, tmp_path_factory):
     content_path1 = tmp_path_factory.getbasetemp() / "test_content_path1.txt"
     content_path2 = tmp_path_factory.getbasetemp() / "test_content_path2.txt"
 
-    assert get_site_content_paths(site) == [content_path1, content_path2]
+    expected = [content_path1, content_path2]
+    expected.extend(site.static_paths)
+    expected.append(site.template_path)
+    assert get_site_content_paths(site) == expected
 
 
 @pytest.mark.skip("Not sure how to test importlib")
