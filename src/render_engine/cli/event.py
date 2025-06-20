@@ -87,7 +87,6 @@ class ServerEventHandler:
 
     def rebuild(self) -> None:
         console.print("[bold purple]Reloading and Rebuilding site...[/bold purple]")
-        console.print("[bold green]Rebuilding site[/bold green]")
         site = get_site(self.import_path, self.site, reload=True)
         try:
             site.render()
