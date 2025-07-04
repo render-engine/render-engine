@@ -51,7 +51,7 @@ class Collection(BaseObject):
         parser_extras: dict[str, Any]
         required_themes: list[callable]
         routes: list[str | Path] = ["./"]
-        sort_by: str = "title"
+        sort_by: str | list = "title"
         sort_reverse: bool = False
         title: str
         template: str | None
