@@ -25,6 +25,8 @@ Collection pages **MUST** come from a `content_path` and all be the same content
 
 `content_path` can be a string representing a path or URL, depending on the [parser](parsers.md?id=basepageparser) used.
 
+`sort_by` can be either a single `attribute` as a `str` or a `list` of attributes to be used as a sort key.
+
 Attributes:
 
 ```Python
@@ -39,7 +41,7 @@ Parser: BasePageParser = BasePageParser
 parser_extras: dict[str, Any]
 required_themes: list[callable]
 routes: list[str] = ["./"]
-sort_by: str = "title"
+sort_by: str | list = "title"
 sort_reverse: bool = False
 title: str
 template: str | None
