@@ -267,3 +267,96 @@ def test_collection_sort_by_error_missing():
     assert "Cannot sort pages" in str(excinfo.value)
     assert "custom_sort_content" in str(excinfo.value)
     assert "SortByErrorCollection" in str(excinfo.value)
+
+
+def test_collection_custom_sort_by_list():
+    """
+    Tests that the sort_by can be changed
+    """
+
+    class PageA(Page):
+        title = "Page A"
+        content = "This Page should list first"
+        custom_sort_content = "z"
+        other_sort_content = 1
+
+    class PageB(Page):
+        title = "Page B"
+        content = "This Page should list second"
+        custom_sort_content = "4"
+        other_sort_content = 1
+
+    class PageC(Page):
+        title = "Page C"
+        content = "This Page should list third"
+        custom_sort_content = "b"
+        other_sort_content = 1
+
+    # Create instances of the page classes
+    page_a = PageA()
+    page_b = PageB()
+    page_c = PageC()
+
+    # Expected order based on custom_sort_content: 4, b, z
+    expected_pages = [page_b, page_c, page_a]
+
+    # Create a mixed order of pages
+    mixed_pages = [page_a, page_c, page_b]
+
+    class CustomCollection(Collection):
+        sort_by = ["other_sort_content", "custom_sort_content"]
+        pages = mixed_pages
+
+    custom_collection = CustomCollection()
+    sorted_pages = list(custom_collection.sorted_pages)
+
+    # Verify the sorted order by checking custom_sort_content values
+    assert [page.custom_sort_content for page in sorted_pages] == [page.custom_sort_content for page in expected_pages]
+
+
+def test_collection_custom_sort_by_list_with_date():
+    """
+    Tests that the sort_by can be changed
+    """
+
+    class PageA(Page):
+        title = "Page A"
+        content = "This Page should list first"
+        custom_sort_content = "z"
+        other_sort_content = 1
+        date = "2025-06-01"
+
+    class PageB(Page):
+        title = "Page B"
+        content = "This Page should list second"
+        custom_sort_content = "4"
+        date = "2025-06-01"
+        other_sort_content = 1
+
+    class PageC(Page):
+        title = "Page C"
+        content = "This Page should list third"
+        custom_sort_content = "b"
+        other_sort_content = 1
+        date = "2025-06-02"
+
+    # Create instances of the page classes
+    page_a = PageA()
+    page_b = PageB()
+    page_c = PageC()
+
+    # Expected order based on custom_sort_content: 4, b, z
+    expected_pages = [page_b, page_a, page_c]
+
+    # Create a mixed order of pages
+    mixed_pages = [page_a, page_c, page_b]
+
+    class CustomCollection(Collection):
+        sort_by = ["other_sort_content", "date", "custom_sort_content"]
+        pages = mixed_pages
+
+    custom_collection = CustomCollection()
+    sorted_pages = list(custom_collection.sorted_pages)
+
+    # Verify the sorted order by checking custom_sort_content values
+    assert [page.custom_sort_content for page in sorted_pages] == [page.custom_sort_content for page in expected_pages]

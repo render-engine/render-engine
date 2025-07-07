@@ -51,7 +51,7 @@ class Collection(BaseObject):
         parser_extras: dict[str, Any]
         required_themes: list[callable]
         routes: list[str | Path] = ["./"]
-        sort_by: str = "title"
+        sort_by: str | list = "title"
         sort_reverse: bool = False
         title: str
         template: str | None
@@ -79,7 +79,7 @@ class Collection(BaseObject):
     parser_extras: dict[str, Any]
     required_themes: list[Callable]
     routes: list[str | Path] = ["./"]
-    sort_by: str = "_title"
+    sort_by: str | list = "_title"
     sort_reverse: bool = False
     template_vars: dict[str, Any]
     template: str | None
@@ -140,6 +140,16 @@ class Collection(BaseObject):
         _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
         return _date.replace(tzinfo=None) if isinstance(_date, datetime.datetime) else _date
 
+    def _sort_key(self, key: str | list[str]) -> Callable:
+        """
+        Dynamically generate the sorting key
+
+        :param key: The key to use
+        """
+        if isinstance(key, str):
+            return self._date_key if key == "date" else lambda page: getattr(page, key)
+        return lambda page: [getattr(page, attr) for attr in key]
+
     @property
     def sorted_pages(self):
         """
@@ -150,12 +160,10 @@ class Collection(BaseObject):
             TypeError: This happens when the values being compared are of two different types
 
         """
-        # Dates need special handling so figure out if that's needed and set it here
-        sort_key = self._date_key if self.sort_by == "date" else lambda page: getattr(page, self.sort_by)
         try:
             return sorted(
                 (page for page in self.__iter__()),
-                key=sort_key,
+                key=self._sort_key(self.sort_by),
                 reverse=self.sort_reverse,
             )
         except AttributeError as e:
