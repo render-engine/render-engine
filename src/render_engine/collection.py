@@ -193,8 +193,9 @@ class Collection(BaseObject):
         archives = [sorted_pages]
 
         if items_per_page != len(sorted_pages):
-            archives.extend(list(batched(sorted_pages, items_per_page)))
-            self.template_vars["num_of_pages"] = len(archives) - 1 / items_per_page
+            paginated_archives = list(batched(sorted_pages, items_per_page))
+            archives.extend(paginated_archives)
+            self.template_vars["num_of_pages"] = len(paginated_archives)
         else:
             self.template_vars["num_of_pages"] = 1
 
