@@ -47,4 +47,30 @@ Archive pages are numbered starting at `0`. **The first page is always a list co
 
 If `items_per_page` is greater than `0`, the remaining will contain the items in the collection, split into groups of `items_per_page`.
 
-You can get the total number of `Archive` pages by grabbing the `Archive.num_archive_pages` attribute.
+You can get the total number of paginated pages by grabbing the `Archive.num_of_pages` attribute.
+
+## Pagination
+
+
+You can use `archive_index` and `num_of_pages` to create pagination.
+
+In your archive template you can:
+
+```
+{% if archive_index > 1%}
+Previous Page: {{archive_index - 1}}
+{% endif %}
+
+Current Page: {{archive_index}}
+
+{% if archive_index < num_of_pages %}
+Next Page: {{archive_index + 1}}
+{% endif %}
+
+Total Pages: {{num_of_pages}}
+
+<!-- Add a range -->
+{% for page_num in range(num_of_pages) %}
+<button{% if page_num == archive_index %}disabled{% endif%}>page_num</span>
+{% endfor %}
+```

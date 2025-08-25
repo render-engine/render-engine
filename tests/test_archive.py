@@ -44,13 +44,13 @@ def test_archive_slug_name_with_pages(title, expected_slug):
 
 @pytest.mark.parametrize(
     "_items_per_page, num_of_pages",
-    [(1, 3), (3, 1)],
+    [(1, 5), (2, 3), (3, 2), (4, 2), (5, 1)],
 )
 def test_archive_num_of_pages(_items_per_page: int, num_of_pages: int):
     """Tests that the number of pages in an archive is equal to the number of pages in the archive"""
 
     class TestCollection(Collection):
-        pages = [Page(), Page(), Page()]
+        pages = [Page(), Page(), Page(), Page(), Page()]
         has_archive = True
         items_per_page = _items_per_page
 
