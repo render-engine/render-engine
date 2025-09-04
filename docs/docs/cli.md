@@ -29,7 +29,7 @@ collection = "blog"  # optional
 ### Example Configuration
 
 ```toml
-[render-engine.cli]
+[tool.render-engine.cli]
 module = "my_site"
 site = "MySite"
 collection = "posts"
