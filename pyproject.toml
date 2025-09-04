@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-cli = ["cookiecutter", "rich", "typer", "watchfiles", "toml"]
+cli = ["render-engine-cli"]
 extras = ["render-engine-sitemap"]
 dev = [
   "cookiecutter",
@@ -39,7 +39,6 @@ dev = [
   "pytest-mock",
   "ruff",
   "toml",
-  "typer",
   "watchfiles",
 ]
 
@@ -55,9 +54,6 @@ documentation = "https://render-engine.readthedocs.io/en/latest/"
 
 [tool.setuptools.package-data]
 "*" = ["*.html", "*.txt", "*.xml", "*.md"]
-
-[project.scripts]
-render-engine = "render_engine.cli.cli:cli"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
