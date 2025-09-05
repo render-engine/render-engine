@@ -175,6 +175,26 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kjaymiller",
+      "name": "Jay Miller",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8632637?v=4",
+      "profile": "https://github.com/kjaymiller",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "bdougie",
+      "name": "Brian Douglas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5713670?v=4",
+      "profile": "https://b.dougie.dev/",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7,
