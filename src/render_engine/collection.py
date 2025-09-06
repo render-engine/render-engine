@@ -252,6 +252,33 @@ class Collection(BaseObject):
             return
         method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
+    def render(self) -> None:
+        """Iterate through Pages and Check for Collections and Feeds"""
+
+        for entry in self:
+            entry.plugin_manager = copy.deepcopy(self.plugin_manager)
+
+            for route in entry.routes:
+                entry.site = self.site
+                entry.render(route, self.site.theme_manager)
+
+        if getattr(self, "has_archive", False):
+            for archive in self.archives:
+                archive.site = self.site
+                logging.debug("Adding Archive: %s", archive.__class__.__name__)
+
+                for _ in self.routes:
+                    archive.render(self.routes[0], self.site.theme_manager)
+
+                if archive.is_index:
+                    archive.slug = "index"
+                    archive.render(self.routes[0], self.site.theme_manager)
+        feed: RSSFeed
+        if hasattr(self, "Feed"):
+            feed = self.feed
+            feed.site = self.site
+            feed.render(route="./", theme_manager=self.site.theme_manager)
+
 
 def render_archives(archive, **kwargs) -> list[Archive]:
     return [archive.render(pages=archive.pages, **kwargs) for archive in archive]

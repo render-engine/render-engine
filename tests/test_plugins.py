@@ -252,7 +252,9 @@ class TestPlugin:
             name = "prebuild"
 
         print("PreBuild")
-        site._render_output(site.output_path, PreBuild())
+        prebuild = PreBuild()
+        prebuild.site = site
+        prebuild.render("./", site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -262,7 +264,9 @@ class TestPlugin:
             name = "postbuild"
 
         print("PostBuild")
-        site._render_output(site.output_path, PostBuild())
+        postbuild = PostBuild()
+        postbuild.site = site
+        postbuild.render("./", site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -272,7 +276,9 @@ class TestPlugin:
             name = "renddercontent"
 
         print("RenderContent")
-        site._render_output(site.output_path, RenderContent())
+        renddercontent = RenderContent()
+        renddercontent.site = site
+        renddercontent.render("./", site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -282,7 +288,9 @@ class TestPlugin:
             name = "postrendercontent"
 
         print("PostRenderContent")
-        site._render_output(site.output_path, PostRenderContent())
+        postrendercontent = PostRenderContent()
+        postrendercontent.site = site
+        postrendercontent.render("./", site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -290,9 +298,12 @@ class TestPlugin:
         class PreBuildCollection(Page):
             content = json.dumps(settings.get("TestPlugin"))
             name = "prebuildcollection"
+            site = site
 
         print("PreBuildCollection")
-        site._render_output(site.output_path, PreBuildCollection())
+        prebuildcollection = PreBuildCollection()
+        prebuildcollection.site = site
+        prebuildcollection.render("./", site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -302,7 +313,9 @@ class TestPlugin:
             name = "postbuildcollection"
 
         print("PostBuildCollection")
-        site._render_output(site.output_path, PostBuildCollection())
+        postbuildcollection = PostBuildCollection()
+        postbuildcollection.site = site
+        postbuildcollection.render("./", site.theme_manager)
 
 
 @pytest.fixture(scope="function")
@@ -313,9 +326,7 @@ def plugin_test_site(tmp_path):
     class TestSite(Site):
         output_path = _output_path
 
-    site = TestSite()
-
-    yield site
+    yield TestSite()
 
 
 @pytest.mark.parametrize(
@@ -331,6 +342,7 @@ def test_plugin_settings_are_passed_properly(plugin_test_site, settings, expecte
 
     class Page1(Page):
         content = "this is a page"
+        site = plugin_test_site
 
     @plugin_test_site.collection
     class LegacyPluginCollection(Collection):

@@ -4,6 +4,8 @@ from typing import Any
 from jinja2 import Environment, Template
 from render_engine_parser.base_parsers import BasePageParser
 
+from render_engine.themes import ThemeManager
+
 from ._base_object import BaseObject
 from .plugins import PluginManager
 
@@ -33,6 +35,7 @@ class BasePage(BaseObject):
     rendered_content: str | None
     _reference: str = "_slug"
     plugin_manager: PluginManager | None
+    site = None
 
     @property
     def _content(self) -> any:
@@ -109,6 +112,21 @@ class BasePage(BaseObject):
 
     def __repr__(self) -> str:
         return f"<Page: {self._title}>"
+
+    def render(self, route: str | Path, theme_manager: ThemeManager) -> int:
+        """Render the page to the file system"""
+        path = Path(self.site.output_path) / Path(route) / Path(self.path_name)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        settings = dict()
+        if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
+            settings = {**self.site.plugin_manager.plugin_settings, "route": route}
+            pm.hook.render_content(page=self, settings=settings, site=self.site)
+        self.rendered_content = self._render_content(theme_manager.engine)
+        # pass the route to the plugin settings
+        if pm is not None:
+            pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
+
+        return path.write_text(self.rendered_content)
 
 
 class Page(BasePage):
