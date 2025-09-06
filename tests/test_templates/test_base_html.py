@@ -24,15 +24,16 @@ def theme_site(tmp_path):
 def test_base_html_body_class(theme_site):
     """body class is added to base html template"""
 
-    class bodyClassTheme(Theme):
+    class BodyClassTheme(Theme):
         template_globals = {"body_class": "my-class"}
         loader = DictLoader({})
         filters = {}
         plugins = []
         prefix = "test"
 
-    theme_site.register_themes(bodyClassTheme)
-    theme_site._render_output("./", theme_site.route_list["testpage"])
+    theme_site.register_themes(BodyClassTheme)
+    theme_site.route_list["testpage"].site = theme_site
+    theme_site.route_list["testpage"].render("./", theme_site.theme_manager)
 
     assert '<body class="my-class">' in (theme_site.output_path / "testpage.html").read_text()
 
@@ -40,16 +41,17 @@ def test_base_html_body_class(theme_site):
 def test_base_html_head_include(theme_site):
     """head can be imported into base html template"""
 
-    class headIncludeTheme(Theme):
+    class HeadIncludeTheme(Theme):
         template_globals = {"head": "head.html"}
         loader = DictLoader({"head.html": "<script>console.log('test')</script>"})
         filters = set()
         plugins = []
         prefix = "test"
 
-    theme_site.register_themes(headIncludeTheme)
+    theme_site.register_themes(HeadIncludeTheme)
     theme_site.load_themes()
-    theme_site._render_output("./", theme_site.route_list["testpage"])
+    theme_site.route_list["testpage"].site = theme_site
+    theme_site.route_list["testpage"].render("./", theme_site.theme_manager)
 
     assert "<script>console.log('test')</script>" in (theme_site.output_path / "testpage.html").read_text()
 

@@ -126,3 +126,7 @@ class BaseObject:
                 base_dict[key] = value
 
         return base_dict
+
+    def render(self, *args, **kwargs):
+        """Render method. Implemented in child objects"""
+        raise NotImplementedError(f'{self.__class__.__name__} does not implement the "render" method.')

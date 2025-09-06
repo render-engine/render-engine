@@ -6,7 +6,6 @@ from pathlib import Path
 from jinja2 import FileSystemLoader, PrefixLoader
 from rich.progress import Progress
 
-from .archive import Archive
 from .collection import Collection
 from .engine import engine
 from .page import Page
@@ -204,46 +203,6 @@ class Site:
         self.route_list[getattr(page, page._reference)] = page
         return page
 
-    def _render_output(self, route: str | Path, page: Page | Archive) -> int:
-        """writes the page object to disk"""
-        path = Path(self.output_path) / Path(route) / Path(page.path_name)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        settings = dict()
-
-        if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            settings = {**self.plugin_manager.plugin_settings, "route": route}
-            page.plugin_manager.hook.render_content(page=page, settings=settings, site=self)
-        page.rendered_content = page._render_content(engine=self.theme_manager.engine)
-        # pass the route to the plugin settings
-
-        if hasattr(page, "plugin_manager") and page.plugin_manager is not None:
-            page.plugin_manager.hook.post_render_content(page=page.__class__, settings=settings, site=self)
-
-        return path.write_text(page.rendered_content)
-
-    def _render_full_collection(self, collection: Collection) -> None:
-        """Iterate through Pages and Check for Collections and Feeds"""
-
-        for entry in collection:
-            entry.plugin_manager = copy.deepcopy(self.plugin_manager)
-
-            for route in entry.routes:
-                self._render_output(route, entry)
-
-        if getattr(collection, "has_archive", False):
-            for archive in collection.archives:
-                logging.debug("Adding Archive: %s", archive.__class__.__name__)
-
-                for route in collection.routes:
-                    self._render_output(collection.routes[0], archive)
-
-                if archive.is_index:
-                    archive.slug = "index"
-                    self._render_output(collection.routes[0], archive)
-
-        if hasattr(collection, "Feed"):
-            self._render_output("./", collection.feed)
-
     def load_themes(self) -> None:
         """
         function for registering the themes with the theme_manager.
@@ -302,32 +261,36 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
+                entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
-                if isinstance(entry, Page):
-                    for route in entry.routes:
+                args = []
+                match entry:
+                    case Page():
+                        for route in entry.routes:
+                            progress.update(
+                                task_add_route,
+                                description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
+                            )
+
+                            # self._render_output(route, entry)
+                            args = [route, self.theme_manager]
+                    case Collection():
                         progress.update(
                             task_add_route,
-                            description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
+                            description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
                         )
-                        self._render_output(route, entry)
+                        pre_build_collection_task = progress.add_task(
+                            "Loading Pre-Build-Collection Plugins",
+                            total=1,
+                        )
+                        entry._run_collection_plugins(
+                            hook_type="pre_build_collection",
+                            site=self,
+                        )
+                        progress.update(pre_build_collection_task, advance=1)
 
+                entry.render(*args)
                 if isinstance(entry, Collection):
-                    progress.update(
-                        task_add_route,
-                        description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
-                    )
-                    pre_build_collection_task = progress.add_task(
-                        "Loading Pre-Build-Collection Plugins",
-                        total=1,
-                    )
-                    entry._run_collection_plugins(
-                        hook_type="pre_build_collection",
-                        site=self,
-                    )
-                    progress.update(pre_build_collection_task, advance=1)
-
-                    self._render_full_collection(entry)
-
                     post_build_collection_task = progress.add_task(
                         "Loading Post-Build-Collection Plugins",
                         total=1,
