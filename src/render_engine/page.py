@@ -12,21 +12,34 @@ from .plugins import PluginManager
 
 class BasePage(BaseObject):
     """
-    This is the Base Page object.
+    Base class for all page objects in Render Engine.
 
-    It was created to allow for the creation of custom page objects.
+    This foundational class provides the core functionality for content pages,
+    establishing the relationship between pages and the site rendering system.
+    It should not be used directly - use the Page class instead.
 
-    This is not intended to be used directly.
+    Architecture Role:
+    - Represents individual content pieces that get rendered to specific URLs
+    - Maintains a reference to the parent Site during rendering
+    - Handles content parsing, template rendering, and URL generation
+    - Supports plugin system integration for content modification
+
+    Key Relationships:
+    - Belongs to a Site (via site attribute set during rendering)
+    - Uses a PluginManager for content processing hooks
+    - Renders through a ThemeManager for template resolution
+    - Can be part of a Collection or exist as standalone pages
 
     Attributes:
-        slug (str): The slug of the page. Defaults to the `title` slugified.
-        content: The content to be rendered by the page.
-        parser: The Parser used to parse the page's content. Defaults to `BasePageParser`.
-        reference: The attribute to use as the reference for the page in the site's route list.
-            Defaults to `slug`.
-        extension (str): The file extension for the page. Defaults to ".html".
-        routes (list[str] | Path): The list of routes for the page. Defaults to ["./"].
-        template (str | Template | None): The template to use for rendering the page.
+        slug (str): URL-safe identifier, auto-generated from title
+        content: Raw or parsed content to be rendered
+        parser: Content parser for processing raw content
+        reference: Attribute used as key in site's route_list (default: "_slug")
+        extension (str): File extension for output (default: ".html")
+        routes (list[str | Path]): URL paths where page should be accessible
+        template (str | Template | None): Jinja2 template for rendering
+        plugin_manager: Manages plugins that modify page content
+        site: Reference to parent Site object (set during rendering)
     """
 
     extension: str = ".html"
@@ -49,18 +62,33 @@ class BasePage(BaseObject):
 
     def url_for(self) -> str:
         """
-        Returns the URL for the page including the first route.
+        Generate the relative URL path for this page.
 
-        This gets the relative URL for a page.
+        URL Generation Logic:
+        - If route is "./": Use page's path_name directly (/page-slug)
+        - If route is custom: Combine route with path_name (/custom-route/page-slug)
 
-        !!! note
+        Route Examples:
+        - routes=["./"] with path_name="about" → "/about"
+        - routes=["blog"] with path_name="post-1" → "/blog/post-1"
+        - routes=["2024/01"] with path_name="hello-world" → "/2024/01/hello-world"
 
-            Pages don't have access to the `Site` attrs.
-            You cannot get an abolute URL from a Page object.
-            Use {{SITE_URL}} in your templates to get the absolute URL.
+        Path Name Generation:
+        - Derived from page's slug attribute
+        - Auto-generated from title if slug not provided
+        - Includes file extension (.html by default)
 
+        Limitations:
+        - Returns relative URLs only (no domain)
+        - Use {{ SITE_URL }} in templates for absolute URLs
+        - Cannot access site configuration directly
 
-        This is the preferred way to reference a page inside of a template.
+        Template Usage:
+        <a href="{{ page.url_for() }}">Link Text</a>
+        <link rel="canonical" href="{{ SITE_URL }}{{ page.url_for() }}">
+
+        Returns:
+            str: Relative URL path for the page
         """
         if (route := self.routes[0]) == "./":
             return f"/{self.path_name}"
@@ -131,39 +159,46 @@ class BasePage(BaseObject):
 
 class Page(BasePage):
     """
-    The general BasePage object used to make web pages.
+    Concrete implementation of BasePage for creating web pages.
 
-    Pages can be rendered directly from a template or generated from a file.
+    This is the primary class users extend to create content pages for their site.
+    Pages can be created from templates, file content, or direct content strings.
 
-    !!! note
+    Content Sources:
+    - Template-based: Define template and variables in the class
+    - File-based: Specify content_path to load content from a file
+    - Direct content: Provide content directly as a string
 
-        Not all attributes are defined by default (those that are marked *optional*) but
-        will be checked for in other areas of the code.
+    Site Integration:
+    - Registered with Site via @site.page decorator or site.page() method
+    - Inherits site's plugin manager with page-specific overrides
+    - Gets site reference during rendering for cross-page linking
+    - Accessible in templates via site.routes[page_slug]
 
-    When you create a page, you specify variables passed into rendering template.
+    Example Usage:
+        @site.page
+        class Home(Page):
+            title = "Welcome"
+            content = "Hello World!"
+            template = "page.html"
+
+        @site.page
+        class About(Page):
+            content_path = "content/about.md"
+            template = "page.html"
 
     Attributes:
-        content_path:
-            The path to the file that will be used to generate the Page's `content`.
-        extension: The suffix to use for the page. Defaults to `.html`.
-        engine:
-            If present, the engine to use for rendering the page.
-
-            !!! note
-                **This is normally not set and the `Site`'s engine will be used.**
-
-        reference:
-            Used to determine how to reference the page in the `Site`'s route_list.
-            Defaults to `slug`.
-        routes: The routes to use for the page. Defaults to `["./"]`.
-        template:
-            The template used to render the page.
-            If not provided, the `Site`'s `content` will be used.
-        Parser:
-            The parser to generate the page's `raw_content`.
-            Defaults to `BasePageParser`.
-        title: The title of the page. Defaults to the class name.
-
+        content_path: Path to file for content generation (optional)
+        extension: Output file extension (default: ".html")
+        engine: Custom Jinja2 engine (rarely used, site engine preferred)
+        reference: Route list key attribute (default: "_slug")
+        routes: URL paths for the page (default: ["./"])
+        template: Jinja2 template name for rendering
+        Parser: Content parser class (default: BasePageParser)
+        title: Page title (default: class name)
+        content: Direct content string (alternative to content_path)
+        parser_extras: Additional parser configuration
+        inherit_plugins: Whether to inherit site plugins (default: True)
     """
 
     content: Any

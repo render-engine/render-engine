@@ -19,53 +19,58 @@ from .plugins import PluginManager
 
 class Collection(BaseObject):
     """
-    Collection objects serve as a way to quickly process pages that have a
-    portion of content that is similar or file driven.
+    Container for groups of related pages with shared properties and automatic features.
+
+    Collections provide a powerful way to manage multiple pages that share common
+    characteristics, such as blog posts, documentation pages, or product listings.
+    They automatically generate archives, feeds, and provide sorting/pagination.
+
+    Architecture Role:
+    - Groups Page objects with similar structure and purpose
+    - Generates Archive pages for pagination when items_per_page is set
+    - Creates RSS/Atom feeds automatically
+    - Applies consistent templates and parsing to all contained pages
+    - Supports complex sorting and filtering of content
+
+    Site Integration:
+    - Registered with Site via @site.collection decorator or site.collection() method
+    - Inherits site's plugin manager with collection-specific overrides
+    - Gets site reference during rendering for cross-site linking
+    - Accessible in templates via site.routes[collection_slug]
+    - Can reference other collections and pages during rendering
+
+    Content Discovery:
+    - Scans content_path directory for files matching include_suffixes
+    - Parses each file using the specified Parser
+    - Creates Page objects for each discovered content file
+    - Applies collection-level settings to all pages
 
     Example:
-
-    ```python
-    from render_engine import Site, Collection
-
-    site = Site()
-
-    @site.collection
-    class BasicCollection(Collection):
-        content_path = "content/pages"
-    ```
-
-    Collection pages **MUST** come from a `content_path` and all be the same
-    content type.  `content_path` can be a string representing a path or URL,
-    depending on the [parser][src.render_engine.parsers.base_parsers] used.
+        @site.collection
+        class Blog(Collection):
+            content_path = "content/posts"
+            template = "post.html"
+            archive_template = "archive.html"
+            items_per_page = 10
+            sort_by = "date"
+            sort_reverse = True
 
     Attributes:
-
-        archive_template: The template to use for the [`Archive`][src.render_engine.archive.Archive] pages.
-        content_path: The path to iterate over to generate pages.
-        content_type: Type[Page] = Page
-        Feed: Type[RSSFeed] = RSSFeed
-        feed_title: str
-        include_suffixes: list[str] = ["*.md", "*.html"]
-        items_per_page: int | None
-        Parser: BasePageParser = BasePageParser
-        parser_extras: dict[str, Any]
-        required_themes: list[callable]
-        routes: list[str | Path] = ["./"]
-        sort_by: str | list = "title"
-        sort_reverse: bool = False
-        title: str
-        template: str | None
-        archive_template str | None: The template to use for the archive pages.
-
-    Methods:
-
-        iter_content_path(): Iterates through the collection's content path.
-        get_page(content_path: str | Path | None = None): Returns the page Object for the specified Content Path.
-        sorted_pages: Returns the sorted pages of the collection.
-        archives: Returns the Archive objects containing the pages from the content path.
-        feed: Returns the Feed object for the collection.
-        slug: Returns the slugified title of the collection.
-
+        content_path: Directory to scan for content files
+        content_type: Page class to instantiate for each content file
+        template: Template for individual pages in the collection
+        archive_template: Template for archive/pagination pages
+        Feed: Feed class for RSS/Atom generation
+        feed_title: Title for the generated feed
+        include_suffixes: File patterns to include (default: ["*.md", "*.html"])
+        items_per_page: Number of items per archive page (enables pagination)
+        Parser: Parser class for processing content files
+        parser_extras: Additional parser configuration
+        required_themes: Themes that must be loaded for this collection
+        routes: Base routes for the collection
+        sort_by: Attribute(s) to sort pages by
+        sort_reverse: Whether to reverse sort order
+        plugin_manager: Manages collection-specific plugins
     """
 
     archive_template: str | Path | None = "archive.html"
@@ -85,21 +90,35 @@ class Collection(BaseObject):
     template: str | None
     plugin_manager: PluginManager | None
 
-    def __init__(
-        self,
-    ) -> None:
+    def __init__(self) -> None:
+        """
+        Initialize the Collection with configuration and setup archive generation.
+
+        Initialization Steps:
+        1. Handle deprecated PageParser attribute (backwards compatibility)
+        2. Set up archive generation if pagination is configured
+        3. Initialize title from class name or custom title
+        4. Set up template variables for archive pages
+        5. Validate configuration and log warnings for deprecated features
+        """
+        # Backwards compatibility: handle deprecated PageParser attribute
         if parser := getattr(self, "PageParser", None):
             logging.warning(
                 DeprecationWarning(
                     f"The deprecated`PageParser` attribute is used in `{self.__class__.__name__}`. \
-                        Use the `Parser` attribute instead."
+                         Use the `Parser` attribute instead."
                 )
             )
             self.Parser = parser
 
+        # Enable archive generation if pagination is configured
         if getattr(self, "items_per_page", False):
             self.has_archive = True
+
+        # Set title for display and URL generation
         self.title = self._title
+
+        # Initialize template variables for archive pages
         self.template_vars = getattr(self, "template_vars", {})
 
     def iter_content_path(self):
@@ -128,13 +147,24 @@ class Collection(BaseObject):
     @staticmethod
     def _date_key(page: Page) -> datetime.datetime:
         """
-        Key for ensuring proper handling of dates for sorting
-        There are 2 issues here:
-        1. We need to convert a string to a datetime for proper sorting
-        2. We need to strip the timezone so that we are consistently dealing with timezone naive objects
+        Extract and normalize date values for consistent sorting.
 
-        :param page: The Page object to handle the date for
-        :return: Timezone naive datetime object
+        Date Sorting Challenges:
+        1. Page dates may be strings (from frontmatter) or datetime objects
+        2. Timezone-aware datetimes need conversion to naive for comparison
+        3. Missing dates should be handled gracefully
+
+        Normalization Process:
+        - Parse string dates using dateutil (handles various formats)
+        - Copy datetime objects to avoid modifying originals
+        - Strip timezone info for consistent comparison
+        - Return original value if not a datetime object
+
+        Args:
+            page: The Page object containing date information
+
+        Returns:
+            datetime: Timezone-naive datetime for sorting, or original value
         """
         date = getattr(page, "date")
         _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
@@ -188,15 +218,23 @@ class Collection(BaseObject):
             )
             yield from ()
 
+        # Archive Generation Logic:
+        # 1. Get all sorted pages from the collection
+        # 2. If pagination is enabled (items_per_page set), split into chunks
+        # 3. Create Archive objects for each page group
+        # 4. First archive is the main index, others are paginated pages
+
         sorted_pages = list(self.sorted_pages)
         items_per_page = getattr(self, "items_per_page", len(sorted_pages))
-        archives = [sorted_pages]
+        archives = [sorted_pages]  # Start with all pages as first archive
 
         if items_per_page != len(sorted_pages):
+            # Pagination enabled: split sorted pages into chunks
             paginated_archives = list(batched(sorted_pages, items_per_page))
             archives.extend(paginated_archives)
             self.template_vars["num_of_pages"] = len(paginated_archives)
         else:
+            # No pagination: single archive with all pages
             self.template_vars["num_of_pages"] = 1
 
         for index, pages in enumerate(archives):
@@ -253,8 +291,23 @@ class Collection(BaseObject):
         method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
     def render(self) -> None:
-        """Iterate through Pages and Check for Collections and Feeds"""
+        """
+        Render all pages in the collection, including archives and feeds.
 
+        Rendering Process:
+        1. Iterate through each page in the collection
+        2. Set up page-specific plugin manager (inherits from collection)
+        3. Establish site reference for cross-page linking
+        4. Render each page to its specified routes
+        5. Generate and render archive pages if pagination is enabled
+        6. Generate and render RSS/Atom feeds if configured
+
+        Plugin Inheritance:
+        - Each page gets a copy of the collection's plugin manager
+        - Collection plugins override site-level plugins
+        - Page-specific plugins can further override collection plugins
+        """
+        # Render individual pages
         for entry in self:
             entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
