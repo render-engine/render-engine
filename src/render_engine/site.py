@@ -15,27 +15,35 @@ from .themes import Theme, ThemeManager
 
 class Site:
     """
-    The site stores your pages and collections to be rendered.
+    Central coordinator for the static site generation process.
+
+    The Site class manages the entire site structure, coordinating Pages, Collections,
+    themes, plugins, and the rendering pipeline. It serves as the main entry point
+    for building a static site.
+
+    Architecture Overview:
+    - Pages: Individual content pieces rendered to specific routes
+    - Collections: Groups of related pages with shared properties and archive generation
+    - Themes: Template and styling packages that can be applied site-wide
+    - Plugins: Extensions that hook into various stages of the build process
+
+    Relationships:
+    - Site contains Pages and Collections in its route_list
+    - Site owns a ThemeManager for template resolution
+    - Site owns a PluginManager for extension coordination
+    - Pages and Collections reference back to their parent Site during rendering
 
     Attributes:
-        site_vars (dict): A dictionary containing site-wide variables and their values.
-        plugin_settings (dict): A dictionary containing plugin settings.
+        site_vars (dict): Global variables available in all templates (e.g., SITE_TITLE, SITE_URL)
+        plugin_settings (dict): Configuration for registered plugins
+        route_list (dict): Mapping of route slugs to Page/Collection objects
+        theme_manager (ThemeManager): Handles template loading and static file management
+        plugin_manager (PluginManager): Manages plugin registration and execution
 
     Methods:
-        update_site_vars(**kwargs): Updates the site-wide variables with the given key-value pairs.
-        register_plugins(*plugins, **plugin_settings): Registers the specified plugins with the site.
-        register_theme(theme): Registers a theme with the site.
-        register_themes(*themes): Registers multiple themes with the site.
-        update_theme_settings(**settings): Updates the theme settings with the given key-value pairs.
-        collection(Collection): Adds a collection to the site's route list.
-        page(Page): Adds a page to the site's route list.
-        load_themes(): Loads the themes registered with the site.
-        render(): Renders all pages and collections added to the site.
-
-    Properties:
-        output_path: The output path where the rendered files will be saved.
-        static_paths: The paths to static files used in the site.
-        template_path: The path to the template files used for rendering.
+        collection(): Register a Collection class with the site
+        page(): Register a Page class with the site
+        render(): Execute the complete site build process
     """
 
     site_vars: dict = {
@@ -122,33 +130,33 @@ class Site:
 
     def collection(self, Collection: type[Collection]) -> Collection:
         """
-        Add the collection to the route list to be rendered later.
+        Register a Collection with the site and establish the site-collection relationship.
 
-        This is the primary way to add a collection to the site and
-        can either be called on an uninstantiated class or on the class definition as a decorator.
+        This method creates a bidirectional relationship between the Site and Collection:
+        - The Collection gets a reference to the Site's PluginManager
+        - The Site stores the Collection in its route_list for rendering
+        - Collection-specific plugins and themes are registered
+        - The Collection becomes accessible via site.route_list[collection_slug]
 
-        In most cases. You should use the decorator method.
+        The relationship enables:
+        - Site-wide plugin inheritance with collection-specific overrides
+        - Theme requirements specified by the collection
+        - Access to site variables and settings during rendering
 
-        ```python
-        from render_engine import Site, Collection
+        Args:
+            Collection: The Collection class to register (not instantiated)
 
-        site = Site()
-
-        @site.collection # works
-        class Pages(Collection):
-            pass
-
-
-        class Posts(Collection):
-            pass
-
-        site.collection(Posts) # also works
-        ```
+        Returns:
+            Collection: The instantiated and configured Collection object
         """
+        # Instantiate the collection and establish plugin inheritance
         _Collection = Collection()
         _Collection.plugin_manager = copy.deepcopy(self.plugin_manager)
+
+        # Register any themes required by this collection
         self.register_themes(*getattr(_Collection, "required_themes", []))
 
+        # Handle collection-specific plugin registration
         if plugins := getattr(_Collection, "plugins", []):
             handle_plugin_registration(
                 _Collection.plugin_manager,
@@ -156,50 +164,55 @@ class Site:
                 getattr(_Collection, "plugin_settings", dict()),
             )
 
+        # Remove any plugins the collection wants to ignore
         for plugin in getattr(_Collection, "ignore_plugins", []):
             _Collection.plugin_manager.unregister_plugin(plugin)
 
+        # Register collection in site's route_list for URL resolution
+        # This enables cross-referencing: {{ "collection_slug" | url_for }}
+        # And collection.page references: {{ "collection_slug.page_slug" | url_for }}
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
     def page(self, _page: Page) -> Page:
         """
-        Add the page to the route list to be rendered later.
-        Also remaps `title` in case the user wants to use it in the template rendering.
+        Register a Page with the site and establish the site-page relationship.
 
-        This is the primary way to add a page to the site and can either be called
-        on an uninstantiated class or on the class definition as a decorator.
+        This method creates a bidirectional relationship between the Site and Page:
+        - The Page gets a reference to the Site's PluginManager
+        - The Site stores the Page in its route_list for rendering
+        - Page-specific plugins are registered and site plugins are inherited
+        - The Page becomes accessible via site.route_list[page_slug]
 
-        In most cases. You should use the decorator method.
+        The relationship enables:
+        - Site-wide plugin inheritance with page-specific overrides
+        - Access to site variables and settings during rendering
+        - Consistent plugin management across all site content
 
-        ```python
+        Args:
+            _page: The Page class to register (not instantiated)
 
-        from render_engine import Site, Page
-
-        site = Site()
-
-        @site.page # works
-        class Home(Page):
-            pass
-
-        class About(Page):
-            pass
-
-        site.page(About) # also works
-        ```
+        Returns:
+            Page: The instantiated and configured Page object
         """
+        # Instantiate the page and expose title attribute for templates
         page = _page()
         page.title = page._title  # Expose _title to the user through `title`
 
-        # copy the plugin manager, removing any plugins that the page has ignored
+        # Establish plugin inheritance from site to page
         page.plugin_manager = copy.deepcopy(self.plugin_manager)
 
+        # Handle page-specific plugin registration
         if plugins := getattr(page, "plugins", []):
             handle_plugin_registration(page.plugin_manager, plugins, getattr(page, "plugin_settings", dict()))
 
+        # Remove any plugins the page wants to ignore
         for plugin in getattr(page, "ignore_plugins", []):
             page.plugin_manager.unregister_plugin(plugin)
 
+        # Register page in site's route_list for URL resolution
+        # This enables direct page references: {{ "page_slug" | url_for }}
+        # The _reference attribute (default: "_slug") determines the route key
         self.route_list[getattr(page, page._reference)] = page
         return page
 
@@ -230,19 +243,30 @@ class Site:
 
     def render(self) -> None:
         """
-        Render all pages and collections.
+        Execute the complete site build process, orchestrating Pages and Collections.
 
-        These are pages and collections that have been added to the site using
-        the [`Site.page`][src.render_engine.Site.page]
-        and [`Site.collection`][src.render_engine.Site.collection] methods.
+        This method coordinates the rendering of all registered Pages and Collections,
+        establishing the final site-page/collection relationships and executing the
+        complete build pipeline with plugin hooks.
 
-        Render should be called after all pages and collections have been added to the site.
+        Build Process:
+        1. Pre-build site plugins execute
+        2. Themes are loaded and site variables injected into templates
+        3. Static files are copied to output directory
+        4. Each Page/Collection gets a reference to the Site (entry.site = self)
+        5. Pages and Collections are rendered with their respective plugin hooks
+        6. Post-build site plugins execute
 
-        You can choose to call it manually in your file or
-        use the CLI command [`render-engine build`][src.render_engine.cli.build]
+        The site.route_list contains all registered content, and during rendering:
+        - Pages get rendered to their specified routes
+        - Collections get rendered along with their archives and feeds
+        - All content has access to site variables and the complete route list
+
+        This establishes the runtime relationship where Pages and Collections
+        can reference the Site and other routes during template rendering.
         """
-
         with Progress() as progress:
+            # Phase 1: Pre-build setup
             pre_build_task = progress.add_task("Loading Pre-Build Plugins and Themes", total=1)
             self.plugin_manager.hook.pre_build_site(
                 site=self,
@@ -252,29 +276,36 @@ class Site:
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)
             progress.update(pre_build_task, advance=1)
-            # Parse Route List
-            task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
 
+            # Phase 2: Route processing setup
+            task_add_route = progress.add_task("[blue]Adding Routes", total=len(self.route_list))
             self.theme_manager._render_static()
 
+            # Inject site context into template globals for cross-referencing
+            # This enables templates to access site info and cross-reference other content
             self.theme_manager.engine.globals["site"] = self
             self.theme_manager.engine.globals["routes"] = self.route_list
 
+            # Phase 3: Render each registered Page/Collection
+            # route_list maps slugs to Page/Collection objects for URL resolution
             for slug, entry in self.route_list.items():
+                # Establish bidirectional relationship: entry gets site reference
+                # This allows Pages/Collections to access site config and other routes
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
+
                 match entry:
                     case Page():
+                        # Render page to each of its routes
                         for route in entry.routes:
                             progress.update(
                                 task_add_route,
                                 description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
                             )
-
-                            # self._render_output(route, entry)
                             args = [route, self.theme_manager]
                     case Collection():
+                        # Execute pre-build collection plugins
                         progress.update(
                             task_add_route,
                             description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
@@ -289,7 +320,10 @@ class Site:
                         )
                         progress.update(pre_build_collection_task, advance=1)
 
+                # Render the entry (Page or Collection)
                 entry.render(*args)
+
+                # Execute post-build collection plugins if this is a Collection
                 if isinstance(entry, Collection):
                     post_build_collection_task = progress.add_task(
                         "Loading Post-Build-Collection Plugins",
@@ -302,6 +336,7 @@ class Site:
                     progress.update(post_build_collection_task, advance=1)
                 progress.update(task_add_route, advance=1)
 
+            # Phase 4: Post-build cleanup
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(
                 site=self,
