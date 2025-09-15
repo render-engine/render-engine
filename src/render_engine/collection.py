@@ -100,7 +100,6 @@ class Collection(BaseObject):
             )
             self.Parser = parser
 
-        # Enable archive generation if pagination is configured
         if getattr(self, "items_per_page", False):
             self.has_archive = True
 
