@@ -141,7 +141,7 @@ class Collection(BaseObject):
             page: The Page object containing date information
 
         Returns:
-            datetime: Timezone-naive datetime for sorting, or original value
+            datetime: Timezone-naive datetime object
         """
         date = getattr(page, "date")
         _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
