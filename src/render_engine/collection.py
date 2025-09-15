@@ -55,21 +55,35 @@ class Collection(BaseObject):
             sort_reverse = True
 
     Attributes:
-        content_path: Directory to scan for content files
-        content_type: Page class to instantiate for each content file
-        template: Template for individual pages in the collection
-        archive_template: Template for archive/pagination pages
-        Feed: Feed class for RSS/Atom generation
-        feed_title: Title for the generated feed
-        include_suffixes: File patterns to include (default: ["*.md", "*.html"])
-        items_per_page: Number of items per archive page (enables pagination)
-        Parser: Parser class for processing content files
-        parser_extras: Additional parser configuration
-        required_themes: Themes that must be loaded for this collection
-        routes: Base routes for the collection
-        sort_by: Attribute(s) to sort pages by
-        sort_reverse: Whether to reverse sort order
-        plugin_manager: Manages collection-specific plugins
+        content_path (Path | str): Directory to scan for content files
+        content_type (type[Page]): Page class to instantiate for each content file (default: Page)
+        template (str | None): Template for individual pages in the collection
+        archive_template (str | Path | None): Template for archive/pagination pages (default: "archive.html")
+        Feed (type[RSSFeed]): Feed class for RSS/Atom generation (default: RSSFeed)
+        feed_title (str): Title for the generated feed
+        include_suffixes (list[str]): File patterns to include (default: ["*.md", "*.html"])
+        items_per_page (int | None): Number of items per archive page (enables pagination)
+        Parser (BasePageParser): Parser class for processing content files (default: BasePageParser)
+        parser_extras (dict[str, Any]): Additional parser configuration
+        required_themes (list[Callable]): Themes that must be loaded for this collection
+        routes (list[str | Path]): Base routes for the collection (default: ["./"])
+        sort_by (str | list): Attribute(s) to sort pages by (default: "_title")
+        sort_reverse (bool): Whether to reverse sort order (default: False)
+        template_vars (dict[str, Any]): Template variables for archive pages
+        plugin_manager (PluginManager | None): Manages collection-specific plugins
+
+    Methods:
+        iter_content_path(): Iterates through the collection's content path.
+        get_page(content_path: str | Path | None = None): Returns the page Object for the specified Content Path.
+        sorted_pages: Returns the sorted pages of the collection.
+        archives: Returns the Archive objects containing the pages from the content path.
+        feed: Returns the Feed object for the collection.
+        slug: Returns the slugified title of the collection.
+        render(): Renders all pages in the collection, including archives and feeds.
+
+    Collection pages **MUST** come from a `content_path` and all be the same
+    content type.  `content_path` can be a string representing a path or URL,
+    depending on the [parser][src.render_engine.parsers.base_parsers] used.
     """
 
     archive_template: str | Path | None = "archive.html"

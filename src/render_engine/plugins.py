@@ -38,16 +38,7 @@ class SiteSpecs:
         self,
         site,
     ) -> None:
-        """
-        Initialize plugin with default settings before site construction.
-
-        Called during plugin registration to allow plugins to inject default
-        configuration values into the site's settings. This happens before
-        any site processing begins.
-
-        Args:
-            site: The Site object being configured
-        """
+        """Add default settings to the site"""
 
     @hook_spec
     def pre_build_site(
@@ -55,19 +46,7 @@ class SiteSpecs:
         site,
         settings: dict[str, Any],
     ) -> None:
-        """
-        Execute before the entire site build process begins.
-
-        This is the first hook called in the build pipeline. Use this for:
-        - Setting up external resources or connections
-        - Validating site configuration
-        - Initializing caches or databases
-        - Modifying site-wide variables
-
-        Args:
-            site: The Site object being built
-            settings: Plugin-specific settings dictionary
-        """
+        """Steps Prior to Building the site"""
 
     @hook_spec
     def post_build_site(
@@ -75,19 +54,7 @@ class SiteSpecs:
         site,
         settings: dict[str, Any],
     ) -> None:
-        """
-        Execute after the entire site build process is complete.
-
-        This is the final hook called in the build pipeline. Use this for:
-        - Cleanup of resources created during build
-        - Generating additional output files
-        - Running post-processing tasks
-        - Deploying or uploading the built site
-
-        Args:
-            site: The completed Site object
-            settings: Plugin-specific settings dictionary
-        """
+        """Build After Building the site"""
 
     @hook_spec
     def render_content(
@@ -97,22 +64,7 @@ class SiteSpecs:
         site,
     ) -> None:
         """
-        Modify page content during the rendering process.
-
-        Called for each page before it gets rendered to its final output.
-        This hook allows plugins to transform, enhance, or modify the page
-        content before template rendering occurs.
-
-        Common uses:
-        - Syntax highlighting for code blocks
-        - Image optimization or lazy loading
-        - Content transformation (markdown processing)
-        - Adding metadata or SEO enhancements
-
-        Args:
-            page: The Page object being rendered
-            settings: Plugin-specific settings dictionary
-            site: The parent Site object
+        Augments the content of the page before it is rendered as output.
         """
 
     @hook_spec
@@ -123,22 +75,7 @@ class SiteSpecs:
         site,
     ) -> None:
         """
-        Modify page content after template rendering is complete.
-
-        Called for each page after template rendering but before the final
-        output is written to disk. Use this for final content modifications
-        that need access to the fully rendered HTML.
-
-        Common uses:
-        - HTML minification
-        - Adding analytics tracking code
-        - Final content validation
-        - Cache busting for static assets
-
-        Args:
-            page: The Page object that was rendered
-            settings: Plugin-specific settings dictionary
-            site: The parent Site object
+        Augments the content of the page before it is rendered as output.
         """
 
     @hook_spec
@@ -148,23 +85,7 @@ class SiteSpecs:
         site,
         settings: dict[str, Any],
     ) -> None:
-        """
-        Execute before a Collection begins processing its pages.
-
-        Called once for each Collection before it starts processing individual
-        pages. Use this for collection-specific setup tasks.
-
-        Common uses:
-        - Validating collection configuration
-        - Setting up collection-specific caches
-        - Preprocessing content files
-        - Initializing collection metadata
-
-        Args:
-            collection: The Collection object being processed
-            site: The parent Site object
-            settings: Plugin-specific settings dictionary
-        """
+        """Steps Prior to Building the collection"""
 
     @hook_spec
     def post_build_collection(
@@ -173,23 +94,7 @@ class SiteSpecs:
         site,
         settings: dict[str, Any],
     ) -> None:
-        """
-        Execute after a Collection has finished processing all its pages.
-
-        Called once for each Collection after all pages, archives, and feeds
-        have been generated. Use this for collection-level post-processing.
-
-        Common uses:
-        - Generating collection sitemaps
-        - Creating collection-specific indexes
-        - Running collection validation
-        - Cleaning up temporary files
-
-        Args:
-            collection: The completed Collection object
-            site: The parent Site object
-            settings: Plugin-specific settings dictionary
-        """
+        """Build After Building the collection"""
 
 
 class PluginManager:

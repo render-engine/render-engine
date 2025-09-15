@@ -177,17 +177,17 @@ class Page(BasePage):
             template = "page.html"
 
     Attributes:
-        content_path: Path to file for content generation (optional)
-        extension: Output file extension (default: ".html")
-        engine: Custom Jinja2 engine (rarely used, site engine preferred)
-        reference: Route list key attribute (default: "_slug")
-        routes: URL paths for the page (default: ["./"])
-        template: Jinja2 template name for rendering
-        Parser: Content parser class (default: BasePageParser)
-        title: Page title (default: class name)
-        content: Direct content string (alternative to content_path)
-        parser_extras: Additional parser configuration
-        inherit_plugins: Whether to inherit site plugins (default: True)
+        content_path (Path | str | None): Path to file for content generation (optional)
+        extension (str): Output file extension (default: ".html")
+        engine (Environment | None): Custom Jinja2 engine (rarely used, site engine preferred)
+        reference (str): Route list key attribute (default: "_slug")
+        routes (list[str | Path]): URL paths for the page (default: ["./"])
+        template (str | Template | None): Jinja2 template name for rendering
+        Parser (type[BasePageParser]): Content parser class (default: BasePageParser)
+        title (str): Page title (default: class name)
+        content (Any): Direct content string (alternative to content_path)
+        parser_extras (dict[str, Any] | None): Additional parser configuration
+        inherit_plugins (bool): Whether to inherit site plugins (default: True)
     """
 
     content: Any

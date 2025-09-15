@@ -34,12 +34,12 @@ class Theme:
     - Theme plugins follow same inheritance rules as site plugins
 
     Attributes:
-        loader: Jinja2 loader providing access to theme's template files
-        prefix: Namespace prefix for theme templates (auto-generated from class name if not provided)
-        filters: Custom Jinja2 filters to add to the rendering environment
-        plugins: List of plugin classes to register when theme is loaded
-        static_dir: Path to directory containing theme's static assets (CSS, JS, images)
-        template_globals: Global variables available in all templates (can include template includes)
+        loader (BaseLoader): Jinja2 loader providing access to theme's template files
+        prefix (str): Namespace prefix for theme templates (auto-generated from class name if not provided)
+        filters (dict): Custom Jinja2 filters to add to the rendering environment (default: {})
+        plugins (list): List of plugin classes to register when theme is loaded (default: [])
+        static_dir (str | pathlib.Path | None): Path to directory containing theme's static assets (CSS, JS, images) (default: None)
+        template_globals (dict | None): Global variables available in all templates (can include template includes) (default: None)
 
     Example:
         custom_theme = Theme(
@@ -101,11 +101,11 @@ class ThemeManager:
     - Provides default globals like 'head' and 'body_class'
 
     Attributes:
-        engine: Jinja2 Environment instance for template rendering
-        output_path: Directory where rendered content and static files are written
-        prefix: Maps theme prefixes to their Jinja2 loaders for template resolution
-        static_paths: Set of directories to copy to output during build
-        template_globals: Global variables injected into all template contexts
+        engine (Environment): Jinja2 Environment instance for template rendering
+        output_path (Path | str): Directory where rendered content and static files are written
+        prefix (dict[str, BaseLoader]): Maps theme prefixes to their Jinja2 loaders for template resolution (default: {})
+        static_paths (set): Set of directories to copy to output during build (default: set())
+        template_globals (dict[str, set]): Global variables injected into all template contexts (default: default_template_globals)
     """
 
     @staticmethod
