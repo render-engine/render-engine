@@ -90,17 +90,7 @@ class Collection(BaseObject):
     plugin_manager: PluginManager | None
 
     def __init__(self) -> None:
-        """
-        Initialize the Collection with configuration and setup archive generation.
-
-        Initialization Steps:
-        1. Handle deprecated PageParser attribute (backwards compatibility)
-        2. Set up archive generation if pagination is configured
-        3. Initialize title from class name or custom title
-        4. Set up template variables for archive pages
-        5. Validate configuration and log warnings for deprecated features
-        """
-        # Backwards compatibility: handle deprecated PageParser attribute
+        """Initialize the Collection with configuration and setup archive generation."""
         if parser := getattr(self, "PageParser", None):
             logging.warning(
                 DeprecationWarning(
