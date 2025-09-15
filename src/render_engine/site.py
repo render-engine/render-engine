@@ -36,8 +36,8 @@ class Site:
         plugin_manager (PluginManager): Manages plugin registration and execution
 
     Methods:
-        collection(): Register a Collection class with the site
-        page(): Register a Page class with the site
+        collection(): Register a Collection class with the site - decorator function
+        page(): Register a Page class with the site - decorator function
         render(): Execute the complete site build process
     """
 
