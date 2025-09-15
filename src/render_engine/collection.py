@@ -30,7 +30,7 @@ class Collection(BaseObject):
     - Generates Archive pages for pagination when items_per_page is set
     - Creates RSS/Atom feeds automatically
     - Applies consistent templates and parsing to all contained pages
-    - Supports complex sorting and filtering of content
+    - Supports sorting of content
 
     Site Integration:
     - Registered with Site via @site.collection decorator or site.collection() method
