@@ -26,11 +26,6 @@ class SiteSpecs:
     5. post_build_collection: After each collection is processed
     6. post_build_site: After entire site build is complete
 
-    Plugin Inheritance:
-    - Site-level plugins are inherited by all Pages and Collections
-    - Collection-specific plugins override or extend site plugins
-    - Page-specific plugins override collection and site plugins
-    - Plugins can be ignored at any level using ignore_plugins attribute
 
     Attributes:
         default_settings (dict[str, Any]): Default configuration for the plugin
