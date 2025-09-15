@@ -37,7 +37,6 @@ class Collection(BaseObject):
     - Inherits site's plugin manager with collection-specific overrides
     - Gets site reference during rendering for cross-site linking
     - Accessible in templates via site.routes[collection_slug]
-    - Can reference other collections and pages during rendering
 
     Content Discovery:
     - Scans content_path directory for files matching include_suffixes
