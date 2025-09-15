@@ -136,7 +136,6 @@ class Collection(BaseObject):
         Date Sorting Challenges:
         1. Page dates may be strings (from frontmatter) or datetime objects
         2. Timezone-aware datetimes need conversion to naive for comparison
-        3. Missing dates should be handled gracefully
 
         Normalization Process:
         - Parse string dates using dateutil (handles various formats)
