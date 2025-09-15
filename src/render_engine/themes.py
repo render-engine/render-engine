@@ -167,7 +167,7 @@ class ThemeManager:
                 # Handle set-type globals (like 'head' for extensible content)
                 if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
                     self.engine.globals.setdefault(key, set()).update(value)
-                elif isinstance(self.engine.globals.get(key), set):
+                if isinstance(self.engine.globals.get(key), set):
                     # Convert single value to set member
                     self.engine.globals[key].add(value)
                 else:
