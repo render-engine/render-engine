@@ -162,13 +162,6 @@ def url_for(env: Environment, value: str, page: int = 0) -> str:
     3. Collection Archive Reference:
        {{ "blog" | url_for(1) }} → URL for second archive page of "blog" collection
 
-    Resolution Logic:
-    - Split on "." to separate collection from page identifier
-    - Look up collection/page in site's route_list
-    - For collections without page specifier, return archive URL
-    - For collections with page specifier, find matching page in collection
-    - Support pagination for collection archives
-
     Template Usage Examples:
         <a href="{{ 'blog' | url_for }}">Blog Index</a>
         <a href="{{ 'blog.hello-world' | url_for }}">Specific Post</a>
