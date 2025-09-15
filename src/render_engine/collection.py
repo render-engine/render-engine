@@ -103,8 +103,6 @@ class Collection(BaseObject):
         if getattr(self, "items_per_page", False):
             self.has_archive = True
         self.title = self._title
-
-        # Initialize template variables for archive pages
         self.template_vars = getattr(self, "template_vars", {})
 
     def iter_content_path(self):
