@@ -21,7 +21,7 @@ class SiteSpecs:
     Hook Execution Order:
     1. pre_build_site: Before any site processing begins
     2. pre_build_collection: Before each collection is processed
-    3. render_content: During page content rendering
+    3. render_content: Prior to page content rendering
     4. post_render_content: After page content is rendered
     5. post_build_collection: After each collection is processed
     6. post_build_site: After entire site build is complete
