@@ -38,8 +38,10 @@ class Theme:
         prefix (str): Namespace prefix for theme templates (auto-generated from class name if not provided)
         filters (dict): Custom Jinja2 filters to add to the rendering environment (default: {})
         plugins (list): List of plugin classes to register when theme is loaded (default: [])
-        static_dir (str | pathlib.Path | None): Path to directory containing theme's static assets (CSS, JS, images) (default: None)
-        template_globals (dict | None): Global variables available in all templates (can include template includes) (default: None)
+        static_dir (str | pathlib.Path | None): Path to directory containing theme's static assets
+            (CSS, JS, images) (default: None)
+        template_globals (dict | None): Global variables available in all templates
+            (can include template includes) (default: None)
 
     Example:
         custom_theme = Theme(
@@ -103,9 +105,11 @@ class ThemeManager:
     Attributes:
         engine (Environment): Jinja2 Environment instance for template rendering
         output_path (Path | str): Directory where rendered content and static files are written
-        prefix (dict[str, BaseLoader]): Maps theme prefixes to their Jinja2 loaders for template resolution (default: {})
+        prefix (dict[str, BaseLoader]): Maps theme prefixes to their Jinja2 loaders for template resolution
+            (default: {})
         static_paths (set): Set of directories to copy to output during build (default: set())
-        template_globals (dict[str, set]): Global variables injected into all template contexts (default: default_template_globals)
+        template_globals (dict[str, set]): Global variables injected into all template contexts
+            (default: default_template_globals)
     """
 
     @staticmethod
