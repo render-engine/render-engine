@@ -102,8 +102,6 @@ class Collection(BaseObject):
 
         if getattr(self, "items_per_page", False):
             self.has_archive = True
-
-        # Set title for display and URL generation
         self.title = self._title
 
         # Initialize template variables for archive pages
