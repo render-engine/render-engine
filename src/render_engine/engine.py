@@ -46,11 +46,12 @@ engine = Environment(
     loader=render_engine_templates_loader,
     autoescape=select_autoescape(["xml"]),  # Auto-escape XML and HTML files
     lstrip_blocks=True,  # Strip leading whitespace from template blocks
-    trim_blocks=True,    # Trim trailing newlines from template blocks
+    trim_blocks=True,  # Trim trailing newlines from template blocks
 )
 
 
 # Custom Jinja2 filters for template rendering
+
 
 def to_pub_date(value: datetime.datetime | datetime.date) -> str:
     """
@@ -68,6 +69,7 @@ def to_pub_date(value: datetime.datetime | datetime.date) -> str:
     if isinstance(value, datetime.date):
         value = parse(value.isoformat())
     return fmt_datetime(value)
+
 
 engine.filters["to_pub_date"] = to_pub_date
 
@@ -98,6 +100,7 @@ def format_datetime(
 
     return value.strftime(format)
 
+
 engine.filters["format_datetime"] = format_datetime
 
 
@@ -114,6 +117,7 @@ def to_absolute(env: Environment, url: str) -> str:
         str: Absolute URL
     """
     return str(urljoin(env.globals.get("SITE_URL"), url))
+
 
 engine.filters["to_absolute"] = to_absolute
 
@@ -139,6 +143,7 @@ def feed_url(env: Environment, value: str) -> str:
         return routes[value].feed.url_for()
     else:
         raise ValueError("No Route Found")
+
 
 engine.filters["feed_url"] = feed_url
 
@@ -197,5 +202,6 @@ def url_for(env: Environment, value: str, page: int = 0) -> str:
         return route.url_for()
 
     raise ValueError(f"{value} is not a valid route.")
+
 
 engine.filters["url_for"] = url_for
