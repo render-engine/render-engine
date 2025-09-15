@@ -18,17 +18,6 @@ class BasePage(BaseObject):
     establishing the relationship between pages and the site rendering system.
     It should not be used directly - use the Page class instead.
 
-    Architecture Role:
-    - Represents individual content pieces that get rendered to specific URLs
-    - Maintains a reference to the parent Site during rendering
-    - Handles content parsing, template rendering, and URL generation
-    - Supports plugin system integration for content modification
-
-    Key Relationships:
-    - Belongs to a Site (via site attribute set during rendering)
-    - Uses a PluginManager for content processing hooks
-    - Renders through a ThemeManager for template resolution
-    - Can be part of a Collection or exist as standalone pages
 
     Attributes:
         slug (str): URL-safe identifier, auto-generated from title
