@@ -203,7 +203,7 @@ class Collection(BaseObject):
 
         sorted_pages = list(self.sorted_pages)
         items_per_page = getattr(self, "items_per_page", len(sorted_pages))
-        archives = [sorted_pages]  # Start with all pages as first archive
+        archives = [sorted_pages]
 
         if items_per_page != len(sorted_pages):
             # Pagination enabled: split sorted pages into chunks
