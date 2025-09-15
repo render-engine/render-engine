@@ -95,7 +95,7 @@ class Collection(BaseObject):
             logging.warning(
                 DeprecationWarning(
                     f"The deprecated`PageParser` attribute is used in `{self.__class__.__name__}`. \
-                         Use the `Parser` attribute instead."
+                        Use the `Parser` attribute instead."
                 )
             )
             self.Parser = parser
