@@ -137,12 +137,6 @@ class Collection(BaseObject):
         1. Page dates may be strings (from frontmatter) or datetime objects
         2. Timezone-aware datetimes need conversion to naive for comparison
 
-        Normalization Process:
-        - Parse string dates using dateutil (handles various formats)
-        - Copy datetime objects to avoid modifying originals
-        - Strip timezone info for consistent comparison
-        - Return original value if not a datetime object
-
         Args:
             page: The Page object containing date information
 
