@@ -27,11 +27,6 @@ class Site:
     - Themes: Template and styling packages that can be applied site-wide
     - Plugins: Extensions that hook into various stages of the build process
 
-    Relationships:
-    - Site contains Pages and Collections in its route_list
-    - Site owns a ThemeManager for template resolution
-    - Site owns a PluginManager for extension coordination
-    - Pages and Collections reference back to their parent Site during rendering
 
     Attributes:
         site_vars (dict): Global variables available in all templates (e.g., SITE_TITLE, SITE_URL)
