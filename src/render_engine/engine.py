@@ -32,7 +32,8 @@ render_engine_templates_loader = ChoiceLoader(
         # Theme-specific templates loaded via prefix (e.g., 'theme_name/template.html')
         PrefixLoader(
             {
-                # "prefix": theme.loader - populated dynamically when themes are registered
+                # populated dynamically when themes are registered
+                # "prefix": theme.loader 
             }
         ),
         # Built-in templates from the render_engine package (lowest priority fallback)
