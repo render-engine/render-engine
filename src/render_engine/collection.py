@@ -23,7 +23,7 @@ class Collection(BaseObject):
 
     Collections provide a powerful way to manage multiple pages that share common
     characteristics, such as blog posts, documentation pages, or product listings.
-    They automatically generate archives, feeds, and provide sorting/pagination.
+    They can generate archives, feeds, and provide sorting/pagination.
 
     Architecture Role:
     - Groups Page objects with similar structure and purpose
