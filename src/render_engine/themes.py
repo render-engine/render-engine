@@ -216,5 +216,3 @@ class ThemeManager:
                     destination,
                     dirs_exist_ok=True,  # Allow overwriting existing files
                 )
-            else:
-                logging.warning(f"Static path does not exist: {static_path}")
