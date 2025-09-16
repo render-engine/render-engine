@@ -27,7 +27,7 @@ from .collection import Collection
 # This ChoiceLoader tries loaders in order, allowing user templates to override built-in ones
 render_engine_templates_loader = ChoiceLoader(
     [
-        # User-defined templates from the 'templates' directory (highest priority)
+        # User-defined template directories
         FileSystemLoader("templates"),
         # Theme-specific templates loaded via prefix (e.g., 'theme_name/template.html')
         PrefixLoader(
