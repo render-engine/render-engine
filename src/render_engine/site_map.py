@@ -19,15 +19,16 @@ class SiteMapEntry:
         match entry:
             case Page():
                 # For a base page the _route created if we use the route is invalid - just use the path_name
-                self._route = urljoin("/", str(Path(route) / self.path_name if from_collection else self.path_name))
+                self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
                 self.entries = list()
             case Collection():
-                self._route = urljoin("/", route)
+                self._route = f"/{route.lstrip('/')}"
                 self.entries = [
                     SiteMapEntry(collection_entry, self._route, from_collection=True) for collection_entry in entry
                 ]
             case _:
                 pass
+        print(self._route)
 
     @property
     def url_for(self) -> str:
