@@ -10,6 +10,7 @@ from .collection import Collection
 from .engine import engine
 from .page import Page
 from .plugins import PluginManager, handle_plugin_registration
+from .site_map import SiteMap
 from .themes import Theme, ThemeManager
 
 
@@ -20,6 +21,7 @@ class Site:
     Attributes:
         site_vars (dict): A dictionary containing site-wide variables and their values.
         plugin_settings (dict): A dictionary containing plugin settings.
+        render_site_map (bool): Whether to render the generated site map as a page.
 
     Methods:
         update_site_vars(**kwargs): Updates the site-wide variables with the given key-value pairs.
@@ -49,6 +51,7 @@ class Site:
     _template_path: str | Path = "templates"
     _static_paths: set = {"static"}
     plugin_settings: dict = {"plugins": defaultdict(dict)}
+    render_site_map: bool = False
 
     def __init__(
         self,
@@ -65,6 +68,7 @@ class Site:
         self.theme_manager.engine.globals.update(self.site_vars)
         if self.theme_manager.engine.loader is not None:
             self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
+        self._site_map = None
 
     @property
     def output_path(self) -> Path | str:
@@ -243,6 +247,20 @@ class Site:
         """
 
         with Progress() as progress:
+            task_site_map = progress.add_task("Generating site map", total=1)
+            self._site_map = SiteMap(self.route_list, self.site_vars.get("SITE_URL", ""))
+            self.site_vars["SITE_MAP"] = self._site_map
+            if self.render_site_map:
+
+                @self.page
+                class SiteMapPage(Page):
+                    title = f"{self.site_vars.get('SITE_TITLE', '')} Site Map"
+                    path_name = "site_map.html"
+                    content = self._site_map.html
+                    template = "page.html"
+
+            progress.update(task_site_map, advance=1)
+
             pre_build_task = progress.add_task("Loading Pre-Build Plugins and Themes", total=1)
             self.plugin_manager.hook.pre_build_site(
                 site=self,
