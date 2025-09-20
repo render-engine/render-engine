@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Iterable
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -18,6 +18,7 @@ class SiteMapEntry:
         self.path_name = entry.path_name
         match entry:
             case Page():
+                # For a base page the _route created if we use the route is invalid - just use the path_name
                 self._route = Path("/") / (route / self.path_name if from_collection else self.path_name)
                 self.entries = list()
             case Collection():
@@ -33,15 +34,17 @@ class SiteMapEntry:
         """The URL for the given entry"""
         return str(self._route)
 
-    @property
-    def all_urls(self) -> Generator[str]:
-        yield from map(str, (entry.url_for for entry in self.entries))
-
 
 class SiteMap:
     """Site map"""
 
     def __init__(self, route_list: dict, site_url: str):
+        """
+        Create the site map based on the route_list
+
+        :param route_list: The route list to parse
+        :param site_url: Used for rendering the HTML to have absolute URLs.
+        """
         self._route_map = dict()
         self._collections = dict()
         for route, entry in route_list.items():
@@ -66,46 +69,45 @@ class SiteMap:
         will be searched if full_search is True.
         If there would be a match in multiple collections - or for just a page, the first match will be returned.
 
-        :param slug: Slug of the entry to find
-        :param path_name: Path name of the entry
-        :param title: The title to look for
+        :param attr: The name of attribute to search for
+        :param value: The value of attribute to search for
         :param collection: The name of the collection to search
         :param full_search: Search recursively in collections
         :return: The first found match or None if not found
         """
 
-        def _search(attr: str, value: str, entries: Iterable) -> SiteMapEntry | None:
+        def search(s_attr: str, s_value: str, entries: Iterable) -> SiteMapEntry | None:
             """
             Search the list of entries for a match
 
-            :param attr: The attribute to search by
-            :param value: The value to search for
+            :param s_attr: The attribute to search by
+            :param s_value: The value to search for
             :param entries: List of entries to search
             :return: First found match or None if not found
             """
-            for entry in entries:
-                if getattr(entry, attr, None) == value:
-                    return entry
+            for s_entry in entries:
+                if getattr(s_entry, s_attr, None) == s_value:
+                    return s_entry
             return None
 
         if collection:
-            # Collection was specified so check there first
-            collection = slugify.slugify(collection)
-            if not (_collection := self._collections[collection]):
-                return None
-            if value and (entry := _search(attr, value, _collection.entries)):
+            # Collection was specified so check there
+            return (
+                search(attr, value, _collection.entries)
+                if (_collection := self._collections[slugify.slugify(collection)])
+                else None
+            )
+        if attr == "slug":
+            # We can handle slug a bit differently since it's the key to the route map dictionary.
+            if entry := self._route_map.get(value):
                 return entry
-            return None
-        if attr == "slug" and (entry := self._route_map.get(value)):
-            # Looking for a slug
-            return entry
-        # Check the base
-        if value and (entry := _search(attr, value, self._route_map.values())):
+        # Check the base route map
+        elif entry := search(attr, value, self._route_map.values()):
             return entry
         if full_search:
             # Check each collection
-            for _collection in self._collections.values():
-                if entry := _search(attr, value, _collection.entries):
+            for collection in self._collections.values():
+                if entry := search(attr, value, collection.entries):
                     return entry
         return None
 
