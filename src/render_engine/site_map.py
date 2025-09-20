@@ -14,7 +14,7 @@ class SiteMapEntry:
     def __init__(self, entry: BaseObject, route: str | Path, from_collection=False):
         """Initialize the entry"""
         self.slug = entry._slug
-        self.title = entry.title
+        self.title = entry._title
         self.path_name = entry.path_name
         match entry:
             case Page():
