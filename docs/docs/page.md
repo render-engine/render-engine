@@ -24,12 +24,13 @@ This is not intended to be used directly.
 
 **Attributes:**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `slug` |  |The slug of the page. Defaults to the `title` slugified. |
-| `content` |  |The content to be rendered by the page |
-| `parser` |  |The Parser used to parse the page's content. Defaults to `BasePageParser`. |
-| `reference` |  |The attribute to use as the reference for the page in the site's route list. Defaults to `slug`. |
+| Name               | Type | Description |
+|--------------------| --- | --- |
+| `slug`             |  |The slug of the page. Defaults to the `title` slugified. |
+| `content`          |  |The content to be rendered by the page |
+| `parser`           |  |The Parser used to parse the page's content. Defaults to `BasePageParser`. |
+| `reference`        |  |The attribute to use as the reference for the page in the site's route list. Defaults to `slug`. |
+| `skip_site_map`    | `False` | When set to `True` the `Page` will not be included in the generated `SiteMap` |
 
 ### Functions
 
@@ -72,6 +73,7 @@ When you create a page, you specify variables passed into rendering template.
 | `template` | `str | None` |The template used to render the page. If not provided, the `Site`'s `content`will be used. |
 | `Parser` | `type[BasePageParser]` |The parser to generate the page's `raw_content`. Defaults to `BasePageParser`. |
 | `title` | `str` |The title of the page. Defaults to the class name. |
+| `skip_site_map`    | `False` | When set to `True` the `Page` will not be included in the generated `SiteMap` |
 
 ## About Page Attributes
 
@@ -103,3 +105,19 @@ By default Page._content will return the result of `Page.Parser.parse(Page.conte
 ### Page Templates
 
 `Page.template` should always be a `str`. `Page.template` refers to the template name that will be passed to the engine given to `Page.render()`.
+
+### Accessing URLs for other pages in the site from within the page content
+
+In order to allow lookup of URLs for other pages within a Site the `content` of a page may be
+a template. If the `content` matches the pattern `{{.*?}}` we will render the `content` as a
+template prior to rendering the page itself.
+
+Example:
+
+```
+{{ site_map.find('my_page').url_for }}
+```
+
+will render to the URL for `my_page` in the `content` and then in the generated page.
+
+For more details on using the `SiteMap` please check the [SiteMap documentation](site_map.md).
