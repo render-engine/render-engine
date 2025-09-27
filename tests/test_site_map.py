@@ -41,7 +41,7 @@ def site(tmp_path_factory):
                     )
                 )
             )
-    for n in range(3):
+    for n in range(4):
         content_file = tmp_input_path / f"page{n}.md"
         content_file.write_text(
             PAGE_TEMPLATE.format(
@@ -67,12 +67,13 @@ def site(tmp_path_factory):
         collection_class.__name__ = collection
         site.collection(collection_class)
 
-    for n in range(3):
+    for n in range(4):
 
         @site.page
         class MyPage(Page):
             content_path = tmp_input_path / f"page{n}.md"
             template = template_file_name
+            skip_site_map = n == 3
 
     yield site
 
