@@ -114,7 +114,7 @@ template prior to rendering the page itself.
 
 Example:
 
-```
+```html
 {{ site_map.find('my_page').url_for }}
 ```
 
