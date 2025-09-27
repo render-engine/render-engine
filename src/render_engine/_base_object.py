@@ -26,6 +26,7 @@ class BaseObject:
     template_vars: dict
     plugins: list[Callable] | None
     plugin_settings: dict = {"plugins": defaultdict(dict)}
+    skip_site_map: bool = False
 
     @property
     def _title(self) -> str:

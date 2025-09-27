@@ -86,6 +86,10 @@ class Site:
     def static_paths(self, static_paths: set) -> None:
         self.theme_manager.static_paths = static_paths
 
+    @property
+    def site_map(self) -> SiteMap:
+        return self._site_map
+
     def update_site_vars(self, **kwargs) -> None:
         self.site_vars.update(**kwargs)
         self.theme_manager.engine.globals.update(self.site_vars)
@@ -249,7 +253,6 @@ class Site:
         with Progress() as progress:
             task_site_map = progress.add_task("Generating site map", total=1)
             self._site_map = SiteMap(self.route_list, self.site_vars.get("SITE_URL", ""))
-            self.site_vars["SITE_MAP"] = self._site_map
             if self.render_site_map:
 
                 @self.page
