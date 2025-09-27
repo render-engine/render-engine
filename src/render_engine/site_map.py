@@ -47,7 +47,11 @@ class SiteMap:
         """
         self._route_map = dict()
         self._collections = dict()
+        route: str
+        entry: BaseObject
         for route, entry in route_list.items():
+            if entry.skip_site_map:
+                continue
             sm_entry = SiteMapEntry(entry, route)
             self._route_map[sm_entry.slug] = sm_entry
             if sm_entry.entries:
