@@ -28,7 +28,6 @@ class SiteMapEntry:
                 ]
             case _:
                 pass
-        print(self._route)
 
     @property
     def url_for(self) -> str:
@@ -57,8 +56,8 @@ class SiteMap:
 
     def find(
         self,
-        attr: str,
         value: str,
+        attr: str = "slug",
         collection: str = None,
         full_search: bool = False,
     ) -> SiteMapEntry | None:
@@ -70,8 +69,8 @@ class SiteMap:
         will be searched if full_search is True.
         If there would be a match in multiple collections - or for just a page, the first match will be returned.
 
-        :param attr: The name of attribute to search for
         :param value: The value of attribute to search for
+        :param attr: The name of attribute to search for, defaults to slug
         :param collection: The name of the collection to search
         :param full_search: Search recursively in collections
         :return: The first found match or None if not found
@@ -91,6 +90,8 @@ class SiteMap:
                     return s_entry
             return None
 
+        if not value:
+            return None
         if collection:
             # Collection was specified so check there
             return (
