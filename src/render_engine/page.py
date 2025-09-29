@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Any
 
@@ -69,10 +70,24 @@ class BasePage(BaseObject):
 
     def _render_from_template(self, template: Template, **kwargs) -> str:
         """Renders the page from a template."""
+        template_data = {"data": self._data, "content": self._content}
+        if site := getattr(self, "site", None):
+            template_data["site_map"] = site.site_map
+        if isinstance(self._content, str) and re.search(r"{{.*}}", self._content):
+            # If the content looks like a template, try to render it.
+            content_template = Template(self._content)
+            template_data["content"] = content_template.render(
+                **{
+                    **self.to_dict(),
+                    **template_data,
+                    **kwargs,
+                }
+            )
+
         return template.render(
             **{
                 **self.to_dict(),
-                **{"content": self._content, "data": self._data},
+                **template_data,
                 **kwargs,
             },
         )

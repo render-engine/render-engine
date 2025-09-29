@@ -46,6 +46,7 @@ sort_reverse: bool = False
 title: str
 template: str | None
 archive_template str | None: The template to use for the archive pages.
+skip_site_map: bool = False: Flag to indicate whether this Collection should not be included in the SiteMap.
 ```
 
 ## Attributes
