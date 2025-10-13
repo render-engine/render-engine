@@ -65,7 +65,6 @@ class SiteMap:
     def __iter__(self):
         """Iterator for the site map object"""
         for entry in self._route_map.values():
-            print(f"Yielding {entry = }")
             yield entry
             yield from entry.entries
 
