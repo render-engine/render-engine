@@ -21,7 +21,8 @@ class Site:
     Attributes:
         site_vars (dict): A dictionary containing site-wide variables and their values.
         plugin_settings (dict): A dictionary containing plugin settings.
-        render_html_site_map (bool): Whether to render the generated site map as a page.
+        render_html_site_map (bool): Whether to render the generated site map as an HTML page.
+        render_xml_site_map (bool): Whether to render the generated site map as XML.
 
     Methods:
         update_site_vars(**kwargs): Updates the site-wide variables with the given key-value pairs.
@@ -264,7 +265,6 @@ class Site:
                     template = "page.html"
 
             if self.render_xml_site_map:
-                print("Rendering XML site map")
 
                 @self.page
                 class SiteMapXml(Page):
