@@ -34,6 +34,10 @@ class SiteMapEntry:
         """The URL for the given entry"""
         return str(self._route)
 
+    def __str__(self) -> str:
+        """String representation of the entry as its URL"""
+        return self.url_for
+
 
 class SiteMap:
     """Site map"""
@@ -57,6 +61,13 @@ class SiteMap:
             if sm_entry.entries:
                 self._collections[sm_entry.slug] = sm_entry
         self.site_url = site_url
+
+    def __iter__(self):
+        """Iterator for the site map object"""
+        for entry in self._route_map.values():
+            print(f"Yielding {entry = }")
+            yield entry
+            yield from entry.entries
 
     def find(
         self,
@@ -121,6 +132,8 @@ class SiteMap:
     def html(self) -> str:
         """Build the site map as HTML"""
         html_string = "<ul>\n"
+        # We can't iterate over `self` because that will flatten out the site map and we do not want that for the HTML
+        # version.
         for entry in self._route_map.values():
             html_string += f'\t<li><a href="{urljoin(self.site_url, entry.url_for)}">{entry.title}</a></li>\n'
             if entry.entries:

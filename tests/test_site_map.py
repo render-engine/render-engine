@@ -138,3 +138,53 @@ def test_site_map_search(site, value, params, expected):
 def test_find_in_template(site):
     site.render()
     assert (site.output_path / "page1.html").read_text() == "Page 1\n/coll1/page0.html"
+
+
+def test_site_map_to_xml(site):
+    site.render_xml_site_map = True
+    site.render()
+    assert (
+        (site.output_path / "site_map.xml").read_text()
+        == """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+	<loc>http://localhost:8000/coll1</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll1/page0.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll1/page1.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll1/page2.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll1/page3.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll2</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll2/page0.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll2/page1.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll2/page2.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/coll2/page3.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/page0.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/page1.html</loc>
+</url>
+<url>
+	<loc>http://localhost:8000/page2.html</loc>
+</url>
+</urlset>"""
+    )

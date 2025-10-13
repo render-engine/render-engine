@@ -21,7 +21,7 @@ class Site:
     Attributes:
         site_vars (dict): A dictionary containing site-wide variables and their values.
         plugin_settings (dict): A dictionary containing plugin settings.
-        render_site_map (bool): Whether to render the generated site map as a page.
+        render_html_site_map (bool): Whether to render the generated site map as a page.
 
     Methods:
         update_site_vars(**kwargs): Updates the site-wide variables with the given key-value pairs.
@@ -51,7 +51,8 @@ class Site:
     _template_path: str | Path = "templates"
     _static_paths: set = {"static"}
     plugin_settings: dict = {"plugins": defaultdict(dict)}
-    render_site_map: bool = False
+    render_html_site_map: bool = False
+    render_xml_site_map: bool = False
 
     def __init__(
         self,
@@ -253,7 +254,7 @@ class Site:
         with Progress() as progress:
             task_site_map = progress.add_task("Generating site map", total=1)
             self._site_map = SiteMap(self.route_list, self.site_vars.get("SITE_URL", ""))
-            if self.render_site_map:
+            if self.render_html_site_map:
 
                 @self.page
                 class SiteMapPage(Page):
@@ -261,6 +262,14 @@ class Site:
                     path_name = "site_map.html"
                     content = self._site_map.html
                     template = "page.html"
+
+            if self.render_xml_site_map:
+                print("Rendering XML site map")
+
+                @self.page
+                class SiteMapXml(Page):
+                    path_name = "site_map.xml"
+                    template = "sitemap.xml"
 
             progress.update(task_site_map, advance=1)
 
