@@ -41,7 +41,7 @@ one found.
 The `SiteMap` object has an `html` property that will return an HTML sitemap with _absolute_ URLs with the
 `Site`'s `SITE_URL`.
 
-As a convenience, Render Engine will generate a site map page if the `Site` property of `render_site_map`
+As a convenience, Render Engine will generate a site map page if the `Site` property of `render_html_site_map`
 is `True` (it defaults to `False`.) Please note that this will not be templated. Should you wish the generated
 site map to be on a template you can add the following to your app:
 
@@ -53,7 +53,13 @@ class SiteMapPage(Page):
     skip_site_map = True
 ```
 
-Please note the `skip_site_map = True` to avoid having a self referential link to the site map.
+Please note the `skip_site_map = True` to avoid having a self-referential link to the site map.
+
+## Generating an XML site map
+
+To have your site generate an XML site map set the `render_xml_site_map` property of your `Site` object
+to `True` (defaults to `False`.) This will create the `site_map.xml` file in the root output directory
+of your site.
 
 ## The `SiteMapEntry` object
 
