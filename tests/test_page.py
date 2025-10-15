@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 import jinja2
@@ -96,3 +97,71 @@ def test_rendered_page_from_template_has_data():
         data = [1, 2, 3, 4]
 
     assert CustomPage()._render_from_template(template=CustomPage.template) == "1234"
+
+
+def test_page_fails_to_render_content_as_template(caplog):
+    """Tests handling content that fails to render as a template"""
+    caplog.set_level(logging.INFO)
+
+    template = "{% for d in data %}{{d}}{% endfor %}\n{{content}}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        data = [1, 2, 3, 4]
+        content = "{{ site_map.find('test') }}"
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "1234\n{{ site_map.find('test') }}"
+    assert "Failed to pre-render" in caplog.messages[0]
+
+
+def test_braces_ignored_without_sitemap():
+    """Tests that braces in content are ignored without `site_map`"""
+    template = "{% for d in data %}{{d}}{% endfor %}\n{{content}}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        data = [1, 2, 3, 4]
+        content = "{{ example }}"
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "1234\n{{ example }}"
+
+
+def test_exception_in_parsing_content_as_template(monkeypatch, caplog):
+    """Test failing to parse content as template"""
+
+    def mock_template():
+        raise jinja2.exceptions.UndefinedError("Mocked error")
+
+    monkeypatch.setattr("render_engine.page.Template", mock_template)
+    caplog.set_level(logging.INFO)
+
+    template = "{% for d in data %}{{d}}{% endfor %}\n{{content}}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        data = [1, 2, 3, 4]
+        content = "{{ site_map.find('test') }}"
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "1234\n{{ site_map.find('test') }}"
+    assert "Failed to parse" in caplog.messages[0]
+
+
+def test_no_prerender():
+    """Test pre-rendering does not occur when no_prerender is True"""
+    template = "{% for d in data %}{{d}}{% endfor %}\n{{content}}"
+
+    environment = jinja2.Environment(loader=jinja2.DictLoader({"test.html": template}))
+
+    class CustomPage(Page):
+        template = environment.get_template("test.html")
+        data = [1, 2, 3, 4]
+        content = "{{ site_map.find('test') }}"
+        no_prerender = True
+
+    assert CustomPage()._render_from_template(template=CustomPage.template) == "1234\n{{ site_map.find('test') }}"
