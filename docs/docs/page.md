@@ -63,17 +63,18 @@ When you create a page, you specify variables passed into rendering template.
 
 **Attributes:**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `content_path` | `str | None` |The path to the file that will be used to generate the Page's `content`. |
-| `extension` | `str | None` |The suffix to use for the page. Defaults to `.html`. |
-| `engine` | `str | None` | If present, the engine to use for rendering the page. **This is normally not set and the `Site` 's engine will be used.** |
-| `reference` | `str | None` |Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`. |
-| `routes` | `str | None` |The routes to use for the page. Defaults to `["./"]`. |
-| `template` | `str | None` |The template used to render the page. If not provided, the `Site`'s `content`will be used. |
-| `Parser` | `type[BasePageParser]` |The parser to generate the page's `raw_content`. Defaults to `BasePageParser`. |
-| `title` | `str` |The title of the page. Defaults to the class name. |
-| `skip_site_map`    | `False` | When set to `True` the `Page` will not be included in the generated `SiteMap` |
+| Name | Type                     | Description                                                                                                                                  |
+| --- |--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `content_path` | `str \| None`            | The path to the file that will be used to generate the Page's `content`.                                                                     |
+| `extension` | `str \| None`            | The suffix to use for the page. Defaults to `.html`.                                                                                         |
+| `engine` | `str \| None`            | If present, the engine to use for rendering the page. **This is normally not set and the `Site` 's engine will be used.**                    |
+| `reference` | `str \| None`            | Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`.                                                  |
+| `routes` | `str \| None`            | The routes to use for the page. Defaults to `["./"]`.                                                                                        |
+| `template` | `str \| None`            | The template used to render the page. If not provided, the `Site`'s `content`will be used.                                                   |
+| `Parser` | `type[BasePageParser]`   | The parser to generate the page's `raw_content`. Defaults to `BasePageParser`.                                                               |
+| `title` | `str`                    | The title of the page. Defaults to the class name.                                                                                           |
+| `skip_site_map`    | `bool`                   | When set to `True` the `Page` will not be included in the generated `SiteMap`. Defaults to `False`.                                          |
+| `no_prerender` | `bool`           | When set to `True` the `Page`'s `content` will not be pre-rendered as a `Template` even if `{{ site_map }}` is present. Defaults to `False`. |
 
 ## About Page Attributes
 
@@ -109,8 +110,8 @@ By default Page._content will return the result of `Page.Parser.parse(Page.conte
 ### Accessing URLs for other pages in the site from within the page content
 
 In order to allow lookup of URLs for other pages within a Site the `content` of a page may be
-a template. If the `content` matches the pattern `{{.*?}}` we will render the `content` as a
-template prior to rendering the page itself.
+a template. If the `content` matches the pattern `{{.*?site_map.*?}}` we will render the `content` as a
+template prior to rendering the page itself unless the `no_prerender` attribute of the page is `True`.
 
 Example:
 

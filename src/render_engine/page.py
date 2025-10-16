@@ -1,3 +1,4 @@
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -9,6 +10,8 @@ from render_engine.themes import ThemeManager
 
 from ._base_object import BaseObject
 from .plugins import PluginManager
+
+logger = logging.getLogger("Page")
 
 
 class BasePage(BaseObject):
@@ -28,6 +31,8 @@ class BasePage(BaseObject):
         extension (str): The file extension for the page. Defaults to ".html".
         routes (list[str] | Path): The list of routes for the page. Defaults to ["./"].
         template (str | Template | None): The template to use for rendering the page.
+        site: The Site object that owns the page.
+        no_prerender: Flag to not prerender the content
     """
 
     extension: str = ".html"
@@ -36,7 +41,8 @@ class BasePage(BaseObject):
     rendered_content: str | None
     _reference: str = "_slug"
     plugin_manager: PluginManager | None
-    site = None
+    site = None  # This is a Site but circular imports so we can't actually type hint it.
+    no_prerender: bool = False
 
     @property
     def _content(self) -> any:
@@ -69,20 +75,35 @@ class BasePage(BaseObject):
             return f"/{route}/{self.path_name}"
 
     def _render_from_template(self, template: Template, **kwargs) -> str:
-        """Renders the page from a template."""
+        """
+        Renders the page from a template.
+
+        If the content looks like a template that
+
+        :param template: Template to render
+        :param **kwargs: Data to pass into the template for rendering.
+        :return: The rendered page
+        """
         template_data = {"data": self._data, "content": self._content}
         if site := getattr(self, "site", None):
             template_data["site_map"] = site.site_map
-        if isinstance(self._content, str) and re.search(r"{{.*}}", self._content):
+        if not self.no_prerender and isinstance(self._content, str) and re.search(r"{{.*?site_map.*?}}", self._content):
             # If the content looks like a template, try to render it.
-            content_template = Template(self._content)
-            template_data["content"] = content_template.render(
-                **{
-                    **self.to_dict(),
-                    **template_data,
-                    **kwargs,
-                }
-            )
+            try:
+                content_template = Template(self._content)
+            except Exception:
+                logger.info(f"Failed to parse {repr(self.path_name)} as a template.", exc_info=True)
+            else:
+                try:
+                    template_data["content"] = content_template.render(
+                        **{
+                            **self.to_dict(),
+                            **template_data,
+                            **kwargs,
+                        }
+                    )
+                except Exception:
+                    logger.info(f"Failed to pre-render {repr(self.path_name)}.", exc_info=True)
 
         return template.render(
             **{
