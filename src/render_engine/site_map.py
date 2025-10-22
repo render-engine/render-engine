@@ -22,7 +22,7 @@ class SiteMapEntry:
                 self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
                 self.entries = list()
             case Collection():
-                self._route = f"/{route.lstrip('/')}"
+                self._route = f"/{entry.routes[0].lstrip('/')}"
                 self.entries = [
                     SiteMapEntry(collection_entry, self._route, from_collection=True) for collection_entry in entry
                 ]
