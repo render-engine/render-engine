@@ -60,7 +60,7 @@ def site(tmp_path_factory):
     for collection in ["coll1", "coll2"]:
 
         class MyColl(Collection):
-            routes = [collection]
+            routes = [f"{collection}-route"]
             pages = coll_pages[collection]
 
         collection_class = MyColl
@@ -82,19 +82,19 @@ def test_site_map_to_html(site):
     sm = SiteMap(site.route_list, "")
     assert sm.html == (
         "<ul>\n"
-        '\t<li><a href="/coll1">coll1</a></li>\n'
+        '\t<li><a href="/coll1-route">coll1</a></li>\n'
         "\t<ul>\n"
-        '\t\t<li><a href="/coll1/page0.html">coll1 -- Page 0</a></li>\n'
-        '\t\t<li><a href="/coll1/page1.html">coll1 -- Page 1</a></li>\n'
-        '\t\t<li><a href="/coll1/page2.html">coll1 -- Page 2</a></li>\n'
-        '\t\t<li><a href="/coll1/page3.html">coll1 -- Page 3</a></li>\n'
+        '\t\t<li><a href="/coll1-route/page0.html">coll1 -- Page 0</a></li>\n'
+        '\t\t<li><a href="/coll1-route/page1.html">coll1 -- Page 1</a></li>\n'
+        '\t\t<li><a href="/coll1-route/page2.html">coll1 -- Page 2</a></li>\n'
+        '\t\t<li><a href="/coll1-route/page3.html">coll1 -- Page 3</a></li>\n'
         "\t</ul>\n"
-        '\t<li><a href="/coll2">coll2</a></li>\n'
+        '\t<li><a href="/coll2-route">coll2</a></li>\n'
         "\t<ul>\n"
-        '\t\t<li><a href="/coll2/page0.html">coll2 -- Page 0</a></li>\n'
-        '\t\t<li><a href="/coll2/page1.html">coll2 -- Page 1</a></li>\n'
-        '\t\t<li><a href="/coll2/page2.html">coll2 -- Page 2</a></li>\n'
-        '\t\t<li><a href="/coll2/page3.html">coll2 -- Page 3</a></li>\n'
+        '\t\t<li><a href="/coll2-route/page0.html">coll2 -- Page 0</a></li>\n'
+        '\t\t<li><a href="/coll2-route/page1.html">coll2 -- Page 1</a></li>\n'
+        '\t\t<li><a href="/coll2-route/page2.html">coll2 -- Page 2</a></li>\n'
+        '\t\t<li><a href="/coll2-route/page3.html">coll2 -- Page 3</a></li>\n'
         "\t</ul>\n"
         '\t<li><a href="/page0.html">Page 0</a></li>\n'
         '\t<li><a href="/page1.html">Page 1</a></li>\n'
@@ -109,21 +109,21 @@ def test_site_map_to_html(site):
         ("page1", {}, "/page1.html"),
         ("page1", {"attr": "slug"}, "/page1.html"),
         ("page3", {"attr": "slug"}, None),
-        ("page3", {"attr": "slug", "full_search": True}, "/coll1/page3.html"),
-        ("page3", {"attr": "slug", "collection": "coll2"}, "/coll2/page3.html"),
+        ("page3", {"attr": "slug", "full_search": True}, "/coll1-route/page3.html"),
+        ("page3", {"attr": "slug", "collection": "coll2"}, "/coll2-route/page3.html"),
         ("page1.html", {"attr": "path_name"}, "/page1.html"),
         ("page3.html", {"attr": "path_name"}, None),
-        ("page3.html", {"attr": "path_name", "full_search": True}, "/coll1/page3.html"),
-        ("page3.html", {"attr": "path_name", "collection": "coll2"}, "/coll2/page3.html"),
+        ("page3.html", {"attr": "path_name", "full_search": True}, "/coll1-route/page3.html"),
+        ("page3.html", {"attr": "path_name", "collection": "coll2"}, "/coll2-route/page3.html"),
         ("page1", {"attr": "slug"}, "/page1.html"),
         ("page3", {"attr": "slug"}, None),
-        ("page3", {"attr": "slug", "full_search": True}, "/coll1/page3.html"),
-        ("page3", {"attr": "slug", "collection": "coll2"}, "/coll2/page3.html"),
+        ("page3", {"attr": "slug", "full_search": True}, "/coll1-route/page3.html"),
+        ("page3", {"attr": "slug", "collection": "coll2"}, "/coll2-route/page3.html"),
         ("Page 1", {"attr": "title"}, "/page1.html"),
         ("coll1 -- Page 3", {"attr": "title"}, None),
-        ("coll1 -- Page 3", {"attr": "title", "full_search": True}, "/coll1/page3.html"),
+        ("coll1 -- Page 3", {"attr": "title", "full_search": True}, "/coll1-route/page3.html"),
         ("coll1 -- Page 3", {"attr": "title", "collection": "coll2"}, None),
-        ("coll2 -- Page 3", {"attr": "title", "collection": "coll2"}, "/coll2/page3.html"),
+        ("coll2 -- Page 3", {"attr": "title", "collection": "coll2"}, "/coll2-route/page3.html"),
     ],
 )
 def test_site_map_search(site, value, params, expected):
@@ -137,7 +137,7 @@ def test_site_map_search(site, value, params, expected):
 
 def test_find_in_template(site):
     site.render()
-    assert (site.output_path / "page1.html").read_text() == "Page 1\n/coll1/page0.html"
+    assert (site.output_path / "page1.html").read_text() == "Page 1\n/coll1-route/page0.html"
 
 
 def test_site_map_to_xml(site):
@@ -148,34 +148,34 @@ def test_site_map_to_xml(site):
         == """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-	<loc>http://localhost:8000/coll1</loc>
+	<loc>http://localhost:8000/coll1-route</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll1/page0.html</loc>
+	<loc>http://localhost:8000/coll1-route/page0.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll1/page1.html</loc>
+	<loc>http://localhost:8000/coll1-route/page1.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll1/page2.html</loc>
+	<loc>http://localhost:8000/coll1-route/page2.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll1/page3.html</loc>
+	<loc>http://localhost:8000/coll1-route/page3.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll2</loc>
+	<loc>http://localhost:8000/coll2-route</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll2/page0.html</loc>
+	<loc>http://localhost:8000/coll2-route/page0.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll2/page1.html</loc>
+	<loc>http://localhost:8000/coll2-route/page1.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll2/page2.html</loc>
+	<loc>http://localhost:8000/coll2-route/page2.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/coll2/page3.html</loc>
+	<loc>http://localhost:8000/coll2-route/page3.html</loc>
 </url>
 <url>
 	<loc>http://localhost:8000/page0.html</loc>
