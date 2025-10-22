@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 
 
 class ContentManager(ABC):
@@ -8,9 +8,9 @@ class ContentManager(ABC):
     @property
     @abstractmethod
     def pages(self) -> Iterable:
-        """The pages managed by the content manager"""
+        """The Page objects managed by the content manager"""
         ...
 
-    def __iter__(self):
+    def __iter__(self) -> Generator:
         """Iterator for the ContentManager"""
         yield from self.pages
