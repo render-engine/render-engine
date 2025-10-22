@@ -291,6 +291,7 @@ def render_archives(archive, **kwargs) -> list[Archive]:
     return [archive.render(pages=archive.pages, **kwargs) for archive in archive]
 
 
+# FileContentManager is defined in the collections.py file to avoid a circular import.
 class FileContentManager(ContentManager):
     """Content manager for content stored on the file system as individual files"""
 
