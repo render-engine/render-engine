@@ -7,9 +7,10 @@ from typing import Any
 
 import dateutil.parser as dateparse
 from more_itertools import batched
-from render_engine.content_managers import ContentManager, FileContentManager
 from render_engine_parser import BasePageParser
 from slugify import slugify
+
+from render_engine.content_managers import ContentManager, FileContentManager
 
 from ._base_object import BaseObject
 from .archive import Archive
@@ -59,7 +60,7 @@ class Collection(BaseObject):
         archive_template str | None: The template to use for the archive pages.
         ContentManager: type[ContentManager] | None = FileContentManager
         content_manager: ContentManager
-        content_manager_extras: dict[str, Any]: kwargs to pass to the ContentManager when instantiating 
+        content_manager_extras: dict[str, Any]: kwargs to pass to the ContentManager when instantiating
 
     Methods:
 
@@ -107,7 +108,7 @@ class Collection(BaseObject):
             self.has_archive = True
         self.title = self._title
         self.template_vars = getattr(self, "template_vars", {})
-        
+
         cm_extras = {
             "content_path": getattr(self, "content_path", None),
             "include_suffixes": getattr(self, "include_suffixes", None),
