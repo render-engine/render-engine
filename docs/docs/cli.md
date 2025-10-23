@@ -7,6 +7,10 @@ tags: ["render-engine", "cli", "site-setup", "build", "serve"]
 
 Render Engine comes with a CLI that can be used to create, build, and serve your site.
 
+> !!! Note
+    The CLI is no longer a part of the Render Engine package and must be installed
+    separately. To install run `pip install render-engine-cli`.
+
 ## pyproject.toml Configuration
 
 The Render Engine CLI can be configured through your `pyproject.toml` file to set default values and avoid repetitive command-line arguments.
