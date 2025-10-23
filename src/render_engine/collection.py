@@ -58,6 +58,9 @@ class Collection(BaseObject):
         title: str
         template: str | None
         archive_template str | None: The template to use for the archive pages.
+        ContentManager: type[ContentManager] | None = FileContentManager: The class for the ContentManager to use 
+        content_manager: ContentManager: Intantiated ContentManager
+        content_manager_extras: dict[str, Any]: kwargs to pass to the ContentManager when instantiating 
 
     Methods:
 
@@ -86,7 +89,7 @@ class Collection(BaseObject):
     template_vars: dict[str, Any]
     template: str | None
     plugin_manager: PluginManager | None
-    ContentManager: type[ContentManager] | None
+    ContentManager: type[ContentManager] | None = FileContentManager
     content_manager_extras: dict[str, Any]
 
     def __init__(
@@ -105,8 +108,7 @@ class Collection(BaseObject):
             self.has_archive = True
         self.title = self._title
         self.template_vars = getattr(self, "template_vars", {})
-        if not hasattr(self, "ContentManager"):
-            self.ContentManager = FileContentManager
+        
         cm_extras = {
             "content_path": getattr(self, "content_path", None),
             "include_suffixes": getattr(self, "include_suffixes", None),
