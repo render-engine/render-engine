@@ -18,13 +18,12 @@ nav:
     - contributing/CONTRIBUTING.md
   - Components:
     - Page Objects: page.md
-    - Collection:
+    - Collection Objects:
       - Collection: collection.md
       - Custom Collection: custom_collections.md
       - Archive: archive.md
       - RSS Feed: feeds.md
-    - Site:
-      - Site: site.md
+    - Site Objects: site.md
   - Extending Render Engine:
     - Plugins: plugins.md
   - Parsers: parsers.md
@@ -32,6 +31,7 @@ nav:
   - Templates and Themes:
     - Templates: templates.md
     - ThemeManager: theme_management.md
+  - Site Map: site_map.md
 
 markdown_extensions:
   - toc
