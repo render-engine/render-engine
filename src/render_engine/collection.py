@@ -58,8 +58,8 @@ class Collection(BaseObject):
         title: str
         template: str | None
         archive_template str | None: The template to use for the archive pages.
-        ContentManager: type[ContentManager] | None = FileContentManager: The class for the ContentManager to use 
-        content_manager: ContentManager: Intantiated ContentManager
+        ContentManager: type[ContentManager] | None = FileContentManager
+        content_manager: ContentManager
         content_manager_extras: dict[str, Any]: kwargs to pass to the ContentManager when instantiating 
 
     Methods:
