@@ -51,7 +51,7 @@ my_page._render_content()
 In many cases, you will want to create rich content. The `MarkdownPageParser`. You can also pass in attributes to the page via frontmatter at the top of the markdown file.
 
 ```python
-from render_engine.parsers.base_parsers import BasePageParser
+from render_engine_markdown import MarkdownPageParser
 from render_engine.page import Page
 
 base_markdown = """
@@ -63,8 +63,8 @@ This is **dynamic** content
 """
 
 class MyPage(Page):
-    parser = BasePageParser
-    content = base_text
+    parser = MarkdownPageParser
+    content = base_markdown
 
 my_page = MyPage()
 my_page.title
@@ -77,6 +77,10 @@ my_page._render_content()
 >>> "<p>This is <strong>dynamic</strong> content</p>"
 
 ```
+
+> !!! Note
+    `MarkdownPageParser` is found in the `render_engine_markdown` package.
+    To install run `pip install render_engine_markdown`.
 
 ## Creating Custom Parsers
 
