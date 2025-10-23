@@ -7,10 +7,9 @@ from typing import Any
 
 import dateutil.parser as dateparse
 from more_itertools import batched
+from render_engine.content_managers import ContentManager, FileContentManager
 from render_engine_parser import BasePageParser
 from slugify import slugify
-
-from render_engine.content_managers import ContentManager, FileContentManager
 
 from ._base_object import BaseObject
 from .archive import Archive
