@@ -6,9 +6,11 @@ from pathlib import Path
 from typing import Any
 
 import dateutil.parser as dateparse
-from more_itertools import batched, flatten
+from more_itertools import batched
 from render_engine_parser import BasePageParser
 from slugify import slugify
+
+from render_engine.content_managers import ContentManager, FileContentManager
 
 from ._base_object import BaseObject
 from .archive import Archive
@@ -56,6 +58,9 @@ class Collection(BaseObject):
         title: str
         template: str | None
         archive_template str | None: The template to use for the archive pages.
+        ContentManager: type[ContentManager] | None = FileContentManager
+        content_manager: ContentManager
+        content_manager_extras: dict[str, Any]: kwargs to pass to the ContentManager when instantiating
 
     Methods:
 
@@ -84,6 +89,8 @@ class Collection(BaseObject):
     template_vars: dict[str, Any]
     template: str | None
     plugin_manager: PluginManager | None
+    ContentManager: type[ContentManager] | None = FileContentManager
+    content_manager_extras: dict[str, Any]
 
     def __init__(
         self,
@@ -102,9 +109,16 @@ class Collection(BaseObject):
         self.title = self._title
         self.template_vars = getattr(self, "template_vars", {})
 
-    def iter_content_path(self):
-        """Iterate through in the collection's content path."""
-        return flatten([Path(self.content_path).glob(suffix) for suffix in self.include_suffixes])
+        cm_extras = {
+            "content_path": getattr(self, "content_path", None),
+            "include_suffixes": getattr(self, "include_suffixes", None),
+            "collection": self,
+        }
+        if hasattr(self, "content_manager_extras"):
+            cm_extras.update(self.content_manager_extras)
+        self.content_manager = self.ContentManager(**cm_extras)
+        if hasattr(self, "pages"):
+            self.content_manager.pages = self.pages
 
     def get_page(
         self,
@@ -116,8 +130,6 @@ class Collection(BaseObject):
             Parser=self.Parser,
         )
 
-        if getattr(self, "_pm", None):
-            _page.register_plugins(self.plugins, **self.plugin_settings)
         _page.parser_extras = getattr(self, "parser_extras", {})
         _page.routes = self.routes
         _page.template = getattr(self, "template", None)
@@ -162,7 +174,7 @@ class Collection(BaseObject):
         """
         try:
             return sorted(
-                (page for page in self.__iter__()),
+                (page for page in self),
                 key=self._sort_key(self.sort_by),
                 reverse=self.sort_reverse,
             )
@@ -231,10 +243,7 @@ class Collection(BaseObject):
         return f"{__name__}"
 
     def __iter__(self):
-        if not hasattr(self, "pages"):
-            self.pages = [self.get_page(page) for page in self.iter_content_path()]
-        for page in self.pages:  # noqa: UP028
-            yield page
+        yield from self.content_manager
 
     def _run_collection_plugins(self, site, hook_type: str):
         """
