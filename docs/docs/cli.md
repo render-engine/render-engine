@@ -9,7 +9,9 @@ Render Engine comes with a CLI that can be used to create, build, and serve your
 
 > !!! Note
     The CLI is no longer a part of the Render Engine package and must be installed
-    separately. To install run `pip install render-engine-cli`.
+    separately. To install run `pip install render-engine-cli`. Render Engine can be
+    installed together with the CLI as well using
+    `pip install render-engine[cli]`.
 
 ## pyproject.toml Configuration
 
