@@ -95,3 +95,10 @@ By default this will format to the site's `DATETIME_FORMAT` (default: `"%d %b %Y
 {{ page.date | format_datetime("%B %d, %Y") }} --> January 01, 2000
 
 ```
+
+## Site Map
+
+Render builds a site map prior to rendering the content. The contents of this
+site map are available to be used in both Page objects (see
+[Page object documentation](/page/#accessing-urls-for-other-pages-in-the-site-from-within-the-page-content).)
+Please see the [site map documentation](/site_map.html) for more information.
