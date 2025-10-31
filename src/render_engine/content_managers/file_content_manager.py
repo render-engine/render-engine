@@ -1,3 +1,5 @@
+import copy
+import subprocess
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -34,3 +36,25 @@ class FileContentManager(ContentManager):
     @pages.setter
     def pages(self, value: Iterable):
         self._pages = value
+
+    def create_entry(
+        self, filepath: Path = None, editor: str = None, content: str = None, metadata: dict = None
+    ) -> str:
+        """
+        Create a new entry for the Collection
+
+        :param filepath: Path object for the new entry
+        :param editor: Editor to open to edit the entry.
+        :param content: Content for the new entry
+        :param metadata: Metadata for the new entry
+        """
+        if not filepath:
+            raise ValueError("filepath needs to be specified.")
+        context = copy.deepcopy(self.collection._metadata_attrs())
+        context.update({"content": content or "Hello, world!"})
+        context.update(metadata)
+        parsed_content = self.collection.Parser.create_entry(**context)
+        filepath.write_text(parsed_content)
+        if editor:
+            subprocess.run([editor, filepath])
+        return f"New entry created at {filepath} ."
