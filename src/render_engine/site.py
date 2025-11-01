@@ -3,6 +3,7 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 
+import rich
 from jinja2 import FileSystemLoader, PrefixLoader
 from rich.progress import Progress
 
@@ -12,6 +13,12 @@ from .page import Page
 from .plugins import PluginManager, handle_plugin_registration
 from .site_map import SiteMap
 from .themes import Theme, ThemeManager
+
+try:
+    # Get the RE version for display. If it's not set it means we're working locally.
+    from render_engine.__version__ import __version__ as re_version
+except ImportError:
+    re_version = "development"
 
 
 class Site:
@@ -251,7 +258,10 @@ class Site:
         You can choose to call it manually in your file or
         use the CLI command [`render-engine build`][src.render_engine.cli.build]
         """
-
+        rich.print(
+            f"[green]Building {repr(self.site_vars.get('SITE_TITLE', 'your site'))} "
+            f"with Render Engine version {re_version}"
+        )
         with Progress() as progress:
             task_site_map = progress.add_task("Generating site map", total=1)
             self._site_map = SiteMap(self.route_list, self.site_vars.get("SITE_URL", ""))
