@@ -288,6 +288,24 @@ class Collection(BaseObject):
             feed.site = self.site
             feed.render(route="./", theme_manager=self.site.theme_manager)
 
+    def create_entry(
+        self, filepath: Path = None, editor: str = None, content: str = None, metadata: dict = None
+    ) -> str:
+        """
+        Create a new entry for the Collection
+
+        :param filepath: Path object for the new entry
+        :param editor: Editor to open to edit the entry.
+        :param content: Content for the new entry
+        :param metadata: Metadata for the new entry
+        """
+        context = copy.deepcopy(self._metadata_attrs())
+        if metadata:
+            context.update(metadata)
+        return self.content_manager.create_entry(
+            filepath=filepath, editor=editor, metadata=context, content=content or "Hello, world!"
+        )
+
 
 def render_archives(archive, **kwargs) -> list[Archive]:
     return [archive.render(pages=archive.pages, **kwargs) for archive in archive]
