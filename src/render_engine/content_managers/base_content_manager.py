@@ -17,6 +17,6 @@ class ContentManager(ABC):
         yield from self.pages
 
     @abstractmethod
-    def create_entry(self, filepath: Path = None, editor: str = None, content: str = None, metadata: dict = None):
+    def create_entry(self, filepath: Path = None, editor: str = None, metadata: dict = None, content: str = None):
         """Create a new entry"""
         ...
