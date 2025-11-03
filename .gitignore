@@ -166,3 +166,5 @@ untitled-site/
 
 .DS_Store
 .python-version
+
+__version__.py

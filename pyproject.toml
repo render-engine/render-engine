@@ -42,9 +42,9 @@ dev = [
   "watchfiles",
 ]
 
-
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
+version_file = "src/render_engine/__version__.py"
 # version_scheme = "python-simplified-semver"
 
 [project.urls]
