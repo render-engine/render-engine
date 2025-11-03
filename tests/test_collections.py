@@ -1,4 +1,5 @@
 import pathlib
+import textwrap
 
 import pluggy
 import pytest
@@ -360,3 +361,58 @@ def test_collection_custom_sort_by_list_with_date():
 
     # Verify the sorted order by checking custom_sort_content values
     assert [page.custom_sort_content for page in sorted_pages] == [page.custom_sort_content for page in expected_pages]
+
+
+@pytest.mark.parametrize(
+    "content, context, expected",
+    [
+        (
+            "",
+            {"title": "title"},
+            textwrap.dedent("""---
+title: title
+---
+
+Hello, world!"""),
+        ),
+        (
+            "test",
+            {},
+            textwrap.dedent("""---
+title: Untitled Entry
+---
+
+test"""),
+        ),
+        (
+            "",
+            {},
+            textwrap.dedent("""---
+title: Untitled Entry
+---
+
+Hello, world!"""),
+        ),
+    ],
+)
+def test_create_entry(tmp_path: pathlib.Path, content, context, expected):
+    """Test the create_entry method"""
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+
+    class BasicCollection(Collection):
+        content_path = tmp_dir.absolute()
+
+    filename = "test.md"
+    filepath = tmp_dir / filename
+    assert str(filepath) in BasicCollection().create_entry(
+        filepath=filepath, editor=None, content=content, metadata=context
+    )
+    assert filepath.read_text().strip() == expected
+
+
+def test_create_entry_no_filename():
+    """Test create_entry with no filename raises an exception"""
+    # Since the base Collection object uses a FileContentManager
+    with pytest.raises(ValueError):
+        Collection().create_entry()
