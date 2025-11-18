@@ -26,6 +26,7 @@ nav:
     - Site Objects: site.md
   - Extending Render Engine:
     - Plugins: plugins.md
+    - Content Managers: content_manager.md
   - Parsers: parsers.md
   - CLI: cli.md
   - Templates and Themes:
