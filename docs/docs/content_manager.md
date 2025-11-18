@@ -56,7 +56,7 @@ The `create_entry` method is used by the Render Engine CLI tool to add new entri
 the new entry to the datastore and, if an `editor` is specified, giving the user the ability to edit the new entry
 prior to committing the entry to the datastore.
 
-#### Arguments:
+#### Arguments
 
 - `filepath: Path`: The path on the filesystem to store the new entry.
 - `editor: str`: The text editor to open for editing the new entry.
