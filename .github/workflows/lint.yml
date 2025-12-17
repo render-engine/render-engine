@@ -36,14 +36,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Markdown Lint base-files
-        uses: DavidAnson/markdownlint-cli2-action@v20
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           globs: |
             *.md
             .github/**/*.md
           config: ./.markdownlint.json
       - name: Markdown Lint Docs
-        uses: DavidAnson/markdownlint-cli2-action@v20
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           globs: docs/**/*.md
           config: docs/.markdownlint.json
