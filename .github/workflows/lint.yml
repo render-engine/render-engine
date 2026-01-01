@@ -13,7 +13,7 @@ jobs:
     name: Format and Lint Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Install Python
@@ -34,7 +34,7 @@ jobs:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
       - name: Markdown Lint base-files
         uses: DavidAnson/markdownlint-cli2-action@v20
         with:
