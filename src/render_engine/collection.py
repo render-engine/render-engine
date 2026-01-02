@@ -1,7 +1,9 @@
 import copy
 import datetime
 import logging
+import os
 from collections.abc import Callable, Generator
+from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import Any
 
@@ -245,6 +247,25 @@ class Collection(BaseObject):
     def __iter__(self):
         yield from self.content_manager
 
+    @property
+    def all_content(self) -> Generator:
+        """All of the content that is associated with the Collection including Pages, Feed, and Archives"""
+        yield from self
+
+        if getattr(self, "has_archive", False):
+            for archive in self.archives:
+                yield archive
+                if archive.is_index:
+                    # In order to avoid collision with parallel processing we need to do a copy.
+                    # A deepcopy is not necessary because we only care about not overwriting the
+                    # slug on the original.
+                    index = copy.copy(archive)
+                    index.slug = "index"
+                    yield index
+
+        if feed := getattr(self, "feed", None):
+            yield feed
+
     def _run_collection_plugins(self, site, hook_type: str):
         """
         Run plugins for a collection
@@ -261,32 +282,29 @@ class Collection(BaseObject):
             return
         method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
-    def render(self) -> None:
-        """Iterate through Pages and Check for Collections and Feeds"""
+    def _render(self, entry):
+        """
+        Renders 1 entry in the Collection
 
-        for entry in self:
+        :param entry: The entry to process
+        """
+        if not isinstance(entry, RSSFeed) and not isinstance(entry, Archive):
             entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
-            for route in entry.routes:
-                entry.site = self.site
-                entry.render(route, self.site.theme_manager)
+        entry.site = self.site
+        for route in entry.routes:
+            entry.render(route, self.site.theme_manager)
 
-        if getattr(self, "has_archive", False):
-            for archive in self.archives:
-                archive.site = self.site
-                logging.debug("Adding Archive: %s", archive.__class__.__name__)
+    def render(self) -> None:
+        """Iterate through Pages and Check for Archives and Feeds"""
 
-                for _ in self.routes:
-                    archive.render(self.routes[0], self.site.theme_manager)
-
-                if archive.is_index:
-                    archive.slug = "index"
-                    archive.render(self.routes[0], self.site.theme_manager)
-        feed: RSSFeed
-        if hasattr(self, "Feed"):
-            feed = self.feed
-            feed.site = self.site
-            feed.render(route="./", theme_manager=self.site.theme_manager)
+        # Use a ThreadPool to process all of the entries in the collection in parallel.
+        # This is limited to the number of CPUs available. The easiest way to implement
+        # this parallelization for a single task is to use the imap_unordered method of
+        # the ThreadPool. This is, effectively, a generator so we need to loop over it
+        # for them to run. Since there is no actual return value to look at we just `pass`.
+        for entry in ThreadPool(processes=os.cpu_count()).imap_unordered(self._render, self.all_content):
+            pass
 
     def create_entry(
         self, filepath: Path = None, editor: str = None, content: str = None, metadata: dict = None
