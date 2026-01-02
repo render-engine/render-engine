@@ -204,10 +204,10 @@ class Page(BasePage):
 
     content: Any
     content_path: Path | str | None
-    Parser: type[BasePageParser] = BasePageParser
     inherit_plugins: bool
     parser_extras: dict[str, Any] | None
     title: str
+    Parser: type[BasePageParser] = BasePageParser
 
     def __init__(
         self,
@@ -229,17 +229,17 @@ class Page(BasePage):
 
         # Parse Content from the Content Path or the Content
         if content_path := (content_path or getattr(self, "content_path", None)):
-            attrs, self.content = self.Parser.parse_content_path(content_path)
+            self.metadata, self.content = self.Parser.parse_content_path(content_path)
 
         elif content := (content or getattr(self, "content", None)):
-            attrs, self.content = self.Parser.parse_content(content)
+            self.metadata, self.content = self.Parser.parse_content(content)
 
         else:
-            attrs = {}
+            self.metadata = {}
             self.content = None
 
         # Set the attributes
-        for key, val in attrs.items():
+        for key, val in self.metadata.items():
             setattr(self, key.lower(), val)
 
     @property
