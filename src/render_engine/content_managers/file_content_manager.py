@@ -4,6 +4,7 @@ from pathlib import Path
 
 from more_itertools import flatten
 
+from render_engine import Page
 from render_engine.content_managers import ContentManager
 
 
@@ -37,7 +38,12 @@ class FileContentManager(ContentManager):
         self._pages = value
 
     def create_entry(
-        self, filepath: Path = None, editor: str = None, metadata: dict = None, content: str = None
+        self,
+        filepath: Path = None,
+        editor: str = None,
+        metadata: dict = None,
+        content: str = None,
+        update: bool = False,
     ) -> str:
         """
         Create a new entry for the Collection
@@ -46,12 +52,28 @@ class FileContentManager(ContentManager):
         :param editor: Editor to open to edit the entry.
         :param content: The content for the entry
         :param metadata: Metadata for the new entry
+        :param update: Allow overwriting the existing file
         """
         if not filepath:
             raise ValueError("filepath needs to be specified.")
+
+        if not update and filepath.exists():
+            raise RuntimeError(f"File at {filepath} exists and update is disabled.")
 
         parsed_content = self.collection.Parser.create_entry(content=content, **metadata)
         filepath.write_text(parsed_content)
         if editor:
             subprocess.run([editor, filepath])
         return f"New entry created at {filepath} ."
+
+    def find_entry(self, **kwargs) -> Page | None:
+        """Find an entry"""
+        for page in self:
+            if all(getattr(page, attr, None) == value for attr, value in kwargs.items()):
+                return page
+        return None
+
+    def update_entry(self, *, page: Page, content: str = None, **kwargs):
+        """Update an entry"""
+        self.create_entry(filepath=page.content_path, metadata=kwargs, content=content, update=True)
+        return f"Entry at {page.content_path} updated."
