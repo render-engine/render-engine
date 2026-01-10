@@ -294,8 +294,7 @@ class Collection(BaseObject):
             entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
         entry.site = self.site
-        for route in entry.routes:
-            entry.render(route, self.site.theme_manager)
+        entry.render(self.site.theme_manager)
 
     def render(self) -> None:
         """Iterate through Pages and Check for Archives and Feeds"""

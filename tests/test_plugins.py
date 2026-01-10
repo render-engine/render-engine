@@ -254,7 +254,7 @@ class TestPlugin:
         print("PreBuild")
         prebuild = PreBuild()
         prebuild.site = site
-        prebuild.render("./", site.theme_manager)
+        prebuild.render(site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -266,7 +266,7 @@ class TestPlugin:
         print("PostBuild")
         postbuild = PostBuild()
         postbuild.site = site
-        postbuild.render("./", site.theme_manager)
+        postbuild.render(site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -278,7 +278,7 @@ class TestPlugin:
         print("RenderContent")
         renddercontent = RenderContent()
         renddercontent.site = site
-        renddercontent.render("./", site.theme_manager)
+        renddercontent.render(site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -290,7 +290,7 @@ class TestPlugin:
         print("PostRenderContent")
         postrendercontent = PostRenderContent()
         postrendercontent.site = site
-        postrendercontent.render("./", site.theme_manager)
+        postrendercontent.render(site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -303,7 +303,7 @@ class TestPlugin:
         print("PreBuildCollection")
         prebuildcollection = PreBuildCollection()
         prebuildcollection.site = site
-        prebuildcollection.render("./", site.theme_manager)
+        prebuildcollection.render(site.theme_manager)
 
     @staticmethod
     @hook_impl
@@ -315,7 +315,7 @@ class TestPlugin:
         print("PostBuildCollection")
         postbuildcollection = PostBuildCollection()
         postbuildcollection.site = site
-        postbuildcollection.render("./", site.theme_manager)
+        postbuildcollection.render(site.theme_manager)
 
 
 @pytest.fixture(scope="function")
