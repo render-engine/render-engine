@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from collections.abc import Generator, Iterable
 from pathlib import Path
 
-from render_engine import Page
-
 
 class ContentManager(ABC):
     """Base ContentManager abstract class"""
@@ -29,6 +27,6 @@ class ContentManager(ABC):
         pass
 
     @abstractmethod
-    def update_entry(self, *, page: Page, **kwargs):
+    def update_entry(self, *, page, **kwargs):
         """Update an entry"""
         pass

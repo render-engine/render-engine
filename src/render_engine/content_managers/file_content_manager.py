@@ -4,7 +4,6 @@ from pathlib import Path
 
 from more_itertools import flatten
 
-from render_engine import Page
 from render_engine.content_managers import ContentManager
 
 
@@ -37,6 +36,9 @@ class FileContentManager(ContentManager):
     def pages(self, value: Iterable):
         self._pages = value
 
+    def __len__(self):
+        return len(list(self.pages))
+
     def create_entry(
         self,
         filepath: Path = None,
@@ -66,14 +68,31 @@ class FileContentManager(ContentManager):
             subprocess.run([editor, filepath])
         return f"New entry created at {filepath} ."
 
-    def find_entry(self, **kwargs) -> Page | None:
-        """Find an entry"""
+    def find_entry(self, **kwargs):
+        """
+        Find an entry
+
+        :param kwargs: List of attributes to search by
+        :return: Page if it was found otherwise None
+        """
         for page in self:
             if all(getattr(page, attr, None) == value for attr, value in kwargs.items()):
                 return page
         return None
 
-    def update_entry(self, *, page: Page, content: str = None, **kwargs):
-        """Update an entry"""
+    def update_entry(self, page, *, content: str = None, **kwargs) -> str:
+        """
+        Update an entry
+
+        :param page: Page object to update
+        :param content: Content for the updated page
+        :param kwargs: Attributes to be included in the updated page
+        :return: String indicating that the page was updated.
+        """
         self.create_entry(filepath=page.content_path, metadata=kwargs, content=content, update=True)
+        if self._pages:
+            self._pages = [
+                existing_page for existing_page in self._pages if page.content_path != existing_page.content_path
+            ]
+            self._pages.append(self.collection.get_page(page.content_path))
         return f"Entry at {page.content_path} updated."
