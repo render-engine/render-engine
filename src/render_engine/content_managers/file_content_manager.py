@@ -68,18 +68,6 @@ class FileContentManager(ContentManager):
             subprocess.run([editor, filepath])
         return f"New entry created at {filepath} ."
 
-    def find_entry(self, **kwargs):
-        """
-        Find an entry
-
-        :param kwargs: List of attributes to search by
-        :return: Page if it was found otherwise None
-        """
-        for page in self:
-            if all(getattr(page, attr, None) == value for attr, value in kwargs.items()):
-                return page
-        return None
-
     def update_entry(self, page, *, content: str = None, **kwargs) -> str:
         """
         Update an entry

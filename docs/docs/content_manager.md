@@ -65,3 +65,21 @@ prior to committing the entry to the datastore.
 
 !!! Note
     Not every `ContentManager` actually needs all the arguments that are passed.
+
+### `find_entry`
+
+The `find_entry` method is used to find a specific page in a `Collection`. It will search through all the pages
+known to the `ContentManager` until it finds one that has all the attributes specified. Even if multiple entries
+would satisfy the criteria, only the first found will be returned.
+
+### `update_entry`
+
+
+The `update_entry` is used to update an existing entry in a `ContentManager`.
+
+Parameters:
+```python
+page: Page  # The Page to update
+content: str = None  # Updated content
+**kwargs: dict  # The other attributes for the updated page
+```
