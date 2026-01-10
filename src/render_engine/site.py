@@ -312,7 +312,6 @@ class Site:
                                 description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
                             )
 
-                            # self._render_output(route, entry)
                             args = [route, self.theme_manager]
                     case Collection():
                         progress.update(

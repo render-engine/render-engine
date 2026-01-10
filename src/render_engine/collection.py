@@ -12,10 +12,9 @@ from more_itertools import batched
 from render_engine_parser import BasePageParser
 from slugify import slugify
 
-from render_engine.content_managers import ContentManager, FileContentManager
-
 from ._base_object import BaseObject
 from .archive import Archive
+from .content_managers import ContentManager, FileContentManager
 from .feeds import RSSFeed
 from .page import Page
 from .plugins import PluginManager
@@ -246,6 +245,9 @@ class Collection(BaseObject):
 
     def __iter__(self):
         yield from self.content_manager
+
+    def __len__(self):
+        return len(self.content_manager)
 
     @property
     def all_content(self) -> Generator:
