@@ -74,10 +74,10 @@ would satisfy the criteria, only the first found will be returned.
 
 ### `update_entry`
 
-
 The `update_entry` is used to update an existing entry in a `ContentManager`.
 
 Parameters:
+
 ```python
 page: Page  # The Page to update
 content: str = None  # Updated content

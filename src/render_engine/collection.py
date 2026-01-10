@@ -247,7 +247,7 @@ class Collection(BaseObject):
         yield from self.content_manager
 
     def __len__(self):
-        return len(list(self))
+        return len(self.content_manager)
 
     @property
     def all_content(self) -> Generator:
