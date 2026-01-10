@@ -245,6 +245,8 @@ class Page(BasePage):
         for key, val in self.metadata.items():
             setattr(self, key.lower(), val)
 
+        self.content_path = content_path
+
     @property
     def _content(self) -> Any:
         """
