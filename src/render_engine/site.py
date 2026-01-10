@@ -306,14 +306,11 @@ class Site:
                 args = []
                 match entry:
                     case Page():
-                        for route in entry.routes:
-                            progress.update(
-                                task_add_route,
-                                description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
-                            )
-
-                            # self._render_output(route, entry)
-                            args = [route, self.theme_manager]
+                        progress.update(
+                            task_add_route,
+                            description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
+                        )
+                        args = [self.theme_manager]
                     case Collection():
                         progress.update(
                             task_add_route,

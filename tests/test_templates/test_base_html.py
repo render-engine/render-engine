@@ -33,7 +33,7 @@ def test_base_html_body_class(theme_site):
 
     theme_site.register_themes(BodyClassTheme)
     theme_site.route_list["testpage"].site = theme_site
-    theme_site.route_list["testpage"].render("./", theme_site.theme_manager)
+    theme_site.route_list["testpage"].render(theme_site.theme_manager)
 
     assert '<body class="my-class">' in (theme_site.output_path / "testpage.html").read_text()
 
@@ -51,7 +51,7 @@ def test_base_html_head_include(theme_site):
     theme_site.register_themes(HeadIncludeTheme)
     theme_site.load_themes()
     theme_site.route_list["testpage"].site = theme_site
-    theme_site.route_list["testpage"].render("./", theme_site.theme_manager)
+    theme_site.route_list["testpage"].render(theme_site.theme_manager)
 
     assert "<script>console.log('test')</script>" in (theme_site.output_path / "testpage.html").read_text()
 

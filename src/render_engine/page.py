@@ -149,20 +149,23 @@ class BasePage(BaseObject):
     def __repr__(self) -> str:
         return f"<Page: {self._title}>"
 
-    def render(self, route: str | Path, theme_manager: ThemeManager) -> int:
+    def render(self, theme_manager: ThemeManager) -> int:
         """Render the page to the file system"""
-        path = Path(self.site.output_path) / Path(route) / Path(self.path_name)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        settings = dict()
-        if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
-            settings = {**self.site.plugin_manager.plugin_settings, "route": route}
-            pm.hook.render_content(page=self, settings=settings, site=self.site)
-        self.rendered_content = self._render_content(theme_manager.engine)
-        # pass the route to the plugin settings
-        if pm is not None:
-            pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
+        rc = 0
+        for route in self.routes:
+            path = Path(self.site.output_path) / Path(route) / Path(self.path_name)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            settings = dict()
+            if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
+                settings = {**self.site.plugin_manager.plugin_settings, "route": route}
+                pm.hook.render_content(page=self, settings=settings, site=self.site)
+            self.rendered_content = self._render_content(theme_manager.engine)
+            # pass the route to the plugin settings
+            if pm is not None:
+                pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
 
-        return path.write_text(self.rendered_content)
+            rc += path.write_text(self.rendered_content)
+        return rc
 
 
 class Page(BasePage):
