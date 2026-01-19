@@ -11,7 +11,7 @@ Docs can be found at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
-Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md).
+Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/.github?tab=coc-ov-file#readme).
 
 ## Before you Contribute
 
