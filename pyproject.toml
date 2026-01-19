@@ -26,6 +26,7 @@ cli = ["render-engine-cli"]
 extras = ["render-engine-sitemap"]
 dev = [
   "cookiecutter",
+  "coverage-badge",
   "ephemeral-port-reserve",
   "httpx",
   "mkdocs",

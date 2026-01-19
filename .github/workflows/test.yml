@@ -61,3 +61,26 @@ jobs:
           name: code-coverage-report-${{ matrix.os }}
           path: .coverage
           overwrite: true
+
+  update-coverage-badge:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Install requirements
+        run: python -m pip install -e .[dev]
+      - name: Generate Coverage Badge
+        run: |
+          python -m pytest
+          coverage-badge -o coverage.svg -f
+      - name: Commit Badge
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update coverage badge [skip ci]
+          file_pattern: coverage.svg
