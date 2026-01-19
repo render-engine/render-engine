@@ -18,3 +18,12 @@ def test(session):
     session.install("pytest")
     session.install(".[dev]")
     session.run("pytest", "tests")
+
+
+@nox.session
+def coverage(session):
+    """Generate coverage badge"""
+    session.install("pytest", "coverage-badge")
+    session.install(".[dev]")
+    session.run("pytest", "tests")
+    session.run("coverage-badge", "-o", "coverage.svg", "-f")
