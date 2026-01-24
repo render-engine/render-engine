@@ -2,12 +2,12 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-![genbadge-coverage](./coverage-badge.svg)
 <!-- markdownlint-restore -->
 
 # Render Engine
 
 [![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
+![genbadge-coverage](./coverage-badge.svg)
 [![Discord](https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple)](https://discord.gg/2xMQ4j4d8m)
 
 ## Learn More
