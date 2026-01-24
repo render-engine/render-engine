@@ -19,6 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.14"
+
       - name: run coverage and generate cov-report
         run: |
           uv run --extra=dev pytest --cov-report xml
