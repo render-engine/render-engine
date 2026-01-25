@@ -53,8 +53,7 @@ mypy:
     uvx mypy src
 
 # Generate coverage badge
-badge:
-    uv run --extra dev pytest --cov-report=xml
+badge: test-cov-report
     uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
 
 # Run full CI workflow (sync, lint, test, badge)
