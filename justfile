@@ -5,7 +5,7 @@
 default:
     @just --list
 
-# Sync dependencies using uv
+[doc('Sync dependencies using uv')]
 sync:
     uv sync --extra dev
 
