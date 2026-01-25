@@ -10,16 +10,8 @@ sync:
     uv sync --extra dev
 
 # Run pytest with coverage
-test:
-    uv run --extra dev pytest
-
-# Run pytest with verbose output
-test-v:
-    uv run --extra dev pytest -v
-
-# Run pytest with coverage report
-test-cov:
-    uv run --extra dev pytest --cov-report=term-missing
+test FLAGS='':
+    uv run --extra dev pytest {{FLAGS}}:
 
 # Run pytest with XML coverage report (for badge generation)
 test-cov-report REPORT='xml':
