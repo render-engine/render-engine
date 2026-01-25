@@ -27,11 +27,11 @@ test-cov-report REPORT='xml':
 
 # Run all nox sessions
 nox:
-    uv run nox
+    uvx run nox
 
 # Run nox test sessions for all Python versions
 nox-test:
-    uv run nox -s test
+    uvx run nox -s test
 
 # Run ruff linter
 lint:
@@ -46,7 +46,7 @@ format:
     uvx ruff format .
 
 # Run both linter and formatter
-ruff: lint-fix format
+ruff: lint format
 
 # Run mypy type checker
 mypy:
