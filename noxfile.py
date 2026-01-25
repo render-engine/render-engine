@@ -2,6 +2,7 @@ import nox
 
 PYTHON_VERSIONS = ["3.13", "3.12", "3.11", "3.10"]
 
+
 @nox.session(python=PYTHON_VERSIONS)
 def test(session):
     """Run the test suite"""
