@@ -5,29 +5,69 @@ date: August 22, 2024
 tags: ["setup", "python", "virtual-environment", "vs-code", "codespaces", "dev-containers"]
 ---
 
-### Install Python
+### Python Version
 
 To develop locally you will need to have Python installed. Make sure you're using `Python 3.10.5` or higher to develop.
 
 Visit <https://python.org> to learn more about installing Python.
 
+#### Nox and multiple versions
+
+Our test matrix in GitHub actions tests against all of the supported versions. You can use [nox](https://nox.thea.codes/en/stable/) to emulate this.
+
+The easiest way to run multiple versions of python is to use [pyenv](https://github.com/pyenv/pyenv).
+
+- install pyenv per your [OS instructions](https://github.com/tylew/URLCopyExtension?tab=readme-ov-file#-installation)
+- install all of the supported versions
+
+```bash
+pyenv install 3.10, 3.11, 3.12, 3.13, 3.14
+```
+
+- set their path locally
+
+```bash
+pyenv local 3.10, 3.11, 3.12, 3.13, 3.14
+```
+
+- set the latest version via a `.python-version` file
+
+```
+# in .python-version
+3.14
+```
+
+
 ### Create a Virtual Environment
 
-Keep your default environment clean by installing a virtual environment.
+This project uses [uv](https://github.com/astral-sh/uv). It's highly recommended that you use 'uv' to manage your environment and use all tools included.
 
-```sh
-python -m venv .venv
+- install `uv` according to your [OS instructions](https://github.com/astral-sh/uv?tab=readme-ov-file#installation)
+
+### Justfile
+
+There are a series of commands saved in a [justfile](https://github.com/casey/just).
+
+- install just using your [OS insctructions](https://github.com/casey/just?tab=readme-ov-file#installation)
+- you can view the available commands with `just`
+
+```
+Available recipes:
+    badge                        # Generate coverage badge
+    ci                           # Run full CI workflow (sync, lint, test, badge)
+    default                      # Default recipe to display available commands
+    format                       # Run ruff formatter
+    lint                         # Run ruff linter
+    lint-fix                     # Run ruff linter with auto-fix
+    mypy                         # Run mypy type checker
+    nox                          # Run all nox sessions
+    nox-test                     # Run nox test sessions for all Python versions
+    ruff                         # Run both linter and formatter
+    sync                         # Sync dependencies using uv
+    test FLAGS=''                # Run pytest with coverage
+    test-cov-report REPORT='xml' # Run pytest with XML coverage report (for badge generation)
 ```
 
-Once your virtual environment is created, you can activate it and install the requirements.
-
-```sh
-source .venv/bin/activate
-python -m pip install --update pip
-python -m pip install requirements.txt
-```
-
-  ![creating an virtual environment](https://vhs.charm.sh/vhs-5t8wsdubdq46vrJydWEtOi.gif)
 
 #### Using VS Code
 
