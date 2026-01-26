@@ -11,7 +11,7 @@ sync:
 
 # Run pytest with coverage
 test FLAGS='':
-    uv run --extra dev pytest {{FLAGS}}:
+    uv run --extra dev pytest {{FLAGS}}
 
 # Run pytest with XML coverage report (for badge generation)
 test-cov-report REPORT='xml':
@@ -19,11 +19,7 @@ test-cov-report REPORT='xml':
 
 # Run all nox sessions
 nox:
-    uvx run nox
-
-# Run nox test sessions for all Python versions
-nox-test:
-    uvx run nox -s test
+    uvx nox
 
 # Run ruff linter
 lint:
