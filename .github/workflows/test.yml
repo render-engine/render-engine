@@ -69,5 +69,5 @@ jobs:
         with:
           python-version: "3.14"
           enable-cache: true # caching dependencies
-      - name: run tests 
+      - name: run tests
         run: uv run --dev pytest tests

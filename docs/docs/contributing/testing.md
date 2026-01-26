@@ -11,7 +11,7 @@ You can call pytest via `uv` or the `justfile`.
 #### Using just
 
 ```bash
-just test 
+just test
 ```
 
 #### Using uv
@@ -21,7 +21,7 @@ just test
 
 ## Tools that don't need to be installed
 
-The tools required for Linting and Formatting (`ruff`) as well as type-checking (`mypy`) are not listed in the dependency group because they don't require other tools to be installed. 
+The tools required for Linting and Formatting (`ruff`) as well as type-checking (`mypy`) are not listed in the dependency group because they don't require other tools to be installed.
 
 These tools can be called via `just`. If you wanted to run them without `just` you can use `uvx`
 
@@ -68,4 +68,3 @@ just mypy
 ```bash
 uvx mypy src
 ```
-
