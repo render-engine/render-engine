@@ -57,7 +57,7 @@ mypy:
     -uvx mypy src # For the moment we have way too many issues in mypy so not having it fail.
 
 # Generate coverage badge
-badge: (test '--cov-report=xml')
+badge: (test-cov-report 'xml')
     uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
 
 # Run full CI workflow (sync, lint, test, badge)
