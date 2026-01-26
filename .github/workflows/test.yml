@@ -24,7 +24,7 @@ jobs:
 
       - name: run coverage and generate cov-report
         run: |
-          uv run --extra=dev pytest --cov-report xml
+          uv run --group=dev pytest --cov-report xml
       - name: genbadge coverage
         run: |
           uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
