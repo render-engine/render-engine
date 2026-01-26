@@ -66,7 +66,22 @@ Available recipes:
     test FLAGS=''                # Run pytest with coverage
     test-cov-report REPORT='xml' # Run pytest with XML coverage report (for badge generation)
 ```
-
+Available recipes:
+    badge                        # Generate coverage badge
+    ci                           # Run full CI workflow (sync, lint, test, badge)
+    default                      # Default recipe to display available commands
+    format directory='.'         # Run ruff formatter as check
+    format-fix directory='.'     # Run ruff formatter and fix issues
+    lint directory='.'           # Run ruff linter without fixing
+    lint-fix directory='.'       # Run ruff linter with auto-fix
+    mypy                         # Run mypy type checker
+    nox                          # Run all nox sessions
+    pytest version *FLAGS=''     # Run tests in arbitrary Python version.
+    ruff
+    ruff-fix directory='.'       # Run both linter and formatter, fixing issues.
+    sync                         # Sync dependencies using uv
+    test *FLAGS=''               # Run pytest
+    test-cov-report REPORT='xml' # Run pytest with coverage report (defaults to XML)
 #### Using VS Code
 
 If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable the installation of the dependencies.
