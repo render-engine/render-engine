@@ -32,7 +32,7 @@ These tools can be called via `just`. If you wanted to run them without `just` y
 
 ### Linting and Formatting
 
-#### Using just
+#### Using just for linting and formatting
 
 ```bash
 just lint
@@ -52,7 +52,7 @@ To run the lint and format together:
 just ruff
 ```
 
-#### Using uvx
+#### Using uvx for linting and formatting
 
 ```bash
 uvx ruff format . # you can include --fix
@@ -61,13 +61,13 @@ uvx ruff check .
 
 ### Type Checking
 
-#### Using just
+#### Using just for type checking
 
 ```bash
 just mypy
 ```
 
-#### Using uvx
+#### Using uvx for type checking
 
 ```bash
 uvx mypy src
