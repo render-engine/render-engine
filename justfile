@@ -5,17 +5,17 @@
 default:
     @just --list
 
-[doc('Sync dependencies using uv')]
+# Sync dependencies using uv
 sync:
-    uv sync --extra dev
+    uv sync --dev
 
 # Run pytest with coverage
 test FLAGS='':
-    uv run --extra dev pytest {{FLAGS}}:
+    uv run --dev pytest {{FLAGS}}:
 
 # Run pytest with XML coverage report (for badge generation)
 test-cov-report REPORT='xml':
-    uv run --extra dev pytest --cov-report={{REPORT}}
+    uv run --dev pytest --cov-report={{REPORT}}
 
 # Run all nox sessions
 nox:
