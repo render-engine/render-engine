@@ -1,0 +1,71 @@
+# Testing, Linting, Formatting, and TypeChecking Render Engine
+
+Render engine uses `pytest` along with some other tools to ensure that render engine works as expected.
+
+## Calling PyTest
+
+The pytest dependencies are in a dependency group called `dev`. This allows us to call those dependencies in testing via `uv`.
+
+You can call pytest via `uv` or the `justfile`.
+
+#### Using just
+
+```bash
+just test 
+```
+
+#### Using uv
+```bash
+`uv run --dev pytest tests`
+```
+
+## Tools that don't need to be installed
+
+The tools required for Linting and Formatting (`ruff`) as well as type-checking (`mypy`) are not listed in the dependency group because they don't require other tools to be installed. 
+
+These tools can be called via `just`. If you wanted to run them without `just` you can use `uvx`
+
+### linting/formatting:
+
+#### Using just
+
+```bash
+just lint
+```
+
+```bash
+just lint-fix
+```
+
+```bash
+just format
+```
+
+To run the lint and format together:
+
+```bash
+just ruff
+```
+
+
+#### Using uvx
+
+```bash
+uvx ruff format . # you can include --fix
+uvx ruff check .
+```
+
+
+typechecking:
+
+#### Using just
+
+```bash
+just mypy
+```
+
+#### Using uvx
+```bash
+uvx mypy src
+```
+
