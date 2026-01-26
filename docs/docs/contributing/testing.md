@@ -55,7 +55,8 @@ just ruff
 #### Using uvx for linting and formatting
 
 ```bash
-uvx ruff format . # you can include --fix
+uvx ruff check . --fix
+uvx ruff format .
 uvx ruff check .
 ```
 
