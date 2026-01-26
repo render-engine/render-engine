@@ -43,7 +43,6 @@ Available recipes:
     test-cov-report REPORT='xml' # Run pytest with coverage report (defaults to XML)
 ```
 
-
 #### Using VS Code
 
 If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable the installation of the dependencies.
