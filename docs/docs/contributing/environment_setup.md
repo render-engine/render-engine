@@ -11,32 +11,6 @@ To develop locally you will need to have Python installed. Make sure you're usin
 
 Visit <https://python.org> to learn more about installing Python.
 
-#### Nox and multiple versions
-
-Our test matrix in GitHub actions tests against all of the supported versions. You can use [nox](https://nox.thea.codes/en/stable/) to emulate this.
-
-The easiest way to run multiple versions of python is to use [pyenv](https://github.com/pyenv/pyenv).
-
-- install pyenv per your [OS instructions](https://github.com/tylew/URLCopyExtension?tab=readme-ov-file#-installation)
-- install all of the supported versions
-
-```bash
-pyenv install 3.10, 3.11, 3.12, 3.13, 3.14
-```
-
-- set their path locally
-
-```bash
-pyenv local 3.10, 3.11, 3.12, 3.13, 3.14
-```
-
-- set the latest version via a `.python-version` file
-
-```text
-# in .python-version
-3.14
-```
-
 ### Create a Virtual Environment
 
 This project uses [uv](https://github.com/astral-sh/uv). It's highly recommended that you use 'uv' to manage your environment and use all tools included.
