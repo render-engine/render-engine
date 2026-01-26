@@ -1,4 +1,8 @@
-# Testing, Linting, Formatting, and TypeChecking Render Engine
+---
+title: Testing, Linting, Formatting, and TypeChecking Render Engine
+description: "The testing, linting, formatting, and typechecking steps including uv and justfiles"
+date: Jan 25, 2026
+---
 
 Render engine uses `pytest` along with some other tools to ensure that render engine works as expected.
 

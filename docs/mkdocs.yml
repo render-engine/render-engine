@@ -16,7 +16,7 @@ nav:
     - contributing/CODE_OF_CONDUCT.md
     - contributing/environment_setup.md
     - contributing/testing.md
-    - contributing/gen_bage.md
+    - contributing/gen_badge.md
     - contributing/CONTRIBUTING.md
   - Components:
     - Page Objects: page.md
