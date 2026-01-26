@@ -12,13 +12,14 @@ The pytest dependencies are in a dependency group called `dev`. This allows us t
 
 You can call pytest via `uv` or the `justfile`.
 
-#### Using just
+### Using just
 
 ```bash
 just test
 ```
 
-#### Using uv
+### Using uv
+
 ```bash
 `uv run --dev pytest tests`
 ```
@@ -29,7 +30,7 @@ The tools required for Linting and Formatting (`ruff`) as well as type-checking 
 
 These tools can be called via `just`. If you wanted to run them without `just` you can use `uvx`
 
-### linting/formatting:
+### Linting and Formatting
 
 #### Using just
 
@@ -51,7 +52,6 @@ To run the lint and format together:
 just ruff
 ```
 
-
 #### Using uvx
 
 ```bash
@@ -59,8 +59,7 @@ uvx ruff format . # you can include --fix
 uvx ruff check .
 ```
 
-
-typechecking:
+### Type Checking
 
 #### Using just
 
@@ -69,6 +68,7 @@ just mypy
 ```
 
 #### Using uvx
+
 ```bash
 uvx mypy src
 ```

@@ -32,11 +32,10 @@ pyenv local 3.10, 3.11, 3.12, 3.13, 3.14
 
 - set the latest version via a `.python-version` file
 
-```
+```text
 # in .python-version
 3.14
 ```
-
 
 ### Create a Virtual Environment
 
@@ -51,7 +50,7 @@ There are a series of commands saved in a [justfile](https://github.com/casey/ju
 - install just using your [OS insctructions](https://github.com/casey/just?tab=readme-ov-file#installation)
 - you can view the available commands with `just`
 
-```
+```text
 Available recipes:
     badge                        # Generate coverage badge
     ci                           # Run full CI workflow (sync, lint, test, badge)
@@ -67,7 +66,6 @@ Available recipes:
     test FLAGS=''                # Run pytest with coverage
     test-cov-report REPORT='xml' # Run pytest with XML coverage report (for badge generation)
 ```
-
 
 #### Using VS Code
 
