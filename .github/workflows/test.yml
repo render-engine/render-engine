@@ -21,10 +21,11 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.14"
+          enable-cache: true
 
       - name: run coverage and generate cov-report
         run: |
-          uv run --extra=dev pytest --cov-report xml
+          uv run --dev pytest --cov-report xml
       - name: genbadge coverage
         run: |
           uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
@@ -44,16 +45,14 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip" # caching pip dependencies
-      - name: Install requirements
-        run: |
-          python -m pip install -e .[dev]
+          enable-cache: true # caching dependencies
       - name: Run tests
         run: |
-          python -m pytest
+          uv run --dev pytest tests
 
   test-against-latest-os:
     # Always run against the latest version on both Windows, Linux, MacOS
@@ -65,19 +64,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6.0.1
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.12"
-          cache: "pip" # caching pip dependencies
-      - name: Install requirements
-        run: |
-          python -m pip install -e .[dev]
-      - name: Run tests
-        run: |
-          python -m pytest
-      - name: coverage
-        uses: actions/upload-artifact@v6
-        with:
-          name: code-coverage-report-${{ matrix.os }}
-          path: .coverage
-          overwrite: true
+          python-version: "3.14"
+          enable-cache: true # caching dependencies
+      - name: run tests 
+        run: uv run --dev pytest tests

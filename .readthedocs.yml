@@ -7,16 +7,19 @@ version: 2
 
 # Set the version of Python and other tools you might need
 build:
-  os: ubuntu-20.04
+  os: ubuntu-lts-latest
   tools:
-    python: "3.10"
+    python: "latest"
+  jobs:
+    pre_create_environment:
+        - asdf plugin add uv
+        - asdf install uv latest
+        - asdf global uv latest
+    create_environment:
+        - uv venv "${READTHEDOCS_VIRTUALENV_PATH}"
+    install:
+        - UV_PROJECT_ENVIRONMENT="${READTHEDOCS_VIRTUALENV_PATH}" uv sync --group docs
 
 mkdocs:
   configuration: docs/mkdocs.yml
 
-# Optionally declare the Python requirements required to build your docs
-python:
-   install:
-    - method: pip
-      path: .
-    - requirements: docs/requirements.txt

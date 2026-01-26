@@ -24,22 +24,23 @@ dependencies = [
 [project.optional-dependencies]
 cli = ["render-engine-cli"]
 extras = ["render-engine-sitemap"]
+
+[dependency-groups]
 dev = [
-  "cookiecutter",
   "ephemeral-port-reserve",
   "httpx",
-  "mkdocs",
-  "mkdocs-material",
-  "mkdocstrings[python]",
   "mypy",
   "pre-commit",
-  "pymdown-extensions",
   "pytest",
   "pytest-cov",
   "pytest-mock",
-  "ruff",
   "toml",
-  "watchfiles",
+]
+docs = [
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]",
+  "pymdown-extensions",
 ]
 
 [tool.setuptools_scm]
