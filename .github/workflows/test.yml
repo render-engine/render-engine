@@ -50,8 +50,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true # caching dependencies
-
-      - name: Install requirements
       - name: Run tests
         run: |
           uv run --dev pytest tests
@@ -71,5 +69,5 @@ jobs:
         with:
           python-version: "3.14"
           enable-cache: true # caching dependencies
-      - name: Install requirements
+      - name: run tests 
         run: uv run --dev pytest tests
