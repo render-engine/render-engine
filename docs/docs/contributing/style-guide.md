@@ -3,13 +3,15 @@ title: Style Guide
 description: "Guidelines for formatting content"
 ---
 
-This guide documents both automated formatting rules (enforced by linters) and manual style preferences for the Render Engine project.
+This guide documents both automated formatting rules (enforced by linters) and manual style preferences for the
+Render Engine project.
 
 ## Automated Formatting
 
 ### Ruff (Python)
 
-Render Engine uses [Ruff](https://docs.astral.sh/ruff/) for Python linting and formatting with the following configuration:
+Render Engine uses [Ruff](https://docs.astral.sh/ruff/) for Python linting and formatting with the following
+configuration:
 
 - **Line length**: 120 characters
 - **Indent width**: 4 spaces
@@ -63,7 +65,8 @@ def process(self, value: str) -> None:
 
 ### Type Hint Ordering
 
-Use modern Python union syntax (`|`) instead of `Union` from typing. Order types with specific types first, and `None` last:
+Use modern Python union syntax (`|`) instead of `Union` from typing. Order types with specific types first, and
+`None` last:
 
 ```python
 # Preferred ✓
