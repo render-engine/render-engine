@@ -29,7 +29,6 @@ extras = ["render-engine-sitemap"]
 dev = [
   "ephemeral-port-reserve",
   "httpx",
-  "mypy",
   "ty",
   "pre-commit",
   "pytest",

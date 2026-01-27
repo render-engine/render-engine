@@ -54,11 +54,11 @@ ruff-fix directory='.':
 
 # Run ty type checker
 ty PATH='src':
-    -uv run ty check {{ path }} # For the moment we have way too many issues in mypy so not having it fail.
+    -uv run ty check {{ path }} # For the moment we have way too many issues in ty so not having it fail.
 
 # Generate coverage badge
 badge: (test-cov-report 'xml')
     uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
 
 # Run full CI workflow (sync, lint, test, badge)
-ci: sync nox ruff mypy badge
+ci: sync nox ruff ty badge
