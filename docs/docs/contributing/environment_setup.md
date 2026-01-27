@@ -5,7 +5,7 @@ date: August 22, 2024
 tags: ["setup", "python", "virtual-environment", "vs-code", "codespaces", "dev-containers"]
 ---
 
-### Install Python
+### Python Version
 
 To develop locally you will need to have Python installed. Make sure you're using `Python 3.10.5` or higher to develop.
 
@@ -13,21 +13,35 @@ Visit <https://python.org> to learn more about installing Python.
 
 ### Create a Virtual Environment
 
-Keep your default environment clean by installing a virtual environment.
+This project uses [uv](https://github.com/astral-sh/uv). It's highly recommended that you use 'uv' to manage your environment and use all tools included.
 
-```sh
-python -m venv .venv
+- install `uv` according to your [OS instructions](https://github.com/astral-sh/uv?tab=readme-ov-file#installation)
+
+### Justfile
+
+There are a series of commands saved in a [justfile](https://github.com/casey/just).
+
+- install just using your [OS insctructions](https://github.com/casey/just?tab=readme-ov-file#installation)
+- you can view the available commands with `just`
+
+```text
+Available recipes:
+    badge                        # Generate coverage badge
+    ci                           # Run full CI workflow (sync, lint, test, badge)
+    default                      # Default recipe to display available commands
+    format directory='.'         # Run ruff formatter as check
+    format-fix directory='.'     # Run ruff formatter and fix issues
+    lint directory='.'           # Run ruff linter without fixing
+    lint-fix directory='.'       # Run ruff linter with auto-fix
+    mypy                         # Run mypy type checker
+    nox                          # Run all nox sessions
+    pytest version *FLAGS=''     # Run tests in arbitrary Python version.
+    ruff
+    ruff-fix directory='.'       # Run both linter and formatter, fixing issues.
+    sync                         # Sync dependencies using uv
+    test *FLAGS=''               # Run pytest
+    test-cov-report REPORT='xml' # Run pytest with coverage report (defaults to XML)
 ```
-
-Once your virtual environment is created, you can activate it and install the requirements.
-
-```sh
-source .venv/bin/activate
-python -m pip install --update pip
-python -m pip install requirements.txt
-```
-
-  ![creating an virtual environment](https://vhs.charm.sh/vhs-5t8wsdubdq46vrJydWEtOi.gif)
 
 #### Using VS Code
 
