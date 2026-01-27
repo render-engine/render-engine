@@ -14,10 +14,11 @@ nav:
     - getting-started/building-your-site.md
   - Contributing:
     - contributing/CODE_OF_CONDUCT.md
-    - contributing/environment_setup.md
-    - contributing/testing.md
-    - contributing/gen_badge.md
     - contributing/CONTRIBUTING.md
+    - contributing/environment_setup.md
+    - contributing/gen_badge.md
+    - contributing/testing.md
+    - contributing/typechecking.md
   - Components:
     - Page Objects: page.md
     - Collection Objects:

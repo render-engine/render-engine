@@ -33,7 +33,6 @@ Available recipes:
     format-fix directory='.'     # Run ruff formatter and fix issues
     lint directory='.'           # Run ruff linter without fixing
     lint-fix directory='.'       # Run ruff linter with auto-fix
-    mypy                         # Run mypy type checker
     nox                          # Run all nox sessions
     pytest version *FLAGS=''     # Run tests in arbitrary Python version.
     ruff
@@ -41,6 +40,7 @@ Available recipes:
     sync                         # Sync dependencies using uv
     test *FLAGS=''               # Run pytest
     test-cov-report REPORT='xml' # Run pytest with coverage report (defaults to XML)
+    ty PATH='src'                # Run ty type checker
 ```
 
 #### Using VS Code

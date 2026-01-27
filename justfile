@@ -53,9 +53,9 @@ ruff-fix DIRECTORY='.':
     uvx ruff check {{ DIRECTORY }}
     @echo "\nEverything looks good!"
 
-# Run mypy type checker
-ty:
-    uv run --dev ty check src # For the moment we have way too many issues in mypy so not having it fail.
+# Run ty type checker
+ty PATH='src':
+    -uv run ty check {{ path }} # For the moment we have way too many issues in ty so not having it fail.
 
 # Generate coverage badge
 badge: (test-cov-report 'xml')
