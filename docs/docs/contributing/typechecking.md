@@ -55,4 +55,3 @@ def get_site_map(self) -> None | SiteMap:  # Wrong order
 def process_template(template: None | str | Template = None) -> str:  # Wrong order
     ...
 ```
-

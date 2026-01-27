@@ -1,5 +1,5 @@
 ---
-title: Testing, Linting, Formatting 
+title: Testing, Linting, Formatting
 description: "The testing, linting, formatting, and typechecking steps including uv and justfiles"
 date: Jan 25, 2026
 ---
@@ -39,7 +39,7 @@ See our section on [typechecking](/contributing/typechecking/)
 #### Using just for type checking
 
 ```bash
-just ty  
+just ty
 ```
 
 ### Linting and Formatting
