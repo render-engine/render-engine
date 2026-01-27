@@ -75,8 +75,7 @@ class Site:
         self.site_settings: dict = {}
         self.subcollections: dict[str, list] = {"pages": []}
         self.theme_manager.engine.globals.update(self.site_vars)
-        if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
+        self.theme_manager.add_loader(0, FileSystemLoader(self._template_path))
         self._site_map = None
 
     @property
@@ -228,22 +227,17 @@ class Site:
         # load themes in the ChoiceLoader/FileLoader
         for theme_prefix, theme_loader in self.theme_manager.prefix.items():
             logging.info(f"loading theme: {theme_prefix}")
-            if self.theme_manager.engine.loader is not None:
-                self.theme_manager.engine.loader.loaders.insert(-1, theme_loader)
+            self.theme_manager.add_loader(-1, theme_loader)
         # load themes in the PrefixLoader
-        if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(-1, PrefixLoader(self.theme_manager.prefix))
+        self.theme_manager.add_loader(-1, PrefixLoader(self.theme_manager.prefix))
 
     @property
     def template_path(self) -> str:
-        if self.theme_manager.engine.loader is not None:
-            return self.theme_manager.engine.loader.loaders[0].searchpath[0]
-        return ""
+        return self.theme_manager.template_path
 
     @template_path.setter
     def template_path(self, template_path: str) -> None:
-        if self.theme_manager.engine.loader is not None:
-            self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(template_path))
+        self.theme_manager.add_loader(0, FileSystemLoader(template_path))
 
     def render(self) -> None:
         """

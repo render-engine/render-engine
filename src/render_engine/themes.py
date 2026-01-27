@@ -3,9 +3,10 @@ import logging
 import pathlib
 import shutil
 from pathlib import Path
+from typing import cast
 
 import slugify
-from jinja2 import BaseLoader, Environment
+from jinja2 import BaseLoader, ChoiceLoader, Environment, FileSystemLoader
 
 
 @dataclasses.dataclass
@@ -111,3 +112,16 @@ class ThemeManager:
                     pathlib.Path(self.output_path) / pathlib.Path(static_path).name,
                     dirs_exist_ok=True,
                 )
+
+    def add_loader(self, idx: int, loader: BaseLoader):
+        """Add a loader to the list of loaders"""
+        if self.engine.loader is not None and isinstance(self.engine.loader, ChoiceLoader):
+            loaders: list[BaseLoader] = cast(list[BaseLoader], self.engine.loader.loaders)
+            loaders.insert(idx, loader)
+
+    @property
+    def template_path(self) -> str:
+        if self.engine.loader is not None and isinstance(self.engine.loader, ChoiceLoader):
+            loader: FileSystemLoader = cast(FileSystemLoader, self.engine.loader.loaders[0])
+            return loader.searchpath[0]
+        return ""
