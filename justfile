@@ -12,7 +12,7 @@ sync:
     uv sync --dev
 
 # Run pytest
-test *FLAGS='': 
+test *FLAGS='':
     pytest {{ DEFAULT_PYTHON_VERSION }} {{ FLAGS }}
 
 # Run tests in arbitrary Python version.

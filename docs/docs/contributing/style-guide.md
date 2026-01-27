@@ -12,7 +12,7 @@ justfile commands should have a `#`-led comment that explains the command above 
 
 the command that is run should be indented 4-spaces
 
-Params should be in `UPPER` casing.  The param in the running command should be wrapped in double braces 
+Params should be in `UPPER` casing.  The param in the running command should be wrapped in double braces
 with a space between the inner braces and the parameter name.
 
 ```
