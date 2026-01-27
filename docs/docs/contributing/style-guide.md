@@ -22,6 +22,8 @@ Ruff automatically formats imports, fixes common errors, and enforces PEP 8 styl
 
 Markdown files are linted using markdownlint with configuration in `.markdownlint.json`.
 
+- **Line length**: 120 characters maximum
+
 ## Python Style Preferences
 
 ### Function and Method Signatures
@@ -94,17 +96,22 @@ Always include type hints for function parameters and return values:
 
 ```python
 # Preferred ✓
-def render(self) -> None:
-    """Render the collection."""
+def process_content(
+    self,
+    content: str,
+    max_length: int = 100,
+    strict: bool = False,
+) -> str:
+    """Process content with type hints for all parameters."""
     pass
 
-def sorted_pages(self) -> list[Page]:
-    """Return sorted pages."""
-    return sorted(self._pages)
+def get_pages(self, count: int) -> list[Page]:
+    """Return pages with typed parameters."""
+    return self._pages[:count]
 
 # Avoid ✗ - Missing type hints
-def render(self):
-    """Render the collection."""
+def process_content(self, content, max_length=100, strict=False):
+    """Process content without type hints."""
     pass
 ```
 
@@ -116,32 +123,33 @@ Just is a command-shortcutting tool used to simplify calling commands.
 
 Justfile commands should have a `#`-led comment that explains the command above the command definition.
 
-The command body must be indented with a single tab character (as required by Just):
+The command body must be indented 4 spaces:
 
 ```just
 # Preferred ✓
 # Sync dependencies using uv
 sync:
-	uv sync --dev
+    uv sync --dev
 
 # Run tests with coverage report (defaults to XML)
 test-cov-report REPORT='xml':
-	uv run --dev pytest --cov-report={{ REPORT }}
+    uv run --dev pytest --cov-report={{ REPORT }}
 ```
 
 ### Parameter Naming
 
-Parameters should be in `UPPER` casing. When used in the command, the parameter should be wrapped in double braces with a space between the inner braces and the parameter name:
+Parameters should be in `UPPER` casing. When used in the command, the parameter should be wrapped in double braces with a
+space between the inner braces and the parameter name:
 
 ```just
 # Preferred ✓
 # Run ruff linter without fixing
 lint DIRECTORY='.':
-	uvx ruff check {{ DIRECTORY }}
+    uvx ruff check {{ DIRECTORY }}
 
 # Avoid ✗ - lowercase parameters or no spaces in braces
 lint directory='.':
-	uvx ruff check {{directory}}
+    uvx ruff check {{directory}}
 ```
 
 ### Command Organization
@@ -152,17 +160,17 @@ Group related commands together and use consistent naming patterns:
 # Preferred ✓
 # Run ruff linter without fixing
 lint DIRECTORY='.':
-	uvx ruff check {{ DIRECTORY }}
+    uvx ruff check {{ DIRECTORY }}
 
 # Run ruff linter with auto-fix
 lint-fix DIRECTORY='.':
-	uvx ruff check --fix {{ DIRECTORY }}
+    uvx ruff check --fix {{ DIRECTORY }}
 
 # Run ruff formatter as check
 format DIRECTORY='.':
-	uvx ruff format --check {{ DIRECTORY }}
+    uvx ruff format --check {{ DIRECTORY }}
 
 # Run ruff formatter and fix issues
 format-fix DIRECTORY='.':
-	uvx ruff format {{ DIRECTORY }}
+    uvx ruff format {{ DIRECTORY }}
 ```
