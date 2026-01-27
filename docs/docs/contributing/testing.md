@@ -35,13 +35,6 @@ These tools can be called via `just`. If you wanted to run them without `just` y
 ### Type Checking
 
 See our section on [typechecking](/contributing/typechecking/)
-
-#### Using just for type checking
-
-```bash
-just ty
-```
-
 ### Linting and Formatting
 
 #### Using just for linting and formatting
