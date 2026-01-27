@@ -96,7 +96,7 @@ class Site:
         self.theme_manager.static_paths = static_paths
 
     @property
-    def site_map(self) -> None|SiteMap:
+    def site_map(self) -> SiteMap | None:
         return self._site_map
 
     def update_site_vars(self, **kwargs) -> None:
