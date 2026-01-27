@@ -12,44 +12,45 @@ sync:
     uv sync --dev
 
 # Run pytest
-test *FLAGS='': (pytest DEFAULT_PYTHON_VERSION FLAGS)
+test *FLAGS='':
+    pytest {{ DEFAULT_PYTHON_VERSION }} {{ FLAGS }}
 
 # Run tests in arbitrary Python version.
-pytest version *FLAGS='':
-    uv run -p {{version}} --dev pytest {{FLAGS}}
+pytest VERSION *FLAGS='':
+    uv run -p {{ VERSION }} --dev pytest {{ FLAGS }}
 
 # Run pytest with coverage report (defaults to XML)
 test-cov-report REPORT='xml':
-    uv run --dev pytest --cov-report={{REPORT}}
+    uv run --dev pytest --cov-report={{ REPORT }}
 
 # Run all nox sessions
 nox:
     uvx nox
 
 # Run ruff linter without fixing
-lint directory='.':
-    uvx ruff check {{ directory }}
+lint DIRECTORY='.':
+    uvx ruff check {{ DIRECTORY }}
 
 # Run ruff linter with auto-fix
-lint-fix directory='.':
-    uvx ruff check --fix {{ directory }}
+lint-fix DIRECTORY='.':
+    uvx ruff check --fix {{ DIRECTORY }}
 
 # Run ruff formatter as check
-format directory='.':
-    uvx ruff format --check {{ directory }}
+format DIRECTORY='.':
+    uvx ruff format --check {{ DIRECTORY }}
 
 # Run ruff formatter and fix issues
-format-fix directory='.':
-    uvx ruff format --check {{ directory }}
+format-fix DIRECTORY='.':
+    uvx ruff format --check {{ DIRECTORY }}
 
 ruff: lint format
 
 # Run both linter and formatter, fixing issues.
-ruff-fix directory='.':
+ruff-fix DIRECTORY='.':
     @# Prefacing with `-` to ignore any errors that might be fixed by formatting.
-    -uvx ruff check --fix {{ directory }}
-    uvx ruff format {{ directory }}
-    uvx ruff check {{ directory }}
+    -uvx ruff check --fix {{ DIRECTORY }}
+    uvx ruff format {{ DIRECTORY }}
+    uvx ruff check {{ DIRECTORY }}
     @echo "\nEverything looks good!"
 
 # Run ty type checker
