@@ -138,8 +138,8 @@ test-cov-report REPORT='xml':
 
 ### Parameter Naming
 
-Parameters should be in `UPPER` casing. When used in the command, the parameter should be wrapped in double braces with a
-space between the inner braces and the parameter name:
+Parameters should be in `UPPER` casing. When used in the command, wrap the parameter in double braces with a space
+between the inner braces and the parameter name:
 
 ```just
 # Preferred ✓
