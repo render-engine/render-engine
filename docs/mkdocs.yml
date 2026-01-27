@@ -15,6 +15,7 @@ nav:
   - Contributing:
     - contributing/CODE_OF_CONDUCT.md
     - contributing/CONTRIBUTING.md
+    - contributing/style-guide.md
     - contributing/environment_setup.md
     - contributing/gen_badge.md
     - contributing/testing.md
