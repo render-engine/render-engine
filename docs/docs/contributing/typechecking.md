@@ -32,7 +32,7 @@ Note: Currently, ty checking does not fail the build due to existing issues that
 
 ## Type Hint Ordering Policy
 
-When writing optional types, always place the primary type **before** `None`:
+When writing optional types, always place the primary type **before** `None`.
 
 ### Preferred ✓
 
