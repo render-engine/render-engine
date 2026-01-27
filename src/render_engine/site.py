@@ -77,7 +77,7 @@ class Site:
         self.theme_manager.engine.globals.update(self.site_vars)
         if self.theme_manager.engine.loader is not None:
             self.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(self._template_path))
-        self._site_map = None
+        self._site_map: SiteMap | None = None
 
     @property
     def output_path(self) -> Path | str:
@@ -96,7 +96,7 @@ class Site:
         self.theme_manager.static_paths = static_paths
 
     @property
-    def site_map(self) -> SiteMap:
+    def site_map(self) -> None|SiteMap:
         return self._site_map
 
     def update_site_vars(self, **kwargs) -> None:
@@ -179,7 +179,7 @@ class Site:
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
-    def page(self, _page: Page) -> Page:
+    def page(self, _page: type[Page]) -> Page:
         """
         Add the page to the route list to be rendered later.
         Also remaps `title` in case the user wants to use it in the template rendering.
@@ -287,7 +287,7 @@ class Site:
             self.plugin_manager.hook.pre_build_site(
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
-            )  # type: ignore
+            )
 
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)

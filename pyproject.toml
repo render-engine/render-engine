@@ -30,6 +30,7 @@ dev = [
   "ephemeral-port-reserve",
   "httpx",
   "mypy",
+  "ty",
   "pre-commit",
   "pytest",
   "pytest-cov",
@@ -71,3 +72,6 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
+
+[tool.ty.rules]
+unresolved-import = "warn"
