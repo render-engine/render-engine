@@ -32,9 +32,11 @@ class  MySite(Site):
 
 ## Handling Static Files
 
-Static files can be added to the site as well either by you or a theme. This allows you to import custom css files, images, javascript and more.
+Static files can be added to the site as well either by you or a theme.
+This allows you to import custom css files, images, javascript and more.
 
-Static Paths are managed by the Site's theme_manager and you can many static_paths. You can add more static paths using `site.static_paths.add("<path/to/static>")`.
+Static Paths are managed by the Site's theme_manager and you can many static_paths.
+You can add more static paths using `site.static_paths.add("<path/to/static>")`.
 
 ```python
 from render_engine import Site
@@ -70,11 +72,14 @@ app.register_themes(SomeTheme)
 
 ## Falling back to default theme
 
-Render Engine has a default theme collection that can be used as a fallback. These themes are used if a theme is not found in the registered themes.
+Render Engine has a default theme collection that can be used as a fallback.
+These themes are used if a theme is not found in the registered themes.
 
 Default Themes Templates pages:
 
 - page.html
 
 > **Note:**
-> The default theme is extremely bare-bones and is only there in case you don't have a theme registered. It is recommended to register a theme or provide your own templates.
+> The default theme is extremely bare-bones and is only there in case you don't have
+> a theme registered. It is recommended to register a theme or provide your own
+> templates.

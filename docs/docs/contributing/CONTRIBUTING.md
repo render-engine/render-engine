@@ -1,9 +1,11 @@
 # Contributing to Render Engine
 
-This document will help you get started in contributing to the Render Engine codebase is open source and contributions are welcome.
+This document will help you get started in contributing to the Render Engine codebase is open source and
+contributions are welcome.
 
 > **NOTE**
-> This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom parser or Theme. Please check the [Render Engine Wiki](https://github.com/render-engine/.github/wiki) or the [Render Engine Docs](https://render-engine.readthedocs.org).
+> This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom
+> parser or Theme. Please check the [Render Engine Wiki][wiki] or the [Render Engine Docs][docs].
 
 ## Docs
 
@@ -38,16 +40,17 @@ If you see or experience a problem, please file an issue. Include any important 
 
 ## Wait to be Assigned Issues
 
-It's important to wait to be assigned an issue before starting to work on it. This prevents [working on code that won't be merged](https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#being-assigned-an-issue).
+It's important to wait to be assigned an issue before starting to work on it. This prevents
+[working on code that won't be merged][being-assigned].
 
 Comment _I can work on this_ or something to that effect, and wait for one of the maintainers to assign the issue to you.
 
 ## Setup your Environment
 
-Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/latest/contributing/contributing#being-assigned-an-issue), you can begin working on an issue either locally with:
+Once you've been [assigned an issue][being-assigned], you can begin working on an issue either locally with:
 
-- [manual setup](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)
-- [dev container](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally)/[GitHub Codespaces](https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces).
+- [manual setup][manual-setup]
+- [dev container][dev-container]/[GitHub Codespaces][codespaces].
 - from dockerfile
 
 ### Manual Configuration
@@ -60,19 +63,21 @@ Once you've been [assigned an issue](https://render-engine.readthedocs.io/en/lat
 
 ### Dockerfile
 
-Our DevContainer is built primarily from a dockerfile. You can build from our Dockerfile directly which would ensure the manual configuration is ran (You will still need to fork and clone).
+Our DevContainer is built primarily from a dockerfile. You can build from our Dockerfile directly which would
+ensure the manual configuration is ran (You will still need to fork and clone).
 
 ## Verify Before Submitting
 
-Render Engine uses nox to text against all supported versions. PRs will not be approved without tests passing on all supported versions.
+Render Engine uses nox to text against all supported versions. PRs will not be approved without tests passing on
+all supported versions.
 
 - 🚫 changes aren't breaking existing code (failing tests)
 - 🚫 Ensure new dependencies are listed, justified, and approved to be added.
 
 ## Contributing to Documentation
 
-Render Engine uses [readthedocs](https://readthedocs.org) in combination with
-[MkDocs](https://www.mkdocs.org),[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/), and [mkdocsstrings](https://mkdocsstrings.readthedocs.io/en/latest/) to generate documentation.
+Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdocs],
+[Material for MkDocs][material], and [mkdocsstrings][mkdocsstrings] to generate documentation.
 
 - 📝 update docstrings for functions, methods, and classes.
 - 📷 add images and gifs where necessary. Assets should be stored in the `docs/docs/assets` folder.
@@ -93,3 +98,14 @@ If you're starting from a blank PR be sure to include the following:
 - issue(s)/discussions being addressed
 - Documentation or tests added/updated
 - Any follow up tasks pending
+
+[wiki]: https://github.com/render-engine/.github/wiki
+[docs]: https://render-engine.readthedocs.org
+[being-assigned]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#being-assigned-an-issue
+[manual-setup]: https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally
+[dev-container]: https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally
+[codespaces]: https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces
+[readthedocs]: https://readthedocs.org
+[mkdocs]: https://www.mkdocs.org
+[material]: https://squidfunk.github.io/mkdocs-material/
+[mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/

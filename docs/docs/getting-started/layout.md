@@ -92,7 +92,8 @@ from render_engine import Site, Page, Collection
 
 ### Importing parsers needed to generate html
 
-Render Engine uses parsers to convert content into html. There are two built-in parsers: ([BasePageParser](../parsers.md#basepageparser) and [MarkdownPageParser](../parsers.md#markdownpageparser)) or create your own.
+Render Engine uses parsers to convert content into html. There are two built-in parsers:
+([BasePageParser][base-parser] and [MarkdownPageParser][markdown-parser]) or create your own.
 
 Custom parsers can be imported and set in the `Parsers` attribute of the `Page` or `Collection` class.
 
@@ -102,7 +103,8 @@ from render_engine_rss import RSSCollection, RSSFeedPageParser
 ```
 
 !!! IMPORTANT
-    Some custom parsers will only work with [custom collections](../custom_collections.md). Please refer to the parser's documentation for more information.****
+    Some custom parsers will only work with [custom collections][custom-collections].
+    Please refer to the parser's documentation for more information.****
 
 ### Render Engine plugins and themes
 
@@ -123,7 +125,8 @@ app.register_theme(kjaymiller)
 ```
 
 !!! IMPORTANT
-    You can register multiple themes but be careful of the order as theme files are looked up in REVERSE order they are added (LIFO - Last in, First out)
+    You can register multiple themes but be careful of the order as theme files are looked up in
+    REVERSE order they are added (LIFO - Last in, First out)
 
 ```python
 from render_engine_kjaymiller_theme import kjaymiller
@@ -136,7 +139,8 @@ app.register_themes([kjaymiller, icon_packs])
 
 ### Adding custom site_vars
 
-Render Engine has a few built-in site variables (`site_vars`) that can be used to customize your site. You can also add your own custom settings.
+Render Engine has a few built-in site variables (`site_vars`) that can be used to customize your site.
+You can also add your own custom settings.
 
 ```python
 #app.py
@@ -151,11 +155,15 @@ app.site_vars.update(
 
 ### Adding Pages and Collections
 
-The page that is created there will generate a file called `index.html` in the output directory. That name comes from the class name but can be defined either in the class itself (using the `slug` attribute) or in a markdown file (defined with the `content_path` attribute).
+The page that is created there will generate a file called `index.html` in the output directory.
+That name comes from the class name but can be defined either in the class itself (using the `slug`
+attribute) or in a markdown file (defined with the `content_path` attribute).
 
-The `template` variable is the name of the template file that will be used to render the page. The `title` variable will be passed to the template as `title`.
+The `template` variable is the name of the template file that will be used to render the page.
+The `title` variable will be passed to the template as `title`.
 
-The default template engine is [jinja2](https://jinja.palletsprojects.com/en/3.0.x/). This means you can use jinja2 syntax in your templates.
+The default template engine is [jinja2][jinja2-docs].
+This means you can use jinja2 syntax in your templates.
 
 ```jinja2
 # templates/index.html
@@ -172,7 +180,9 @@ would render as:
 
 ### Adding attributes from a file
 
-Render Engine can also add attributes to your page from a markdown file. This is useful if you want to add a lot of content to your page. To do this, Render Engine uses [frontmatter](https://pypi.org/project/python-frontmatter/) to parse the attributes at the top of the markdown file.
+Render Engine can also add attributes to your page from a markdown file. This is useful if you want
+to add a lot of content to your page. To do this, Render Engine uses [frontmatter][python-frontmatter]
+to parse the attributes at the top of the markdown file.
 
 ```markdown
 # content/index.md
@@ -192,7 +202,8 @@ class Index(Page):
   content_path="content/index.md"
 ```
 
-The end result is the same as the previous example. If we want to get the content of the markdown file, we can pass the `content` attribute to the jinja2 template.
+The end result is the same as the previous example. If we want to get the content of the markdown
+file, we can pass the `content` attribute to the jinja2 template.
 
 ```jinja2
 # templates/index.html
@@ -210,7 +221,8 @@ The markdown in `content` will converted to html and rendered in the template.
 
 #### Creating a Collection
 
-Collections are a group of pages that are rendered using the same template and (some) attributes. They are created using the `Collection` class and the `render_collection` decorator.
+Collections are a group of pages that are rendered using the same template and (some) attributes.
+They are created using the `Collection` class and the `render_collection` decorator.
 
 ```python
 # app.py
@@ -221,13 +233,19 @@ class Blog(Collection):
   content_path="content/blog"
 ```
 
-The `content_path` attribute is the path to the folder that contains the markdown files for the collection. Every markdown page will be converted into a `Page` object. The `template` attribute is the name of the template that will be used to render each page in the collection.
+The `content_path` attribute is the path to the folder that contains the markdown files for the
+collection. Every markdown page will be converted into a `Page` object. The `template` attribute is
+the name of the template that will be used to render each page in the collection.
 
-You can also pass custom attributes to the collection. These attributes will be passed onto each page in the collection as well.
+You can also pass custom attributes to the collection. These attributes will be passed onto each
+page in the collection as well.
 
 #### Custom Collections
 
-We named our collection Blog but there aren't a lot of features that come with a blog included. Render Engine actually has a built-in `Blog` class you can use to create a blog. It will automatically create a collection of posts and a page for each post. It will also create a page for the blog index and an RSS Feed.
+We named our collection Blog but there aren't a lot of features that come with a blog included.
+Render Engine actually has a built-in `Blog` class you can use to create a blog. It will
+automatically create a collection of posts and a page for each post. It will also create a page for
+the blog index and an RSS Feed.
 
 It's still rendered using the same `render_collection` decorator.
 
@@ -241,3 +259,9 @@ class Blog(Blog):
 ```
 
 ### Continue to [Creating a Page](creating-a-page.md)
+
+[base-parser]: ../parsers.md#basepageparser
+[markdown-parser]: ../parsers.md#markdownpageparser
+[custom-collections]: ../custom_collections.md
+[jinja2-docs]: https://jinja.palletsprojects.com/en/3.0.x/
+[python-frontmatter]: https://pypi.org/project/python-frontmatter/
