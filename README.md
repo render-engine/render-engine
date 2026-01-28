@@ -61,7 +61,6 @@ We encourage contributors of all skill levels. Please review the [contributing](
 
 ## Contributors
 
-
 <!-- markdownlint-disable -->
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -97,11 +96,8 @@ We encourage contributors of all skill levels. Please review the [contributing](
   </tbody>
 </table>
 
-
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
 <!-- markdownlint-restore -->
 
 ### Sponsors at the $20/month and Higher Level
