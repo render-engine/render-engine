@@ -51,6 +51,10 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
 
 We've compiled a set of [awesome add-ons](https://github.com/render-engine/render-engine-awesome-list) that you can use to make your site even better!
 
+## CONTRIBUTING
+
+We encourage contributors of all skill levels. Please review the [contributing](https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/) section of our docs for more information.
+
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
