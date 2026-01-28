@@ -58,8 +58,11 @@ make your site even better!
 ## Contributors
 
 <!-- markdownlint-disable -->
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <table>
   <tbody>
     <tr>
@@ -92,11 +95,10 @@ make your site even better!
 </table>
 
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-<!-- prettier-ignore-start -->
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
 <!-- markdownlint-restore -->
 
 ### Sponsors at the $20/month and Higher Level
