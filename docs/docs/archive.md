@@ -5,14 +5,15 @@ date: August 22, 2024
 tags: ["archive", "parameters", "collection"]
 ---
 
-Archives are a [`BasePage`](page.md?id=basepage) object used to display a list of [`Page`](page.md?id=page) objects in a [`Collection`](collection.md?id=collection).
+Archives are a [`BasePage`][basepage-object] object used to display a list of [`Page`][page-object] objects in a
+[`Collection`][collection-object].
 
 Archive objects create a customizable page that can be controlled via its parent Collection.
 
-Bases: [`BasePage`](page.md?id=basepage)
+Bases: [`BasePage`][basepage-object]
 
-The Archive is a [Page](page.md?id=page) object used by the collection
-that focuses on presenting the Collection's pages.
+The Archive is a [Page][page-object] object used by the collection that focuses on presenting the
+Collection's pages.
 
 **Parameters:**
 
@@ -20,7 +21,7 @@ that focuses on presenting the Collection's pages.
 
 | Name | Type | Description | Default |
 | ---- | ---- | ---- | ---- |
-| `pages` | `list[`[`BasePage`](page.md?id=basepage)`]` | The list of pages to include in the archive | _required_                                                |
+| `pages` | `list[`[`BasePage`][basepage-object]`]` | The list of pages to include in the archive | _required_ |
 | `title`         | `str`                                       | The title of the archive                                 | _required_                                                |
 | `template`      | `str                                        | Template`                                                | The template to use for the archive                       | "archive.html" |
 | `routes`        | `list[str                                   | Path]`                                                   | The routes for where the archive page should be generated | _required_     |
@@ -29,7 +30,7 @@ that focuses on presenting the Collection's pages.
 
 > !!! Warning Not Directly Used
     The Archive object is not meant to be used directly.
-    It is used by the [Collection](collection.md?id=collection) object.
+    It is used by the [Collection][collection-object] object.
     Attributes can be used to customize.
 
 Collection.archives yields a generator of Archive objects. Each Archive object will have a `pages` attribute that is a list of Page objects referenced in that Archive Page. The number of pages is determined by the `Collection.items_per_page` attribute.
@@ -74,3 +75,7 @@ Total Pages: {{num_of_pages}}
 <button{% if page_num == archive_index %}disabled{% endif%}>page_num</span>
 {% endfor %}
 ```
+
+[basepage-object]: page.md?id=basepage
+[page-object]: page.md?id=page
+[collection-object]: collection.md?id=collection

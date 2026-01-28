@@ -20,9 +20,12 @@
 
 ## The _3 layer_ Architecture
 
-- **[Page](https://render-engine.readthedocs.io/en/latest/page/)** - A single webpage item built from content, a template, raw data, or a combination of those things.
-- **[Collection](https://render-engine.readthedocs.io/en/latest/collection/)** - A group of webpages built from the same template, organized in a single directory
-- **[Site](https://render-engine.readthedocs.io/en/latest/site/)** - The container that helps to render all Pages and Collections with uniform settings and variables
+- **[Page][page-docs]** - A single webpage item built from content, a template,
+  raw data, or a combination of those things.
+- **[Collection][collection-docs]** - A group of webpages built from the same
+  template, organized in a single directory
+- **[Site][site-docs]** - The container that helps to render all Pages and
+  Collections with uniform settings and variables
 
 ## Installing Render Engine
 
@@ -49,7 +52,8 @@ Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/p
 
 ## Finding Awesome Add-Ons
 
-We've compiled a set of [awesome add-ons](https://github.com/render-engine/render-engine-awesome-list) that you can use to make your site even better!
+We've compiled a set of [awesome add-ons][awesome-list] that you can use to
+make your site even better!
 
 ## CONTRIBUTING
 
@@ -108,3 +112,8 @@ We encourage contributors of all skill levels. Please review the [contributing](
 - [Brian Douglas](https://github.com/bdougie)
 
 Thank you to them and all of those who continue to support this project!
+
+[page-docs]: https://render-engine.readthedocs.io/en/latest/page/
+[collection-docs]: https://render-engine.readthedocs.io/en/latest/collection/
+[site-docs]: https://render-engine.readthedocs.io/en/latest/site/
+[awesome-list]: https://github.com/render-engine/render-engine-awesome-list

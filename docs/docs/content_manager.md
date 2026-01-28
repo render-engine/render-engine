@@ -39,8 +39,8 @@ def create_entry(self, filepath: Path = None, editor: str = None, metadata: dict
 ### `pages`
 
 The `pages` property is how the `Collection` accesses its content. It is a method that _must_ be implemented by
-every `ContentManager`. An example `pages` implementation (from the
-[`FileContentManger`](https://github.com/render-engine/render-engine/blob/main/src/render_engine/content_managers/file_content_manager.py)) is:
+every `ContentManager`. An example `pages` implementation (from the [`FileContentManger`][file-content-manager])
+is:
 
 ```python
 @property
@@ -83,3 +83,5 @@ page: Page  # The Page to update
 content: str = None  # Updated content
 **kwargs: dict  # The other attributes for the updated page
 ```
+
+[file-content-manager]: https://github.com/render-engine/render-engine/blob/main/src/render_engine/content_managers/file_content_manager.py

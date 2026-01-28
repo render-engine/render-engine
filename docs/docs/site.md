@@ -9,12 +9,12 @@ The site stores your pages and collections to be rendered.
 
 **Attributes:**
 
-| Name            | Type   | Description                                                                                        |
-| --------------- | ------ | -------------------------------------------------------------------------------------------------- |
-| `output_path`   | `str`  | path to write rendered content                                                                     |
-| `static_paths`  | `set`  | set of paths for static folders. This will get copied to the output folder. Folders are recursive. |
-| `site_vars`     | `dict` | dictionary that will be passed into page template                                                  |
-| `site_settings` |        | settings that will be passed into pages and collections but not into templates                     |
+| Name            | Type   | Description                                                   |
+| --------------- | ------ | ------------------------------------------------------------- |
+| `output_path`   | `str`  | path to write rendered content                                |
+| `static_paths`  | `set`  | paths for static folders copied to output (recursive)         |
+| `site_vars`     | `dict` | dictionary that will be passed into page template             |
+| `site_settings` |        | settings passed to pages and collections (not templates)      |
 
 ## Functions
 

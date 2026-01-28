@@ -5,23 +5,24 @@ date: August 22, 2024
 tags: ["setup", "python", "virtual-environment", "vs-code", "codespaces", "dev-containers"]
 ---
 
-### Python Version
+## Python Version
 
 To develop locally you will need to have Python installed. Make sure you're using `Python 3.10.5` or higher to develop.
 
 Visit <https://python.org> to learn more about installing Python.
 
-### Create a Virtual Environment
+## Create a Virtual Environment
 
-This project uses [uv](https://github.com/astral-sh/uv). It's highly recommended that you use 'uv' to manage your environment and use all tools included.
+This project uses [uv][uv]. It's highly recommended that you use 'uv' to manage your environment and use all
+tools included.
 
-- install `uv` according to your [OS instructions](https://github.com/astral-sh/uv?tab=readme-ov-file#installation)
+- install `uv` according to your [OS instructions][uv-installation]
 
-### Justfile
+## Justfile
 
-There are a series of commands saved in a [justfile](https://github.com/casey/just).
+There are a series of commands saved in a [justfile][just].
 
-- install just using your [OS insctructions](https://github.com/casey/just?tab=readme-ov-file#installation)
+- install just using your [OS insctructions][just-installation]
 - you can view the available commands with `just`
 
 ```text
@@ -43,9 +44,10 @@ Available recipes:
     ty PATH='src'                # Run ty type checker
 ```
 
-#### Using VS Code
+### Using VS Code
 
-If you're using [Visual Studio Code](https://code.visualstudio.com/) you can also create a virtual environment from the command pallet. This will also enable the installation of the dependencies.
+If you're using [Visual Studio Code][vscode] you can also create a virtual environment from the command
+pallet. This will also enable the installation of the dependencies.
 
 ![Creating an Environment using VS Code](<../assets/create environment vs code.gif>)
 
@@ -57,9 +59,12 @@ You can create a codespace on main.
 
 ![Create a Codespace](../assets/create-codespace.gif)
 
-This will create a codespace in which you can make your changes. Don't worry they won't let you push your changes directly to the codebase but when you go to make that change it will let you create a fork and submit the PR.
+This will create a codespace in which you can make your changes. Don't worry they won't let you push your
+changes directly to the codebase but when you go to make that change it will let you create a fork and
+submit the PR.
 
-There is a `devcontainer.json` designed to give you a good start on developing for Render Engine, including getting extensions and settings.
+There is a `devcontainer.json` designed to give you a good start on developing for Render Engine, including
+getting extensions and settings.
 
 ## Using Dev Containers
 
@@ -69,8 +74,15 @@ To use dev containers, you will need to have VS Code installed, Docker, and the 
 
 Start with ensuring that the docker daemon is running.
 
-Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: ReOpen in Container" and select the option.
+Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: ReOpen
+in Container" and select the option.
 
 This will create a new local environment with the same configuration as the [codespace](#using-codespaces).
 
 ![Launching a Dev Container](<../assets/launching a dev container.gif>)
+
+[uv]: https://github.com/astral-sh/uv
+[uv-installation]: https://github.com/astral-sh/uv?tab=readme-ov-file#installation
+[just]: https://github.com/casey/just
+[just-installation]: https://github.com/casey/just?tab=readme-ov-file#installation
+[vscode]: https://code.visualstudio.com/
