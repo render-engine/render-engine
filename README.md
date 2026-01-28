@@ -57,7 +57,8 @@ make your site even better!
 
 ## CONTRIBUTING
 
-We encourage contributors of all skill levels. Please review the [contributing](https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/) section of our docs for more information.
+We encourage contributors of all skill levels.
+Please review the [contributing][contributing] section of our docs for more information.
 
 ## Contributors
 
@@ -106,6 +107,7 @@ We encourage contributors of all skill levels. Please review the [contributing](
 
 Thank you to them and all of those who continue to support this project!
 
+[contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/
 [page-docs]: https://render-engine.readthedocs.io/en/latest/page/
 [collection-docs]: https://render-engine.readthedocs.io/en/latest/collection/
 [site-docs]: https://render-engine.readthedocs.io/en/latest/site/
