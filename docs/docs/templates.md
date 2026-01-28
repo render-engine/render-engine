@@ -7,7 +7,8 @@ tags: ["jinja2", "templates", "filters", "site-variables","route-list"]
 
 Like most Python web frameworks, Render Engine also supports templating.
 
-Render Engine uses the [Jinja2](https://palletsprojects.com/p/jinja/) templating engine. Jinja2 is a very powerful templating engine that is used by many Python web frameworks.
+Render Engine uses the [Jinja2][jinja2-home] templating engine. Jinja2 is a
+very powerful templating engine that is used by many Python web frameworks.
 
 ## Template Globals
 
@@ -15,11 +16,15 @@ Render Engine provides a few global variables that you can use in your templates
 
 ### route_list
 
-The route_list global is a list of all the routes that are registered with Render Engine. This is useful if you want to create a navigation bar or a sitemap.
+The route_list global is a list of all the routes that are registered with
+Render Engine. This is useful if you want to create a navigation bar or a
+sitemap.
 
 ### Attributes from site_vars
 
-The site_vars global is a dictionary of all the variables that are defined in the `Site.site_vars`file. This is useful if you want to reference a variable site_wide in your templates.
+The site_vars global is a dictionary of all the variables that are defined in
+the `Site.site_vars`file. This is useful if you want to reference a variable
+site_wide in your templates.
 
 ```python
 
@@ -37,21 +42,26 @@ The title of the site. This is useful if you want to reference the site title in
 
 ### SITE_URL
 
-The url of the site. This is useful if you want to reference the site url in your templates. It can also be used to create absolute urls for your pages.
+The url of the site. This is useful if you want to reference the site url in
+your templates. It can also be used to create absolute urls for your pages.
 
 ### DATETIME_FORMAT
 
-This is the default format that the `format_datetime` filter will use. You can override this by setting the `DATETIME_FORMAT` variable in your `Site.site_vars` file.
+This is the default format that the `format_datetime` filter will use. You can
+override this by setting the `DATETIME_FORMAT` variable in your
+`Site.site_vars` file.
 
 By default this is set to `"%d %b %Y %H:%M %Z"`.
 
 ## Filters
 
-Render Engine comes with a few [filters](https://jinja.palletsprojects.com/en/3.1.x/templates/#filters) that you can use in your templates.
+Render Engine comes with a few [filters][jinja2-filters] that you can use in
+your templates.
 
 ### url_for(page)
 
-The url_for filter is a wrapper around the `url_for` method for Pages. It allows you to reference a page by its slug or by its collection and slug.
+The url_for filter is a wrapper around the `url_for` method for Pages. It
+allows you to reference a page by its slug or by its collection and slug.
 
 ```jinja2
 
@@ -61,7 +71,9 @@ The url_for filter is a wrapper around the `url_for` method for Pages. It allows
 {# The about page is in the `Pages` collection. #}
 {{'pages.about'| url_for }}
 
-If you want to reference the archive for the page you can just use the Collection.slug attribute. You can also reference the paginated values with the page parameter on the `url_for` filter.
+If you want to reference the archive for the page you can just use the
+Collection.slug attribute. You can also reference the paginated values with the
+page parameter on the `url_for` filter.
 
 {# The about page is in the `Pages` collection. #}
 {{'pages.about'| url_for }}
@@ -76,7 +88,8 @@ If you want to reference the archive for the page you can just use the Collectio
 
 ### to_pub_date
 
-This filter converts a datetime object to a [RFC 822](https://tools.ietf.org/html/rfc822) formatted date. This is useful for RSS feeds.
+This filter converts a datetime object to a [RFC 822][rfc822] formatted date.
+This is useful for RSS feeds.
 
 ```jinja2
 
@@ -102,3 +115,7 @@ Render builds a site map prior to rendering the content. The contents of this
 site map are available to be used in both Page objects (see
 [Page object documentation](/page/#accessing-urls-for-other-pages-in-the-site-from-within-the-page-content).)
 Please see the [site map documentation](/site_map.html) for more information.
+
+[jinja2-home]: https://palletsprojects.com/p/jinja/
+[jinja2-filters]: https://jinja.palletsprojects.com/en/3.1.x/templates/#filters
+[rfc822]: https://tools.ietf.org/html/rfc822

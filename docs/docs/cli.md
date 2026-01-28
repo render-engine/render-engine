@@ -15,7 +15,8 @@ Render Engine comes with a CLI that can be used to create, build, and serve your
 
 ## pyproject.toml Configuration
 
-The Render Engine CLI can be configured through your `pyproject.toml` file to set default values and avoid repetitive command-line arguments.
+The Render Engine CLI can be configured through your `pyproject.toml` file to set default values and avoid
+repetitive command-line arguments.
 
 ### Configuration Options
 

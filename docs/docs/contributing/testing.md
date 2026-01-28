@@ -10,7 +10,8 @@ Render engine uses `pytest` along with some other tools to ensure that render en
 
 ### Calling PyTest
 
-The pytest dependencies are in a dependency group called `dev`. This allows us to call those dependencies in testing via `uv`.
+The pytest dependencies are in a dependency group called `dev`. This allows us to call those dependencies
+in testing via `uv`.
 
 You can call pytest via `uv` or the `justfile`.
 
@@ -28,7 +29,8 @@ just test
 
 ## Tools that don't need to be installed
 
-The tools required for Linting and Formatting (`ruff`)  are not listed in the dependency group because they don't require other tools to be installed.
+The tools required for Linting and Formatting (`ruff`) are not listed in the dependency group because they
+don't require other tools to be installed.
 
 These tools can be called via `just`. If you wanted to run them without `just` you can use `uvx`
 

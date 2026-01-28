@@ -6,7 +6,8 @@ description: Defines how developers should type
 
 ## Type Checking with ty
 
-This project uses [ty](https://github.com/astral-sh/ty) as its primary type checker. ty is included in the dev dependencies and provides static type analysis for the codebase.
+This project uses [ty][ty] as its primary type checker. ty is included in the dev dependencies and
+provides static type analysis for the codebase.
 
 ### Running ty
 
@@ -55,3 +56,5 @@ def get_site_map(self) -> None | SiteMap:  # Wrong order
 def process_template(template: None | str | Template = None) -> str:  # Wrong order
     ...
 ```
+
+[ty]: https://github.com/astral-sh/ty
