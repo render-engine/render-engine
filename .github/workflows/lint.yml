@@ -36,4 +36,5 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: oven-sh/setup-bun@v2
+        name: Lint files
         run: bunx markdownlint-cli2 **/*.md
