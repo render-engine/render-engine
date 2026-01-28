@@ -35,15 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - name: Markdown Lint base-files
-        uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: |
-            *.md
-            .github/**/*.md
-          config: ./.markdownlint.json
-      - name: Markdown Lint Docs
-        uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: docs/**/*.md
-          config: docs/.markdownlint.json
+      - uses: oven-sh/setup-bun@v2
+      - name: Linting with docs
+        run: bunx markdownlint-cli2 **/*.md
