@@ -40,10 +40,6 @@ jobs:
         with:
           globs: |
             *.md
+            docs/**/*.md
             .github/**/*.md
           config: ./.markdownlint.json
-      - name: Markdown Lint Docs
-        uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: docs/**/*.md
-          config: docs/.markdownlint.json
