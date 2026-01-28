@@ -60,7 +60,6 @@ make your site even better!
 We encourage contributors of all skill levels.
 Please review the [contributing][contributing] section of our docs for more information.
 
-
 ## Contributors
 
 <!-- markdownlint-disable -->
