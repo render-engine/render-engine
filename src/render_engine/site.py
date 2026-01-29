@@ -178,7 +178,7 @@ class Site:
         self.route_list[_Collection._slug] = _Collection
         return _Collection
 
-    def page(self, _page: Page) -> Page:
+    def page(self, _page: type[Page]) -> Page:
         """
         Add the page to the route list to be rendered later.
         Also remaps `title` in case the user wants to use it in the template rendering.
