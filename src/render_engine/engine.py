@@ -1,5 +1,6 @@
 import datetime
 from email.utils import format_datetime as fmt_datetime
+from typing import cast
 from urllib.parse import urljoin
 
 from dateutil.parser import parse
@@ -13,7 +14,9 @@ from jinja2 import (
     select_autoescape,
 )
 
+from ._base_object import BaseObject
 from .collection import Collection
+from .page import BasePage
 
 render_engine_templates_loader = ChoiceLoader(
     [
@@ -56,10 +59,11 @@ def format_datetime(
     datetime_format: str | None = None,
 ) -> str:
     """Parse information from the given class object."""
+    format: str
     if datetime_format:
         format = datetime_format
     else:
-        format = env.globals.get("DATETIME_FORMAT", "%Y-%m-%d")
+        format = cast(str, env.globals.get("DATETIME_FORMAT", "%Y-%m-%d"))
 
     return value.strftime(format)
 
@@ -69,7 +73,8 @@ engine.filters["format_datetime"] = format_datetime
 
 @pass_environment
 def to_absolute(env: Environment, url: str) -> str:
-    return str(urljoin(env.globals.get("SITE_URL"), url))
+    site_url: str = cast(str, env.globals.get("SITE_URL"))
+    return str(urljoin(site_url, url))
 
 
 engine.filters["to_absolute"] = to_absolute
@@ -78,10 +83,11 @@ engine.filters["to_absolute"] = to_absolute
 @pass_environment
 def feed_url(env: Environment, value: str) -> str:
     """Returns the URL for the collections feed"""
-    routes = env.globals.get("routes")
+    routes = cast(dict[str, BaseObject], env.globals.get("routes"))
 
     if routes:
-        return routes[value].feed.url_for()
+        route = cast(Collection, routes[value])
+        return route.feed.url_for()
 
     else:
         raise ValueError("No Route Found")
@@ -93,21 +99,24 @@ engine.filters["feed_url"] = feed_url
 @pass_environment
 def url_for(env: Environment, value: str, page: int = 0) -> str:
     """Look for the route in the route_list and return the url for the page."""
-    routes = env.globals.get("routes")
-    route = value.split(".", maxsplit=1)
+    routes = cast(dict[str, BaseObject], env.globals.get("routes"))
 
-    if len(route) == 2 and isinstance(route, list):
-        collection, route = route
+    if "." in value:
+        collection, route = value.split(".", maxsplit=1)
+
         if collection := routes.get(collection, None):
+            collection = cast(Collection, collection)
             for page in collection:
                 if getattr(page, page._reference) == route:
                     return page.url_for()
 
     else:
-        route = routes.get(value)
-        if isinstance(route, Collection):
-            return list(route.archives)[page].url_for()
-        return route.url_for()
+        route: BaseObject | None
+        match route := routes.get(value):
+            case Collection():
+                return list(route.archives)[page].url_for()
+            case BasePage():
+                return route.url_for()
 
     raise ValueError(f"{value} is not a valid route.")
 

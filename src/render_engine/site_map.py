@@ -16,13 +16,14 @@ class SiteMapEntry:
         self.slug = entry._slug
         self.title = entry._title
         self.path_name = entry.path_name
+        route = str(route)
         match entry:
             case Page():
                 # For a base page the _route created if we use the route is invalid - just use the path_name
                 self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
                 self.entries = list()
             case Collection():
-                self._route = f"/{entry.routes[0].lstrip('/')}"
+                self._route = f"/{str(entry.routes[0]).lstrip('/')}"
                 self.entries = [
                     SiteMapEntry(collection_entry, self._route, from_collection=True) for collection_entry in entry
                 ]
@@ -72,7 +73,7 @@ class SiteMap:
         self,
         value: str,
         attr: str = "slug",
-        collection: str = None,
+        collection: str | None = None,
         full_search: bool = False,
     ) -> SiteMapEntry | None:
         """

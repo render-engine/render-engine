@@ -2,10 +2,10 @@ import copy
 import datetime
 import logging
 import os
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterable
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import dateutil.parser as dateparse
 from more_itertools import batched
@@ -81,16 +81,17 @@ class Collection(BaseObject):
     feed_title: str
     include_suffixes: list[str] = ["*.md", "*.html"]
     items_per_page: int | None
-    Parser: BasePageParser = BasePageParser
+    Parser: type[BasePageParser] = BasePageParser
     parser_extras: dict[str, Any]
     required_themes: list[Callable]
     routes: list[str | Path] = ["./"]
+    site = None
     sort_by: str | list = "_title"
     sort_reverse: bool = False
     template_vars: dict[str, Any]
     template: str | None
     plugin_manager: PluginManager | None
-    ContentManager: type[ContentManager] | None = FileContentManager
+    ContentManager: type[ContentManager] = FileContentManager
     content_manager_extras: dict[str, Any]
 
     def __init__(
@@ -119,7 +120,7 @@ class Collection(BaseObject):
             cm_extras.update(self.content_manager_extras)
         self.content_manager = self.ContentManager(**cm_extras)
         if hasattr(self, "pages"):
-            self.content_manager.pages = self.pages
+            self.content_manager.pages = cast(Iterable, self.pages)
 
     def get_page(
         self,
@@ -275,6 +276,7 @@ class Collection(BaseObject):
         :param site: The site object triggering the call
         :param hook_type: The hook to run
         """
+        self.plugin_manager = cast(PluginManager, self.plugin_manager)
         if not getattr(self.plugin_manager, "_pm", None) or not self.plugin_manager.plugins:
             return
         try:
@@ -284,15 +286,22 @@ class Collection(BaseObject):
             return
         method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
-    def _render(self, entry):
+    def _render(self, entry: BaseObject):
         """
         Renders 1 entry in the Collection
 
         :param entry: The entry to process
         """
         if not isinstance(entry, RSSFeed) and not isinstance(entry, Archive):
-            entry.plugin_manager = copy.deepcopy(self.plugin_manager)
+            entry.plugin_manager: PluginManager = copy.deepcopy(self.plugin_manager)
 
+        # Circular imports. Need to be handled here.
+        from .page import BasePage
+        from .site import Site
+
+        entry = cast(BasePage, entry)
+        self = cast(Collection, self)
+        self.site = cast(Site, self.site)
         entry.site = self.site
         entry.render(self.site.theme_manager)
 
@@ -308,7 +317,11 @@ class Collection(BaseObject):
             pass
 
     def create_entry(
-        self, filepath: Path = None, editor: str = None, content: str = None, metadata: dict = None
+        self,
+        filepath: Path | None = None,
+        editor: str | None = None,
+        content: str | None = None,
+        metadata: dict | None = None,
     ) -> str:
         """
         Create a new entry for the Collection

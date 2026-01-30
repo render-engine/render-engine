@@ -65,7 +65,7 @@ class Site:
     def __init__(
         self,
     ) -> None:
-        self.plugin_manager = PluginManager()
+        self.plugin_manager: PluginManager = PluginManager()
         self.theme_manager = ThemeManager(
             engine=engine,
             output_path=self._output_path,
@@ -95,7 +95,7 @@ class Site:
         self.theme_manager.static_paths = static_paths
 
     @property
-    def site_map(self) -> SiteMap:
+    def site_map(self) -> SiteMap | None:
         return self._site_map
 
     def update_site_vars(self, **kwargs) -> None:
@@ -281,7 +281,7 @@ class Site:
             self.plugin_manager.hook.pre_build_site(
                 site=self,
                 settings=self.plugin_manager.plugin_settings,
-            )  # type: ignore
+            )
 
             self.load_themes()
             self.theme_manager.engine.globals.update(self.site_vars)

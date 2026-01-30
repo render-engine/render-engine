@@ -36,15 +36,12 @@ class FileContentManager(ContentManager):
     def pages(self, value: Iterable):
         self._pages = value
 
-    def __len__(self):
-        return len(list(self.pages))
-
     def create_entry(
         self,
-        filepath: Path = None,
-        editor: str = None,
-        metadata: dict = None,
-        content: str = None,
+        filepath: Path | None = None,
+        editor: str | None = None,
+        metadata: dict | None = None,
+        content: str | None = None,
         update: bool = False,
     ) -> str:
         """
@@ -62,13 +59,13 @@ class FileContentManager(ContentManager):
         if not update and filepath.exists():
             raise RuntimeError(f"File at {filepath} exists and update is disabled.")
 
-        parsed_content = self.collection.Parser.create_entry(content=content, **metadata)
+        parsed_content = self.collection.Parser.create_entry(content=content, **(metadata or {}))
         filepath.write_text(parsed_content)
         if editor:
             subprocess.run([editor, filepath])
         return f"New entry created at {filepath} ."
 
-    def update_entry(self, page, *, content: str = None, **kwargs) -> str:
+    def update_entry(self, page, *, content: str | None = None, **kwargs) -> str:
         """
         Update an entry
 

@@ -1,7 +1,7 @@
 import logging
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from jinja2 import Environment, Template
 from render_engine_parser.base_parsers import BasePageParser
@@ -43,14 +43,15 @@ class BasePage(BaseObject):
     plugin_manager: PluginManager | None
     site = None  # This is a Site but circular imports so we can't actually type hint it.
     no_prerender: bool = False
+    collection: dict | None = None
 
     @property
-    def _content(self) -> any:
+    def _content(self) -> Any:
         """returns the content of the page."""
         return getattr(self, "content", None)
 
     @property
-    def _data(self) -> any:
+    def _data(self) -> Any:
         """returns the content of the page."""
         return getattr(self, "data", None)
 
@@ -152,12 +153,16 @@ class BasePage(BaseObject):
     def render(self, theme_manager: ThemeManager) -> int:
         """Render the page to the file system"""
         rc = 0
+        from .site import Site
+
+        site: Site = cast(Site, self.site)
+
         for route in self.routes:
-            path = Path(self.site.output_path) / Path(route) / Path(self.path_name)
+            path = Path(site.output_path) / Path(route) / Path(self.path_name)
             path.parent.mkdir(parents=True, exist_ok=True)
             settings = dict()
             if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
-                settings = {**self.site.plugin_manager.plugin_settings, "route": route}
+                settings = {**site.plugin_manager.plugin_settings, "route": route}
                 pm.hook.render_content(page=self, settings=settings, site=self.site)
             self.rendered_content = self._render_content(theme_manager.engine)
             # pass the route to the plugin settings
@@ -228,11 +233,11 @@ class Page(BasePage):
                 Defaults to `BasePageParser`.
         """
         if Parser:
-            self.Parser = Parser
+            self.Parser = cast(type[BasePageParser], Parser)
 
         # Parse Content from the Content Path or the Content
         if content_path := (content_path or getattr(self, "content_path", None)):
-            self.metadata, self.content = self.Parser.parse_content_path(content_path)
+            self.metadata, self.content = self.Parser.parse_content_path(str(content_path))
 
         elif content := (content or getattr(self, "content", None)):
             self.metadata, self.content = self.Parser.parse_content(content)

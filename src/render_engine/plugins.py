@@ -137,7 +137,7 @@ class PluginManager:
 
 def handle_plugin_registration(
     plugin_manager: PluginManager,
-    plugins: Iterable[tuple[type, dict]] | type,
+    plugins: Iterable[tuple[type, dict]],
     current_settings: dict,
 ):
     """

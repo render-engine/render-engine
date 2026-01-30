@@ -55,7 +55,7 @@ ruff-fix DIRECTORY='.':
 
 # Run ty type checker
 ty PATH='src':
-    -uv run ty check {{ PATH }} # For the moment we have way too many issues in ty so not having it fail.
+    uv run ty check {{ PATH }} # For the moment we have way too many issues in ty so not having it fail.
 
 # Generate coverage badge
 badge: (test-cov-report 'xml')
