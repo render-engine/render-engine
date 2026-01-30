@@ -96,11 +96,15 @@ class ThemeManager:
         if theme.template_globals:
             for key, value in theme.template_globals.items():
                 if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
-                    self.engine.globals.setdefault(key, set()).update(value)
-                if isinstance(self.engine.globals.get(key), set):
-                    self.engine.globals[key].add(value)
-                else:
-                    self.engine.globals[key] = value
+                    entry: set = cast(set, self.engine.globals.get(key, set()))
+                    entry.update(value)
+                    self.engine.globals[key] = entry
+                match self.engine.globals.get(key):
+                    case set():
+                        entry: set = cast(set, self.engine.globals[key])
+                        entry.add(value)
+                    case _:
+                        self.engine.globals[key] = value
 
     def _render_static(self) -> None:
         """Copies a Static Directory to the output folder"""

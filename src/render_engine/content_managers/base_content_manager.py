@@ -12,12 +12,26 @@ class ContentManager(ABC):
         """The Page objects managed by the content manager"""
         ...
 
+    @pages.setter
+    @abstractmethod
+    def pages(self, value: Iterable):
+        pass
+
+    def __len__(self):
+        return len(list(self.pages))
+
     def __iter__(self) -> Generator:
         """Iterator for the ContentManager"""
         yield from self.pages
 
     @abstractmethod
-    def create_entry(self, filepath: Path = None, editor: str = None, metadata: dict = None, content: str = None):
+    def create_entry(
+        self,
+        filepath: Path | None = None,
+        editor: str | None = None,
+        metadata: dict | None = None,
+        content: str | None = None,
+    ):
         """Create a new entry"""
         pass
 

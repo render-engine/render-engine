@@ -2,6 +2,8 @@
 Feed Objects for Generating RSS Feeds
 """
 
+from render_engine_parser import BasePageParser
+
 from .page import BasePage
 
 
@@ -35,3 +37,8 @@ class RSSFeed(BasePage):
 
     template = "rss2.0.xml"
     extension: str = ".rss"
+    Parser: type[BasePageParser] = BasePageParser
+
+    def __init__(self):
+        self.pages: list = list()
+        self.slug: str = self._slug or self.__class__.__name__
