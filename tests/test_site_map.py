@@ -5,7 +5,7 @@ import pytest
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
-from render_engine.site_map import SiteMap
+from render_engine.site_map import SiteMap, SiteMapEntry
 
 PAGE_TEMPLATE = """
 ---
@@ -130,6 +130,7 @@ def test_site_map_search(site, value, params, expected):
     sm = SiteMap(site.route_list, "")
     if expected is not None:
         found = sm.find(value, **params)
+        assert isinstance(found, SiteMapEntry)
         assert found.url_for == expected
     else:
         assert sm.find(value, **params) is None
