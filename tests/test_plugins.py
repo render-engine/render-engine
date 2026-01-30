@@ -4,10 +4,10 @@ import typing
 
 import pytest
 
-from src.render_engine.collection import Collection
-from src.render_engine.page import Page
-from src.render_engine.plugins import PluginManager, hook_impl
-from src.render_engine.site import Site
+from render_engine.collection import Collection
+from render_engine.page import Page
+from render_engine.plugins import PluginManager, hook_impl
+from render_engine.site import Site
 
 
 class FakeLegacyPlugin:
@@ -88,8 +88,6 @@ def site(tmp_path_factory):
         ]
         content = "test"
 
-    #site.page(testPage())
-
     yield site
 
 
@@ -158,8 +156,6 @@ def test_page_plugins_registered():
     @app.page
     class TestPage(Page):
         plugins = [FakePlugin]
-
-    #app.page(TestPage())
 
     assert app.route_list["testpage"].plugin_manager._pm.list_name_plugin()[0][0] == "FakePlugin"
 
