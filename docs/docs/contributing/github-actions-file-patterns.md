@@ -12,7 +12,6 @@ GitHub Actions provides free CI minutes, but they are limited. By using file pat
 
 - **Save CI minutes** - Only run tests when code changes, not for documentation updates
 - **Faster feedback** - Skip irrelevant workflows to get results faster
-- **Better resource usage** - Reduce unnecessary compute usage
 
 ## Basic Syntax
 
@@ -177,6 +176,10 @@ git diff --name-only main...your-branch
 # Test if files match a pattern
 git diff --name-only main...your-branch | grep "src/"
 ```
+
+> **TIP**
+> When testing your workflows locally, use `uv` to run Python commands with the latest version. For example:
+> `uv run -p 3.14 --dev pytest` to run tests with Python 3.14 (or the latest available version).
 
 ### GitHub Actions Context
 
