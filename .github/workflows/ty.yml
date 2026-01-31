@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+
   pull_request:
     branches: 
         - main
+
   workflow_dispatch:
 
 jobs:
@@ -18,5 +20,5 @@ jobs:
         with:
             python-version: "3.12"
             enable-cache: true
-      - name: Run type check
+      - name: Run type (ty) check
         run: uvx ty check .
