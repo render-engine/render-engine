@@ -23,5 +23,7 @@ jobs:
         with:
             python-version: "3.12"
             enable-cache: true
+      - name: Sync dependencies
+        run: uv sync --dev
       - name: Run type (ty) check
         run: uvx ty check ${{ env.TY_PATH }}
