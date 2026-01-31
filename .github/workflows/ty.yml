@@ -11,6 +11,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  TY_PATH: 'src'
+
 jobs:
   ty_check:
     runs-on: ubuntu-latest
@@ -21,4 +24,4 @@ jobs:
             python-version: "3.12"
             enable-cache: true
       - name: Run type (ty) check
-        run: uvx ty check .
+        run: uvx ty check ${{ env.TY_PATH }}
