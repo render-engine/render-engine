@@ -4,15 +4,16 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
         - main
-
+    paths:
+      - ".github/workflows/ty.yml"
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "requirements.txt"
   workflow_dispatch:
-
-env:
-  TY_PATH: 'src'
 
 jobs:
   ty_check:
@@ -20,10 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: astral-sh/setup-uv@v7
-        with:
-            python-version: "3.12"
-            enable-cache: true
-      - name: Sync dependencies
-        run: uv sync --dev
       - name: Run type (ty) check
-        run: uvx ty check ${{ env.TY_PATH }}
+        run: uv run ty check .
