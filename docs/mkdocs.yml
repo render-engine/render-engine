@@ -20,6 +20,7 @@ nav:
     - contributing/gen_badge.md
     - contributing/testing.md
     - contributing/typechecking.md
+    - contributing/github-actions-file-patterns.md
   - Components:
     - Page Objects: page.md
     - Collection Objects:
