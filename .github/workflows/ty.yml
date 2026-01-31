@@ -20,4 +20,3 @@ jobs:
       - uses: astral-sh/setup-uv@v7
       - name: Run type (ty) check
         run: uv run ty check src
-        continue-on-error: true
