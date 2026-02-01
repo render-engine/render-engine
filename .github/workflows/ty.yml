@@ -1,0 +1,22 @@
+name: Type Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+        - main
+    paths:
+      - "src/**"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+jobs:
+  ty_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - uses: astral-sh/setup-uv@v7
+      - name: Run type (ty) check
+        run: uv run ty check src
