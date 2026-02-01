@@ -30,7 +30,7 @@ jobs:
         run: |
           uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
       - name: Commit Badge
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Update coverage badge [skip ci]
           file_pattern: coverage.svg
