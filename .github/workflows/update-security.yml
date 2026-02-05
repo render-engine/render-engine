@@ -24,9 +24,9 @@ jobs:
       - name: Update SECURITY.md
         run: |
           VERSION="${{ steps.get_version.outputs.version }}"
-          # Update the supported version in SECURITY.md
-          sed -i "s/| [0-9]\+\.[0-9]\+\.[0-9]\+ | :white_check_mark: |/| $VERSION | :white_check_mark: |/" SECURITY.md
-          sed -i "s/| < [0-9]\+\.[0-9]\+\.[0-9]\+ |/| < $VERSION |/" SECURITY.md
+          # Update the supported version in SECURITY.md (compact table format)
+          sed -i "s/| [0-9]\+\.[0-9]\+\.[0-9]\+| :white_check_mark:|/| $VERSION| :white_check_mark:|/" SECURITY.md
+          sed -i "s/| < [0-9]\+\.[0-9]\+\.[0-9]\+|/| < $VERSION|/" SECURITY.md
 
       - name: Check for changes
         id: check_changes
