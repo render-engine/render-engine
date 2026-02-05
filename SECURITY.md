@@ -7,8 +7,8 @@ Please ensure you are using the most recent release available on PyPI or GitHub.
 
 | Version       | Supported          |
 | ------------- | ------------------ |
-| 2025.11.1     | :white_check_mark: |
-| < 2025.11.1   | :x:                |
+| {{ VERSION }}     | :white_check_mark: |
+| < {{ VERSION }}  | :x:                |
 
 ## Reporting a Vulnerability
 
