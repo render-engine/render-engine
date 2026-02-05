@@ -1,0 +1,62 @@
+name: Update SECURITY.md
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+        with:
+          ref: main
+
+      - name: Get latest release version
+        id: get_version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update SECURITY.md
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          # Update SECURITY.md with properly formatted table
+          cat >SECURITY.md <<EOF
+          # Security Policy
+
+          ## Supported Versions
+
+          We only support the latest version of render-engine with security updates.
+          Please ensure you are using the most recent release available on PyPI or GitHub.
+
+          | Version       | Supported          |
+          | ------------- | ------------------ |
+          | {{ VERSION }}     | :white_check_mark: |
+          | < {{ VERSION }}  | :x:                |
+
+          ## Reporting a Vulnerability
+
+          Email: <kjaymiller@gmail.com>
+          EOF
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet SECURITY.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add SECURITY.md
+          git commit -m "Update SECURITY.md to version ${{ steps.get_version.outputs.version }}"
+          git push
