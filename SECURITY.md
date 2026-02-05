@@ -6,8 +6,8 @@ We only support the latest version of render-engine with security updates. Pleas
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| Latest   | :white_check_mark: |
-| < Latest | :x:                |
+| 2025.11.1 | :white_check_mark: |
+| < 2025.11.1 | :x:                |
 
 ## Reporting a Vulnerability
 
