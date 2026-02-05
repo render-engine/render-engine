@@ -25,8 +25,23 @@ jobs:
         run: |
           VERSION="${{ steps.get_version.outputs.version }}"
           # Update the supported version in SECURITY.md (compact table format)
-          sed -i "s/\| \d+\.\d+\.\d+\| :white_check_mark:|\/\| $VERSION\| :white_check_mark:\|/" SECURITY.md
-          sed -i "s\/| < \d+\.\d+\.d+\|/\| < $VERSION\|/" SECURITY.md
+          cat > SECURITY.md << EOF
+          # Security Policy
+
+          ## Supported Versions
+
+          We only support the latest version of render-engine with security updates.
+          Please ensure you are using the most recent release available on PyPI or GitHub.
+
+          | Version       | Supported          |
+          | ------------- | ------------------ |
+          | $VERSION      | :white_check_mark: |
+          | < $VERSION    | :x:                |
+
+          ## Reporting a Vulnerability
+
+          Email: <kjaymiller@gmail.com>
+          EOF
 
       - name: Check for changes
         id: check_changes
