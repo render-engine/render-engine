@@ -45,6 +45,7 @@ jobs:
           EOF
 
       - name: Format markdown tables
+        uses: oven-sh/setup-bun@v2
         run: bunx markdown-table-formatter SECURITY.md
 
       - name: Create Pull Request
