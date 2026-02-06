@@ -44,8 +44,10 @@ jobs:
           Email: <kjaymiller@gmail.com>
           EOF
 
-      - name: Format markdown tables
+      - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+
+      - name: Format markdown tables
         run: bunx markdown-table-formatter SECURITY.md
 
       - name: Create Pull Request
