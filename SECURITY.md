@@ -5,10 +5,10 @@
 We only support the latest version of render-engine with security updates.
 Please ensure you are using the most recent release available on PyPI or GitHub.
 
-| Version       | Supported          |
-| ------------- | ------------------ |
-| {{ VERSION }}     | :white_check_mark: |
-| < {{ VERSION }}  | :x:                |
+| Version    | Supported          |
+|------------|--------------------|
+| 2011.5.1   | :white_check_mark: |
+| < 2011.5.1 | :x:                |
 
 ## Reporting a Vulnerability
 
