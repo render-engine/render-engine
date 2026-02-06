@@ -44,6 +44,9 @@ jobs:
           Email: <kjaymiller@gmail.com>
           EOF
 
+      - name: Format markdown tables
+        run: bunx markdown-table-formatter SECURITY.md
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
