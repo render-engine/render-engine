@@ -3,13 +3,12 @@
 ## Supported Versions
 
 We only support the latest version of render-engine with security updates.
-Please ensure you are using the most recent release available on PyPI or GitHub.
+Please ensure you are using the most recent release available on [PyPI].
 
-| Version    | Supported          |
-|------------|--------------------|
-| 2011.5.1   | :white_check_mark: |
-| < 2011.5.1 | :x:                |
+If you find a vulnerability please [file an issue][render-engine-issues].
 
-## Reporting a Vulnerability
+For more information, visit the [security] section of the docs.
 
-Email: <kjaymiller@gmail.com>
+[security]: https://render-engine.readthedocs.io/en/latest/contributing/SECURITY/
+[PyPI]: https://pypi.org/project/render-engine/
+[render-engine-issues]: https://github.com/render-engine/render-engine/issues
