@@ -5,10 +5,14 @@
 We only support the latest version of render-engine with security updates.
 Please ensure you are using the most recent release available on [PyPI].
 
-If you find a vulnerability please [file an issue][render-engine-issues].
+| Version    | Supported          |
+|------------|--------------------|
+| Latest     | :white_check_mark: |
+| < Latest   | :x:                |
 
-For more information, visit the [security] section of the docs.
+## Reporting a Vulnerability
 
-[security]: https://render-engine.readthedocs.io/en/latest/contributing/SECURITY/
+If you find a vulnerability in the latest Render Engine that is due to an external package, please [file an issue][render-engine-issues].
+
 [PyPI]: https://pypi.org/project/render-engine/
 [render-engine-issues]: https://github.com/render-engine/render-engine/issues
