@@ -6,9 +6,9 @@
 
 # Render Engine
 
-<https://github.com/kjaymiller/render_engine/actions/workflows/test.yml>
+![PyTest]
 ![genbadge-coverage]
-<https://discord.gg/2xMQ4j4d8m>
+![Discord]
 
 ## Learn More
 
@@ -107,6 +107,8 @@ Please review the [contributing][contributing] section of our docs for more info
 
 Thank you to them and all of those who continue to support this project!
 
+[PyTest]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg
+[Discord]: https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple
 [contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/
 [page-docs]: https://render-engine.readthedocs.io/en/latest/page/
 [collection-docs]: https://render-engine.readthedocs.io/en/latest/collection/
