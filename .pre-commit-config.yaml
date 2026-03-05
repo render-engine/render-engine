@@ -1,19 +1,34 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
-default_language_version:
-  python: python3.12
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
     hooks:
-      - id: check-yaml
-      - id: check-toml
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.10.0
-    hooks:
-      - id: ruff
-        args: ["--fix"]
-      # Run the formatter.
-      - id: ruff-format
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.15.1
+  hooks:
+    # Run the linter.
+    - id: ruff-check
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
+- repo: https://github.com/allganize/ty-pre-commit
+  # Ty version.
+  rev: v0.0.17
+  hooks:
+    # Run the type checker.
+    - id: ty-check
+- repo: https://github.com/DavidAnson/markdownlint-cli2
+  rev: v0.6.0
+  hooks:
+    - id: markdownlint-cli2
+- repo: local
+  hooks:
+    - id: deptry
+      name: deptry
+      entry: uv run deptry .
+      language: system
+      always_run: true
+      pass_filenames: false
