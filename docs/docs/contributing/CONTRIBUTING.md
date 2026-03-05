@@ -13,7 +13,7 @@ Docs can be found at <https://render-engine.readthedocs.org>
 
 ## Code of Conduct
 
-Render Engine and all of the packages in this org follow the same [Code of Conduct](https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md).
+Render Engine and all of the packages in this org follow the same [Code of Conduct].
 
 ## Before you Contribute
 
@@ -23,7 +23,7 @@ When suggesting a feature, consider the following:
 - Would your feature be a good theme?
 - Could this be implemented as a Custom Parsers or Collections
 
-More on when to choose these solutions in our [docs](https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider).
+More on when to choose these solutions in our [docs][docs-contributing].
 
 ## Filing an Issue
 
@@ -109,3 +109,6 @@ If you're starting from a blank PR be sure to include the following:
 [mkdocs]: https://www.mkdocs.org
 [material]: https://squidfunk.github.io/mkdocs-material/
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
+
+[code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
+[docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider

@@ -7,7 +7,7 @@ date: August 22, 2024
 tags: ["building", "site-generation", "render-engine"]
 ---
 
-Once you've created the [layout](layout.md) of your site, you can start building it.
+Once you've created the [layout] of your site, you can start building it.
 
 ## Calling `render()`
 
@@ -39,3 +39,5 @@ render-engine build app:app
 Your site will be generated in the `output` folder.
 
 [cli-build]: ../cli.md#building-your-site-with-render-engine-build
+
+[layout]: layout.md

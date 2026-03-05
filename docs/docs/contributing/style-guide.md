@@ -10,7 +10,7 @@ Render Engine project.
 
 ### Ruff (Python)
 
-Render Engine uses [Ruff](https://docs.astral.sh/ruff/) for Python linting and formatting with the following
+Render Engine uses [Ruff] for Python linting and formatting with the following
 configuration:
 
 - **Line length**: 120 characters
@@ -177,3 +177,5 @@ format DIRECTORY='.':
 format-fix DIRECTORY='.':
     uvx ruff format {{ DIRECTORY }}
 ```
+
+[ruff]: https://docs.astral.sh/ruff/
