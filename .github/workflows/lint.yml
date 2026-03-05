@@ -36,4 +36,4 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
       - name: Lint files
-        run: npx markdownlint-cli2 **/*.md
+        run: bunx --yes markdownlint-cli2 **/*.md
