@@ -89,5 +89,5 @@ This will create a new local environment with the same configuration as the [cod
 
 [codespace]: #using-codespaces
 [create a codespace]: ../assets/create-codespace.gif
-[creating an environment using vs code]: <../assets/create environment vs code.gif>
-[launching a dev container]: <../assets/launching a dev container.gif>
+[creating an environment using vs code]: ../assets/create%20environment%20vs%20code.gif
+[launching a dev container]: ../assets/launching%20a%20dev%20container.gif
