@@ -35,5 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
-      - name: Lint files
-        run: npx --yes markdownlint-cli2 **/*.md
+      - name: lint-test
+      - uses: DavidAnson/markdownlint-cli2-action@v22
+      with:
+        globs: '**/*.md'
