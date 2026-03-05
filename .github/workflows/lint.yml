@@ -36,6 +36,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
       - name: lint-test
-      - uses: DavidAnson/markdownlint-cli2-action@v22
-      with:
-        globs: '**/*.md'
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          globs: '**/*.md'
