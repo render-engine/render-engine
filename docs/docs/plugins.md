@@ -117,7 +117,7 @@ settings sent to the plugin will be `{'setting1': 'a', 'setting2': 'b'}`.
 
 ### Implementing a plugin
 
-Plugins are built with pluggy. See the [pluggy documentation](https://pluggy.readthedocs.io/en/latest/#) for more information.
+Plugins are built with pluggy. See the [pluggy documentation] for more information.
 
 Plugins use the entrypoints defined in `render_engine.plugins`. These allow plugins to be called at different
 points in the render engine lifecycle.
@@ -152,3 +152,5 @@ class MyPlugin:
         my_settings = settings['MyPlugin']
         ...
 ```
+
+[pluggy documentation]: https://pluggy.readthedocs.io/en/latest/#
