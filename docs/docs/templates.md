@@ -113,9 +113,12 @@ By default this will format to the site's `DATETIME_FORMAT` (default: `"%d %b %Y
 
 Render builds a site map prior to rendering the content. The contents of this
 site map are available to be used in both Page objects (see
-[Page object documentation](/page/#accessing-urls-for-other-pages-in-the-site-from-within-the-page-content).)
-Please see the [site map documentation](/site_map.html) for more information.
+[Page object documentation].)
+Please see the [site map documentation] for more information.
 
 [jinja2-home]: https://palletsprojects.com/p/jinja/
 [jinja2-filters]: https://jinja.palletsprojects.com/en/3.1.x/templates/#filters
 [rfc822]: https://tools.ietf.org/html/rfc822
+
+[page object documentation]: /page/#accessing-urls-for-other-pages-in-the-site-from-within-the-page-content
+[site map documentation]: /site_map.html

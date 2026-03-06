@@ -258,10 +258,12 @@ class Blog(Blog):
   content_path="content/blog"
 ```
 
-### Continue to [Creating a Page](creating-a-page.md)
+### Continue to [Creating a Page]
 
 [base-parser]: ../parsers.md#basepageparser
 [markdown-parser]: ../parsers.md#markdownpageparser
 [custom-collections]: ../custom_collections.md
 [jinja2-docs]: https://jinja.palletsprojects.com/en/3.0.x/
 [python-frontmatter]: https://pypi.org/project/python-frontmatter/
+
+[creating a page]: creating-a-page.md

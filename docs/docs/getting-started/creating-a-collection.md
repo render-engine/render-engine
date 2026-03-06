@@ -84,8 +84,10 @@ class Heroes(Collection):
 
 The value of `42` can be accessed in your template using `{{collection.some_value}}`.
 
-## Continue to [Building your Site](building-your-site.md)
+## Continue to [Building your Site]
 
 [collection-docs]: ../collection.md
 [Creating a Page]: creating-a-page.md
 [jinja-context]: https://jinja.palletsprojects.com/en/3.0.x/api/#the-context
+
+[building your site]: building-your-site.md

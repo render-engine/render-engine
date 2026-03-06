@@ -11,9 +11,9 @@ Feed Objects for Generating RSS Feeds
 
 `RSSFeed`
 
-Bases: [`BasePage`](page.md?id=basepage)
+Bases: [`BasePage`]
 
-Creates an RSS feed [Page](page.md) Object.
+Creates an RSS feed [Page] Object.
 
 > !!! Note
     This is the base object type and should only contain the params identified by the
@@ -37,3 +37,6 @@ This is built using the built-in `rss2.0.xml` jinja template.
     ```
 
 [rss-spec]: http://www.rssboard.org/rss-specification
+
+[`basepage`]: page.md?id=basepage
+[page]: page.md

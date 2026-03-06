@@ -6,15 +6,15 @@
 
 # Render Engine
 
-[![PyTest](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg)](https://github.com/kjaymiller/render_engine/actions/workflows/test.yml)
-![genbadge-coverage](./coverage-badge.svg)
-[![Discord](https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple)](https://discord.gg/2xMQ4j4d8m)
+[![PyTest][pytest-badge]][pytest-action]
+![genbadge-coverage][coverage-badge]
+[![Discord][discord-badge]][discord-link]
 
 ## Learn More
 
-- [Check out the Documentation](https://render-engine.readthedocs.io/en/latest/)
-- [Contributors and Builders, Check out the Wiki](https://github.com/render-engine/render-engine/wiki)
-- [Join the community!](https://discord.gg/2xMQ4j4d8m)
+- [Check out the Documentation][docs]
+- [Contributors and Builders, Check out the Wiki][wiki]
+- [Join the community!][discord-link]
 
 ## What is RenderEngine
 
@@ -29,10 +29,10 @@
 
 ## Installing Render Engine
 
-To use the render engine, you must have Python 3.10 or greater installed. You can download Python from [python.org](https://python.org).
+To use the render engine, you must have Python 3.10 or greater installed. You can download Python from [python.org][python].
 
-- Linux/MacOS: [python.org](https://python.org)
-- Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
+- Linux/MacOS: [python.org][python]
+- Windows: [Microsoft Store][ms-store]
 
 Render Engine is available in PyPI and can be installed using pip:
 
@@ -48,7 +48,7 @@ pip install render-engine[cli]
 
 ## Getting Started
 
-Check out the [Getting Started](https://render-engine.readthedocs.io/en/latest/page/) Section in the [Documentation](https://render-engine.readthedocs.io)
+Check out the [Getting Started][getting-started] Section in the [Documentation][docs]
 
 ## Finding Awesome Add-Ons
 
@@ -103,10 +103,21 @@ Please review the [contributing][contributing] section of our docs for more info
 
 ### Sponsors at the $20/month and Higher Level
 
-- [Brian Douglas](https://github.com/bdougie)
+- [Brian Douglas][bdougie]
 
 Thank you to them and all of those who continue to support this project!
 
+[pytest-badge]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg
+[pytest-action]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml
+[coverage-badge]: ./coverage-badge.svg
+[discord-badge]: https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple
+[discord-link]: https://discord.gg/2xMQ4j4d8m
+[docs]: https://render-engine.readthedocs.io/en/latest/
+[wiki]: https://github.com/render-engine/render-engine/wiki
+[python]: https://python.org
+[ms-store]: https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K
+[getting-started]: https://render-engine.readthedocs.io/en/latest/page/
+[bdougie]: https://github.com/bdougie
 [contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/
 [page-docs]: https://render-engine.readthedocs.io/en/latest/page/
 [collection-docs]: https://render-engine.readthedocs.io/en/latest/collection/
