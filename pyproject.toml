@@ -10,11 +10,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "jinja2",
-  "markdown2",
   "more-itertools",
   "pluggy",
   "python-dateutil",
-  "python-frontmatter",
   "python-slugify",
   "render-engine-parser",
   "render-engine-markdown",
@@ -28,6 +26,7 @@ extras = ["render-engine-sitemap"]
 [dependency-groups]
 dev = [
   "ephemeral-port-reserve",
+  "deptry>=0.24.0",
   "httpx",
   "ty",
   "pre-commit",
@@ -74,3 +73,6 @@ select = ["E", "F", "I", "UP"]
 
 [tool.ty.rules]
 unresolved-import = "warn"
+
+[tool.deptry]
+pep621_dev_dependency_groups = ["cli", "extras"]
