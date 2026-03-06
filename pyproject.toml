@@ -75,4 +75,4 @@ select = ["E", "F", "I", "UP"]
 unresolved-import = "warn"
 
 [tool.deptry]
-exclude_groups = ["cli", "extras"]
+pep621_dev_dependency_groups = ["cli", "extras"]

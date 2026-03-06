@@ -1007,13 +1007,10 @@ wheels = [
 name = "render-engine"
 source = { editable = "." }
 dependencies = [
-    { name = "deptry" },
     { name = "jinja2" },
-    { name = "markdown2" },
     { name = "more-itertools" },
     { name = "pluggy" },
     { name = "python-dateutil" },
-    { name = "python-frontmatter" },
     { name = "python-slugify" },
     { name = "render-engine-markdown" },
     { name = "render-engine-parser" },
@@ -1030,6 +1027,7 @@ extras = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "deptry" },
     { name = "ephemeral-port-reserve" },
     { name = "httpx" },
     { name = "pre-commit" },
@@ -1048,13 +1046,10 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "deptry", specifier = ">=0.24.0" },
     { name = "jinja2" },
-    { name = "markdown2" },
     { name = "more-itertools" },
     { name = "pluggy" },
     { name = "python-dateutil" },
-    { name = "python-frontmatter" },
     { name = "python-slugify" },
     { name = "render-engine-cli", marker = "extra == 'cli'" },
     { name = "render-engine-markdown" },
@@ -1066,6 +1061,7 @@ provides-extras = ["cli", "extras"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "deptry", specifier = ">=0.24.0" },
     { name = "ephemeral-port-reserve" },
     { name = "httpx" },
     { name = "pre-commit" },
