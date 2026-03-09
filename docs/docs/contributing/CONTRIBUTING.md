@@ -75,6 +75,12 @@ all supported versions.
 - 🚫 changes aren't breaking existing code (failing tests)
 - 🚫 Ensure new dependencies are listed, justified, and approved to be added.
 
+## TODOs
+
+Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO Prefix`.
+We use [todo-to-issue] as a github action that will create issues for any TODOs that are created.
+This will modify your code with the issue number and link to the TODO in the comments.
+
 ## Contributing to Documentation
 
 Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdocs],
@@ -116,6 +122,7 @@ Low quality contributions or code that cannot be defended by the USER (not their
 will result in issues/prs being immediately closed.
 Multiple low quality contributions will result in your user account being banned from contribution.
 
+[ai-attestation]: #ai-attestation
 [gh-render-engine]: https://github.com/render-engine
 [wiki]: https://github.com/render-engine/.github/wiki
 [docs]: https://render-engine.readthedocs.org
@@ -127,6 +134,6 @@ Multiple low quality contributions will result in your user account being banned
 [mkdocs]: https://www.mkdocs.org
 [material]: https://squidfunk.github.io/mkdocs-material/
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
-[ai-attestation]: #ai-attestation
 [code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
 [docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider
+[todo-to-issue]: https://github.com/marketplace/actions/todo-to-issue
