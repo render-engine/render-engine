@@ -6,7 +6,7 @@ title: Example Page
 
 This page was built using the `create_app` command.
 
-You may notice this is [markdown](https://www.markdownguide.org) format.
+You may notice this is [markdown] format.
 
 You can add the markdown parser to this collection.
 
@@ -18,4 +18,7 @@ from render_engine.parsers.markdown import MarkdownPageParser
 
 ```
 
-For more information check out the [Render Engine Documentation](https://render-engine.readthedocs.io/en/latest/)
+For more information check out the [Render Engine Documentation]
+
+[markdown]: https://www.markdownguide.org
+[render engine documentation]: https://render-engine.readthedocs.io/en/latest/
