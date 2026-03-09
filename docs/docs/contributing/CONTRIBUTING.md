@@ -74,6 +74,10 @@ all supported versions.
 - 🚫 changes aren't breaking existing code (failing tests)
 - 🚫 Ensure new dependencies are listed, justified, and approved to be added.
 
+## TODOs
+
+Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO Prefix`. We use [todo-to-issue] as a github action that will create issues for any TODOs that are created. This will modify your code with the issue number and link to the TODO in the comments. 
+
 ## Contributing to Documentation
 
 Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdocs],
@@ -109,3 +113,5 @@ If you're starting from a blank PR be sure to include the following:
 [mkdocs]: https://www.mkdocs.org
 [material]: https://squidfunk.github.io/mkdocs-material/
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
+[todo-to-issues]: https://github.com/marketplace/actions/todo-to-issue
+
