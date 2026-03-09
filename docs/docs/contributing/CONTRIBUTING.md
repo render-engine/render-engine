@@ -101,13 +101,20 @@ If you're starting from a blank PR be sure to include the following:
 - Any follow up tasks pending
 - [AI Attestation][ai-attestation]
 
+When submitting your PR, please be sure to use the template provided.
+**Not following this guideline will result in the immediate rejection of your PR.**
+
 ## AI Attestation
 
-Projects in the [Render Engine organization][gh-render-engine] will accept code contributions created with the assistance of AI Coding software. We ask that that you include an AI Attestation to your issue, comment, or PR. 
+Projects in the [Render Engine organization][gh-render-engine] will accept code contributions created with the
+assistance of AI Coding software. We ask that that you include an AI Attestation to your issue, comment, or PR.
 
 This attestation should mean that the AI model is included as a co-Author of the changes.
 
-The AI assistant is your copilot. You are still responsible for code changes submitted. Low quality contributions or code that cannot be defended by the USER (not their AI model) will result in issues/prs being immediately closed. Multiple low quality contributions will result in your user account being banned from contribution.
+The AI assistant is your copilot. You are still responsible for code changes submitted.
+Low quality contributions or code that cannot be defended by the USER (not their AI model)
+will result in issues/prs being immediately closed.
+Multiple low quality contributions will result in your user account being banned from contribution.
 
 [gh-render-engine]: https://github.com/render-engine
 [wiki]: https://github.com/render-engine/.github/wiki
