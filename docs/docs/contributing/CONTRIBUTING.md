@@ -103,7 +103,7 @@ If you're starting from a blank PR be sure to include the following:
 
 ## AI Attestation
 
-Projects in the [Render Engine organization][gh-render-engine] will accept code contributions created with the assistance of AI Coding software. We ask that that you include an AI Attestation to your issue, comment, or pr.
+Projects in the [Render Engine organization][gh-render-engine] will accept code contributions created with the assistance of AI Coding software. We ask that that you include an AI Attestation to your issue, comment, or PR. 
 
 This attestation should mean that the AI model is included as a co-Author of the changes.
 
