@@ -76,7 +76,7 @@ all supported versions.
 
 ## TODOs
 
-Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO Prefix`. We use [todo-to-issue] as a github action that will create issues for any TODOs that are created. This will modify your code with the issue number and link to the TODO in the comments. 
+Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO Prefix`. We use [todo-to-issue] as a github action that will create issues for any TODOs that are created. This will modify your code with the issue number and link to the TODO in the comments.
 
 ## Contributing to Documentation
 
