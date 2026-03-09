@@ -10,16 +10,16 @@ tags:
 
 ### The _3 layer_ Architecture
 
-- **[Page](page.md)** - A single webpage item built from content, a template, raw data, or a combination of those things.
-- **[Collection](collection.md)** - A group of webpages built from the same template, organized in a single directory
-- **[Site](site.md)** - The container that helps to render all Pages and Collections in with uniform settings and variables
+- **[Page]** - A single webpage item built from content, a template, raw data, or a combination of those things.
+- **[Collection]** - A group of webpages built from the same template, organized in a single directory
+- **[Site]** - The container that helps to render all Pages and Collections in with uniform settings and variables
 
 ### Installing Render Engine
 
-In order to use render engine, you must have python 3.10 installed. You can download python from [python.org](https://python.org).
+In order to use render engine, you must have python 3.10 installed. You can download python from [python.org].
 
-- Linux/MacOS: [python.org](https://python.org)
-- Windows: [Microsoft Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K)
+- Linux/MacOS: [python.org]
+- Windows: [Microsoft Store]
 
 Render Engine is available in PyPI and can be installed using pip:
 
@@ -35,4 +35,11 @@ pip install render-engine[cli]
 
 ## Getting Started
 
-Check out the [Getting Started](./getting-started/getting-started.md).
+Check out the [Getting Started].
+
+[collection]: collection.md
+[getting started]: ./getting-started/getting-started.md
+[microsoft store]: https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K
+[page]: page.md
+[python.org]: https://python.org
+[site]: site.md

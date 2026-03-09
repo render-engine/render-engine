@@ -15,7 +15,7 @@ content is stored in the file system with each piece of content existing in a di
 
 ## Selecting a `ContentManager`
 
-The `ContentManager` for a given [`Collection`](collection.md) is controlled by the `ContentManager` attribute. When
+The `ContentManager` for a given [`Collection`] is controlled by the `ContentManager` attribute. When
 the class is instantiated the `ContentManager` is also instantiated with any `content_manager_extras` being passed
 as arguments. To access the `ContentManager` of a given `Collection` use the `content_manager` attribute.
 
@@ -85,3 +85,5 @@ content: str = None  # Updated content
 ```
 
 [file-content-manager]: https://github.com/render-engine/render-engine/blob/main/src/render_engine/content_managers/file_content_manager.py
+
+[`collection`]: collection.md

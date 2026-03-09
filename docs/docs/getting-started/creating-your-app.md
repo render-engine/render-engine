@@ -24,8 +24,12 @@ python -m render_engine init
 `init` has a few options that you can use to customize your site
 
 You can view the options using the `--help` flag.
-![render-engine init --help](../assets/render-engine-init-help.png)
+![render-engine init --help]
 
-Visit the [CLI - init](../cli.md) page for more information.
+Visit the [CLI - init] page for more information.
 
-### Continue to [Simple Site Layout](layout.md)
+### Continue to [Simple Site Layout]
+
+[cli - init]: ../cli.md
+[render-engine init --help]: ../assets/render-engine-init-help.png
+[simple site layout]: layout.md

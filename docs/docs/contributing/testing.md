@@ -36,7 +36,7 @@ These tools can be called via `just`. If you wanted to run them without `just` y
 
 ### Type Checking
 
-See our section on [typechecking](/contributing/typechecking/)
+See our section on [typechecking]
 
 ### Linting and Formatting
 
@@ -67,3 +67,5 @@ uvx ruff check . --fix
 uvx ruff format .
 uvx ruff check .
 ```
+
+[typechecking]: /contributing/typechecking/

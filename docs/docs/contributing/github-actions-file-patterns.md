@@ -243,6 +243,10 @@ If your workflow runs more often than expected:
 
 ## Additional Resources
 
-- [GitHub Actions: Workflow syntax for paths](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore)
-- [GitHub Actions: Filter pattern cheat sheet](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet)
-- [GitHub Actions Labeler](https://github.com/actions/labeler) - For automatic PR labeling based on file patterns
+- [GitHub Actions: Workflow syntax for paths]
+- [GitHub Actions: Filter pattern cheat sheet]
+- [GitHub Actions Labeler] - For automatic PR labeling based on file patterns
+
+[github actions labeler]: https://github.com/actions/labeler
+[github actions: filter pattern cheat sheet]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+[github actions: workflow syntax for paths]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore

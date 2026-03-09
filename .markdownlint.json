@@ -4,5 +4,10 @@
     "tables": false,
     "code_blocks": false
   },
-  "MD041": false
+  "MD041": false,
+  "MD054": {
+    "inline": false,
+    "url_inline": false,
+    "collapsed": false
+  }
 }

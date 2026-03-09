@@ -49,7 +49,7 @@ Available recipes:
 If you're using [Visual Studio Code][vscode] you can also create a virtual environment from the command
 pallet. This will also enable the installation of the dependencies.
 
-![Creating an Environment using VS Code](<../assets/create environment vs code.gif>)
+![Creating an Environment using VS Code]
 
 ## Using Codespaces
 
@@ -57,7 +57,7 @@ You can create a new codespace to quickly get started with your project.
 
 You can create a codespace on main.
 
-![Create a Codespace](../assets/create-codespace.gif)
+![Create a Codespace]
 
 This will create a codespace in which you can make your changes. Don't worry they won't let you push your
 changes directly to the codebase but when you go to make that change it will let you create a fork and
@@ -77,12 +77,17 @@ Start with ensuring that the docker daemon is running.
 Open your fork of the project in VS Code and open the command pallet. Next, Enter "Dev Containers: ReOpen
 in Container" and select the option.
 
-This will create a new local environment with the same configuration as the [codespace](#using-codespaces).
+This will create a new local environment with the same configuration as the [codespace].
 
-![Launching a Dev Container](<../assets/launching a dev container.gif>)
+![Launching a Dev Container]
 
 [uv]: https://github.com/astral-sh/uv
 [uv-installation]: https://github.com/astral-sh/uv?tab=readme-ov-file#installation
 [just]: https://github.com/casey/just
 [just-installation]: https://github.com/casey/just?tab=readme-ov-file#installation
 [vscode]: https://code.visualstudio.com/
+
+[codespace]: #using-codespaces
+[create a codespace]: ../assets/create-codespace.gif
+[creating an environment using vs code]: ../assets/create%20environment%20vs%20code.gif
+[launching a dev container]: ../assets/launching%20a%20dev%20container.gif
