@@ -113,6 +113,6 @@ If you're starting from a blank PR be sure to include the following:
 [mkdocs]: https://www.mkdocs.org
 [material]: https://squidfunk.github.io/mkdocs-material/
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
-[todo-to-issues]: https://github.com/marketplace/actions/todo-to-issue
 [code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
 [docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider
+[todo-to-issue]: https://github.com/marketplace/actions/todo-to-issue
