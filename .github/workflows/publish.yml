@@ -21,11 +21,9 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: 3.14
-      - name: Install build dependencies
-        run: uv add build
 
       - name: Build distributions
-        run: uv run python -m build
+        run: uv build
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
