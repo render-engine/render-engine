@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -43,17 +43,37 @@ class SiteMapEntry:
 class SiteMap:
     """Site map"""
 
-    def __init__(self, route_list: dict, site_url: str):
+    def __init__(self, site_url: str = "", route_list: dict | None = None) -> None:
         """
         Create the site map based on the route_list
 
-        :param route_list: The route list to parse
         :param site_url: Used for rendering the HTML to have absolute URLs.
+        :param route_list: The route list to parse
         """
         self._route_map = dict()
         self._collections = dict()
+        self._site_url = site_url
+        if not route_list:
+            return
+        self.update(route_list)
+
+    @property
+    def site_url(self) -> str:
+        return self._site_url
+
+    @site_url.setter
+    def site_url(self, value: str) -> None:
+        self._site_url = value
+
+    def update(self, route_list: dict) -> None:
+        """
+        Update the site map with a new route list.
+
+        :param route_list: The route list to parse
+        """
         route: str
         entry: BaseObject
+        self._route_map = dict()
         for route, entry in route_list.items():
             if entry.skip_site_map:
                 continue
@@ -61,9 +81,8 @@ class SiteMap:
             self._route_map[sm_entry.slug] = sm_entry
             if sm_entry.entries:
                 self._collections[sm_entry.slug] = sm_entry
-        self.site_url = site_url
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[SiteMapEntry]:
         """Iterator for the site map object"""
         for entry in self._route_map.values():
             yield entry
