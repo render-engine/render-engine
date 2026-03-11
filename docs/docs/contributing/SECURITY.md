@@ -7,8 +7,8 @@ Please ensure you are using the most recent release available on [PyPI].
 
 | Version  | Supported |
 |----------|-----------|
-| Latest   | ✅         |
-| < Latest | ❌         |
+| Latest   | ✅        |
+| < Latest | ❌        |
 
 ## Reporting a Vulnerability
 
