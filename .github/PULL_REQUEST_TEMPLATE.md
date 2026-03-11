@@ -1,6 +1,8 @@
 <!--
 SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
+
+Not following this guideline will result in the immediate rejection of your PR.
 -->
 
 #### Type of Issue
