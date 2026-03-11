@@ -79,7 +79,7 @@ def site(tmp_path_factory):
 
 
 def test_site_map_to_html(site):
-    sm = SiteMap(site.route_list, "")
+    sm = SiteMap("", site.route_list)
     assert sm.html == (
         "<ul>\n"
         '\t<li><a href="/coll1-route">coll1</a></li>\n'
@@ -127,7 +127,7 @@ def test_site_map_to_html(site):
     ],
 )
 def test_site_map_search(site, value, params, expected):
-    sm = SiteMap(site.route_list, "")
+    sm = SiteMap("", site.route_list)
     if expected is not None:
         found = sm.find(value, **params)
         assert isinstance(found, SiteMapEntry)

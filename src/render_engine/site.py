@@ -76,7 +76,7 @@ class Site:
         self.subcollections: dict[str, list] = {"pages": []}
         self.theme_manager.engine.globals.update(self.site_vars)
         self.theme_manager.add_loader(0, FileSystemLoader(self._template_path))
-        self._site_map = None
+        self._site_map = SiteMap()
 
     @property
     def output_path(self) -> Path | str:
@@ -239,7 +239,7 @@ class Site:
     def template_path(self, template_path: str) -> None:
         self.theme_manager.add_loader(0, FileSystemLoader(template_path))
 
-    def render(self) -> None:
+    def render(self, site_url: str | None = None) -> None:
         """
         Render all pages and collections.
 
@@ -251,14 +251,23 @@ class Site:
 
         You can choose to call it manually in your file or
         use the CLI command [`render-engine build`][src.render_engine.cli.build]
+
+        :param site_url: Alternate URL for the site to use in the site map
         """
         rich.print(
             f"[green]Building {repr(self.site_vars.get('SITE_TITLE', 'your site'))} "
             f"with Render Engine version {re_version}"
         )
         with Progress() as progress:
-            task_site_map = progress.add_task("Generating site map", total=1)
-            self._site_map = SiteMap(self.route_list, self.site_vars.get("SITE_URL", ""))
+            site_url = site_url if site_url is not None else self.site_vars.get("SITE_URL", "")
+            task_site_map = progress.add_task(f"Updating site map. {site_url=}", total=1)
+
+            # self._site_map will be initialized with an empty route list and the site URL pointing
+            # to https://localhost:8000/ This task will update to the correct site URL and with the route list
+            # as it will be rendered.
+            self._site_map.site_url = site_url
+            self._site_map.update(self.route_list)
+
             if self.render_html_site_map:
 
                 @self.page
