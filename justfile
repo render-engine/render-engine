@@ -27,9 +27,17 @@ test-cov-report REPORT='xml':
 nox:
     uvx nox
 
-# Run markdown linter
+# Run markdown linter (requires bun or npm)
 lint-md DIRECTORY=".":
-    bunx markdownlint-cli2 {{ DIRECTORY }}
+    #!/usr/bin/env sh
+    if command -v bun > /dev/null 2>&1; then
+        bunx markdownlint-cli2 {{ DIRECTORY }}
+    elif command -v npm > /dev/null 2>&1; then
+        npx markdownlint-cli2 {{ DIRECTORY }}
+    else
+        echo "Error: neither bun nor npm found. Install one of them to run markdown linting." >&2
+        exit 1
+    fi
 
 # Run ruff linter without fixing
 lint DIRECTORY='.':
