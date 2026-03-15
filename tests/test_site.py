@@ -1,9 +1,12 @@
+import json
 from pathlib import Path
 
 import pluggy
 import pytest
+import toml
 from jinja2 import DictLoader, FileSystemLoader
 
+from render_engine import DataObject
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.plugins import SiteSpecs
@@ -334,3 +337,33 @@ def test_custom_template_path_assignment(site, tmp_path):
     site = Site()
     site.template_path = str(test_custom_template_path)
     assert site.theme_manager.engine.get_template("test_custom_template.html")
+
+
+@pytest.mark.parametrize(
+    "seri_out, seri_in, kwargs",
+    [
+        (json.dumps, json.loads, None),
+        (json.dumps, json.loads, {}),
+        (json.dumps, json.loads, {"indent": 2}),
+        (toml.dumps, toml.loads, None),
+        (None, json.loads, None),
+    ],
+)
+def test_site_with_data_object(tmp_path, seri_in, seri_out, kwargs):
+    """Tests that the data object renders properly"""
+    site = Site()
+    output_path: Path = Path(tmp_path)
+    site.output_path = output_path
+
+    source_data: dict = {"key": "value"}
+    output_filename = "data_object.json"
+
+    @site.data_object
+    class MyDataObject(DataObject):
+        data_object = source_data
+        path_name = output_filename
+        serializer = seri_out
+
+    site.render()
+    output_file = (output_path / output_filename).read_text()
+    assert seri_in(output_file) == source_data

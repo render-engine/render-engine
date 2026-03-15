@@ -30,6 +30,7 @@ nav:
       - Archive: archive.md
       - RSS Feed: feeds.md
     - Site Objects: site.md
+    - Data Objects: data_object.md
   - Extending Render Engine:
     - Plugins: plugins.md
     - Content Managers: content_manager.md

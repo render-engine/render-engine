@@ -1,4 +1,5 @@
 import copy
+import json
 import logging
 from collections import defaultdict
 from pathlib import Path
@@ -8,6 +9,7 @@ from jinja2 import FileSystemLoader, PrefixLoader
 from rich.progress import Progress
 
 from .collection import Collection
+from .data_object import DataObject
 from .engine import engine
 from .page import Page
 from .plugins import PluginManager, handle_plugin_registration
@@ -219,6 +221,51 @@ class Site:
         self.route_list[getattr(page, page._reference)] = page
         return page
 
+    def data_object(self, _data_object: type[DataObject]) -> DataObject:
+        """
+        Add the data object to the route list to be rendered later.
+
+        This is the primary way to add a data object to the site and can either be called
+        on an uninstantiated class or on the class definition as a decorator.
+
+        In most cases. You should use the decorator method.
+
+        ```python
+
+        from render_engine import Site, DataObject
+
+        site = Site()
+
+        data_object = {'key': 'value'}
+
+        @site.data_object  # works
+        class MyJson(DataObject):
+            data_object = data_object
+
+        class MyJson(DataObject):
+            data_object = data_object
+
+        site.page(MyJson) # also works
+        ```
+        """
+        # Since adding a function as a raw attribute on a class will make it a method we need to actually handle
+        # it with `staticmethod`. Rather than asking users to do that, we will extract whatever might be set as the
+        # serializer function and use the `__init__` for the `DataObject` to set it so that it is properly handled.
+        serializer = getattr(_data_object, "serializer", None) or json.dumps
+        data_object = _data_object(serializer)
+
+        data_object.plugin_manager = copy.deepcopy(self.plugin_manager)
+        if plugins := getattr(data_object, "plugins", []):
+            handle_plugin_registration(
+                data_object.plugin_manager, plugins, getattr(data_object, "plugin_settings", dict())
+            )
+
+        for plugin in getattr(data_object, "ignore_plugins", []):
+            data_object.plugin_manager.unregister_plugin(plugin)
+
+        self.route_list[data_object.path_name] = data_object
+        return data_object
+
     def load_themes(self) -> None:
         """
         function for registering the themes with the theme_manager.
@@ -328,6 +375,11 @@ class Site:
                             site=self,
                         )
                         progress.update(pre_build_collection_task, advance=1)
+                    case DataObject():
+                        progress.update(
+                            task_add_route,
+                            description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
+                        )
 
                 entry.render(*args)
                 if isinstance(entry, Collection):
