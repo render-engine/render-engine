@@ -11,8 +11,8 @@ class DataObject(BaseObject):
     """Class to store a data object"""
 
     data_object: Any = None  # The data object
-    serializer_args: dict = {}
     serializer: Callable
+    serializer_args: dict = {}
 
     routes: list[str | Path] = ["./"]
     path_name: str | Path = Path("data_object.json")
