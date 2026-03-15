@@ -6,6 +6,7 @@ import slugify
 
 from render_engine import Collection, Page
 from render_engine._base_object import BaseObject
+from render_engine.data_object import DataObject
 
 
 class SiteMapEntry:
@@ -18,7 +19,7 @@ class SiteMapEntry:
         self.path_name = entry.path_name
         route = str(route)
         match entry:
-            case Page():
+            case Page() | DataObject():
                 # For a base page the _route created if we use the route is invalid - just use the path_name
                 self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
                 self.entries = list()
