@@ -27,6 +27,10 @@ test-cov-report REPORT='xml':
 nox:
     uvx nox
 
+# Run markdown linter
+lint-md DIRECTORY=".":
+    bunx markdownlint-cli2 {{ DIRECTORY }}
+
 # Run ruff linter without fixing
 lint DIRECTORY='.':
     uvx ruff check {{ DIRECTORY }}
