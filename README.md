@@ -109,7 +109,7 @@ Thank you to them and all of those who continue to support this project!
 
 [pytest-badge]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg
 [pytest-action]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml
-[coverage-badge]: ./coverage-badge.svg
+[coverage-badge]: https://raw.githubusercontent.com/render-engine/render-engine/refs/heads/main/coverage-badge.svg
 [discord-badge]: https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple
 [discord-link]: https://discord.gg/2xMQ4j4d8m
 [docs]: https://render-engine.readthedocs.io/en/latest/
