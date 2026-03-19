@@ -60,6 +60,14 @@ To run the lint and format together:
 just ruff
 ```
 
+#### Using just for linting Markdown
+
+```bash
+just lint-md
+```
+
+**NOTE** running the markdown lint requires [bun].
+
 #### Using uvx for linting and formatting
 
 ```bash
@@ -69,3 +77,4 @@ uvx ruff check .
 ```
 
 [typechecking]: /contributing/typechecking/
+[bun]: https://bun.com/docs
