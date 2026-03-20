@@ -30,6 +30,6 @@ Visit the [CLI - init] page for more information.
 
 ### Continue to [Simple Site Layout]
 
-[cli - init]: ../cli.md
+[cli - init]: ../cli/docs/cli.md
 [render-engine init --help]: ../assets/render-engine-init-help.png
 [simple site layout]: layout.md

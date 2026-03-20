@@ -38,6 +38,5 @@ render-engine build app:app
 
 Your site will be generated in the `output` folder.
 
-[cli-build]: ../cli.md#building-your-site-with-render-engine-build
-
+[cli-build]: ../cli/docs/cli.md#building-your-site-with-render-engine-build
 [layout]: layout.md
