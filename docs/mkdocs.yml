@@ -35,7 +35,7 @@ nav:
     - Plugins: plugins.md
     - Content Managers: content_manager.md
   - Parsers: parsers.md
-  - CLI: cli.md
+  - CLI: cli/docs/cli.md
   - Templates and Themes:
     - Templates: templates.md
     - ThemeManager: theme_management.md
@@ -62,3 +62,10 @@ plugins:
           show_source: false
           show_root_full_path: false
           show_category_heading: true
+- multirepo:
+    # (optional) tells multirepo to cleanup the temporary directory after site is built.
+    cleanup: true
+    nav_repos:
+      - name: CLI
+        import_url: https://github.com/render-engine/render-engine-cli?branch=main
+        imports: [/docs/cli.md]
