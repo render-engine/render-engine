@@ -38,7 +38,7 @@ dev = [
 docs = [
   "mkdocs",
   "mkdocs-material",
-  "mkdocs-multirepo-plugin",
+  "mkdocs-multirepo-plugin==0.8.3",
   "mkdocstrings[python]",
   "pymdown-extensions",
 ]

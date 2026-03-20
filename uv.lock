@@ -1108,7 +1108,7 @@ dev = [
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
-    { name = "mkdocs-multirepo-plugin" },
+    { name = "mkdocs-multirepo-plugin", specifier = "==0.8.3" },
     { name = "mkdocstrings", extras = ["python"] },
     { name = "pymdown-extensions" },
 ]
