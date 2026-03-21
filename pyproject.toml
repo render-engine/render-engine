@@ -13,8 +13,8 @@ dependencies = [
   "more-itertools",
   "pluggy",
   "python-dateutil",
+  "python-frontmatter==1.1.0",
   "python-slugify",
-  "render-engine-parser",
   "render-engine-markdown",
   "rich",
 ]
@@ -28,7 +28,7 @@ dev = [
   "ephemeral-port-reserve",
   "deptry>=0.24.0",
   "httpx",
-  "ty",
+  "ty==0.0.14", # TODO: Update typing with new versions in 0.0.24
   "pre-commit",
   "pytest",
   "pytest-cov",

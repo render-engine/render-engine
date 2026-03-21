@@ -9,7 +9,6 @@ from typing import Any, cast
 
 import dateutil.parser as dateparse
 from more_itertools import batched
-from render_engine_parser import BasePageParser
 from slugify import slugify
 
 from ._base_object import BaseObject
@@ -17,6 +16,7 @@ from .archive import Archive
 from .content_managers import ContentManager, FileContentManager
 from .feeds import RSSFeed
 from .page import Page
+from .parsers import BasePageParser
 from .plugins import PluginManager
 
 

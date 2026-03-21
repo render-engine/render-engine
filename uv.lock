@@ -1044,9 +1044,9 @@ dependencies = [
     { name = "more-itertools" },
     { name = "pluggy" },
     { name = "python-dateutil" },
+    { name = "python-frontmatter" },
     { name = "python-slugify" },
     { name = "render-engine-markdown" },
-    { name = "render-engine-parser" },
     { name = "rich" },
 ]
 
@@ -1084,10 +1084,10 @@ requires-dist = [
     { name = "more-itertools" },
     { name = "pluggy" },
     { name = "python-dateutil" },
+    { name = "python-frontmatter", specifier = "==1.1.0" },
     { name = "python-slugify" },
     { name = "render-engine-cli", marker = "extra == 'cli'" },
     { name = "render-engine-markdown" },
-    { name = "render-engine-parser" },
     { name = "render-engine-sitemap", marker = "extra == 'extras'" },
     { name = "rich" },
 ]
@@ -1103,7 +1103,7 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-mock" },
     { name = "toml" },
-    { name = "ty" },
+    { name = "ty", specifier = "==0.0.14" },
 ]
 docs = [
     { name = "mkdocs" },

@@ -2,9 +2,8 @@
 Feed Objects for Generating RSS Feeds
 """
 
-from render_engine_parser import BasePageParser
-
 from .page import BasePage
+from .parsers import BasePageParser
 
 
 class RSSFeed(BasePage):
