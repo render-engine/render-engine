@@ -77,9 +77,17 @@ all supported versions.
 
 ## TODOs
 
-Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO Prefix`.
-We use [todo-to-issue] as a github action that will create issues for any TODOs that are created.
-This will modify your code with the issue number and link to the TODO in the comments.
+Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO` prefix.
+We use [todo-to-issue] as a GitHub Action to create issues from TODOs.
+
+When a PR containing `# TODO` comments is opened, a bot will comment suggesting a maintainer
+add the **todo-to-issue** label. Once a maintainer adds the label, the action will:
+
+1. Create GitHub issues for each TODO
+2. Update the TODO comments in your code with the issue number and link
+3. Commit the changes back to your PR branch
+
+The label is removed automatically afterward and can be re-applied if new TODOs are added.
 
 ## Contributing to Documentation
 
