@@ -1,1 +1,3 @@
-from .base_parsers import BasePageParser as BasePageParser
+from .base_parsers import BasePageParser
+
+__all__ = ["BasePageParser"]
