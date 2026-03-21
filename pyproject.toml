@@ -28,7 +28,8 @@ dev = [
   "ephemeral-port-reserve",
   "deptry>=0.24.0",
   "httpx",
-  "ty==0.0.14", # TODO: Update typing with new versions in 0.0.24
+  # TODO: Update typing with new versions in 0.0.24
+  "ty==0.0.14",
   "pre-commit",
   "pytest",
   "pytest-cov",
