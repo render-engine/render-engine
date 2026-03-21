@@ -1,31 +1,89 @@
-name: "Run TODO to Issue"
+name: "TODO to Issue"
+
 on:
   pull_request:
+    types: [opened, synchronize, labeled]
     branches: [main]
+
 jobs:
-  build:
-    runs-on: "ubuntu-latest"
+  detect-todos:
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check diff for TODOs
+        id: check
+        run: |
+          if git diff origin/main...HEAD | grep -q '^\+.*# *TODO'; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: steps.check.outputs.found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const marker = '<!-- todo-to-issue-bot -->';
+            if (comments.some(c => c.body.includes(marker))) return;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `${marker}\nThis PR contains \`TODO\` comments. A maintainer can add the **todo-to-issue** label to automatically create GitHub issues and link them in the code.`
+            });
+
+  create-issues:
+    if: github.event.action == 'labeled' && github.event.label.name == 'todo-to-issue'
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
       pull-requests: write
     steps:
-      - uses: "actions/checkout@v6"
-      - name: "TODO to Issue"
-        uses: "alstr/todo-to-issue-action@v5"
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: TODO to Issue
+        uses: alstr/todo-to-issue-action@v5
         with:
           INSERT_ISSUE_URLS: "true"
           CLOSES_ISSUE: "true"
-      - name: Set Git user
+
+      - name: Commit and push issue URLs
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Commit and Push Changes
-        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if [[ `git status --porcelain` ]]; then
             git commit -m "Automatically added GitHub issue links to TODOs"
-            git push origin main
+            git push origin HEAD:${{ github.head_ref }}
           else
             echo "No changes to commit"
           fi
+
+      - name: Remove label
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              name: 'todo-to-issue'
+            });
