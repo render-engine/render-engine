@@ -262,7 +262,6 @@ class Page(BasePage):
         Returns:
             Any: The parsed content of the page.
         """
-        # TODO: Modify this to use the warlus. Or not.
         content = getattr(self, "content", None)
         if content:
             return self.Parser.parse(content, extras=getattr(self, "parser_extras", {}))
