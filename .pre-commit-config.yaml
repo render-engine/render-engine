@@ -26,6 +26,10 @@ repos:
   rev: v0.6.0
   hooks:
     - id: markdownlint-cli2
+- repo: https://github.com/kjaymiller/pin-versions
+  rev: 2026.3.6
+  hooks:
+    - id: pin-versions
 - repo: local
   hooks:
     - id: deptry
