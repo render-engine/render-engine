@@ -9,40 +9,40 @@ description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "jinja2",
-  "more-itertools",
-  "pluggy",
-  "python-dateutil",
+  "jinja2==3.1.6",
+  "more-itertools==10.8.0",
+  "pluggy==1.6.0",
+  "python-dateutil==2.9.0.post0",
   "python-frontmatter==1.1.0",
-  "python-slugify",
-  "render-engine-markdown",
-  "rich",
+  "python-slugify==8.0.4",
+  "render-engine-markdown==2023.12.1",
+  "rich==14.3.1",
 ]
 
 [project.optional-dependencies]
-cli = ["render-engine-cli"]
-extras = ["render-engine-sitemap"]
+cli = ["render-engine-cli==2025.11.1"]
+extras = ["render-engine-sitemap==2024.1.1a1"]
 
 [dependency-groups]
 dev = [
-  "ephemeral-port-reserve",
+  "ephemeral-port-reserve==1.1.4",
   "deptry>=0.24.0",
-  "httpx",
+  "httpx==0.28.1",
   # TODO: Update typing with new versions in 0.0.24
   # Issue URL: https://github.com/render-engine/render-engine/issues/1142
   "ty==0.0.14",
-  "pre-commit",
-  "pytest",
-  "pytest-cov",
-  "pytest-mock",
-  "toml",
+  "pre-commit==4.5.1",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pytest-mock==3.15.1",
+  "toml==0.10.2",
 ]
 docs = [
-  "mkdocs",
-  "mkdocs-material",
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.7.6",
   "mkdocs-multirepo-plugin==0.8.3",
-  "mkdocstrings[python]",
-  "pymdown-extensions",
+  "mkdocstrings[python]==1.0.3",
+  "pymdown-extensions==10.21",
 ]
 
 [tool.setuptools_scm]
