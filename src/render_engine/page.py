@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Any, cast
 
 from jinja2 import Environment, Template
-from render_engine_parser.base_parsers import BasePageParser
 
 from render_engine.themes import ThemeManager
 
 from ._base_object import BaseObject
+from .parsers import BasePageParser
 from .plugins import PluginManager
 
 logger = logging.getLogger("Page")
@@ -85,9 +85,11 @@ class BasePage(BaseObject):
         :param **kwargs: Data to pass into the template for rendering.
         :return: The rendered page
         """
+
         template_data = {"data": self._data, "content": self._content}
         if site := getattr(self, "site", None):
             template_data["site_map"] = site.site_map
+
         if not self.no_prerender and isinstance(self._content, str) and re.search(r"{{.*?site_map.*?}}", self._content):
             # If the content looks like a template, try to render it.
             try:
@@ -237,14 +239,14 @@ class Page(BasePage):
 
         # Parse Content from the Content Path or the Content
         if content_path := (content_path or getattr(self, "content_path", None)):
-            self.metadata, self.content = self.Parser.parse_content_path(str(content_path))
+            self.metadata, self.content = self.Parser.parse_content_path(content_path)
 
         elif content := (content or getattr(self, "content", None)):
             self.metadata, self.content = self.Parser.parse_content(content)
 
         else:
             self.metadata = {}
-            self.content = None
+            self.content = ""
 
         # Set the attributes
         for key, val in self.metadata.items():
@@ -260,4 +262,7 @@ class Page(BasePage):
         Returns:
             Any: The parsed content of the page.
         """
-        return self.Parser.parse(self.content, extras=getattr(self, "parser_extras", {}))
+        content = getattr(self, "content", None)
+        if content:
+            return self.Parser.parse(content, extras=getattr(self, "parser_extras", {}))
+        return content
