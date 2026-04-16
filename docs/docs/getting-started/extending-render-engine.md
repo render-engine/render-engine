@@ -4,8 +4,6 @@ description: "Extending Render Engine with custom plugins and themes."
 date: April 16, 2026
 tags: ["customization", "themes", "plugins", "render-engine"]
 ---
-# Extending Render Engine
-
 While Render Engine works great out of the box, there are times when you might
 want to extend it beyond the basics. To do this, you can use themes, plugins,
 and content managers.
@@ -26,6 +24,7 @@ more.
 
 For more information on writing and using plugins, check out the
 [Plugins page].
+
 ## Content Managers
 
 Render Engine uses Content Managers to handle loading the content. Render
