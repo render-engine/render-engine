@@ -11,6 +11,7 @@ nav:
     - getting-started/layout.md
     - getting-started/creating-a-page.md
     - getting-started/creating-a-collection.md
+    - getting-started/extending-render-engine.md
     - getting-started/building-your-site.md
   - Contributing:
     - contributing/CODE_OF_CONDUCT.md
