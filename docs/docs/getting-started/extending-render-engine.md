@@ -10,7 +10,7 @@ and content managers.
 
 ## Themes
 
-Themes s are a collection of Jinja templates and static files used to render
+Themes are a collection of Jinja templates and static files used to render
 your site.
 
 For more information on themes, check out the [ThemeManager page].
