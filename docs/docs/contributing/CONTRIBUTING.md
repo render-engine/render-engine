@@ -101,8 +101,13 @@ Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 
 ### Using Just (recommended)
 
+You can start the documentation server on the default port (8000):
 ```sh
-just docs
+just docs 
+```
+Or, you can specify a custom port:
+```sh
+just docs 8080
 ```
 
 ## Formatting your PR
