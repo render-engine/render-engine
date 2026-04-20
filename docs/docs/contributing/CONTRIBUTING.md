@@ -99,8 +99,10 @@ Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdoc
 
 Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 
+### Using Just (recommended)
+
 ```sh
-python -m mkdocs serve -f docs/mkdocs.yml
+just docs
 ```
 
 ## Formatting your PR
