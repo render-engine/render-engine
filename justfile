@@ -27,9 +27,9 @@ test-cov-report REPORT='xml':
 nox:
     uvx nox
 
-docs:
-    @echo "Starting documentation server..."
-    mkdocs serve -f docs/mkdocs.yml -a 0.0.0.0:8000
+docs port="8000":
+    @echo "Starting documentation server on port {{port}}..."
+    mkdocs serve -f docs/mkdocs.yml -a 0.0.0.0:{{port}}
 
 # Run markdown linter (requires bun or npm)
 lint-md DIRECTORY=".":
