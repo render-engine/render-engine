@@ -112,7 +112,7 @@ just docs 8080
 > **NOTE** Please make sure you have installed the `docs` dependency group before running this command.
 
 ```
-uc sync --group docs
+uv sync --group docs
 ```
 
 ## Formatting your PR
