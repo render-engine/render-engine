@@ -99,8 +99,24 @@ Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdoc
 
 Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 
+### Using Just (recommended)
+
+You can start the documentation server on the default port (8000):
+
 ```sh
-python -m mkdocs serve -f docs/mkdocs.yml
+just docs 
+```
+
+Or, you can specify a custom port:
+
+```sh
+just docs 8080
+```
+
+> **NOTE** Please make sure you have installed the `docs` dependency group before running this command.
+
+```sh
+uv sync --group docs
 ```
 
 ## Formatting your PR
