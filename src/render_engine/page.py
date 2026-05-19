@@ -266,3 +266,26 @@ class Page(BasePage):
         if content:
             return self.Parser.parse(content, extras=getattr(self, "parser_extras", {}))
         return content
+
+
+class RedirectPage(Page):
+    redirect_url: str
+    redirect_timeout: int = 0
+    template = "redirect.html"
+    title = "Redirecting..."
+
+    def __init__(self, *args, **kwargs):
+        # Ensure we have a URL to redirect to.
+        if not getattr(self, "redirect_url", None):
+            raise RuntimeError("redirect_url must be set")
+
+        super().__init__(*args, **kwargs)
+
+        # If we don't have any content defined, use a default.
+        if not self.content:
+            self.content = f'Redirecting to "{self.redirect_url}" in {self.redirect_timeout} seconds.'
+
+        # Make sure the template will have access to the timeout and URL
+        self.template_vars = getattr(self, "template_vars", {})
+        self.template_vars["redirect_url"] = self.redirect_url
+        self.template_vars["redirect_timeout"] = self.redirect_timeout
