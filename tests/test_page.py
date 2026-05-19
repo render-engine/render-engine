@@ -185,6 +185,7 @@ class TestRedirectPage:
 
         class TestPage(RedirectPage):
             redirect_url = "https://example.com"
+            redirect_timeout = 0
 
         test_page = TestPage(content=content, content_path=content_path)
         assert expected == test_page.content

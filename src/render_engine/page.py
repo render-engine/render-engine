@@ -270,7 +270,7 @@ class Page(BasePage):
 
 class RedirectPage(Page):
     redirect_url: str
-    redirect_timeout: int = 5
+    redirect_timeout: int = 0
     template = "redirect.html"
     title = "Redirecting..."
 
