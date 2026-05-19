@@ -4,7 +4,7 @@ import pathlib
 import jinja2
 import pytest
 
-from render_engine import Page
+from render_engine import Page, RedirectPage
 
 
 @pytest.fixture
@@ -165,3 +165,34 @@ def test_no_prerender():
         no_prerender = True
 
     assert CustomPage()._render_from_template(template=CustomPage.template) == "1234\n{{ site_map.find('test') }}"
+
+
+class TestRedirectPage:
+    @pytest.mark.parametrize(
+        "content, content_path, expected",
+        [
+            ("This is a test", False, "This is a test"),
+            ("This is a test", True, "This is a test"),
+            ("", False, 'Redirecting to "https://example.com" in 0 seconds.'),
+        ],
+    )
+    def test_renders_properly(self, tmp_path: pathlib.Path, content: str, content_path: bool, expected: str):
+        if content_path:
+            d = tmp_path / "test_page.md"
+            d.write_text(content)
+            content = None
+            content_path = d
+
+        class TestPage(RedirectPage):
+            redirect_url = "https://example.com"
+
+        test_page = TestPage(content=content, content_path=content_path)
+        assert expected == test_page.content
+
+    def test_invalid_initialization(self):
+        with pytest.raises(RuntimeError):
+
+            class TestPage(RedirectPage):
+                pass
+
+            TestPage()
