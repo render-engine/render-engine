@@ -9,8 +9,7 @@ def test(session: nox.Session) -> None:
     session.run_install(
         "uv",
         "sync",
-        "--extra",
-        "dev",
+        "--dev",
         "--quiet",
         f"--python={session.virtualenv.location}",
         env={"UV_PROJECT_ENVIRONMENT": session.virtualenv.location},
