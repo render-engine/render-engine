@@ -1,5 +1,6 @@
-> ![NOTE]:
+> [!NOTE]
 > As of 2026.6.2 you will need to install render-engine-cli separately
+
 <!-- markdownlint-disable -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
