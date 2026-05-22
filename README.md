@@ -1,5 +1,5 @@
 > [!NOTE]
-> As of 2026.6.2 you will need to install render-engine-cli separately
+> As of 2026.6.1 you will need to install render-engine-cli separately
 
 <!-- markdownlint-disable -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
