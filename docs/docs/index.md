@@ -27,10 +27,10 @@ Render Engine is available in PyPI and can be installed using pip:
 pip install render-engine
 ```
 
-To use the cli, install the cli extras
+To use the cli, install the `render-engine-cli`
 
 ```bash
-pip install render-engine[cli]
+pip install render-engine-cli
 ```
 
 ## Getting Started
