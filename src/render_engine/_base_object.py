@@ -28,6 +28,10 @@ class BaseObject:
     plugin_settings: dict = {"plugins": defaultdict(dict)}
     skip_site_map: bool = False
     metadata: dict = dict()
+    _path_name: str | None = None
+
+    # Using bool or None to have an unset state
+    slug_only_url: bool | None = None
 
     @property
     def _title(self) -> str:
@@ -88,7 +92,7 @@ class BaseObject:
             str: The URL path for the object.
 
         """
-        return f"{self._slug}{self.extension}"
+        return self._path_name or f"{self._slug}{self.extension}"
 
     def url_for(self):
         """
