@@ -295,9 +295,10 @@ class Site:
         """
         Handle automatic generation of redirect pages for all routes of an entry to "/{slug}/"
 
-        NOTE: This will mutate the entry to set the correct slug only URL and path name.
+        NOTE: This will mutate the entry to set the correct slug only URL and path name if
+              a slug only URL is requested.
 
-        :param _entry: The entry to add the slug URL for
+        :param entry: The entry to add the slug URL for
         """
         if not entry.slug_only_url:
             return
