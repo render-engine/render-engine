@@ -26,6 +26,7 @@ repos:
   rev: v0.6.0
   hooks:
     - id: markdownlint-cli2
+      args: [ "*.md", "docs/**/*.md" ]
 - repo: https://github.com/kjaymiller/pin-versions
   rev: 2026.3.6
   hooks:
