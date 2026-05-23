@@ -302,11 +302,12 @@ class Site:
         """
         if not entry.slug_only_url:
             return
-        redirector = RedirectPage(redirect_url=f"/{entry._slug}", path_name=entry.path_name)
+        slug = getattr(entry, "slug", entry._slug)
+        redirector = RedirectPage(redirect_url=f"/{slug}", path_name=entry.path_name)
         redirector.routes = entry.routes
         redirector.site = self
         redirector.render(self.theme_manager)
-        entry.routes = [f"./{entry._slug}"]
+        entry.routes = [f"./{slug}"]
         try:
             # If someone set the path_name and overrode the property we need to do this.
             entry.path_name = "index.html"  # type: ignore
