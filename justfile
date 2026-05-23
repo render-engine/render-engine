@@ -32,7 +32,7 @@ docs port="8000":
     mkdocs serve -f docs/mkdocs.yml -a 0.0.0.0:{{port}}
 
 # Run markdown linter (requires bun or npm)
-lint-md DIRECTORY=".":
+lint-md *DIRECTORY="*.md docs/**/*.md":  # Note that we don't want the ** glob from root because that will include site packages
     #!/usr/bin/env sh
     if command -v bun > /dev/null 2>&1; then
         bunx markdownlint-cli2 {{ DIRECTORY }}
