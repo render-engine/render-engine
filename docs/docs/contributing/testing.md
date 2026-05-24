@@ -76,5 +76,5 @@ uvx ruff format .
 uvx ruff check .
 ```
 
-[typechecking]: /contributing/typechecking/
+[typechecking]: typechecking.md
 [bun]: https://bun.com/docs

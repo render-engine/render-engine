@@ -9,12 +9,13 @@ The site stores your pages and collections to be rendered.
 
 **Attributes:**
 
-| Name            | Type   | Description                                                   |
-| --------------- | ------ | ------------------------------------------------------------- |
-| `output_path`   | `str`  | path to write rendered content                                |
-| `static_paths`  | `set`  | paths for static folders copied to output (recursive)         |
-| `site_vars`     | `dict` | dictionary that will be passed into page template             |
-| `site_settings` |        | settings passed to pages and collections (not templates)      |
+| Name              | Type   | Description                                              |
+|-------------------|--------|----------------------------------------------------------|
+| `output_path`     | `str`  | path to write rendered content                           |
+| `static_paths`    | `set`  | paths for static folders copied to output (recursive)    |
+| `site_vars`       | `dict` | dictionary that will be passed into page template        |
+| `site_settings`   |        | settings passed to pages and collections (not templates) |
+| `slug_only_urls`  | `bool` | default value for pages for [`slug_only_url`]            |
 
 ## Functions
 
@@ -103,3 +104,4 @@ use the CLI command [`render-engine build`]
 [`render-engine build`]: cli.md?id=build
 [`site.collection`]: site.md?id=collection
 [`site.page`]: site.md?id=page
+[`slug_only_url`]: page.md#slug-only-urls

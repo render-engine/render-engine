@@ -39,8 +39,8 @@ For more information on writing and using plugins, check out the
 
 ## Continue to [Building your Site]
 
-[ThemeManager Page]:../theme_management/
-[Plugins Page]:../plugins/
-[Content Managers Page]:../content_manager/
-[The Render Engine Awesome List]:https://github.com/render-engine/render-engine-awesome-list
+[ThemeManager Page]: ../theme_management.md
+[Plugins Page]: ../plugins.md
+[Content Managers Page]: ../content_manager.md
+[The Render Engine Awesome List]: https://github.com/render-engine/render-engine-awesome-list
 [building your site]: building-your-site.md

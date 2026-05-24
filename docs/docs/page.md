@@ -26,13 +26,13 @@ This is not intended to be used directly.
 
 **Attributes:**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `slug` | | The slug of the page. Defaults to the `title` slugified. |
-| `content` | | The content to be rendered by the page |
-| `parser` | | The Parser used to parse the page's content. Defaults to `BasePageParser`. |
-| `reference` | | The attribute to use as the reference for the page in the site's route list. Defaults to `slug`. |
-| `skip_site_map` | `False` | When set to `True` the `Page` will not be included in the generated `SiteMap` |
+| Name            | Type    | Description                                                                                      |
+|-----------------|---------|--------------------------------------------------------------------------------------------------|
+| `slug`          |         | The slug of the page. Defaults to the `title` slugified.                                         |
+| `content`       |         | The content to be rendered by the page                                                           |
+| `parser`        |         | The Parser used to parse the page's content. Defaults to `BasePageParser`.                       |
+| `reference`     |         | The attribute to use as the reference for the page in the site's route list. Defaults to `slug`. |
+| `skip_site_map` | `False` | When set to `True` the `Page` will not be included in the generated `SiteMap`                    |
 
 ### Functions
 
@@ -67,20 +67,40 @@ When you create a page, you specify variables passed into rendering template.
 
 **Attributes:**
 
-<!-- markdownlint-disable MD013 -->
-| Name | Type | Description |
-| --- | --- | --- |
-| `content_path` | `str \| None` | The path to the file that will be used to generate the Page's `content`. |
-| `extension` | `str \| None` | The suffix to use for the page. Defaults to `.html`. |
-| `engine` | `str \| None` | If present, the engine to use for rendering the page. **This is normally not set and the `Site` 's engine will be used.** |
-| `reference` | `str \| None` | Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`. |
-| `routes` | `str \| None` | The routes to use for the page. Defaults to `["./"]`. |
-| `template` | `str \| None` | The template used to render the page. If not provided, the `Site`'s `content`will be used. |
-| `Parser` | `type[BasePageParser]` | The parser to generate the page's `raw_content`. Defaults to `BasePageParser`. |
-| `title` | `str` | The title of the page. Defaults to the class name. |
-| `skip_site_map` | `bool` | When set to `True` the `Page` will not be included in the generated `SiteMap`. Defaults to `False`. |
-| `no_prerender` | `bool` | When set to `True` the `Page`'s `content` will not be pre-rendered as a `Template` even if `{{ site_map }}` is present. Defaults to `False`. |
-<!-- markdownlint-enable MD013 -->
+| Name             | Type                   | Description                                                                                                                                  |
+|------------------|:-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `content_path`   | `str \| None`          | The path to the file that will be used to generate the Page's `content`.                                                                     |
+| `extension`      | `str \| None`          | The suffix to use for the page. Defaults to `.html`.                                                                                         |
+| `engine`         | `str \| None`          | If present, the engine to use for rendering the page. **This is normally not set and the `Site` 's engine will be used.**                    |
+| `reference`      | `str \| None`          | Used to determine how to reference the page in the `Site`'s route_list. Defaults to `slug`.                                                  |
+| `routes`         | `str \| None`          | The routes to use for the page. Defaults to `["./"]`.                                                                                        |
+| `template`       | `str \| None`          | The template used to render the page. If not provided, the `Site`'s `content`will be used.                                                   |
+| `Parser`         | `type[BasePageParser]` | The parser to generate the page's `raw_content`. Defaults to `BasePageParser`.                                                               |
+| `title`          | `str`                  | The title of the page. Defaults to the class name.                                                                                           |
+| `skip_site_map`  | `bool`                 | When set to `True` the `Page` will not be included in the generated `SiteMap`. Defaults to `False`.                                          |
+| `no_prerender`   | `bool`                 | When set to `True` the `Page`'s `content` will not be pre-rendered as a `Template` even if `{{ site_map }}` is present. Defaults to `False`. |
+| `slug_only_url`  | `bool \| None`         | See [Slug only URLS] for more details.                                                                                                       |
+
+### Slug only URLs
+
+When the `slug_only_url` attribute is set the page will render at `/{page.slug}` For example:
+
+```python
+class CustomPage(Page):
+    content = 'My content'
+    slug_only_url = True
+```
+
+The above `CustomPage` will render at `/custompage/index.html` and a [`RedirectPage`]
+will render at `custompage.html` that will point the browser to the actual page.
+
+Possible values for `slug_only_url`:
+
+| Value            | Meaning                                     |
+| ---------------- | ------------------------------------------- |
+| `True`           | Create a slug only URL with a redirect page |
+| `False`          | Do not create a slug only URL.              |
+| `None` (default) | Inherit behavior from the `Site` object.    |
 
 ## About Page Attributes
 
@@ -133,6 +153,28 @@ will render to the URL for `my_page` in the `content` and then in the generated 
 
 For more details on using the `SiteMap` please check the [SiteMap documentation][site_map].
 
+## RedirectPage
+
+The `RedirectPage` is a special page type. It will render as a normal page, however it includes additional
+`meta` tags that redirect the browser to a different URL. The `RedirectPage` has 2 special attributes:
+
+<!-- markdownlint-disable MD013 -->
+| Name               | Type  | Description                                      |
+|--------------------|-------|--------------------------------------------------|
+| `redirect_url`     | `str` | The URL to redirect the browser to.              |                                                                                                         |
+| `redirect_timeout` | `int` | How long to wait before reditecting the browser. |
+<!-- markdownlint-enable MD013 -->
+
+It should be noted that in order to achieve this, a `redirect.html` template is used. In order to maintain
+this functionality with your own template the following line should be included in the `<head>` block of
+your template:
+
+```html
+<meta http-equiv="Refresh" content="{{redirect_timeout}}; URL={{redirect_url}}" />
+```
+
 [parsers]: parsers.md
 [basepage]: page.md?id=basepage
 [site_map]: site_map.md
+[Slug only URLs]: #slug-only-urls
+[`RedirectPage`]: #redirectpage

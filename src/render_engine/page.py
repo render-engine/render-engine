@@ -274,10 +274,15 @@ class RedirectPage(Page):
     template = "redirect.html"
     title = "Redirecting..."
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, redirect_url: str = "", **kwargs):
         # Ensure we have a URL to redirect to.
-        if not getattr(self, "redirect_url", None):
+        if redirect_url:
+            self.redirect_url = redirect_url
+        elif not getattr(self, "redirect_url", None):
             raise RuntimeError("redirect_url must be set")
+
+        if path_name := kwargs.pop("path_name", None):
+            self._path_name = path_name
 
         super().__init__(*args, **kwargs)
 

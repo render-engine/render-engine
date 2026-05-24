@@ -11,7 +11,7 @@ from rich.progress import Progress
 from .collection import Collection
 from .data_object import DataObject
 from .engine import engine
-from .page import Page
+from .page import Page, RedirectPage
 from .plugins import PluginManager, handle_plugin_registration
 from .site_map import SiteMap
 from .themes import Theme, ThemeManager
@@ -63,6 +63,7 @@ class Site:
     plugin_settings: dict = {"plugins": defaultdict(dict)}
     render_html_site_map: bool = False
     render_xml_site_map: bool = False
+    slug_only_urls: bool = False
 
     def __init__(
         self,
@@ -219,6 +220,10 @@ class Site:
             page.plugin_manager.unregister_plugin(plugin)
 
         self.route_list[getattr(page, page._reference)] = page
+
+        # Default, unset state is None so check for that before assigning the value from Site
+        if page.slug_only_url is None:
+            page.slug_only_url = self.slug_only_urls
         return page
 
     def data_object(self, _data_object: type[DataObject]) -> DataObject:
@@ -286,6 +291,30 @@ class Site:
     def template_path(self, template_path: str) -> None:
         self.theme_manager.add_loader(0, FileSystemLoader(template_path))
 
+    def handle_slug_only_url(self, entry: Page | Collection):
+        """
+        Handle automatic generation of redirect pages for all routes of an entry to "/{slug}/"
+
+        NOTE: This will mutate the entry to set the correct slug only URL and path name if
+              a slug only URL is requested.
+
+        :param entry: The entry to add the slug URL for
+        """
+        if not entry.slug_only_url:
+            return
+        slug = getattr(entry, "slug", entry._slug)
+        redirector = RedirectPage(redirect_url=f"/{slug}", path_name=entry.path_name)
+        redirector.routes = entry.routes
+        redirector.site = self
+        redirector.render(self.theme_manager)
+        entry.routes = [f"./{slug}"]
+        try:
+            # If someone set the path_name and overrode the property we need to do this.
+            entry.path_name = "index.html"  # type: ignore
+        except AttributeError:
+            # If the path_name is still a property it will raise an AttributeError
+            entry._path_name = "index.html"
+
     def render(self, site_url: str | None = None) -> None:
         """
         Render all pages and collections.
@@ -351,6 +380,7 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
+                print(f"Hanlding {entry._slug = }")
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
@@ -361,6 +391,7 @@ class Site:
                             description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
                         )
                         args = [self.theme_manager]
+                        self.handle_slug_only_url(entry)
                     case Collection():
                         progress.update(
                             task_add_route,

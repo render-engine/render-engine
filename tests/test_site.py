@@ -367,3 +367,45 @@ def test_site_with_data_object(tmp_path, seri_in, seri_out, kwargs):
     site.render()
     output_file = (output_path / output_filename).read_text()
     assert seri_in(output_file) == source_data
+
+
+def test_site_slug_only_url_page(site, tmp_path: Path):
+    """Tests site outputs to output_path"""
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+        slug_only_url = True
+
+    site.render()
+
+    assert (site.output_path / "custompage.html").exists()
+    assert (site.output_path / "custompage/index.html").exists()
+
+
+def test_site_slug_only_url_site(site, tmp_path: Path):
+    """Tests site outputs to output_path"""
+    site.slug_only_urls = True
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    assert (site.output_path / "custompage.html").exists()
+    assert (site.output_path / "custompage/index.html").exists()
+
+
+def test_site_slug_only_url_site_false(site, tmp_path: Path):
+    """Tests site outputs to output_path"""
+    site.slug_only_urls = False
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    assert (site.output_path / "custompage.html").exists()
+    assert not (site.output_path / "custompage/index.html").exists()
