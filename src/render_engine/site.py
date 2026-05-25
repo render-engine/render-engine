@@ -352,6 +352,7 @@ class Site:
                     path_name = "site_map.html"
                     content = self._site_map.html
                     template = "page.html"
+                    slug_only_url = False
 
             if self.render_xml_site_map:
 
@@ -359,6 +360,7 @@ class Site:
                 class SiteMapXml(Page):
                     path_name = "site_map.xml"
                     template = "sitemap.xml"
+                    slug_only_url = False
 
             progress.update(task_site_map, advance=1)
 
@@ -380,7 +382,6 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
-                print(f"Hanlding {entry._slug = }")
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
