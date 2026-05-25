@@ -21,7 +21,10 @@ class SiteMapEntry:
         match entry:
             case Page() | DataObject():
                 # For a base page the _route created if we use the route is invalid - just use the path_name
-                self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
+                if entry.slug_only_url:
+                    self._route = f"/{self.slug}"
+                else:
+                    self._route = f"/{route.lstrip('/')}/{self.path_name}" if from_collection else f"/{self.path_name}"
                 self.entries = list()
             case Collection():
                 self._route = f"/{str(entry.routes[0]).lstrip('/')}"

@@ -74,6 +74,7 @@ def site(tmp_path_factory):
             content_path = tmp_input_path / f"page{n}.md"
             template = template_file_name
             skip_site_map = n == 3
+            slug_only_url = n == 2
 
     yield site
 
@@ -98,7 +99,7 @@ def test_site_map_to_html(site):
         "\t</ul>\n"
         '\t<li><a href="/page0.html">Page 0</a></li>\n'
         '\t<li><a href="/page1.html">Page 1</a></li>\n'
-        '\t<li><a href="/page2.html">Page 2</a></li>\n'
+        '\t<li><a href="/page2">Page 2</a></li>\n'
         "</ul>\n"
     )
 
@@ -185,7 +186,7 @@ def test_site_map_to_xml(site):
 	<loc>http://localhost:8000/page1.html</loc>
 </url>
 <url>
-	<loc>http://localhost:8000/page2.html</loc>
+	<loc>http://localhost:8000/page2</loc>
 </url>
 </urlset>"""
     )
