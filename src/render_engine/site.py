@@ -382,7 +382,6 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
-                print(f"Hanlding {entry._slug = }")
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
