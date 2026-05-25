@@ -16,13 +16,13 @@ site rendering.
 
 ### Attributes
 
-| Name              | Type          | Description                                                               |
-|-------------------|---------------|---------------------------------------------------------------------------|
-| `data_object`     | `Any`         | The object to serialize.                                                  |
-| `serializer`      | 'Callable`    | The function to serialize with.                                           |
-| `serializer_args` | dict          | Optional `kwargs` to be passed to the `serializer` along with the object. |
-| `routes`          | list          | List of directories to output the serialized object to.                   |
-| `path_name`       | `str \| Path` | The filename to output the serialized data to.                            |
+| Name              | Type         | Description                                                               |
+|-------------------|--------------|---------------------------------------------------------------------------|
+| `data_object`     | `Any`        | The object to serialize.                                                  |
+| `serializer`      | `Callable`   | The function to serialize with.                                           |
+| `serializer_args` | `dict`       | Optional `kwargs` to be passed to the `serializer` along with the object. |
+| `routes`          | `list`       | List of directories to output the serialized object to.                   |
+| `path_name`       | `str | Path` | The filename to output the serialized data to.                            |
 
 The `serializer` is a function that takes a single positional argument and optional `**kwargs`. Should you wish to use
 a function with a different signature, you will need to write a wrapper around it.
