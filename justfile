@@ -9,7 +9,7 @@ default:
 
 # Sync dependencies using uv
 sync:
-    uv sync --dev
+    uv sync --dev --group docs
 
 # Run pytest
 test *FLAGS='':
