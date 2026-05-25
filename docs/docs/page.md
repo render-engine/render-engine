@@ -67,6 +67,7 @@ When you create a page, you specify variables passed into rendering template.
 
 **Attributes:**
 
+<!-- markdownlint-disable MD060 -->
 | Name             | Type                   | Description                                                                                                                                  |
 |------------------|:-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | `content_path`   | `str | None`           | The path to the file that will be used to generate the Page's `content`.                                                                     |
@@ -80,6 +81,7 @@ When you create a page, you specify variables passed into rendering template.
 | `skip_site_map`  | `bool`                 | When set to `True` the `Page` will not be included in the generated `SiteMap`. Defaults to `False`.                                          |
 | `no_prerender`   | `bool`                 | When set to `True` the `Page`'s `content` will not be pre-rendered as a `Template` even if `{{ site_map }}` is present. Defaults to `False`. |
 | `slug_only_url`  | `bool | None`          | See [Slug only URLS] for more details.                                                                                                       |
+<!-- markdownlint-enable MD060 -->
 
 ### Slug only URLs
 
