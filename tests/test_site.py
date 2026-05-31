@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from pathlib import Path
 
 import pluggy
@@ -409,3 +410,59 @@ def test_site_slug_only_url_site_false(site, tmp_path: Path):
 
     assert (site.output_path / "custompage.html").exists()
     assert not (site.output_path / "custompage/index.html").exists()
+
+
+def test_site_constructor():
+    """Tests that variables set via the constructor work"""
+    test_kwargs = {
+        "output_path": "override",
+        "template_path": "override",
+        "static_paths": {"override"},
+        "plugin_settings": {},
+        "render_html_site_map": True,
+        "render_xml_site_map": True,
+        "slug_only_urls": True,
+        "site_vars": {},
+    }
+    site = Site(**test_kwargs)
+    for attr, value in test_kwargs.items():
+        assert getattr(site, attr) == value, f"Failure at {attr}"
+
+
+def test_site_constructor_sub_class():
+    """Tests that attributes set when subclassing override the constructor"""
+    test_kwargs = {
+        "output_path": "override",
+        "template_path": "override",
+        "static_paths": {"override"},
+        "plugin_settings": {},
+        "render_html_site_map": True,
+        "render_xml_site_map": True,
+        "slug_only_urls": True,
+        "site_vars": {},
+    }
+
+    class TestSite(Site):
+        _output_path: str | Path = "output_override"
+        _template_path: str | Path = "templates_override"
+        _static_paths: set = {"static_override"}
+        plugin_settings: dict = {"plugins_override": defaultdict(dict)}
+        render_html_site_map: bool = False
+        render_xml_site_map: bool = True
+        slug_only_urls: bool = False
+        site_vars: dict = {"site_vars_override": True}
+
+    site = TestSite(**test_kwargs)
+    expected_attrs = {
+        "output_path": TestSite._output_path,
+        "template_path": TestSite._template_path,
+        "static_paths": TestSite._static_paths,
+        "plugin_settings": TestSite.plugin_settings,
+        "render_html_site_map": TestSite.render_html_site_map,
+        "render_xml_site_map": TestSite.render_xml_site_map,
+        "slug_only_urls": TestSite.slug_only_urls,
+        "site_vars": TestSite.site_vars,
+    }
+
+    for attr, value in expected_attrs.items():
+        assert getattr(site, attr) == value, f"Failure at {attr}"
