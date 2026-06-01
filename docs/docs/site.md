@@ -9,15 +9,57 @@ The site stores your pages and collections to be rendered.
 
 **Attributes:**
 
-| Name              | Type   | Description                                              |
-|-------------------|--------|----------------------------------------------------------|
-| `output_path`     | `str`  | path to write rendered content                           |
-| `static_paths`    | `set`  | paths for static folders copied to output (recursive)    |
-| `site_vars`       | `dict` | dictionary that will be passed into page template        |
-| `site_settings`   |        | settings passed to pages and collections (not templates) |
-| `slug_only_urls`  | `bool` | default value for pages for [`slug_only_url`]            |
+| Name                   | Type     | Description                                                    |
+|------------------------|----------|----------------------------------------------------------------|
+| `output_path`          | `str`    | path to write rendered content                                 |
+| `static_paths`         | `set`    | paths for static folders copied to output (recursive)          |
+| `site_vars`            | `dict`   | dictionary that will be passed into page template              |
+| `render_html_site_map` | `bool`   | When True render the site map as an HTML file. Default: False. |
+| `render_xml_site_map`  | `bool`   | When True render the site map as an XML file. Default: False.  |
+| `slug_only_urls`       | `bool`   | default value for pages for [`slug_only_url`]                  |
+
+> !!! Note
+    These attributes can be set as class level attributes when subclassing `Site`, as parameters during instantiation,
+    or updated as attributes later on. If they are set as class level attributes those values will be used during
+    instantiation regardless of what is sent to the constructor.
 
 ## Functions
+
+### `Site()`
+
+```python
+from render_engine import Site
+
+Site(
+    *,
+    output_path: str | Path = "output",
+    template_path: str | Path = "templates",
+    static_paths: set[str | Path] = {"static"},
+    plugin_settings: object | dict = SENTINEL,
+    render_html_site_map: bool = False,
+    render_xml_site_map: bool = False,
+    slug_only_urls: bool = False,
+    site_vars: object | dict = SENTINEL,
+) -> None:
+    pass
+```
+
+The `Site` constructor takes the following keyword arguments:
+
+<!-- markdownlint-disable MD056 -->
+<!-- markdownlint-disable MD060 -->
+| Name                   | Type         | Description                                                                              |
+|------------------------|--------------|------------------------------------------------------------------------------------------|
+| `output_path`          | `str | Path` | Path to write rendered content.                                                          |
+| `template_path`        | `str | Path` | Path to location of template files.                                                      |
+| `static_paths`         | `str | Path` | Paths for static folders copied to output (recursive).                                   |
+| `plugin_settings`      | `dict`       | Dictionary caontaining plugin settings.                                                  |
+| `render_html_site_map` | `bool`       | When True render the site map as an HTML file. Default: False.                           |
+| `render_xml_site_map`  | `bool`       | When True render the site map as an XML file. Default: False.                            |
+| `slug_only_urls`       | `bool`       | Default value for Page objects rendering slub only URLS. Default: False                  |
+| `site_vars`            | `dict`       | The site_vars dictionary containing data to be passed to all templates during rendering. |
+<!-- markdownlint-enable MD056 -->
+<!-- markdownlint-enable MD060 -->
 
 ### `collection(Collection)`
 
