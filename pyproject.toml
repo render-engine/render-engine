@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-[extras = ""]
+extras = []
 
 [dependency-groups]
 dev = [
