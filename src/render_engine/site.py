@@ -22,6 +22,8 @@ try:
 except ImportError:
     re_version = "development"
 
+SENTINEL: object = object()
+
 
 class Site:
     """
@@ -50,35 +52,71 @@ class Site:
         template_path: The path to the template files used for rendering.
     """
 
-    site_vars: dict = {
-        "SITE_TITLE": "Untitled Site",
-        "SITE_URL": "http://localhost:8000/",
-        "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
-        "head": set(),
-        "theme": {},
-    }
-    _output_path: str | Path = "output"
-    _template_path: str | Path = "templates"
-    _static_paths: set = {"static"}
-    plugin_settings: dict = {"plugins": defaultdict(dict)}
-    render_html_site_map: bool = False
-    render_xml_site_map: bool = False
-    slug_only_urls: bool = False
-
     def __init__(
         self,
+        *,
+        output_path: str | Path = "output",
+        template_path: str | Path = "templates",
+        static_paths: set[str | Path] = {"static"},
+        plugin_settings: object | dict = SENTINEL,
+        render_html_site_map: bool = False,
+        render_xml_site_map: bool = False,
+        slug_only_urls: bool = False,
+        site_vars: object | dict = SENTINEL,
     ) -> None:
+        """
+        Constructor for the Site object.
+
+        Note that attributes set as class attributes while subclassing Site will override
+        parameters sent via this constructor.
+
+        :param output_path: Path to write rendered content
+        :param template_path: Path to location of template files
+        :param static_paths: Paths for static folders copied to output (recursive)
+        :param plugin_settings: Dictionary caontaining plugin settings
+        :param render_html_site_map: When True render the site map as an HTML file. Default: False
+        :param render_xml_site_map: When True render the site map as an XMK file. Default: False
+        :param slug_only_urls: Default value for Page objects rendering slub only URLS. Default: False
+        :param site_vars: The site_vars dictionary containing data to be passed to all templates during rendering
+        """
+        # Use getattr for the attributes moved from class level to constructor arguments
+        # to properly handle subclassing. This will prefeer the value from the subclass
+        # for these attributes
+        template_path = getattr(self, "_template_path", template_path)
+        output_path = getattr(self, "_output_path", output_path)
+        static_paths = getattr(self, "_static_paths", static_paths)
+        self.plugin_settings: dict = getattr(
+            self, "plugin_settings", {"plugins": defaultdict(dict)} if plugin_settings is SENTINEL else plugin_settings
+        )
+        self.render_xml_site_map: bool = getattr(self, "render_xml_site_map", render_xml_site_map)
+        self.render_html_site_map: bool = getattr(self, "render_html_site_map", render_html_site_map)
+        self.slug_only_urls: bool = getattr(self, "slug_only_urls", slug_only_urls)
+
         self.plugin_manager: PluginManager = PluginManager()
         self.theme_manager = ThemeManager(
             engine=engine,
-            output_path=self._output_path,
-            static_paths=self._static_paths,
+            output_path=output_path,
+            static_paths=static_paths,
         )
+
+        self.site_vars: dict = getattr(
+            self,
+            "site_vars",
+            {
+                "SITE_TITLE": "Untitled Site",
+                "SITE_URL": "http://localhost:8000/",
+                "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
+                "head": set(),
+                "theme": {},
+            }
+            if site_vars is SENTINEL
+            else site_vars,
+        )
+
         self.route_list: dict = {}
-        self.site_settings: dict = {}
         self.subcollections: dict[str, list] = {"pages": []}
         self.theme_manager.engine.globals.update(self.site_vars)
-        self.theme_manager.add_loader(0, FileSystemLoader(self._template_path))
+        self.theme_manager.add_loader(0, FileSystemLoader(template_path))
         self._site_map = SiteMap()
 
     @property

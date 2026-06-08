@@ -44,13 +44,14 @@ from render_engine_kjaymiller_theme import kjaymiller
 from render_engine_youtube_embed import YouTubeEmbed
 
 # create Site() as `app` or `site`
-# add your `output_path` (if not default)
-# add local `static_paths`
-# register plugins and themes
+# setting your `output_path` (if not default)
+# and local `static_paths`
+app = Site(
+            output_path = "output",
+            static_paths = {"static"},
+          )
 
-app = Site()
-app.output_path = "output"
-app.static_paths.add("static")
+# register plugins and themes
 app.register_plugins(YouTubeEmbed)
 app.register_theme(kjaymiller)
 
