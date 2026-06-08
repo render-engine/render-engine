@@ -98,7 +98,7 @@ class ThemeManager:
                 if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
                     entry: set = cast(set, self.engine.globals.get(key, set()))
                     entry.update(value)
-                    self.engine.globals[key] = entry
+                    self.engine.globals[key] = entry  # type: ignore
                 match self.engine.globals.get(key):
                     case set():
                         entry: set = cast(set, self.engine.globals[key])

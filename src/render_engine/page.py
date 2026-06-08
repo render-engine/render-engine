@@ -9,7 +9,6 @@ from render_engine.themes import ThemeManager
 
 from ._base_object import BaseObject
 from .parsers import BasePageParser
-from .plugins import PluginManager
 
 logger = logging.getLogger("Page")
 
@@ -40,8 +39,6 @@ class BasePage(BaseObject):
     template: str | Template | None
     rendered_content: str | None
     _reference: str = "_slug"
-    plugin_manager: PluginManager | None
-    site = None  # This is a Site but circular imports so we can't actually type hint it.
     no_prerender: bool = False
     collection: dict | None = None
 

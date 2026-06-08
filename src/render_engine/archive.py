@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +33,7 @@ class Archive(BasePage):
     def __init__(
         self,
         title: str,
-        pages: list[BasePage],
+        pages: Iterable[BasePage],
         template_vars: dict[str, Any],
         routes: list[str | Path],
         archive_index: int = 0,

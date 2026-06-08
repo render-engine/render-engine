@@ -15,7 +15,7 @@ from ._base_object import BaseObject
 from .archive import Archive
 from .content_managers import ContentManager, FileContentManager
 from .feeds import RSSFeed
-from .page import Page
+from .page import BasePage, Page
 from .parsers import BasePageParser
 from .plugins import PluginManager
 
@@ -85,12 +85,10 @@ class Collection(BaseObject):
     parser_extras: dict[str, Any]
     required_themes: list[Callable]
     routes: list[str | Path] = ["./"]
-    site = None
     sort_by: str | list = "_title"
     sort_reverse: bool = False
     template_vars: dict[str, Any]
     template: str | None
-    plugin_manager: PluginManager | None
     ContentManager: type[ContentManager] = FileContentManager
     content_manager_extras: dict[str, Any]
 
@@ -204,7 +202,7 @@ class Collection(BaseObject):
 
         sorted_pages = list(self.sorted_pages)
         items_per_page = getattr(self, "items_per_page", len(sorted_pages))
-        archives = [sorted_pages]
+        archives: list[Iterable[BasePage]] = [sorted_pages]
 
         if items_per_page != len(sorted_pages):
             paginated_archives = list(batched(sorted_pages, items_per_page))
@@ -293,7 +291,7 @@ class Collection(BaseObject):
         :param entry: The entry to process
         """
         if not isinstance(entry, RSSFeed) and not isinstance(entry, Archive):
-            entry.plugin_manager: PluginManager = copy.deepcopy(self.plugin_manager)
+            entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
         # Circular imports. Need to be handled here.
         from .page import BasePage
