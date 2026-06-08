@@ -1,5 +1,16 @@
 # Contributing to Render Engine
 
+While the Render Engine team welcomes contributions to our repositories we do ask that only humans contribute to them.
+This does not mean that humans are not permitted to use LLMs in the course of their contributions, however any
+contributions from accounts that are not owned by a human will be rejected immediately.
+
+Please ensure that you are following all of the guidance in this document when contributing to Render Engine.
+Specifically, please note the following:
+
+1. [Wait to be assigned an issue]
+2. [Formatting your PR]
+3. [AI attestation]
+
 This document will help you get started in contributing to the Render Engine codebase is open source and
 contributions are welcome.
 
@@ -37,7 +48,7 @@ If you see or experience a problem, please file an issue. Include any important 
 - Plugins/Themes/Custom Parsers & Collections Installed
 - Commands/Code Used
 - Output
-- [AI Attestation][ai-attestation]
+- [AI Attestation]
 
 ## Wait to be Assigned Issues
 
@@ -59,7 +70,9 @@ Once you've been [assigned an issue][being-assigned], you can begin working on a
 - fork and clone
 - create virtual environment and connect to virtual environment
 - create local installation with dev tooling
-  `python -m pip install -e .[dev]`
+  `uv pip install -e . --group dev`
+  > **NOTE** If your change will require a documentation update the `docs` group should also be installed.
+`uv pip install -e . --group dev --group docs`
 - run pre-commit (it will install all of its needed deps)
 
 ### Dockerfile
@@ -72,8 +85,10 @@ ensure the manual configuration is ran (You will still need to fork and clone).
 Render Engine uses nox to text against all supported versions. PRs will not be approved without tests passing on
 all supported versions.
 
-- 🚫 changes aren't breaking existing code (failing tests)
+- 🚫 changes aren't breaking existing code (failing tests.)
 - 🚫 Ensure new dependencies are listed, justified, and approved to be added.
+- 🚫 Ensure that type checking passes.
+- 🚫 Ensure that all linting passes.
 
 ## TODOs
 
@@ -91,8 +106,7 @@ The label is removed automatically afterward and can be re-applied if new TODOs 
 
 ## Contributing to Documentation
 
-Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][mkdocs],
-[Material for MkDocs][material], and [mkdocsstrings][mkdocsstrings] to generate documentation.
+Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][uv[Material for MkDocs][material], and [mkdocsstrings][mkdocsstrings] to generate documentation.
 
 - 📝 update docstrings for functions, methods, and classes.
 - 📷 add images and gifs where necessary. Assets should be stored in the `docs/docs/assets` folder.
@@ -122,15 +136,6 @@ uv sync --group docs
 ## Formatting your PR
 
 Render Engine uses a Pull Request Template that will help you include all the information needed to submit your PR.
-
-If you're starting from a blank PR be sure to include the following:
-
-- Summary
-- issue(s)/discussions being addressed
-- Documentation or tests added/updated
-- Any follow up tasks pending
-- [AI Attestation][ai-attestation]
-
 When submitting your PR, please be sure to use the template provided.
 **Not following this guideline will result in the immediate rejection of your PR.**
 
@@ -146,7 +151,7 @@ Low quality contributions or code that cannot be defended by the USER (not their
 will result in issues/prs being immediately closed.
 Multiple low quality contributions will result in your user account being banned from contribution.
 
-[ai-attestation]: #ai-attestation
+[AI attestation]: #ai-attestation
 [gh-render-engine]: https://github.com/render-engine
 [wiki]: https://github.com/render-engine/.github/wiki
 [docs]: https://render-engine.readthedocs.org
@@ -161,3 +166,6 @@ Multiple low quality contributions will result in your user account being banned
 [code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
 [docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider
 [todo-to-issue]: https://github.com/marketplace/actions/todo-to-issue
+[Wait to be assigned an issue]: #wait-to-be-assigned-issues
+[Formatting your PR]: #formatting-your-pr
+
