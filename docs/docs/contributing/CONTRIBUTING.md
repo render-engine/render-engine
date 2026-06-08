@@ -106,7 +106,8 @@ The label is removed automatically afterward and can be re-applied if new TODOs 
 
 ## Contributing to Documentation
 
-Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][uv[Material for MkDocs][material], and [mkdocsstrings][mkdocsstrings] to generate documentation.
+Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][uv[Material for MkDocs][material],
+and [mkdocsstrings][mkdocsstrings] to generate documentation.
 
 - 📝 update docstrings for functions, methods, and classes.
 - 📷 add images and gifs where necessary. Assets should be stored in the `docs/docs/assets` folder.
@@ -168,4 +169,3 @@ Multiple low quality contributions will result in your user account being banned
 [todo-to-issue]: https://github.com/marketplace/actions/todo-to-issue
 [Wait to be assigned an issue]: #wait-to-be-assigned-issues
 [Formatting your PR]: #formatting-your-pr
-
