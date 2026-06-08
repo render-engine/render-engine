@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-extras = ["render-engine-sitemap==2024.1.1a1"]
+extras = []
 
 [dependency-groups]
 dev = [
