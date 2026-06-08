@@ -3,7 +3,7 @@ import logging
 import pathlib
 import shutil
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import slugify
 from jinja2 import BaseLoader, ChoiceLoader, Environment, FileSystemLoader
@@ -98,7 +98,7 @@ class ThemeManager:
                 if isinstance(value, set) and isinstance(self.engine.globals.get(key), set):
                     entry: set = cast(set, self.engine.globals.get(key, set()))
                     entry.update(value)
-                    self.engine.globals[key] = entry
+                    cast(dict[str, Any], self.engine.globals)[key] = entry
                 match self.engine.globals.get(key):
                     case set():
                         entry: set = cast(set, self.engine.globals[key])

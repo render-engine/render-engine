@@ -207,7 +207,7 @@ class Collection(BaseObject):
         archives = [sorted_pages]
 
         if items_per_page != len(sorted_pages):
-            paginated_archives = list(batched(sorted_pages, items_per_page))
+            paginated_archives = [list(batch) for batch in batched(sorted_pages, items_per_page)]
             archives.extend(paginated_archives)
             self.template_vars["num_of_pages"] = len(paginated_archives)
         else:
@@ -293,7 +293,7 @@ class Collection(BaseObject):
         :param entry: The entry to process
         """
         if not isinstance(entry, RSSFeed) and not isinstance(entry, Archive):
-            entry.plugin_manager: PluginManager = copy.deepcopy(self.plugin_manager)
+            entry.plugin_manager = copy.deepcopy(self.plugin_manager)  # type: ignore[assignment]
 
         # Circular imports. Need to be handled here.
         from .page import BasePage

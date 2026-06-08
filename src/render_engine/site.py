@@ -3,6 +3,7 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
+from typing import Any, cast
 
 import rich
 from jinja2 import FileSystemLoader, PrefixLoader
@@ -85,8 +86,10 @@ class Site:
         template_path = getattr(self, "_template_path", template_path)
         output_path = getattr(self, "_output_path", output_path)
         static_paths = getattr(self, "_static_paths", static_paths)
-        self.plugin_settings: dict = getattr(
-            self, "plugin_settings", {"plugins": defaultdict(dict)} if plugin_settings is SENTINEL else plugin_settings
+        self.plugin_settings: dict[str, Any] = cast(
+            dict[str, Any], getattr(
+                self, "plugin_settings", {"plugins": defaultdict(dict)} if plugin_settings is SENTINEL else plugin_settings
+            )
         )
         self.render_xml_site_map: bool = getattr(self, "render_xml_site_map", render_xml_site_map)
         self.render_html_site_map: bool = getattr(self, "render_html_site_map", render_html_site_map)
@@ -99,18 +102,20 @@ class Site:
             static_paths=static_paths,
         )
 
-        self.site_vars: dict = getattr(
-            self,
-            "site_vars",
-            {
-                "SITE_TITLE": "Untitled Site",
-                "SITE_URL": "http://localhost:8000/",
-                "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
-                "head": set(),
-                "theme": {},
-            }
-            if site_vars is SENTINEL
-            else site_vars,
+        self.site_vars: dict[str, Any] = cast(
+            dict[str, Any], getattr(
+                self,
+                "site_vars",
+                {
+                    "SITE_TITLE": "Untitled Site",
+                    "SITE_URL": "http://localhost:8000/",
+                    "DATETIME_FORMAT": "%d %b %Y %H:%M %Z",
+                    "head": set(),
+                    "theme": {},
+                }
+                if site_vars is SENTINEL
+                else site_vars,
+            )
         )
 
         self.route_list: dict = {}
@@ -416,8 +421,8 @@ class Site:
 
             self.theme_manager._render_static()
 
-            self.theme_manager.engine.globals["site"] = self
-            self.theme_manager.engine.globals["routes"] = self.route_list
+            cast(dict[str, Any], self.theme_manager.engine.globals)["site"] = self
+            cast(dict[str, Any], self.theme_manager.engine.globals)["routes"] = self.route_list
 
             for slug, entry in self.route_list.items():
                 entry.site = self
