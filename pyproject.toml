@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-extras = ["render-engine-sitemap==2024.1.1a1"]
+extras = []
 
 [dependency-groups]
 dev = [
@@ -29,10 +29,10 @@ dev = [
   "httpx==0.28.1",
   # TODO: Update typing with new versions in 0.0.24
   # Issue URL: https://github.com/render-engine/render-engine/issues/1142
-  "ty==0.0.14",
-  "pre-commit==4.5.1",
-  "pytest==9.0.2",
-  "pytest-cov==7.0.0",
+  "ty==0.0.40",
+  "pre-commit==4.6.0",
+  "pytest==9.0.3",
+  "pytest-cov==7.1.0",
   "pytest-mock==3.15.1",
   "toml==0.10.2",
 ]
@@ -40,7 +40,7 @@ docs = [
   "mkdocs==1.6.1",
   "mkdocs-material==9.7.6",
   "mkdocs-multirepo-plugin==0.8.3",
-  "mkdocstrings[python]==1.0.3",
+  "mkdocstrings[python]==1.0.4",
   "pymdown-extensions==10.21.3",
 ]
 
