@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any, cast
 
 from render_engine._base_object import BaseObject
-from render_engine.plugins import PluginManager
 
 
 class DataObject(BaseObject):
@@ -16,8 +15,6 @@ class DataObject(BaseObject):
 
     routes: list[str | Path] = ["./"]
     path_name: str | Path = Path("data_object.json")
-    plugin_manager: PluginManager | None
-    site = None  # This is a Site but circular imports so we can't actually type hint it.
 
     def __init__(self, serializer: Callable = json.dumps):
         """Ensure that the serializer method is static"""

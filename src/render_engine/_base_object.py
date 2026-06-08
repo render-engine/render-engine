@@ -5,6 +5,8 @@ from collections.abc import Callable
 
 from slugify import slugify
 
+from render_engine.plugins import PluginManager
+
 
 class BaseObject:
     """
@@ -29,6 +31,8 @@ class BaseObject:
     skip_site_map: bool = False
     metadata: dict = dict()
     _path_name: str | None = None
+    site = None  # This is a Site but circular imports so we can't actually type hint it.
+    plugin_manager: PluginManager | None
 
     # Using bool or None to have an unset state
     slug_only_url: bool | None = None
