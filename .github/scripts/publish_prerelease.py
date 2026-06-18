@@ -18,7 +18,6 @@ surrounding project environment:
     uv run --script .github/scripts/publish_prerelease.py bump 2026.6.1b1
     uv run --script .github/scripts/publish_prerelease.py selftest
 """
-from __future__ import annotations
 
 from datetime import date
 
@@ -57,14 +56,14 @@ def selftest() -> None:
     """Run offline checks of the version rules."""
     today = date(2026, 6, 17)
     cases = {
-        "2026.6.1b1": "2026.6.1b2",     # continue beta serial
-        "2026.6.1a1": "2026.6.1a2",     # continue alpha serial
-        "2026.6.1a9": "2026.6.1a10",    # double-digit serial
-        "2026.6.1b10": "2026.6.1b11",   # double-digit beta serial
-        "2026.6.1": "2026.6.2a1",       # final -> next minor, a1
-        "2026.6.10": "2026.6.11a1",     # double-digit minor final
-        "2026.5.4a2": "2026.6.1a1",     # prior month -> reset to today
-        "2025.12.3a4": "2026.6.1a1",    # prior year -> reset to today
+        "2026.6.1b1": "2026.6.1b2",  # continue beta serial
+        "2026.6.1a1": "2026.6.1a2",  # continue alpha serial
+        "2026.6.1a9": "2026.6.1a10",  # double-digit serial
+        "2026.6.1b10": "2026.6.1b11",  # double-digit beta serial
+        "2026.6.1": "2026.6.2a1",  # final -> next minor, a1
+        "2026.6.10": "2026.6.11a1",  # double-digit minor final
+        "2026.5.4a2": "2026.6.1a1",  # prior month -> reset to today
+        "2025.12.3a4": "2026.6.1a1",  # prior year -> reset to today
     }
     table = Table(title=f"Version rules (today = {today})")
     table.add_column("result")
@@ -78,7 +77,9 @@ def selftest() -> None:
         ok = got == want
         failures += not ok
         result = "[green]✓ OK[/]" if ok else "[red]✗ FAIL[/]"
-        table.add_row(result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want)
+        table.add_row(
+            result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want
+        )
 
     console.print(table)
     if failures:
