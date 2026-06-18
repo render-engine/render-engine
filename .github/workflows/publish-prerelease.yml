@@ -1,0 +1,55 @@
+name: Publish prerelease on label
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compute the next version but do not create the release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-publish
+  cancel-in-progress: false   # queue merges; every labeled merge should publish
+
+jobs:
+  release:
+    # Run on a merged, labeled PR, or on any manual dispatch.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       contains(github.event.pull_request.labels.*.name, 'release'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false   # checkout only fetches the publish script
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          enable-cache: true
+
+      - name: Compute and publish prerelease
+        id: publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Merged-PR runs always publish; manual runs honor the dispatch toggle.
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          # Latest release in the repo; the bump script computes the next one.
+          latest="$(gh release list --json name --jq '.[].name' \
+            | grep -E '^[0-9]{4}\.[0-9]+\.[0-9]+([ab][0-9]+)?$' \
+            | sort -V | tail -1)"
+          version="$(uv run --script .github/scripts/publish_prerelease.py bump "$latest")"
+          echo "Latest tag: $latest -> next: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "DRY RUN — would publish $version"
+          else
+            gh release create "$version" --prerelease --generate-notes --title "$version"
+          fi
