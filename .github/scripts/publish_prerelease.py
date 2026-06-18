@@ -1,7 +1,11 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["packaging", "rich-click", "rich"]
+# dependencies = [
+#   "packaging==26.2",
+#   "rich-click==1.9.8",
+#   "rich==15.0.0",
+# ]
 # ///
 """Compute the next CalVer prerelease version. Pure function: version in, version out.
 
@@ -77,7 +81,9 @@ def selftest() -> None:
         ok = got == want
         failures += not ok
         result = "[green]✓ OK[/]" if ok else "[red]✗ FAIL[/]"
-        table.add_row(result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want)
+        table.add_row(
+            result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want
+        )
 
     console.print(table)
     if failures:
