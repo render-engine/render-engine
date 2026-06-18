@@ -36,5 +36,5 @@ if [[ "${DRY_RUN:-false}" == "true" ]]; then
   exit 0
 fi
 
-cmd='gh release create "$NEXT" --prerelease --generate-notes --title "$NEXT"'
+gh release create "$NEXT" --prerelease --generate-notes --title "$NEXT"
 echo "$NEXT"
