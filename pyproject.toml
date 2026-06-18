@@ -65,31 +65,6 @@ addopts = ["--cov=src", "--cov-report=term-missing", "-ra", "-q"]
 version_toml = "pyproject.toml:project.version"
 branch = "main"
 
-[tool.bumpversion]
-# CalVer prerelease scheme: YYYY.M.MINOR[a|b N] (unpadded month, matching git tags).
-parse = '''(?x)
-    (?P<year>\d+)\.(?P<month>\d+)\.(?P<minor>\d+)
-    (?:(?P<pre_l>[ab])(?P<pre_n>\d+))?
-'''
-# Single (suffix-only) form so every bump keeps an a/b suffix -> never a final.
-serialize = ["{year}.{month}.{minor}{pre_l}{pre_n}"]
-
-[tool.bumpversion.parts.year]
-calver_format = "{YYYY}"
-
-[tool.bumpversion.parts.month]
-calver_format = "{MM}"
-
-[tool.bumpversion.parts.minor]
-first_value = "1"
-
-[tool.bumpversion.parts.pre_l]
-first_value = "a"
-values = ["a", "b"]
-
-[tool.bumpversion.parts.pre_n]
-first_value = "1"
-
 [tool.ruff]
 line-length = 120
 indent-width = 4
