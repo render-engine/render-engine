@@ -77,9 +77,7 @@ def selftest() -> None:
         ok = got == want
         failures += not ok
         result = "[green]✓ OK[/]" if ok else "[red]✗ FAIL[/]"
-        table.add_row(
-            result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want
-        )
+        table.add_row(result, current, f"[green]{got}[/]" if ok else f"[red]{got}[/]", want)
 
     console.print(table)
     if failures:
