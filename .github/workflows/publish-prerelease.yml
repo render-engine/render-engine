@@ -1,0 +1,40 @@
+name: Publish prerelease on label
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compute the next version but do not create the release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-publish
+  cancel-in-progress: false   # queue merges; every labeled merge should publish
+
+jobs:
+  release:
+    # Run on a merged, labeled PR, or on any manual dispatch.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       contains(github.event.pull_request.labels.*.name, 'release'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6   # needed for pyproject.toml (bump-my-version config)
+      - uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+
+      - name: Compute and publish prerelease
+        id: publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Manual runs honor the dispatch input; merged-PR runs always publish.
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: bash .github/scripts/publish_prerelease.sh
