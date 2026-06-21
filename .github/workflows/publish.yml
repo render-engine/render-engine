@@ -2,28 +2,53 @@ name: Build distribution
 
 on:
   release:
-    types: [created]
+    types: [created, published]
+
+permissions: {}
 
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-  deploy:
+    permissions:
+      contents: read
+
+  build:
     needs: test
     name: Deploy to PyPI
     permissions:
-      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
 
       - name: Set up Python
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@a9b33f02405f50e505f17ab8530e42a23200a5d1
         with:
           python-version: 3.14
+          enable-cache: false
 
       - name: Build distributions
         run: uv build
+      - name: Upload artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: ./dist
+          name: render-engine
 
-      - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+  publish-pypi:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@484a0b528fb4d7bd804637ccb632e47a0e638317
+        with:
+          path: ./dist
+          name: render-engine
+      - name: Push to PyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b
