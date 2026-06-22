@@ -2,7 +2,8 @@ name: Build distribution
 
 on:
   release:
-    types: [created, published]
+    types: [created, published, prereleased]
+  workflow_dispatch:
 
 permissions: {}
 
@@ -40,7 +41,7 @@ jobs:
 
   publish-pypi:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    if: startsWith(github.ref, 'refs/tags/') # only publish to PyPI on tag pushes
     runs-on: ubuntu-latest
     permissions:
       id-token: write
