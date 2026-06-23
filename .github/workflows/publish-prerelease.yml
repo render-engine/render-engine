@@ -11,8 +11,8 @@ on:
         default: true
 
 permissions:
-  contents: write
-  actions: write
+  contents: write # gives access to apply the tag
+  actions: write # permission to run the workflow for publish
 
 concurrency:
   group: release-publish
@@ -42,7 +42,6 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           # Latest release in the repo; the bump script computes the next one.
-          latest_versions=""
           version=$(uv run --script .github/scripts/publish_prerelease.py bump-from "gh release list --json name --jq '.[].name'")
           echo "Next Version: $version"
 
