@@ -23,6 +23,8 @@ surrounding project environment:
     uv run --script .github/scripts/publish_prerelease.py selftest
 """
 
+import shlex
+import subprocess
 from datetime import date
 
 import rich_click as click
@@ -53,6 +55,15 @@ def cli() -> None:
 def bump(current: str) -> None:
     """Print the next prerelease version after CURRENT (e.g. 2026.6.1b1)."""
     click.echo(next_version(Version(current), date.today()))
+
+
+@cli.command()
+@click.argument("command")
+def bump_from_command(command: str) -> None:
+    """Execute the given command and then bump the result. Must output to JSON array of values"""
+    cmd_output = subprocess.run(shlex.split(command), timeout=5, capture_output=True, text=True)
+    current_version = max(map(Version, cmd_output.stdout.splitlines()))
+    click.echo(next_version(current_version, date.today()))
 
 
 @cli.command()
