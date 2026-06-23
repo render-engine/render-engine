@@ -52,5 +52,5 @@ jobs:
             echo "DRY RUN — would publish $version"
           else
             gh release create "$version" --prerelease --generate-notes --title "$version"
-						gh workflow run publish.yml --ref "$version"
+            gh workflow run publish.yml --ref "$version"
           fi
