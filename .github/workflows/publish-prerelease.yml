@@ -13,7 +13,6 @@ on:
 permissions:
   contents: write
   actions: write
-  id-token: write
 
 concurrency:
   group: release-publish
@@ -51,4 +50,5 @@ jobs:
             echo "DRY RUN — Next Version would be: $version"
           else
             gh release create "$version" --prerelease --generate-notes --title "$version"
+            gh workflow run publish.yml --ref "$version"
           fi
