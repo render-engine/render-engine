@@ -43,7 +43,7 @@ jobs:
         run: |
           # Latest release in the repo; the bump script computes the next one.
           latest_versions=""
-          version="$(uv run --script .github/scripts/publish_prerelease.py bump-from \"gh release list --json name --jq '.[].name'\")"
+          version=$(uv run --script .github/scripts/publish_prerelease.py bump-from "gh release list --json name --jq '.[].name'")
           echo "Next Version: $version" >> "$GITHUB_OUTPUT"
 
           if [ "$DRY_RUN" = "true" ]; then
