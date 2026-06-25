@@ -31,6 +31,12 @@ repos:
   rev: 2026.3.6
   hooks:
     - id: pin-versions
+- repo: https://github.com/zizmorcore/zizmor-pre-commit
+  # Zizmor version.
+  rev: v1.26.1
+  hooks:
+    # Run the linter.
+    - id: zizmor
 - repo: local
   hooks:
     - id: deptry
