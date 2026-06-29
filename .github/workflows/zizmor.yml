@@ -6,13 +6,18 @@ on:
   pull_request:
     branches: ["**"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   zizmor:
+    name: Zizmor Check
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      security-events: write # required for advanced security policy
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
