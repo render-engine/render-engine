@@ -13,7 +13,7 @@ jobs:
     name: Format and Lint Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install uv
@@ -29,7 +29,7 @@ jobs:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v7
       - name: lint-test
         uses: DavidAnson/markdownlint-cli2-action@v23
         with:

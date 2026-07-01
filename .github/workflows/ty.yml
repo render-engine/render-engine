@@ -16,7 +16,7 @@ jobs:
   ty_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
       - name: Run type (ty) check
         run: uv run ty check src
