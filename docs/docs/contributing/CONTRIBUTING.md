@@ -106,7 +106,7 @@ The label is removed automatically afterward and can be re-applied if new TODOs 
 
 ## Contributing to Documentation
 
-Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs][uv[Material for MkDocs][material],
+Render Engine uses [readthedocs][readthedocs] in combination with [MkDocs], [Material for MkDocs],
 and [mkdocsstrings][mkdocsstrings] to generate documentation.
 
 - 📝 update docstrings for functions, methods, and classes.
@@ -149,7 +149,7 @@ This attestation should mean that the AI model is included as a co-Author of the
 
 The AI assistant is your copilot. You are still responsible for code changes submitted.
 Low quality contributions or code that cannot be defended by the USER (not their AI model)
-will result in issues/prs being immediately closed.
+will result in issues/PRs being immediately closed.
 Multiple low quality contributions will result in your user account being banned from contribution.
 
 [AI attestation]: #ai-attestation
@@ -161,8 +161,8 @@ Multiple low quality contributions will result in your user account being banned
 [dev-container]: https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#developing-locally
 [codespaces]: https://render-engine.readthedocs.io/en/latest/contributing/environment_setup#using-codespaces
 [readthedocs]: https://readthedocs.org
-[mkdocs]: https://www.mkdocs.org
-[material]: https://squidfunk.github.io/mkdocs-material/
+[MkDocs]: https://www.mkdocs.org
+[Material for MkDocs]: https://squidfunk.github.io/mkdocs-material/
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
 [code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
 [docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider
