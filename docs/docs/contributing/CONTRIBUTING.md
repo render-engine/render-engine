@@ -78,7 +78,7 @@ Once you've been [assigned an issue][being-assigned], you can begin working on a
 ### Dockerfile
 
 Our DevContainer is built primarily from a dockerfile. You can build from our Dockerfile directly which would
-ensure the manual configuration is ran (You will still need to fork and clone).
+ensure the manual configuration is run (You will still need to fork and clone).
 
 ## Verify Before Submitting
 
@@ -92,17 +92,10 @@ all supported versions.
 
 ## TODOs
 
-Todos are not encouraged all the time but if necessary please indicate any todos with the `# TODO` prefix.
-We use [todo-to-issue] as a GitHub Action to create issues from TODOs.
-
-When a PR containing `# TODO` comments is opened, a bot will comment suggesting a maintainer
-add the **todo-to-issue** label. Once a maintainer adds the label, the action will:
-
-1. Create GitHub issues for each TODO
-2. Update the TODO comments in your code with the issue number and link
-3. Commit the changes back to your PR branch
-
-The label is removed automatically afterward and can be re-applied if new TODOs are added.
+To-dos are not encouraged all the time but if necessary please indicate any todos with the `# TODO` prefix.
+Before submitting a PR with a `# TODO` please make sure to open the corresponding [issue in GitHub] and include
+the link as part of the `# TODO` comment. PRs opened that include a `# TODO` comment without a corresponding
+GitHub issue will be requested to create the issue and update the comment prior to merge.
 
 ## Contributing to Documentation
 
@@ -119,7 +112,7 @@ Test your docs changes by running the command **FROM THE PROJECT ROOT**.
 You can start the documentation server on the default port (8000):
 
 ```sh
-just docs 
+just docs
 ```
 
 Or, you can specify a custom port:
@@ -166,6 +159,6 @@ Multiple low quality contributions will result in your user account being banned
 [mkdocsstrings]: https://mkdocsstrings.readthedocs.io/en/latest/
 [code of conduct]: https://github.com/render-engine/render-engine/blob/main/.github/CODE_OF_CONDUCT.md
 [docs-contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/#instead-of-making-a-change-in-render-engines-code-consider
-[todo-to-issue]: https://github.com/marketplace/actions/todo-to-issue
 [Wait to be assigned an issue]: #wait-to-be-assigned-issues
 [Formatting your PR]: #formatting-your-pr
+[issue in GitHub]: https://github.com/render-engine/render-engine/issues/new/choose
