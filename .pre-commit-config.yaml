@@ -1,47 +1,47 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  # Ruff version.
-  rev: v0.15.1
-  hooks:
-    # Run the linter.
-    - id: ruff-check
-      args: [ --fix ]
-    # Run the formatter.
-    - id: ruff-format
-- repo: local
-  hooks:
-    - id: ty-check
-      name: ty
-      entry: uv run ty check src/render_engine
-      language: system
-      types: [python]
-      pass_filenames: false
-- repo: https://github.com/DavidAnson/markdownlint-cli2
-  rev: v0.6.0
-  hooks:
-    - id: markdownlint-cli2
-      args: [ "*.md", "docs/**/*.md" ]
-- repo: https://github.com/kjaymiller/pin-versions
-  rev: 2026.3.6
-  hooks:
-    - id: pin-versions
-- repo: https://github.com/zizmorcore/zizmor-pre-commit
-  # Zizmor version.
-  rev: v1.26.1
-  hooks:
-    # Run the linter.
-    - id: zizmor
-- repo: local
-  hooks:
-    - id: deptry
-      name: deptry
-      entry: uv run deptry src
-      language: system
-      always_run: true
-      pass_filenames: false
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.15.1
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: ty-check
+        name: ty
+        entry: uv run ty check src/render_engine
+        language: system
+        types: [python]
+        pass_filenames: false
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.6.0
+    hooks:
+      - id: markdownlint-cli2
+        args: ["*.md", "docs/**/*.md"]
+  - repo: https://github.com/kjaymiller/pin-versions
+    rev: 2026.3.6
+    hooks:
+      - id: pin-versions
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    # Zizmor version.
+    rev: v1.26.1
+    hooks:
+      # Run the linter.
+      - id: zizmor
+  - repo: local
+    hooks:
+      - id: deptry
+        name: deptry
+        entry: uv run deptry src
+        language: system
+        always_run: true
+        pass_filenames: false

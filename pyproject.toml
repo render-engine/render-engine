@@ -25,10 +25,8 @@ extras = []
 [dependency-groups]
 dev = [
   "ephemeral-port-reserve==1.1.4",
-  "deptry>=0.24.0",
+  "deptry==0.25.1",
   "httpx==0.28.1",
-  # TODO: Update typing with new versions in 0.0.24
-  # Issue URL: https://github.com/render-engine/render-engine/issues/1142
   "ty==0.0.55",
   "pre-commit==4.6.0",
   "pytest==9.1.1",
@@ -77,4 +75,9 @@ select = ["E", "F", "I", "UP"]
 unresolved-import = "warn"
 
 [tool.deptry]
-pep621_dev_dependency_groups = ["extras"]
+optional_dependencies_dev_groups = ["extras"]
+
+[tool.deptry.package_module_name_map]
+python-dateutil = "dateutil"
+python-slugify = "slugify"
+python-frontmatter = "frontmatter"
