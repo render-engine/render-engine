@@ -13,12 +13,20 @@ on:
       - "pyproject.toml"
       - "requirements.txt"
 
+permissions:
+  contents: read
+
 jobs:
   gen-coverage-badge:
+    name: Generate Coverage Badge
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           python-version: "3.14"
           enable-cache: true
@@ -30,32 +38,35 @@ jobs:
         run: |
           uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
       - name: Commit Badge
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
         with:
           commit_message: Update coverage badge [skip ci]
           file_pattern: coverage.svg
 
   test-against-python-matrix:
-    # Only test all the supported versions when a pull request is made or the workflow is called
-    if: ${{github.event_name == 'workflow_call'}} || ${{github.event_name == 'pull_request'}}
+    name: Test on all supported Python versions
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        # 3.14 is not run here because it is for the latest OK check so it would be redundant.
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.15"]
       fail-fast: true
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true # caching dependencies
       - name: Run tests
         run: |
-          uv run --dev pytest tests
+          uv run --dev --python {{ matrix.python-version }} pytest tests
 
   test-against-latest-os:
     # Always run against the latest version on both Windows, Linux, MacOS
+    name: Test against latest OS
     if: github.event.pull_request.user.login != 'dependabot[bot]'
     strategy:
       matrix:
@@ -63,11 +74,13 @@ jobs:
       fail-fast: true
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           python-version: "3.14"
           enable-cache: true # caching dependencies
       - name: run tests
-        run: uv run --dev pytest tests
+        run: uv run --dev --python 3.14 pytest tests
