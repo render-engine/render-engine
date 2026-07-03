@@ -9,7 +9,6 @@ description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  #  "deptry==0.25.1",
   "jinja2==3.1.6",
   "more-itertools==11.1.0",
   "pluggy==1.6.0",
