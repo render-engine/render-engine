@@ -62,7 +62,7 @@ jobs:
           enable-cache: true # caching dependencies
       - name: Run tests
         run: |
-          uv run --dev --python {{ matrix.python-version }} pytest tests
+          uv run --dev --python ${{ matrix.python-version }} pytest tests
 
   test-against-latest-os:
     # Always run against the latest version on both Windows, Linux, MacOS
