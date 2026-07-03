@@ -1,12 +1,15 @@
 name: Type Check
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
       - main
   pull_request:
     branches:
-        - main
+      - main
     paths:
       - "src/**"
       - "pyproject.toml"
@@ -16,7 +19,9 @@ jobs:
   ty_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
       - name: Run type (ty) check
         run: uv run ty check src
