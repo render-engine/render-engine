@@ -2,8 +2,10 @@
 # Requires: just, uv
 
 DEFAULT_PYTHON_VERSION := "3.14"
+WORKFLOW_DIRECTORY := ".github/workflows/"
 
 # Default recipe to display available commands
+[private]
 default:
     @just --list
 
@@ -12,11 +14,10 @@ sync:
     uv sync --dev --group docs
 
 # Run pytest
-test *FLAGS='':
-    pytest {{ DEFAULT_PYTHON_VERSION }} {{ FLAGS }}
+test *FLAGS='': (pytest DEFAULT_PYTHON_VERSION FLAGS)
 
 # Run tests in arbitrary Python version.
-pytest VERSION *FLAGS='':
+pytest VERSION=DEFAULT_PYTHON_VERSION *FLAGS='':
     uv run -p {{ VERSION }} --dev pytest {{ FLAGS }}
 
 # Run pytest with coverage report (defaults to XML)
@@ -79,3 +80,11 @@ badge: (test-cov-report 'xml')
 
 # Run full CI workflow (sync, lint, test, badge)
 ci: sync nox ruff ty badge
+
+# Update and pin actions with pinact
+pinact WORKFLOW='*.yml' *FLAGS='':
+    pinact run -u {{ FLAGS }} {{ WORKFLOW_DIRECTORY }}{{ WORKFLOW }}
+
+# Audit with zizmor
+zizmor WORKFLOW='*.yml' *FLAGS='':
+    uvx zizmor {{ WORKFLOW_DIRECTORY }}{{ WORKFLOW }} {{ FLAGS }}
