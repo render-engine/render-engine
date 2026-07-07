@@ -391,6 +391,7 @@ class Site:
             # as it will be rendered.
             self._site_map.site_url = site_url
             self._site_map.update(self.route_list)
+            self._site_map.add_static_files(self.static_paths)
 
             if self.render_html_site_map:
 

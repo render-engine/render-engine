@@ -466,3 +466,64 @@ def test_site_constructor_sub_class():
 
     for attr, value in expected_attrs.items():
         assert getattr(site, attr) == value, f"Failure at {attr}"
+
+def test_static_files_appear_in_site_map_after_render(tmp_path: Path):
+    """Static files should be included in site.site_map once the site has been rendered"""
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("fake-image-bytes")
+
+    site = Site()
+    site.output_path = tmp_path / "output"
+    site.static_paths.add(static_dir)
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    entry = site.site_map.find("/static/logo.png", attr="url_for")
+    assert entry is not None
+    assert entry.title == "logo.png"
+
+
+def test_static_files_appear_in_xml_site_map(tmp_path: Path):
+    """Rendered site_map.xml should include a <url> entry for static files"""
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("fake-image-bytes")
+
+    site = Site()
+    site.output_path = tmp_path / "output"
+    site.static_paths.add(static_dir)
+    site.render_xml_site_map = True
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    xml_content = (site.output_path / "site_map.xml").read_text()
+    assert "http://localhost:8000/static/logo.png" in xml_content
+
+
+def test_nested_static_files_appear_in_site_map(tmp_path: Path):
+    """Nested static files (subfolders) should also get their own site map entry"""
+    static_dir = tmp_path / "static"
+    (static_dir / "nested").mkdir(parents=True)
+    (static_dir / "nested" / "test.txt").write_text("test")
+
+    site = Site()
+    site.output_path = tmp_path / "output"
+    site.static_paths.add(static_dir)
+
+    @site.page
+    class CustomPage(Page):
+        content = "this is a test"
+
+    site.render()
+
+    entry = site.site_map.find("/static/nested/test.txt", attr="url_for")
+    assert entry is not None

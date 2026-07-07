@@ -42,6 +42,34 @@ class SiteMapEntry:
     def __str__(self) -> str:
         """String representation of the entry as its URL"""
         return self.url_for
+    
+class StaticSiteMapEntry:
+    """Site map entry for a static file """
+
+    def __init__(self, file_path: Path, static_root: Path, url_prefix: str = ""):
+        """
+        :param file_path: Absolute path to the static file on disk.
+        :param static_root: The static directory this file lives under (e.g. "static").
+        :param url_prefix: The folder name this static dir gets copied to in the
+            output directory. `ThemeManager._render_static` copies each static_path
+            to `output_path / static_path.name`, so this should be `static_root.name`.
+        """
+        relative = file_path.relative_to(static_root).as_posix()
+        self.slug = slugify.slugify(f"{url_prefix}/{relative}" if url_prefix else relative)
+        self.title = file_path.name
+        self.path_name = relative
+        prefix = url_prefix.strip("/")
+        self._route = f"/{prefix}/{relative}" if prefix else f"/{relative}"
+        self.entries: list = []
+
+    @property
+    def url_for(self) -> str:
+        """The URL for the given entry"""
+        return str(self._route)
+
+    def __str__(self) -> str:
+        """String representation of the entry as its URL"""
+        return self.url_for
 
 
 class SiteMap:
@@ -150,7 +178,20 @@ class SiteMap:
                 if entry := search(attr, value, collection.entries):
                     return entry
         return None
-
+    
+    def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
+        """ Add static files to the site map"""
+        for static in static_paths:
+            static = Path(static)
+            if not static.exists():
+                continue
+            url_prefix = static.name
+            for file_path in static.rglob("*"):
+                if file_path.is_file():
+                    entry = StaticSiteMapEntry(file_path, static, url_prefix)
+                    self._route_map[entry.slug] = entry
+        
+    
     @property
     def html(self) -> str:
         """Build the site map as HTML"""
