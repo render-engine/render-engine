@@ -90,7 +90,7 @@ class Site:
             self,
             "_static_paths",
             {"static"} if static_paths is SENTINEL else static_paths,
-        ) 
+        )
         self.plugin_settings: dict = cast(
             dict,
             getattr(
