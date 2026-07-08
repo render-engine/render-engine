@@ -86,10 +86,13 @@ class Site:
         # for these attributes
         template_path = getattr(self, "_template_path", template_path)
         output_path = getattr(self, "_output_path", output_path)
-        static_paths = getattr(
-            self,
-            "_static_paths",
-            {"static"} if static_paths is SENTINEL else static_paths,
+        static_paths = cast(
+            "set[str | Path]",
+            getattr(
+                self,
+                "_static_paths",
+                {"static"} if static_paths is SENTINEL else static_paths,
+            ),
         )
         self.plugin_settings: dict = cast(
             dict,
