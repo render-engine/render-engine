@@ -5,7 +5,7 @@ import pytest
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
-from render_engine.site_map import SiteMap, SiteMapEntry , StaticSiteMapEntry
+from render_engine.site_map import SiteMap, SiteMapEntry, StaticSiteMapEntry
 
 PAGE_TEMPLATE = """
 ---
@@ -191,6 +191,7 @@ def test_site_map_to_xml(site):
 </urlset>"""
     )
 
+
 def test_static_site_map_entry_attributes(tmp_path):
     static_dir = tmp_path / "static"
     (static_dir / "css").mkdir(parents=True)
@@ -217,9 +218,6 @@ def test_add_static_files_adds_entry_per_file(tmp_path):
 
     urls = sorted(entry.url_for for entry in sm)
     assert urls == ["/static/images/logo.png", "/static/style.css"]
-
-
-
 
 
 def test_add_static_files_multiple_static_dirs_no_collision(tmp_path):

@@ -59,7 +59,7 @@ class Site:
         *,
         output_path: str | Path = "output",
         template_path: str | Path = "templates",
-        static_paths: set[str | Path] = {"static"},
+        static_paths: set[str | Path] | object = SENTINEL,
         plugin_settings: object | dict = SENTINEL,
         render_html_site_map: bool = False,
         render_xml_site_map: bool = False,
@@ -86,7 +86,11 @@ class Site:
         # for these attributes
         template_path = getattr(self, "_template_path", template_path)
         output_path = getattr(self, "_output_path", output_path)
-        static_paths = getattr(self, "_static_paths", static_paths)
+        static_paths = getattr(
+            self,
+            "_static_paths",
+            {"static"} if static_paths is SENTINEL else static_paths,
+        ) 
         self.plugin_settings: dict = cast(
             dict,
             getattr(
@@ -390,8 +394,8 @@ class Site:
             # to https://localhost:8000/ This task will update to the correct site URL and with the route list
             # as it will be rendered.
             self._site_map.site_url = site_url
+            self._site_map.static_paths = self.static_paths
             self._site_map.update(self.route_list)
-            self._site_map.add_static_files(self.static_paths)
 
             if self.render_html_site_map:
 

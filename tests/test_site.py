@@ -467,6 +467,7 @@ def test_site_constructor_sub_class():
     for attr, value in expected_attrs.items():
         assert getattr(site, attr) == value, f"Failure at {attr}"
 
+
 def test_static_files_appear_in_site_map_after_render(tmp_path: Path):
     """Static files should be included in site.site_map once the site has been rendered"""
     static_dir = tmp_path / "static"

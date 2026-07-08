@@ -42,9 +42,10 @@ class SiteMapEntry:
     def __str__(self) -> str:
         """String representation of the entry as its URL"""
         return self.url_for
-    
-class StaticSiteMapEntry:
-    """Site map entry for a static file """
+
+
+class StaticSiteMapEntry(SiteMapEntry):
+    """Site map entry for a static file"""
 
     def __init__(self, file_path: Path, static_root: Path, url_prefix: str = ""):
         """
@@ -62,29 +63,27 @@ class StaticSiteMapEntry:
         self._route = f"/{prefix}/{relative}" if prefix else f"/{relative}"
         self.entries: list = []
 
-    @property
-    def url_for(self) -> str:
-        """The URL for the given entry"""
-        return str(self._route)
-
-    def __str__(self) -> str:
-        """String representation of the entry as its URL"""
-        return self.url_for
-
 
 class SiteMap:
     """Site map"""
 
-    def __init__(self, site_url: str = "", route_list: dict | None = None) -> None:
+    def __init__(
+        self,
+        site_url: str = "",
+        route_list: dict | None = None,
+        static_paths: Iterable[str | Path] | None = None,
+    ) -> None:
         """
         Create the site map based on the route_list
 
         :param site_url: Used for rendering the HTML to have absolute URLs.
         :param route_list: The route list to parse
+        :param static_paths: Static directories to include in the site map
         """
         self._route_map = dict()
         self._collections = dict()
         self._site_url = site_url
+        self.static_paths = static_paths
         if not route_list:
             return
         self.update(route_list)
@@ -113,6 +112,20 @@ class SiteMap:
             self._route_map[sm_entry.slug] = sm_entry
             if sm_entry.entries:
                 self._collections[sm_entry.slug] = sm_entry
+        if self.static_paths:
+            self.add_static_files(self.static_paths)
+
+    def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
+        """Add static files to the site map"""
+        for static in static_paths:
+            static = Path(static)
+            if not static.exists():
+                continue
+            url_prefix = static.name
+            for file_path in static.rglob("*"):
+                if file_path.is_file():
+                    entry = StaticSiteMapEntry(file_path, static, url_prefix)
+                    self._route_map[entry.slug] = entry
 
     def __iter__(self) -> Generator[SiteMapEntry]:
         """Iterator for the site map object"""
@@ -178,20 +191,7 @@ class SiteMap:
                 if entry := search(attr, value, collection.entries):
                     return entry
         return None
-    
-    def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
-        """ Add static files to the site map"""
-        for static in static_paths:
-            static = Path(static)
-            if not static.exists():
-                continue
-            url_prefix = static.name
-            for file_path in static.rglob("*"):
-                if file_path.is_file():
-                    entry = StaticSiteMapEntry(file_path, static, url_prefix)
-                    self._route_map[entry.slug] = entry
-        
-    
+
     @property
     def html(self) -> str:
         """Build the site map as HTML"""
