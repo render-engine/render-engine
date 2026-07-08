@@ -61,6 +61,37 @@ To have your site generate an XML site map set the `render_xml_site_map` propert
 to `True` (defaults to `False`.) This will create the `site_map.xml` file in the root output directory
 of your site.
 
+## Including Static Files in the Site Map
+
+By default, the `SiteMap` also includes an entry for every static file found in
+the `Site`'s `static_paths` (e.g. images, CSS, JS, and any other files copied
+from your static directories). This means static assets show up in both the
+generated HTML site map and the XML site map alongside your `Page` and
+`Collection` entries.
+
+Static file entries use the URL they are ultimately served at, based on where
+`static_paths` are copied to in the output directory. For example, a file at
+`static/images/logo.png` will appear in the site map with the URL
+`/static/images/logo.png`.
+
+If you want to add static files to a `SiteMap` manually — for example, when
+working with the `SiteMap` object directly rather than through `Site.render()`
+— use the `add_static_files` method:
+
+```python
+def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
+```
+
+### Parameters
+
+- `static_paths`: An iterable of directories (as `str` or `Path`) to walk for
+  static files. This is normally `Site.static_paths`, the same set of
+  directories copied to the output folder.
+
+Note: `SiteMap.update()` will automatically call `add_static_files` for you
+if the `SiteMap` has `static_paths` set, so in most cases you won't need to
+call this directly — it happens automatically as part of `Site.render()`.
+
 ## The `SiteMapEntry` object
 
 The `SiteMap` is a collection of `SiteMapEntry` objects. Each `SiteMapEntry` has the following attributes
@@ -74,3 +105,24 @@ and properties:
 - `entries` - A list of `SiteMapEntry` objects representing the `Page` objects in a given `Collection`.
 for a `Page` this will be an empty `list`.
 - `url_for` - This property will provide the _relative_ URL for the given entry.
+
+## The `StaticSiteMapEntry` object
+
+`StaticSiteMapEntry` is a subclass of `SiteMapEntry` used to represent static
+files (images, CSS, JS, etc.) in the site map, rather than `Page` or
+`Collection` objects. It shares the same `url_for` property and `__str__`
+behavior as `SiteMapEntry`, so it can be used interchangeably anywhere a
+`SiteMapEntry` is expected — for example, when iterating over a `SiteMap` or
+using `SiteMap.find()`.
+
+### Attributes and Properties
+
+- `slug` - A slug generated from the static file's path relative to its
+  static directory (e.g. `static-images-logo-png`).
+- `title` - The file's name (e.g. `logo.png`).
+- `path_name` - The file's path relative to its static directory (e.g.
+  `images/logo.png`).
+- `entries` - Always an empty `list`, since a static file has no
+  sub-entries.
+- `url_for` - Inherited from `SiteMapEntry`. Returns the file's relative URL,
+  e.g. `/static/images/logo.png`.
