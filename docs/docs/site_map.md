@@ -82,6 +82,7 @@ working with the `SiteMap` object directly rather than through `Site.render()`
 def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
 ```
 
+<!--  markdownlint-disable-next-line MD024 -->
 ### Parameters
 
 - `static_paths`: An iterable of directories (as `str` or `Path`) to walk for
@@ -114,15 +115,3 @@ files (images, CSS, JS, etc.) in the site map, rather than `Page` or
 behavior as `SiteMapEntry`, so it can be used interchangeably anywhere a
 `SiteMapEntry` is expected — for example, when iterating over a `SiteMap` or
 using `SiteMap.find()`.
-
-### Attributes and Properties
-
-- `slug` - A slug generated from the static file's path relative to its
-  static directory (e.g. `static-images-logo-png`).
-- `title` - The file's name (e.g. `logo.png`).
-- `path_name` - The file's path relative to its static directory (e.g.
-  `images/logo.png`).
-- `entries` - Always an empty `list`, since a static file has no
-  sub-entries.
-- `url_for` - Inherited from `SiteMapEntry`. Returns the file's relative URL,
-  e.g. `/static/images/logo.png`.
