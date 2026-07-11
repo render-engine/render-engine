@@ -201,27 +201,6 @@ paths:
   - "requirements.txt"
 ```
 
-### Documentation Labels
-
-From `.github/labeler.yml`:
-
-```yaml
-documentation:
-  - changed-files:
-    - any-glob-to-any-file: ['docs/**', 'guides/**']
-    - any-glob-to-any-file: '**/*.md'
-```
-
-### Source Code Labels
-
-```yaml
-source:
-  - all:
-    - changed-files:
-      - any-glob-to-any-file: 'src/**/*'
-      - all-globs-to-all-files: '!src/docs/*'
-```
-
 ## Troubleshooting
 
 ### Workflow Not Running When Expected
