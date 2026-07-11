@@ -66,9 +66,11 @@ class Site:
         render_xml_site_map: bool = False,
         slug_only_urls: bool = False,
         site_vars: object | dict = SENTINEL,
-        static_include_patterns: Iterable[str] = ("*",),
-        static_exclude_patterns: Iterable[str] = (),
-        static_exclude_dirs: Iterable[str] = (),
+        static_include_patterns: Iterable[str] | None = None,
+        static_exclude_patterns: Iterable[str] | None = None,
+        static_exclude_dirs: Iterable[str] | None = None,
+        static_include_dirs: Iterable[str] | None = None,
+        include_static_in_site_map: bool = True,
     ) -> None:
         """
         Constructor for the Site object.
@@ -84,9 +86,13 @@ class Site:
         :param render_xml_site_map: When True render the site map as an XMK file. Default: False
         :param slug_only_urls: Default value for Page objects rendering slub only URLS. Default: False
         :param site_vars: The site_vars dictionary containing data to be passed to all templates during rendering
-        :param static_include_patterns: Glob patterns a static file must match to be included. Default: all files.
+        :param static_include_patterns: Glob patterns a static file must match to be included.
+            Default None: no filtering.
         :param static_exclude_patterns: Glob patterns that exclude a static file even if it matched an include pattern.
         :param static_exclude_dirs: Directory names to skip entirely under any static path.
+        :param static_include_dirs: Subdirectory paths that override static_exclude_dirs for matching subdirectories.
+        :param include_static_in_site_map: When False, static files are not added to the site map at all
+            (they are still copied to output). Default: True.
         """
         # Use getattr for the attributes moved from class level to constructor arguments
         # to properly handle subclassing. This will prefeer the value from the subclass
@@ -101,9 +107,15 @@ class Site:
                 {"static"} if static_paths is SENTINEL else static_paths,
             ),
         )
-        self.static_include_patterns: Iterable[str] = getattr(self, "static_include_patterns", static_include_patterns)
-        self.static_exclude_patterns: Iterable[str] = getattr(self, "static_exclude_patterns", static_exclude_patterns)
-        self.static_exclude_dirs: Iterable[str] = getattr(self, "static_exclude_dirs", static_exclude_dirs)
+        self.static_include_patterns: Iterable[str] | None = getattr(
+            self, "static_include_patterns", static_include_patterns
+        )
+        self.static_exclude_patterns: Iterable[str] | None = getattr(
+            self, "static_exclude_patterns", static_exclude_patterns
+        )
+        self.static_exclude_dirs: Iterable[str] | None = getattr(self, "static_exclude_dirs", static_exclude_dirs)
+        self.static_include_dirs: Iterable[str] | None = getattr(self, "static_include_dirs", static_include_dirs)
+        self.include_static_in_site_map: bool = getattr(self, "include_static_in_site_map", include_static_in_site_map)
 
         self.plugin_settings: dict = cast(
             dict,
@@ -412,6 +424,8 @@ class Site:
             self._site_map.static_include_patterns = self.static_include_patterns
             self._site_map.static_exclude_patterns = self.static_exclude_patterns
             self._site_map.static_exclude_dirs = self.static_exclude_dirs
+            self._site_map.static_include_dirs = self.static_include_dirs
+            self._site_map.include_static_in_site_map = self.include_static_in_site_map
             self._site_map.update(self.route_list)
 
             if self.render_html_site_map:

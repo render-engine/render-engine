@@ -84,9 +84,11 @@ class SiteMap:
         self._collections = dict()
         self._site_url = site_url
         self.static_paths = static_paths
-        self.static_include_patterns: Iterable[str] = ("*",)
-        self.static_exclude_patterns: Iterable[str] = ()
-        self.static_exclude_dirs: Iterable[str] = ()
+        self.static_include_patterns: Iterable[str] | None = None
+        self.static_exclude_patterns: Iterable[str] | None = None
+        self.static_exclude_dirs: Iterable[str] | None = None
+        self.static_include_dirs: Iterable[str] | None = None
+        self.include_static_in_site_map: bool = True
         if not route_list:
             return
         self.update(route_list)
@@ -115,28 +117,32 @@ class SiteMap:
             self._route_map[sm_entry.slug] = sm_entry
             if sm_entry.entries:
                 self._collections[sm_entry.slug] = sm_entry
-        if self.static_paths:
+        if self.static_paths and self.include_static_in_site_map:
             self.add_static_files(
                 self.static_paths,
                 include_patterns=self.static_include_patterns,
                 exclude_patterns=self.static_exclude_patterns,
                 exclude_dirs=self.static_exclude_dirs,
+                include_dirs=self.static_include_dirs,
             )
 
     def add_static_files(
         self,
         static_paths: Iterable[str | Path],
-        include_patterns: Iterable[str] = ("*",),
-        exclude_patterns: Iterable[str] = (),
-        exclude_dirs: Iterable[str] = (),
+        include_patterns: Iterable[str] | None = None,
+        exclude_patterns: Iterable[str] | None = None,
+        exclude_dirs: Iterable[str] | None = None,
+        include_dirs: Iterable[str] | None = None,
     ) -> None:
         """
         Add static files to the site map, optionally filtered by pattern or directory.
 
         :param static_paths: Static directories to include in the site map
-        :param include_patterns: Glob patterns a file must match to be included. Defaults to all files.
+        :param include_patterns: Glob patterns a file must match to be included. Default None: no filtering.
         :param exclude_patterns: Glob patterns that exclude a matching file even if it matched an include pattern.
         :param exclude_dirs: Directory names to skip entirely (matched against any path segment).
+        :param include_dirs: Subdirectory paths that override exclude_dirs, forcing inclusion for matching
+            subdirectories even if a parent directory was excluded.
         """
         for static in static_paths:
             static = Path(static)
@@ -146,12 +152,19 @@ class SiteMap:
             for file_path in static.rglob("*"):
                 if not file_path.is_file():
                     continue
-                rel_parts = file_path.relative_to(static).parts[:-1]
-                if exclude_dirs and any(part in exclude_dirs for part in rel_parts):
+                rel_dir = file_path.relative_to(static).parent
+                rel_parts = rel_dir.parts
+                rel_dir_str = rel_dir.as_posix()
+
+                excluded_by_dir = exclude_dirs is not None and any(part in exclude_dirs for part in rel_parts)
+                included_override = include_dirs is not None and any(
+                    rel_dir_str == d or rel_dir_str.startswith(f"{d}/") for d in include_dirs
+                )
+                if excluded_by_dir and not included_override:
                     continue
-                if not any(file_path.match(p) for p in include_patterns):
+                if include_patterns is not None and not any(file_path.match(p) for p in include_patterns):
                     continue
-                if exclude_patterns and any(file_path.match(p) for p in exclude_patterns):
+                if exclude_patterns is not None and any(file_path.match(p) for p in exclude_patterns):
                     continue
                 entry = StaticSiteMapEntry(file_path, static, url_prefix)
                 self._route_map[entry.slug] = entry

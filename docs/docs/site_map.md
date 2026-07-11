@@ -95,25 +95,34 @@ def add_static_files(
   static files. This is normally `Site.static_paths`, the same set of
   directories copied to the output folder.
 - `include_patterns`: An iterable of glob patterns a file must match to be
-  included in the site map. Defaults to `("*",)`, which includes every file.
+  included in the site map. Defaults to `None`, meaning no filtering — every
+  file is included.
 - `exclude_patterns`: An iterable of glob patterns that exclude a file even
-  if it matched an `include_patterns` entry. Defaults to `()`, excluding
+  if it matched an `include_patterns` entry. Defaults to `None`, excluding
   nothing.
 - `exclude_dirs`: An iterable of directory names to skip entirely, matched
   against any path segment relative to the static directory. Defaults to
-  `()`, excluding nothing.
+  `None`, excluding nothing.
+- `include_dirs`: An iterable of subdirectory paths that override
+  `exclude_dirs`, forcing inclusion for matching subdirectories even if a
+  parent directory was excluded. Defaults to `None`.
 
 Note: `SiteMap.update()` will automatically call `add_static_files` for you
-if the `SiteMap` has `static_paths` set, using `Site.static_include_patterns`,
-`Site.static_exclude_patterns`, and `Site.static_exclude_dirs` — so in most
-cases you won't need to call this directly, or configure filtering anywhere
-except on your `Site` object. For example:
+if the `SiteMap` has `static_paths` set and `include_static_in_site_map` is
+`True`, using `Site.static_include_patterns`, `Site.static_exclude_patterns`,
+`Site.static_exclude_dirs`, and `Site.static_include_dirs` — so in most cases
+you won't need to call this directly, or configure filtering anywhere except
+on your `Site` object. Setting `include_static_in_site_map=False` on `Site`
+excludes static files from the site map entirely, without affecting whether
+they are copied to the output directory. For example:
 
 ```python
 site = Site(
     static_paths={"static"},
     static_include_patterns=("*.css", "*.js", "*.png"),
     static_exclude_dirs=("drafts",),
+    static_include_dirs=("drafts/public",),
+    include_static_in_site_map=True,
 )
 ```
 

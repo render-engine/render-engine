@@ -288,6 +288,37 @@ def test_add_static_files_exclude_dirs_skips_directory(tmp_path):
     assert urls == ["/static/logo.png"]
 
 
+def test_add_static_files_include_dirs_overrides_exclude_dirs(tmp_path):
+    static_dir = tmp_path / "static"
+    (static_dir / "drafts" / "public").mkdir(parents=True)
+    (static_dir / "drafts" / "private").mkdir(parents=True)
+    (static_dir / "drafts" / "public" / "notice.png").write_text("a")
+    (static_dir / "drafts" / "private" / "secret.png").write_text("b")
+    (static_dir / "logo.png").write_text("c")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files(
+        [static_dir],
+        exclude_dirs=["drafts"],
+        include_dirs=["drafts/public"],
+    )
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/drafts/public/notice.png", "/static/logo.png"]
+
+
+def test_include_static_in_site_map_false_excludes_from_map(tmp_path):
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("a")
+
+    sm = SiteMap("", {}, static_paths=[static_dir])
+    sm.include_static_in_site_map = False
+    sm.update({})
+
+    assert list(sm) == []
+
+
 def test_site_static_filters_apply_through_render(tmp_path_factory):
     base_temp_path = tmp_path_factory.getbasetemp()
     static_dir = base_temp_path / "filtered_static"
