@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 from collections import defaultdict
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, cast
 
@@ -65,6 +66,9 @@ class Site:
         render_xml_site_map: bool = False,
         slug_only_urls: bool = False,
         site_vars: object | dict = SENTINEL,
+        static_include_patterns: Iterable[str] = ("*",),
+        static_exclude_patterns: Iterable[str] = (),
+        static_exclude_dirs: Iterable[str] = (),
     ) -> None:
         """
         Constructor for the Site object.
@@ -80,6 +84,9 @@ class Site:
         :param render_xml_site_map: When True render the site map as an XMK file. Default: False
         :param slug_only_urls: Default value for Page objects rendering slub only URLS. Default: False
         :param site_vars: The site_vars dictionary containing data to be passed to all templates during rendering
+        :param static_include_patterns: Glob patterns a static file must match to be included. Default: all files.
+        :param static_exclude_patterns: Glob patterns that exclude a static file even if it matched an include pattern.
+        :param static_exclude_dirs: Directory names to skip entirely under any static path.
         """
         # Use getattr for the attributes moved from class level to constructor arguments
         # to properly handle subclassing. This will prefeer the value from the subclass
@@ -94,6 +101,10 @@ class Site:
                 {"static"} if static_paths is SENTINEL else static_paths,
             ),
         )
+        self.static_include_patterns: Iterable[str] = getattr(self, "static_include_patterns", static_include_patterns)
+        self.static_exclude_patterns: Iterable[str] = getattr(self, "static_exclude_patterns", static_exclude_patterns)
+        self.static_exclude_dirs: Iterable[str] = getattr(self, "static_exclude_dirs", static_exclude_dirs)
+
         self.plugin_settings: dict = cast(
             dict,
             getattr(
@@ -398,6 +409,9 @@ class Site:
             # as it will be rendered.
             self._site_map.site_url = site_url
             self._site_map.static_paths = self.static_paths
+            self._site_map.static_include_patterns = self.static_include_patterns
+            self._site_map.static_exclude_patterns = self.static_exclude_patterns
+            self._site_map.static_exclude_dirs = self.static_exclude_dirs
             self._site_map.update(self.route_list)
 
             if self.render_html_site_map:

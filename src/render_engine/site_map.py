@@ -84,6 +84,9 @@ class SiteMap:
         self._collections = dict()
         self._site_url = site_url
         self.static_paths = static_paths
+        self.static_include_patterns: Iterable[str] = ("*",)
+        self.static_exclude_patterns: Iterable[str] = ()
+        self.static_exclude_dirs: Iterable[str] = ()
         if not route_list:
             return
         self.update(route_list)
@@ -113,19 +116,45 @@ class SiteMap:
             if sm_entry.entries:
                 self._collections[sm_entry.slug] = sm_entry
         if self.static_paths:
-            self.add_static_files(self.static_paths)
+            self.add_static_files(
+                self.static_paths,
+                include_patterns=self.static_include_patterns,
+                exclude_patterns=self.static_exclude_patterns,
+                exclude_dirs=self.static_exclude_dirs,
+            )
 
-    def add_static_files(self, static_paths: Iterable[str | Path]) -> None:
-        """Add static files to the site map"""
+    def add_static_files(
+        self,
+        static_paths: Iterable[str | Path],
+        include_patterns: Iterable[str] = ("*",),
+        exclude_patterns: Iterable[str] = (),
+        exclude_dirs: Iterable[str] = (),
+    ) -> None:
+        """
+        Add static files to the site map, optionally filtered by pattern or directory.
+
+        :param static_paths: Static directories to include in the site map
+        :param include_patterns: Glob patterns a file must match to be included. Defaults to all files.
+        :param exclude_patterns: Glob patterns that exclude a matching file even if it matched an include pattern.
+        :param exclude_dirs: Directory names to skip entirely (matched against any path segment).
+        """
         for static in static_paths:
             static = Path(static)
             if not static.exists():
                 continue
             url_prefix = static.name
             for file_path in static.rglob("*"):
-                if file_path.is_file():
-                    entry = StaticSiteMapEntry(file_path, static, url_prefix)
-                    self._route_map[entry.slug] = entry
+                if not file_path.is_file():
+                    continue
+                rel_parts = file_path.relative_to(static).parts[:-1]
+                if exclude_dirs and any(part in exclude_dirs for part in rel_parts):
+                    continue
+                if not any(file_path.match(p) for p in include_patterns):
+                    continue
+                if exclude_patterns and any(file_path.match(p) for p in exclude_patterns):
+                    continue
+                entry = StaticSiteMapEntry(file_path, static, url_prefix)
+                self._route_map[entry.slug] = entry
 
     def __iter__(self) -> Generator[SiteMapEntry]:
         """Iterator for the site map object"""

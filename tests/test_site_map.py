@@ -247,3 +247,69 @@ def test_add_static_files_can_be_found_via_site_map_find(tmp_path):
     assert found is not None
     assert found.title == "logo.png"
     assert sm.find("/static/missing.png", attr="url_for") is None
+
+
+def test_add_static_files_include_patterns_filters_files(tmp_path):
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("a")
+    (static_dir / "notes.txt").write_text("b")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir], include_patterns=["*.png"])
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/logo.png"]
+
+
+def test_add_static_files_exclude_patterns_filters_files(tmp_path):
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("a")
+    (static_dir / "logo.png.bak").write_text("b")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir], exclude_patterns=["*.bak"])
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/logo.png"]
+
+
+def test_add_static_files_exclude_dirs_skips_directory(tmp_path):
+    static_dir = tmp_path / "static"
+    (static_dir / "drafts").mkdir(parents=True)
+    (static_dir / "logo.png").write_text("a")
+    (static_dir / "drafts" / "wip.png").write_text("b")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir], exclude_dirs=["drafts"])
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/logo.png"]
+
+
+def test_site_static_filters_apply_through_render(tmp_path_factory):
+    base_temp_path = tmp_path_factory.getbasetemp()
+    static_dir = base_temp_path / "filtered_static"
+    static_dir.mkdir(exist_ok=True)
+    (static_dir / "logo.png").write_text("a")
+    (static_dir / "notes.txt").write_text("b")
+    (static_dir / "drafts").mkdir(exist_ok=True)
+    (static_dir / "drafts" / "wip.png").write_text("c")
+
+    tmp_output_path = base_temp_path / "filtered_output"
+    tmp_template_path = base_temp_path / "filtered_templates"
+    tmp_template_path.mkdir(exist_ok=True)
+
+    class FilteredSite(Site):
+        output_path = tmp_output_path
+        _template_path = tmp_template_path
+        static_paths = {static_dir}
+        static_include_patterns = ("*.png",)
+        static_exclude_dirs = ("drafts",)
+
+    filtered_site = FilteredSite()
+    filtered_site.render()
+
+    urls = sorted(entry.url_for for entry in filtered_site.site_map if isinstance(entry, StaticSiteMapEntry))
+    assert urls == [f"/{static_dir.name}/logo.png"]
