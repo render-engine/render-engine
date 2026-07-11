@@ -5,7 +5,7 @@ import pytest
 from render_engine.collection import Collection
 from render_engine.page import Page
 from render_engine.site import Site
-from render_engine.site_map import SiteMap, SiteMapEntry
+from render_engine.site_map import SiteMap, SiteMapEntry, StaticSiteMapEntry
 
 PAGE_TEMPLATE = """
 ---
@@ -190,3 +190,60 @@ def test_site_map_to_xml(site):
 </url>
 </urlset>"""
     )
+
+
+def test_static_site_map_entry_attributes(tmp_path):
+    static_dir = tmp_path / "static"
+    (static_dir / "css").mkdir(parents=True)
+    file_path = static_dir / "css" / "main.css"
+    file_path.write_text("body { color: red; }")
+
+    entry = StaticSiteMapEntry(file_path, static_dir, url_prefix="static")
+
+    assert entry.path_name == "css/main.css"
+    assert entry.title == "main.css"
+    assert entry.url_for == "/static/css/main.css"
+    assert entry.entries == []
+    assert str(entry) == entry.url_for
+
+
+def test_add_static_files_adds_entry_per_file(tmp_path):
+    static_dir = tmp_path / "static"
+    (static_dir / "images").mkdir(parents=True)
+    (static_dir / "style.css").write_text("body{}")
+    (static_dir / "images" / "logo.png").write_text("fake-png-bytes")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir])
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/images/logo.png", "/static/style.css"]
+
+
+def test_add_static_files_multiple_static_dirs_no_collision(tmp_path):
+    static_dir_1 = tmp_path / "static"
+    static_dir_2 = tmp_path / "theme_static"
+    static_dir_1.mkdir()
+    static_dir_2.mkdir()
+    (static_dir_1 / "logo.png").write_text("a")
+    (static_dir_2 / "logo.png").write_text("b")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir_1, static_dir_2])
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/logo.png", "/theme_static/logo.png"]
+
+
+def test_add_static_files_can_be_found_via_site_map_find(tmp_path):
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("fake-png-bytes")
+
+    sm = SiteMap("http://example.com")
+    sm.add_static_files([static_dir])
+
+    found = sm.find("/static/logo.png", attr="url_for")
+    assert found is not None
+    assert found.title == "logo.png"
+    assert sm.find("/static/missing.png", attr="url_for") is None
