@@ -162,7 +162,7 @@ class SiteMap:
                 )
                 if excluded_by_dir and not included_override:
                     continue
-                if include_patterns is not None and not any(file_path.match(p) for p in include_patterns):
+                if include_patterns and not any(file_path.match(p) for p in include_patterns):
                     continue
                 if exclude_patterns is not None and any(file_path.match(p) for p in exclude_patterns):
                     continue
