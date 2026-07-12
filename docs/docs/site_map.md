@@ -82,9 +82,10 @@ working with the `SiteMap` object directly rather than through `Site.render()`
 def add_static_files(
     self,
     static_paths: Iterable[str | Path],
-    include_patterns: Iterable[str] = ("*",),
-    exclude_patterns: Iterable[str] = (),
-    exclude_dirs: Iterable[str] = (),
+    include_patterns: Iterable[str] | None = None,
+    exclude_patterns: Iterable[str] | None = None,
+    exclude_dirs: Iterable[str] | None = None,
+    include_dirs: Iterable[str] | None = None,
 ) -> None:
 ```
 
