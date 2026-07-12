@@ -477,6 +477,7 @@ def test_static_files_appear_in_site_map_after_render(tmp_path: Path):
     site = Site()
     site.output_path = tmp_path / "output"
     site.static_paths.add(static_dir)
+    site.include_static_in_site_map = True
 
     @site.page
     class CustomPage(Page):
@@ -498,6 +499,7 @@ def test_static_files_appear_in_xml_site_map(tmp_path: Path):
     site = Site()
     site.output_path = tmp_path / "output"
     site.static_paths.add(static_dir)
+    site.include_static_in_site_map = True
     site.render_xml_site_map = True
 
     @site.page
@@ -519,6 +521,7 @@ def test_nested_static_files_appear_in_site_map(tmp_path: Path):
     site = Site()
     site.output_path = tmp_path / "output"
     site.static_paths.add(static_dir)
+    site.include_static_in_site_map = True
 
     @site.page
     class CustomPage(Page):

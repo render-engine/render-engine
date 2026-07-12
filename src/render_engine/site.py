@@ -70,7 +70,7 @@ class Site:
         static_exclude_patterns: Iterable[str] | None = None,
         static_exclude_dirs: Iterable[str] | None = None,
         static_include_dirs: Iterable[str] | None = None,
-        include_static_in_site_map: bool = True,
+        include_static_in_site_map: bool = False,
     ) -> None:
         """
         Constructor for the Site object.
@@ -81,18 +81,17 @@ class Site:
         :param output_path: Path to write rendered content
         :param template_path: Path to location of template files
         :param static_paths: Paths for static folders copied to output (recursive)
-        :param plugin_settings: Dictionary caontaining plugin settings
+        :param plugin_settings: Dictionary containing plugin settings
         :param render_html_site_map: When True render the site map as an HTML file. Default: False
         :param render_xml_site_map: When True render the site map as an XMK file. Default: False
         :param slug_only_urls: Default value for Page objects rendering slub only URLS. Default: False
         :param site_vars: The site_vars dictionary containing data to be passed to all templates during rendering
-        :param static_include_patterns: Glob patterns a static file must match to be included.
-            Default None: no filtering.
+        :param static_include_patterns: Glob patterns a static file must match to be included. Default: None.
         :param static_exclude_patterns: Glob patterns that exclude a static file even if it matched an include pattern.
         :param static_exclude_dirs: Directory names to skip entirely under any static path.
         :param static_include_dirs: Subdirectory paths that override static_exclude_dirs for matching subdirectories.
-        :param include_static_in_site_map: When False, static files are not added to the site map at all
-            (they are still copied to output). Default: True.
+        :param include_static_in_site_map: When True, static files are added to the site map.
+            They are always copied to output regardless of this setting. Default: False.
         """
         # Use getattr for the attributes moved from class level to constructor arguments
         # to properly handle subclassing. This will prefeer the value from the subclass

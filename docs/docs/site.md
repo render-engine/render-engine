@@ -40,6 +40,11 @@ Site(
     render_xml_site_map: bool = False,
     slug_only_urls: bool = False,
     site_vars: object | dict = SENTINEL,
+    static_include_patterns: set[str] | None = None,
+    static_exclude_patterns: set[str] | None = None,
+    static_exclude_dirs: set[str] | None = None,
+    static_include_dirs: set[str] | None = None,
+    include_static_in_site_map: bool = False,
 ) -> None:
     pass
 ```
@@ -58,6 +63,11 @@ The `Site` constructor takes the following keyword arguments:
 | `render_xml_site_map`  | `bool`       | When True render the site map as an XML file. Default: False.                            |
 | `slug_only_urls`       | `bool`       | Default value for Page objects rendering slub only URLS. Default: False                  |
 | `site_vars`            | `dict`       | The site_vars dictionary containing data to be passed to all templates during rendering. |
+| `static_include_patterns` | `set[str] \| None` | Glob patterns a static file must match to be included. Default: `None` (no filtering). |
+| `static_exclude_patterns` | `set[str] \| None` | Glob patterns that exclude a static file even if it matched an include pattern. Default: `None`. |
+| `static_exclude_dirs`  | `set[str] \| None` | Directory names to skip entirely under any static path. Default: `None`. |
+| `static_include_dirs`  | `set[str] \| None` | Subdirectory paths that override `static_exclude_dirs` for matching subdirectories. Default: `None`. |
+| `include_static_in_site_map` | `bool` | When True, static files are added to the site map. Default: `False`. |
 <!-- markdownlint-enable MD056 -->
 <!-- markdownlint-enable MD060 -->
 

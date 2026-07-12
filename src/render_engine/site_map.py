@@ -88,7 +88,7 @@ class SiteMap:
         self.static_exclude_patterns: Iterable[str] | None = None
         self.static_exclude_dirs: Iterable[str] | None = None
         self.static_include_dirs: Iterable[str] | None = None
-        self.include_static_in_site_map: bool = True
+        self.include_static_in_site_map: bool = False
         if not route_list:
             return
         self.update(route_list)

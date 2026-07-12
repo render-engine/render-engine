@@ -106,7 +106,7 @@ def add_static_files(
   `None`, excluding nothing.
 - `include_dirs`: An iterable of subdirectory paths that override
   `exclude_dirs`, forcing inclusion for matching subdirectories even if a
-  parent directory was excluded. Defaults to `None`.
+  parent directory was excluded. Defaults to `None`, meaning no override.
 
 Note: `SiteMap.update()` will automatically call `add_static_files` for you
 if the `SiteMap` has `static_paths` set and `include_static_in_site_map` is

@@ -338,9 +338,23 @@ def test_site_static_filters_apply_through_render(tmp_path_factory):
         static_paths = {static_dir}
         static_include_patterns = ("*.png",)
         static_exclude_dirs = ("drafts",)
+        include_static_in_site_map = True
 
     filtered_site = FilteredSite()
     filtered_site.render()
 
     urls = sorted(entry.url_for for entry in filtered_site.site_map if isinstance(entry, StaticSiteMapEntry))
     assert urls == [f"/{static_dir.name}/logo.png"]
+
+
+def test_include_static_in_site_map_true_includes_in_map(tmp_path):
+    static_dir = tmp_path / "static"
+    static_dir.mkdir()
+    (static_dir / "logo.png").write_text("a")
+
+    sm = SiteMap("", {}, static_paths=[static_dir])
+    sm.include_static_in_site_map = True
+    sm.update({})
+
+    urls = sorted(entry.url_for for entry in sm)
+    assert urls == ["/static/logo.png"]
