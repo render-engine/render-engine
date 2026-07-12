@@ -164,7 +164,7 @@ class SiteMap:
                     continue
                 if include_patterns and not any(file_path.match(p) for p in include_patterns):
                     continue
-                if exclude_patterns is not None and any(file_path.match(p) for p in exclude_patterns):
+                if exclude_patterns and any(file_path.match(p) for p in exclude_patterns):
                     continue
                 entry = StaticSiteMapEntry(file_path, static, url_prefix)
                 self._route_map[entry.slug] = entry
