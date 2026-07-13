@@ -12,6 +12,7 @@ jobs:
     uses: ./.github/workflows/test.yml
     permissions:
       contents: read
+      pull-requests: write # This is needed for the coverage badge. Will fail on startup without it.
 
   build:
     needs: test
