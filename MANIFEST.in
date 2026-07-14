@@ -1,0 +1,15 @@
+prune docs
+prune tests
+prune .github
+prune .devcontainer
+prune .vscode
+
+exclude uv.lock
+exclude .gitignore
+exclude .all-contributorsrc
+exclude .markdownlint.json
+exclude .pre-commit-config.yaml
+exclude .readthedocs.yml
+exclude coverage-badge.svg
+exclude justfile
+exclude noxfile.py
