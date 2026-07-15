@@ -1,5 +1,5 @@
-include README.md
-include SECURITY.md
+exclude README.md
+exclude SECURITY.md
 
 prune docs
 prune tests
