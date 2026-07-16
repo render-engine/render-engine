@@ -6,6 +6,7 @@ prune tests
 prune .github
 prune .devcontainer
 prune .vscode
+prune src/render_engine.egg-info
 
 exclude uv.lock
 exclude .gitignore
@@ -16,3 +17,5 @@ exclude .readthedocs.yml
 exclude coverage-badge.svg
 exclude justfile
 exclude noxfile.py
+exclude src/render_engine/.gitignore
+exclude src/render_engine/py.typed
