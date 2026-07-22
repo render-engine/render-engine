@@ -277,6 +277,26 @@ def tests_site_multiple_static_paths(tmp_path: Path, site: Site):
     assert (output_tmp_dir / "static2" / "test2.txt").exists()
 
 
+def test_site_static_paths_not_required_to_exist(site: Site, tmp_path: Path):
+    """
+    A `static_paths` entry that does not point to an existing directory should be
+    skipped silently during rendering instead of raising an error, and the rest
+    of the site should still render normally. (#799)
+    """
+    missing_static_dir = tmp_path / "does_not_exist"
+    site.static_paths.add(missing_static_dir)
+    assert not missing_static_dir.exists()
+
+    @site.page
+    class CustomPage(Page):
+        content = "test"
+
+    site.render()
+
+    assert (site.output_path / "custompage.html").exists()
+    assert not (site.output_path / missing_static_dir.name).exists()
+
+
 def test_site_theme_update_settings(site, tmp_path: Path):
     """Tests that the theme manager updates the settings"""
     site = Site()
