@@ -9,8 +9,6 @@ description = "A Flexible Static Site Generator for Python"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -75,7 +73,7 @@ branch = "main"
 [tool.ruff]
 line-length = 120
 indent-width = 4
-target-version = "py311"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
