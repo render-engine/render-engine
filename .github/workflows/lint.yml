@@ -24,9 +24,9 @@ jobs:
         with:
           python-version: 3.14
       - name: Install dependencies
-        run: uvx ruff check . --output-format=github
+        run: uvx ruff check src tests --output-format=github
       - name: Check formatting
-        run: uvx ruff format . --check
+        run: uvx ruff format src tests --check
 
   lint-docs:
     name: Lint Markdown
