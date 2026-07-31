@@ -67,6 +67,7 @@ branch = "main"
 line-length = 120
 indent-width = 4
 target-version = "py310"
+exclude = ["*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
