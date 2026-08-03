@@ -45,19 +45,19 @@ lint-md *DIRECTORY="*.md docs/**/*.md":  # Note that we don't want the ** glob f
     fi
 
 # Run ruff linter without fixing
-lint DIRECTORY='.':
+lint *DIRECTORY='src tests':
     uvx ruff check {{ DIRECTORY }}
 
 # Run ruff linter with auto-fix
-lint-fix DIRECTORY='.':
+lint-fix *DIRECTORY='src tests':
     uvx ruff check --fix {{ DIRECTORY }}
 
 # Run ruff formatter as check
-format DIRECTORY='.':
+format *DIRECTORY='src tests':
     uvx ruff format --check {{ DIRECTORY }}
 
 # Run ruff formatter and fix issues
-format-fix DIRECTORY='.':
+format-fix *DIRECTORY='src tests':
     uvx ruff format --check {{ DIRECTORY }}
 
 ruff: lint format
