@@ -1,6 +1,6 @@
 import nox
 
-PYTHON_VERSIONS = ["3.15", "3.14", "3.13", "3.12", "3.11", "3.10"]
+PYTHON_VERSIONS = ["3.15", "3.14", "3.13", "3.12", "3.11"]
 
 
 @nox.session(python=PYTHON_VERSIONS, venv_backend="uv", reuse_venv=True)
