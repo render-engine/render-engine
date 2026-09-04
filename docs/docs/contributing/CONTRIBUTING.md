@@ -1,6 +1,6 @@
 # Contributing to Render Engine
 
-While the Render Engine team welcomes contributions to our repositories we do ask that only humans contribute to them.
+While the Render Engine team welcomes contributions to [our repositories] we do ask that only humans contribute to them.
 This does not mean that humans are not permitted to use LLMs in the course of their contributions, however any
 contributions from accounts that are not owned by a human will be rejected immediately.
 
@@ -162,3 +162,4 @@ Multiple low quality contributions will result in your user account being banned
 [Wait to be assigned an issue]: #wait-to-be-assigned-issues
 [Formatting your PR]: #formatting-your-pr
 [issue in GitHub]: https://github.com/render-engine/render-engine/issues/new/choose
+[our repositories]: https://github.com/render-engine
