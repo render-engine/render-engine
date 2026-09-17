@@ -26,7 +26,7 @@ body:
       options:
         - Windows
         - Linux (include distro)
-        - MacOS
+        - MacOS (include version)
       default: 0
     validations:
       required: true
