@@ -24,7 +24,7 @@ body:
       label: Operating System
       description: What Operating System are you using?
       options:
-        - Windows
+        - Windows (include version)
         - Linux (include distro)
         - MacOS (include version)
       default: 0
