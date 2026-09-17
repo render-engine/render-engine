@@ -34,7 +34,7 @@ body:
     id: python-version
     attributes:
       label: What Python Version are you using?
-      placeholder: 3.15.0rc1
+      placeholder: 3.14
   - type: textarea
     id: additional-installations
     attributes:
