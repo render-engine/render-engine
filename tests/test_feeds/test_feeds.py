@@ -79,7 +79,7 @@ def test_rss_feed_template_with_strictundefined(engine, tmp_path):
 @pytest.mark.parametrize(
     "date",
     [
-        datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=timezone.utc),
+        datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=datetime.UTC),
         datetime.datetime(2023, 4, 15, 0, 0, 0, tzinfo=None),
         datetime.date(2024, 4, 15),
     ],
