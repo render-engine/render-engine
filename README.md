@@ -105,12 +105,6 @@ Please review the [contributing][contributing] section of our docs for more info
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- markdownlint-restore -->
 
-### Sponsors at the $20/month and Higher Level
-
-- [Brian Douglas][bdougie]
-
-Thank you to them and all of those who continue to support this project!
-
 [pytest-badge]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg
 [pytest-action]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml
 [coverage-badge]: https://raw.githubusercontent.com/render-engine/render-engine/refs/heads/main/coverage-badge.svg
