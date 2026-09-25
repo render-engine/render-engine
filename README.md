@@ -115,7 +115,6 @@ Please review the [contributing][contributing] section of our docs for more info
 [python.org]: https://python.org
 [ms-store]: https://apps.microsoft.com/detail/9NQ7512CXL7T
 [getting-started]: https://render-engine.readthedocs.io/en/latest/page/
-[bdougie]: https://github.com/bdougie
 [contributing]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/
 [page-docs]: https://render-engine.readthedocs.io/en/latest/page/
 [collection-docs]: https://render-engine.readthedocs.io/en/latest/collection/
