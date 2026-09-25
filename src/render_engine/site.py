@@ -464,50 +464,57 @@ class Site:
             self.theme_manager.engine.globals["site"] = self  # type: ignore
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
+            render_errors: list[Exception] = []
             for slug, entry in self.route_list.items():
-                entry.site = self
-                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
-                args = []
-                match entry:
-                    case Page():
-                        progress.update(
-                            task_add_route,
-                            description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
-                        )
-                        args = [self.theme_manager]
-                        self.handle_slug_only_url(entry)
-                    case Collection():
-                        progress.update(
-                            task_add_route,
-                            description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
-                        )
-                        pre_build_collection_task = progress.add_task(
-                            "Loading Pre-Build-Collection Plugins",
+                try:
+                    entry.site = self
+                    progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
+                    args = []
+                    match entry:
+                        case Page():
+                            progress.update(
+                                task_add_route,
+                                description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
+                            )
+                            args = [self.theme_manager]
+                            self.handle_slug_only_url(entry)
+                        case Collection():
+                            progress.update(
+                                task_add_route,
+                                description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
+                            )
+                            pre_build_collection_task = progress.add_task(
+                                "Loading Pre-Build-Collection Plugins",
+                                total=1,
+                            )
+                            entry._run_collection_plugins(
+                                hook_type="pre_build_collection",
+                                site=self,
+                            )
+                            progress.update(pre_build_collection_task, advance=1)
+                        case DataObject():
+                            progress.update(
+                                task_add_route,
+                                description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
+                            )
+
+                    entry.render(*args)
+                    if isinstance(entry, Collection):
+                        post_build_collection_task = progress.add_task(
+                            "Loading Post-Build-Collection Plugins",
                             total=1,
                         )
                         entry._run_collection_plugins(
-                            hook_type="pre_build_collection",
+                            hook_type="post_build_collection",
                             site=self,
                         )
-                        progress.update(pre_build_collection_task, advance=1)
-                    case DataObject():
-                        progress.update(
-                            task_add_route,
-                            description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
-                        )
-
-                entry.render(*args)
-                if isinstance(entry, Collection):
-                    post_build_collection_task = progress.add_task(
-                        "Loading Post-Build-Collection Plugins",
-                        total=1,
-                    )
-                    entry._run_collection_plugins(
-                        hook_type="post_build_collection",
-                        site=self,
-                    )
-                    progress.update(post_build_collection_task, advance=1)
-                progress.update(task_add_route, advance=1)
+                        progress.update(post_build_collection_task, advance=1)
+                    progress.update(task_add_route, advance=1)
+                except Exception as error:  # noqa: BLE001
+                    error.add_note(f"Error rendering route {slug!r}")
+                    render_errors.append(error)
+            if render_errors:
+                raise ExceptionGroup("Errors while rendering the site", render_errors)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(
