@@ -531,3 +531,33 @@ def test_nested_static_files_appear_in_site_map(tmp_path: Path):
 
     entry = site.site_map.find("/static/nested/test.txt", attr="url_for")
     assert entry is not None
+
+
+def test_render_accumulates_route_errors_into_exception_group(site, tmp_path: Path):
+    """A failing route should not abort the build; every failure surfaces together.
+
+    Regression test for the ExceptionGroup behaviour requested in
+    render-engine/render-engine#1288.
+    """
+    template = tmp_path / "t.html"
+    template.write_text("ok")
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+
+    @site.page
+    class GoodPage(Page):
+        template = "t.html"
+
+    @site.page
+    class BadPage(Page):
+        template = "t.html"
+
+        def render(self, theme_manager):
+            raise ValueError("boom")
+
+    with pytest.raises(ExceptionGroup) as exc_info:
+        site.render()
+
+    # The failing route is reported...
+    assert any(isinstance(error, ValueError) and "boom" in str(error) for error in exc_info.value.exceptions)
+    # ...and the healthy route was still rendered despite it.
+    assert (site.output_path / "goodpage.html").exists()
