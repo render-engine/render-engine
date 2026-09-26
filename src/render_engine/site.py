@@ -396,19 +396,19 @@ class Site:
             entry._path_name = "index.html"
 
     def _report_render_errors(self, render_errors: list[tuple[str, BaseObject, Exception]]) -> None:
-        """Relata as rotas que falharam ao renderizar sem abortar o build (#1289).
+        """Report the routes that failed to render, without aborting the build.
 
-        Em vez de levantar um ExceptionGroup, escreve no stderr um resumo de cada
-        rota que falhou (rota e slug do entry, suficiente pra localizar o problema)
-        e joga os tracebacks completos num arquivo, cada um precedido pela info do
-        entry pra casar a falha com o entry que a causou. So o CAMINHO do arquivo
-        vai pro stderr: o traceback inteiro pode ser enorme quando varias paginas
-        quebram de uma vez.
+        Instead of raising an ExceptionGroup, write a summary of each failing
+        route (its route and the entry slug, enough to locate the problem) to
+        stderr, and dump the full tracebacks to a file, each preceded by the
+        entry information so a failure can be matched to the entry that caused
+        it. Only the file PATH goes to stderr: the full tracebacks can be huge
+        when many pages fail at once.
         """
 
         def _slug_of(entry: BaseObject) -> str:
-            # Page/DataObject nem sempre expoem `.slug` (so a Collection tem a
-            # property); `_slug` existe em todo BaseObject, entao serve de fallback.
+            # Page/DataObject don't always expose `.slug` (only Collection has the
+            # property); `_slug` exists on every BaseObject, so it's a safe fallback.
             return getattr(entry, "slug", None) or entry._slug
 
         print(f"render-engine: {len(render_errors)} route(s) failed to render:", file=sys.stderr)
@@ -506,9 +506,9 @@ class Site:
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
             render_errors: list[tuple[str, BaseObject, Exception]] = []
-            for route, entry in self.route_list.items():
+            for slug, entry in self.route_list.items():
                 entry.site = self
-                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{route}")
+                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
                 match entry:
                     case Page():
@@ -538,13 +538,13 @@ class Site:
                             description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
                         )
 
-                # O try envolve SO a chamada de render do entry (pedido do mantenedor
-                # no #1289): uma rota que falha nao aborta o build nem impede as
-                # outras, e a falha vira relatorio no fim em vez de excecao levantada.
+                # Wrap only the entry.render call: a route that fails should not
+                # abort the build or block the others; its failure is collected and
+                # reported at the end instead of being raised.
                 try:
                     entry.render(*args)
                 except Exception as error:  # noqa: BLE001
-                    render_errors.append((route, entry, error))
+                    render_errors.append((slug, entry, error))
                     progress.update(task_add_route, advance=1)
                     continue
 
