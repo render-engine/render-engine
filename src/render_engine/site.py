@@ -1,6 +1,9 @@
 import copy
 import json
 import logging
+import sys
+import tempfile
+import traceback
 from collections import defaultdict
 from collections.abc import Iterable
 from pathlib import Path
@@ -392,6 +395,44 @@ class Site:
             # If the path_name is still a property it will raise an AttributeError
             entry._path_name = "index.html"
 
+    def _report_render_errors(self, render_errors: list[tuple[str, BaseObject, Exception]]) -> None:
+        """Relata as rotas que falharam ao renderizar sem abortar o build (#1289).
+
+        Em vez de levantar um ExceptionGroup, escreve no stderr um resumo de cada
+        rota que falhou (rota e slug do entry, suficiente pra localizar o problema)
+        e joga os tracebacks completos num arquivo, cada um precedido pela info do
+        entry pra casar a falha com o entry que a causou. So o CAMINHO do arquivo
+        vai pro stderr: o traceback inteiro pode ser enorme quando varias paginas
+        quebram de uma vez.
+        """
+
+        def _slug_of(entry: BaseObject) -> str:
+            # Page/DataObject nem sempre expoem `.slug` (so a Collection tem a
+            # property); `_slug` existe em todo BaseObject, entao serve de fallback.
+            return getattr(entry, "slug", None) or entry._slug
+
+        print(f"render-engine: {len(render_errors)} route(s) failed to render:", file=sys.stderr)
+        for route, entry, error in render_errors:
+            print(
+                f"  - route {route!r} (slug {_slug_of(entry)!r}): {type(error).__name__}: {error}",
+                file=sys.stderr,
+            )
+
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            prefix="render-engine-errors-",
+            suffix=".log",
+            delete=False,
+            encoding="utf-8",
+        ) as report:
+            for route, entry, error in render_errors:
+                report.write(f"route {route!r} (slug {_slug_of(entry)!r})\n")
+                report.write("".join(traceback.format_exception(error)))
+                report.write("\n")
+            report_path = report.name
+
+        print(f"render-engine: full tracebacks written to {report_path}", file=sys.stderr)
+
     def render(self, site_url: str | None = None) -> None:
         """
         Render all pages and collections.
@@ -464,57 +505,62 @@ class Site:
             self.theme_manager.engine.globals["site"] = self  # type: ignore
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
-            render_errors: list[Exception] = []
-            for slug, entry in self.route_list.items():
-                try:
-                    entry.site = self
-                    progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
-                    args = []
-                    match entry:
-                        case Page():
-                            progress.update(
-                                task_add_route,
-                                description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
-                            )
-                            args = [self.theme_manager]
-                            self.handle_slug_only_url(entry)
-                        case Collection():
-                            progress.update(
-                                task_add_route,
-                                description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
-                            )
-                            pre_build_collection_task = progress.add_task(
-                                "Loading Pre-Build-Collection Plugins",
-                                total=1,
-                            )
-                            entry._run_collection_plugins(
-                                hook_type="pre_build_collection",
-                                site=self,
-                            )
-                            progress.update(pre_build_collection_task, advance=1)
-                        case DataObject():
-                            progress.update(
-                                task_add_route,
-                                description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
-                            )
-
-                    entry.render(*args)
-                    if isinstance(entry, Collection):
-                        post_build_collection_task = progress.add_task(
-                            "Loading Post-Build-Collection Plugins",
+            render_errors: list[tuple[str, BaseObject, Exception]] = []
+            for route, entry in self.route_list.items():
+                entry.site = self
+                progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{route}")
+                args = []
+                match entry:
+                    case Page():
+                        progress.update(
+                            task_add_route,
+                            description=f"[blue]Adding[gold]Route: [blue]{entry._slug}",
+                        )
+                        args = [self.theme_manager]
+                        self.handle_slug_only_url(entry)
+                    case Collection():
+                        progress.update(
+                            task_add_route,
+                            description=f"[blue]Adding[gold]Route: [blue]Collection {entry._slug}",
+                        )
+                        pre_build_collection_task = progress.add_task(
+                            "Loading Pre-Build-Collection Plugins",
                             total=1,
                         )
                         entry._run_collection_plugins(
-                            hook_type="post_build_collection",
+                            hook_type="pre_build_collection",
                             site=self,
                         )
-                        progress.update(post_build_collection_task, advance=1)
-                    progress.update(task_add_route, advance=1)
+                        progress.update(pre_build_collection_task, advance=1)
+                    case DataObject():
+                        progress.update(
+                            task_add_route,
+                            description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
+                        )
+
+                # O try envolve SO a chamada de render do entry (pedido do mantenedor
+                # no #1289): uma rota que falha nao aborta o build nem impede as
+                # outras, e a falha vira relatorio no fim em vez de excecao levantada.
+                try:
+                    entry.render(*args)
                 except Exception as error:  # noqa: BLE001
-                    error.add_note(f"Error rendering route {slug!r}")
-                    render_errors.append(error)
+                    render_errors.append((route, entry, error))
+                    progress.update(task_add_route, advance=1)
+                    continue
+
+                if isinstance(entry, Collection):
+                    post_build_collection_task = progress.add_task(
+                        "Loading Post-Build-Collection Plugins",
+                        total=1,
+                    )
+                    entry._run_collection_plugins(
+                        hook_type="post_build_collection",
+                        site=self,
+                    )
+                    progress.update(post_build_collection_task, advance=1)
+                progress.update(task_add_route, advance=1)
             if render_errors:
-                raise ExceptionGroup("Errors while rendering the site", render_errors)
+                self._report_render_errors(render_errors)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(

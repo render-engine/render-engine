@@ -1,4 +1,5 @@
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -533,11 +534,13 @@ def test_nested_static_files_appear_in_site_map(tmp_path: Path):
     assert entry is not None
 
 
-def test_render_accumulates_route_errors_into_exception_group(site, tmp_path: Path):
-    """A failing route should not abort the build; every failure surfaces together.
+def test_render_reports_route_errors_without_aborting(site, tmp_path: Path, capsys):
+    """A failing route is reported, not raised, and doesn't abort the build.
 
-    Regression test for the ExceptionGroup behaviour requested in
-    render-engine/render-engine#1288.
+    Regression test for the diagnostics behaviour requested in
+    render-engine/render-engine#1288 and refined in #1289: each failing route is
+    summarised on stderr and its full traceback is written to a file whose path is
+    printed to stderr, while healthy routes still render.
     """
     template = tmp_path / "t.html"
     template.write_text("ok")
@@ -554,10 +557,20 @@ def test_render_accumulates_route_errors_into_exception_group(site, tmp_path: Pa
         def render(self, theme_manager):
             raise ValueError("boom")
 
-    with pytest.raises(ExceptionGroup) as exc_info:
-        site.render()
+    # The build completes instead of raising, even though one route fails.
+    site.render()
 
-    # The failing route is reported...
-    assert any(isinstance(error, ValueError) and "boom" in str(error) for error in exc_info.value.exceptions)
-    # ...and the healthy route was still rendered despite it.
+    err = capsys.readouterr().err
+    # The failing route is summarised on stderr, by slug and exception type...
+    assert "badpage" in err.lower()
+    assert "ValueError" in err
+    # ...with a path to a file holding the full tracebacks.
+    match = re.search(r"written to (?P<path>.+\.log)", err)
+    assert match, err
+    report = Path(match.group("path").strip())
+    assert report.exists()
+    contents = report.read_text()
+    assert "boom" in contents
+    assert "Traceback" in contents
+    # The healthy route was still rendered despite the failure.
     assert (site.output_path / "goodpage.html").exists()
