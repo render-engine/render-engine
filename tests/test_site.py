@@ -1,4 +1,5 @@
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -531,3 +532,45 @@ def test_nested_static_files_appear_in_site_map(tmp_path: Path):
 
     entry = site.site_map.find("/static/nested/test.txt", attr="url_for")
     assert entry is not None
+
+
+def test_render_reports_route_errors_without_aborting(site, tmp_path: Path, capsys):
+    """A failing route is reported, not raised, and doesn't abort the build.
+
+    Regression test for the diagnostics behaviour requested in
+    render-engine/render-engine#1288 and refined in #1289: each failing route is
+    summarised on stderr and its full traceback is written to a file whose path is
+    printed to stderr, while healthy routes still render.
+    """
+    template = tmp_path / "t.html"
+    template.write_text("ok")
+    site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+
+    @site.page
+    class GoodPage(Page):
+        template = "t.html"
+
+    @site.page
+    class BadPage(Page):
+        template = "t.html"
+
+        def render(self, theme_manager):
+            raise ValueError("boom")
+
+    # The build completes instead of raising, even though one route fails.
+    site.render()
+
+    err = capsys.readouterr().err
+    # The failing route is summarised on stderr, by slug and exception type...
+    assert "badpage" in err.lower()
+    assert "ValueError" in err
+    # ...with a path to a file holding the full tracebacks.
+    match = re.search(r"written to (?P<path>.+\.log)", err)
+    assert match, err
+    report = Path(match.group("path").strip())
+    assert report.exists()
+    contents = report.read_text()
+    assert "boom" in contents
+    assert "Traceback" in contents
+    # The healthy route was still rendered despite the failure.
+    assert (site.output_path / "goodpage.html").exists()

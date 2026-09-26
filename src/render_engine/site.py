@@ -1,6 +1,9 @@
 import copy
 import json
 import logging
+import sys
+import tempfile
+import traceback
 from collections import defaultdict
 from collections.abc import Iterable
 from pathlib import Path
@@ -392,6 +395,44 @@ class Site:
             # If the path_name is still a property it will raise an AttributeError
             entry._path_name = "index.html"
 
+    def _report_render_errors(self, render_errors: list[tuple[str | Path, BaseObject, Exception]]) -> None:
+        """Report the routes that failed to render, without aborting the build.
+
+        Instead of raising an ExceptionGroup, write a summary of each failing
+        route (its route and the entry slug, enough to locate the problem) to
+        stderr, and dump the full tracebacks to a file, each preceded by the
+        entry information so a failure can be matched to the entry that caused
+        it. Only the file PATH goes to stderr: the full tracebacks can be huge
+        when many pages fail at once.
+        """
+
+        def _slug_of(entry: BaseObject) -> str:
+            # Page/DataObject don't always expose `.slug` (only Collection has the
+            # property); `_slug` exists on every BaseObject, so it's a safe fallback.
+            return getattr(entry, "slug", None) or entry._slug
+
+        print(f"render-engine: {len(render_errors)} route(s) failed to render:", file=sys.stderr)
+        for route, entry, error in render_errors:
+            print(
+                f"  - route {route!r} (slug {_slug_of(entry)!r}): {type(error).__name__}: {error}",
+                file=sys.stderr,
+            )
+
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            prefix="render-engine-errors-",
+            suffix=".log",
+            delete=False,
+            encoding="utf-8",
+        ) as report:
+            for route, entry, error in render_errors:
+                report.write(f"route {route!r} (slug {_slug_of(entry)!r})\n")
+                report.write("".join(traceback.format_exception(error)))
+                report.write("\n")
+            report_path = report.name
+
+        print(f"render-engine: full tracebacks written to {report_path}", file=sys.stderr)
+
     def render(self, site_url: str | None = None) -> None:
         """
         Render all pages and collections.
@@ -464,6 +505,7 @@ class Site:
             self.theme_manager.engine.globals["site"] = self  # type: ignore
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
+            render_errors: list[tuple[str | Path, BaseObject, Exception]] = []
             for slug, entry in self.route_list.items():
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
@@ -496,7 +538,16 @@ class Site:
                             description=f"[blue]Adding[gold]Route: [blue]{entry.filename}",
                         )
 
-                entry.render(*args)
+                # Wrap only the entry.render call: a route that fails should not
+                # abort the build or block the others; its failure is collected and
+                # reported at the end instead of being raised.
+                try:
+                    entry.render(*args)
+                except Exception as error:  # noqa: BLE001
+                    render_errors.append((slug, entry, error))
+                    progress.update(task_add_route, advance=1)
+                    continue
+
                 if isinstance(entry, Collection):
                     post_build_collection_task = progress.add_task(
                         "Loading Post-Build-Collection Plugins",
@@ -508,6 +559,8 @@ class Site:
                     )
                     progress.update(post_build_collection_task, advance=1)
                 progress.update(task_add_route, advance=1)
+            if render_errors:
+                self._report_render_errors(render_errors)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(
