@@ -395,7 +395,7 @@ class Site:
             # If the path_name is still a property it will raise an AttributeError
             entry._path_name = "index.html"
 
-    def _report_render_errors(self, render_errors: list[tuple[str, BaseObject, Exception]]) -> None:
+    def _report_render_errors(self, render_errors: list[tuple[str | Path, BaseObject, Exception]]) -> None:
         """Report the routes that failed to render, without aborting the build.
 
         Instead of raising an ExceptionGroup, write a summary of each failing
@@ -505,7 +505,7 @@ class Site:
             self.theme_manager.engine.globals["site"] = self  # type: ignore
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
-            render_errors: list[tuple[str, BaseObject, Exception]] = []
+            render_errors: list[tuple[str | Path, BaseObject, Exception]] = []
             for slug, entry in self.route_list.items():
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
