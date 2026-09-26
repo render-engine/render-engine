@@ -15,7 +15,7 @@ from .collection import Collection
 from .data_object import DataObject
 from .engine import engine
 from .page import Page, RedirectPage
-from .plugins import PluginManager, handle_plugin_registration
+from .plugins import PluginHookNames, PluginManager, handle_plugin_registration
 from .site_map import SiteMap
 from .themes import Theme, ThemeManager
 
@@ -486,7 +486,7 @@ class Site:
                             total=1,
                         )
                         entry._run_collection_plugins(
-                            hook_type="pre_build_collection",
+                            hook_type=PluginHookNames.PRE_BUILD_COLLECTION,
                             site=self,
                         )
                         progress.update(pre_build_collection_task, advance=1)
@@ -503,7 +503,7 @@ class Site:
                         total=1,
                     )
                     entry._run_collection_plugins(
-                        hook_type="post_build_collection",
+                        hook_type=PluginHookNames.POST_BUILD_COLLECTION,
                         site=self,
                     )
                     progress.update(post_build_collection_task, advance=1)
