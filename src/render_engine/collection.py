@@ -17,7 +17,7 @@ from .content_managers import ContentManager, FileContentManager
 from .feeds import RSSFeed
 from .page import BasePage, Page
 from .parsers import BasePageParser
-from .plugins import PluginManager
+from .plugins import PluginHookNames, PluginManager
 
 
 class Collection(BaseObject):
@@ -267,7 +267,7 @@ class Collection(BaseObject):
         if feed := getattr(self, "feed", None):
             yield feed
 
-    def _run_collection_plugins(self, site, hook_type: str):
+    def _run_collection_plugins(self, site, hook_type: PluginHookNames):
         """
         Run plugins for a collection
 
@@ -278,13 +278,13 @@ class Collection(BaseObject):
         if not getattr(self.plugin_manager, "_pm", None) or not self.plugin_manager.plugins:
             return
         try:
-            method = getattr(self.plugin_manager.hook, hook_type)
+            method: Callable = getattr(self.plugin_manager.hook, hook_type)
         except AttributeError:
             logging.error(f"Unknown {hook_type=}")
             return
         method(collection=self, site=site, settings=self.plugin_manager.plugin_settings)
 
-    def _render(self, entry: BaseObject):
+    def _render(self, entry: BasePage):
         """
         Renders 1 entry in the Collection
 
@@ -294,12 +294,10 @@ class Collection(BaseObject):
             entry.plugin_manager = copy.deepcopy(self.plugin_manager)
 
         # Circular imports. Need to be handled here.
-        from .page import BasePage
         from .site import Site
 
-        entry = cast(BasePage, entry)
-        self = cast(Collection, self)
-        self.site = cast(Site, self.site)
+        self: Collection = cast(Collection, self)
+        self.site: Site = cast(Site, self.site)
         entry.site = self.site
         entry.render(self.site.theme_manager)
 
@@ -329,7 +327,7 @@ class Collection(BaseObject):
         :param content: Content for the new entry
         :param metadata: Metadata for the new entry
         """
-        context = copy.deepcopy(self._metadata_attrs())
+        context: dict[str, str] = copy.deepcopy(self._metadata_attrs())
         if metadata:
             context.update(metadata)
         return self.content_manager.create_entry(
