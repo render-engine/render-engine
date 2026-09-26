@@ -1,9 +1,16 @@
+<!-- markdownlint-disable MD001 -->
+
 <!--
 SUMMARY OF THE CHANGES BEING MADE
 Be sure to include any referenced issues and discussions.
 
 Not following this guideline will result in the immediate rejection of your PR.
 -->
+
+## Contributing guidelines
+
+- [ ] I have read and abided by all of the [contributing guidelines] for this project.
+- [ ] The issue this PR resolves has been assigned to me.
 
 #### Type of Issue
 
@@ -30,3 +37,5 @@ Not following this guideline will result in the immediate rejection of your PR.
 #### AI Attestation
 
 <!-- Include how AI was used in the creation of this change -->
+
+[contributing guidelines]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/

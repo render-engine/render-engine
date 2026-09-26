@@ -14,9 +14,13 @@ Specifically, please note the following:
 This document will help you get started in contributing to the Render Engine codebase is open source and
 contributions are welcome.
 
-> **NOTE**
-> This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom
-> parser or Theme. Please check the [Render Engine Wiki][wiki] or the [Render Engine Docs][docs].
+!!! NOTE
+    This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom
+    parser or Theme. Please check the [Render Engine Wiki][wiki] or the [Render Engine Docs][docs].
+
+!!! NOTE
+    Render Engine uses [gh-profiler] as part of its CI for all new issues and pull requests. The output generated
+    by `gh-profiler` is transient and will be deleted when the issue or PR is closed.
 
 ## Docs
 
@@ -71,8 +75,13 @@ Once you've been [assigned an issue][being-assigned], you can begin working on a
 - create virtual environment and connect to virtual environment
 - create local installation with dev tooling
   `uv pip install -e . --group dev`
-  > **NOTE** If your change will require a documentation update the `docs` group should also be installed.
-`uv pip install -e . --group dev --group docs`
+!!! NOTE
+    If your change will require a documentation update the `docs` group should also be installed.
+
+    ```sh
+    uv pip install -e . --group dev --group docs
+    ```
+
 - run pre-commit (it will install all of its needed deps)
 
 ### Dockerfile
@@ -163,3 +172,4 @@ Multiple low quality contributions will result in your user account being banned
 [Formatting your PR]: #formatting-your-pr
 [issue in GitHub]: https://github.com/render-engine/render-engine/issues/new/choose
 [our repositories]: https://github.com/render-engine
+[gh-profiler]: https://pypi.org/project/gh-profiler/
