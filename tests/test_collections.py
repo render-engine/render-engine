@@ -369,29 +369,35 @@ def test_collection_custom_sort_by_list_with_date():
         (
             "",
             {"title": "title"},
-            textwrap.dedent("""---
+            textwrap.dedent(
+                """---
 title: title
 ---
 
-Hello, world!"""),
+Hello, world!"""
+            ),
         ),
         (
             "test",
             {},
-            textwrap.dedent("""---
+            textwrap.dedent(
+                """---
 title: Untitled Entry
 ---
 
-test"""),
+test"""
+            ),
         ),
         (
             "",
             {},
-            textwrap.dedent("""---
+            textwrap.dedent(
+                """---
 title: Untitled Entry
 ---
 
-Hello, world!"""),
+Hello, world!"""
+            ),
         ),
     ],
 )

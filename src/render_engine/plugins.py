@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 from collections.abc import Iterable
+from enum import StrEnum, auto
 from typing import Any
 
 import pluggy
@@ -8,6 +9,16 @@ import pluggy
 _PROJECT_NAME = "render_engine"
 hook_impl = pluggy.HookimplMarker(project_name=_PROJECT_NAME)
 hook_spec = pluggy.HookspecMarker(project_name=_PROJECT_NAME)
+
+
+class PluginHookNames(StrEnum):
+    ADD_DEFAULT_SETTINGS = auto()
+    PRE_BUILD_SITE = auto()
+    POST_BUILD_SITE = auto()
+    RENDER_CONTNENT = auto()
+    POST_RENDER_CONTENT = auto()
+    PRE_BUILD_COLLECTION = auto()
+    POST_BUILD_COLLECTION = auto()
 
 
 class SiteSpecs:
