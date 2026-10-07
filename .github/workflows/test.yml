@@ -8,7 +8,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/test.yml"
-      - ".github/actions/**"
+      - ".github/actions/**/*.yml"
       - "src/**"
       - "tests/**"
       - "pyproject.toml"
