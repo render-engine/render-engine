@@ -100,8 +100,8 @@ Please review the [contributing][contributing] section of our docs for more info
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- markdownlint-restore -->
 
-[pytest-badge]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml/badge.svg
-[pytest-action]: https://github.com/kjaymiller/render_engine/actions/workflows/test.yml
+[pytest-badge]: https://github.com/render-engine/render-engine/actions/workflows/test.yml/badge.svg?branch=main
+[pytest-action]: https://github.com/render-engine/render-engine/actions/workflows/test.yml
 [coverage-badge]: https://raw.githubusercontent.com/render-engine/render-engine/refs/heads/main/coverage-badge.svg
 [discord-badge]: https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple
 [discord-link]: https://discord.gg/2xMQ4j4d8m
