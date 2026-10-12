@@ -12,7 +12,7 @@
 - [Check out the Documentation][docs]
 - [Contributors and Builders, Check out the Wiki][wiki]
 - [Join the community!][discord-link]
-- [Visit the official website][website]
+- [Explore Render Engine's features and learn how to get started][website]
 
 ## What is RenderEngine
 
