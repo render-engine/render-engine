@@ -12,6 +12,7 @@
 - [Check out the Documentation][docs]
 - [Contributors and Builders, Check out the Wiki][wiki]
 - [Join the community!][discord-link]
+- [Visit the official website][website]
 
 ## What is RenderEngine
 
@@ -105,6 +106,7 @@ Please review the [contributing][contributing] section of our docs for more info
 [coverage-badge]: https://raw.githubusercontent.com/render-engine/render-engine/refs/heads/main/coverage-badge.svg
 [discord-badge]: https://img.shields.io/discord/1174377880118104156?label=Discord&color=purple
 [discord-link]: https://discord.gg/2xMQ4j4d8m
+[website]: https://render-engine.org/
 [docs]: https://render-engine.readthedocs.io/en/latest/
 [wiki]: https://github.com/render-engine/render-engine/wiki
 [python.org]: https://python.org
