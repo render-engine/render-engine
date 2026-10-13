@@ -157,6 +157,15 @@ Render should be called after all pages and collections have been added to the s
 You can choose to call it manually in your file or
 use the CLI command [`render-engine build`]
 
+> !!! Note
+  `Site.render` will accumulate all exceptions raised during the rendering of its entries.
+  When it has completed it will output the list of entries that raised exceptions and
+  output the back traces to a log file in the site's `output_path`. If `raise_on_error`
+  is `True` it will raise an exception upon completion. If `print_errors` is `True`
+  the log of the back traces will be outputted to `sys.stderr` in addition to the log file.
+  When running in CI it is recommended to set both of these parameters to `True` when
+  initializing your `Site` object.
+
 [`render-engine build`]: cli.md?id=build
 [`site.collection`]: site.md?id=collection
 [`site.page`]: site.md?id=page

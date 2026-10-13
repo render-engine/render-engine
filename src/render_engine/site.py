@@ -411,7 +411,7 @@ class Site:
         it. Only the file PATH goes to stderr: the full tracebacks can be huge
         when many pages fail at once.
         """
-        error_file: Path = Path(self.output_path) / f"error_{dt.datetime.now().isoformat()}.log"
+        error_file: Path = Path(self.output_path) / f"error_{int(dt.datetime.now().timestamp())}.log"
 
         report_exceptions: list[str] = []
         for exception in render_errors:
