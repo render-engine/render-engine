@@ -45,6 +45,8 @@ Site(
     static_exclude_dirs: set[str] | None = None,
     static_include_dirs: set[str] | None = None,
     include_static_in_site_map: bool = False,
+    raise_on_error: bool = False,
+    print_errors: bool = False,
 ) -> None:
     pass
 ```
@@ -68,6 +70,8 @@ The `Site` constructor takes the following keyword arguments:
 | `static_exclude_dirs`  | `set[str] \| None` | Directory names to skip entirely under any static path. Default: `None`. |
 | `static_include_dirs`  | `set[str] \| None` | Subdirectory paths that override `static_exclude_dirs` for matching subdirectories. Default: `None`. |
 | `include_static_in_site_map` | `bool` | When True, static files are added to the site map. Default: `False`. |
+| `raise_on_error` | bool | When True a `RuntimeError` will be raised if one or more exceptions were encountered whilerendering the site. |
+| `print_errors` | bool | When True the errror log will be printed to `stderr` in addition to the log file. |
 <!-- markdownlint-enable MD056 -->
 <!-- markdownlint-enable MD060 -->
 

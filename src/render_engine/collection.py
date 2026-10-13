@@ -296,21 +296,34 @@ class Collection(BaseObject):
         # Circular imports. Need to be handled here.
         from .site import Site
 
-        self: Collection = cast(Collection, self)
-        self.site: Site = cast(Site, self.site)
-        entry.site = self.site
-        entry.render(self.site.theme_manager)
+        try:
+            self: Collection = cast(Collection, self)
+            self.site: Site = cast(Site, self.site)
+            entry.site = self.site
+            entry.render(self.site.theme_manager)
+        except Exception as e:
+            e.add_note(f"Exception raised when processing {entry._slug!r}")
+            raise
 
     def render(self) -> None:
         """Iterate through Pages and Check for Archives and Feeds"""
+
+        exceptions: list[Exception] = []
 
         # Use a ThreadPool to process all of the entries in the collection in parallel.
         # This is limited to the number of CPUs available. The easiest way to implement
         # this parallelization for a single task is to use the imap_unordered method of
         # the ThreadPool. This is, effectively, a generator so we need to loop over it
         # for them to run. Since there is no actual return value to look at we just `pass`.
-        for entry in ThreadPool(processes=os.cpu_count()).imap_unordered(self._render, self.all_content):
-            pass
+
+        with ThreadPool(processes=os.cpu_count()) as pool:
+            for entry in self.all_content:
+                try:
+                    pool.apply(self._render, (entry,))
+                except* Exception as eg:
+                    exceptions.extend(eg.exceptions)
+        if exceptions:
+            raise ExceptionGroup(f"Failures in processing Collection {self.__class__.__name__!r}", exceptions) from None
 
     def create_entry(
         self,
