@@ -172,7 +172,7 @@ class BasePage(BaseObject):
                 rc += path.write_text(self.rendered_content)
         except Exception as e:
             e.add_note(f"{type(e).__name__} while rendering {self._slug!r}")
-            raise ExceptionGroup(f"{type(e).__name__} while rendering {self._slug!r}", [e])
+            raise
         return rc
 
 
