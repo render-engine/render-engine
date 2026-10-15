@@ -7,6 +7,8 @@ from render_engine_parser import BasePageParser
 
 from render_engine.collection import Collection
 from render_engine.page import Page
+from render_engine.site import Site
+from render_engine.themes import ThemeManager
 
 pm = pluggy.PluginManager("fake_test")
 
@@ -422,3 +424,34 @@ def test_create_entry_no_filename():
     # Since the base Collection object uses a FileContentManager
     with pytest.raises(ValueError):
         Collection().create_entry()
+
+
+def test_collection_exception_groups(tmp_path: pathlib.Path):
+    """Test that collection.render will raise an ExceptionGroup if one or more pages in it raises an exception"""
+    tmp_dir: pathlib.Path = tmp_path / "output"
+
+    class ExceptionPage(Page):
+        def __init__(self, title):
+            super().__init__()
+            self.title = title
+
+        def render(self, theme_manager: ThemeManager) -> int:
+            raise RuntimeError("Failed to render")
+
+    class GoodPage(Page):
+        title = "Good Page"
+        content = "Good page"
+
+    site = Site()
+    site.output_path = tmp_dir
+
+    @site.collection
+    class TestCollection(Collection):
+        pages = [ExceptionPage(title=f"exception page {count}") for count in range(2)] + [GoodPage()]
+
+    TestCollection.site = site
+
+    with pytest.raises(ExceptionGroup) as eg:
+        TestCollection.render()
+    assert len(eg.value.exceptions) == 2
+    assert (site.output_path / "good-page.html").exists()

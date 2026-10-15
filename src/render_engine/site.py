@@ -1,8 +1,8 @@
 import copy
+import datetime as dt
 import json
 import logging
 import sys
-import tempfile
 import traceback
 from collections import defaultdict
 from collections.abc import Iterable
@@ -74,6 +74,8 @@ class Site:
         static_exclude_dirs: Iterable[str] | None = None,
         static_include_dirs: Iterable[str] | None = None,
         include_static_in_site_map: bool = False,
+        raise_on_error: bool = False,
+        print_errors: bool = False,
     ) -> None:
         """
         Constructor for the Site object.
@@ -95,6 +97,8 @@ class Site:
         :param static_include_dirs: Subdirectory paths that override static_exclude_dirs for matching subdirectories.
         :param include_static_in_site_map: When True, static files are added to the site map.
             They are always copied to output regardless of this setting. Default: False.
+        :param raise_on_error: Flag indicating whether rendering errors should raise. Default False.
+        :param print_errors: Flag indicating whether errors during rendering should print to the console. Default False.
         """
         # Use getattr for the attributes moved from class level to constructor arguments
         # to properly handle subclassing. This will prefeer the value from the subclass
@@ -160,6 +164,8 @@ class Site:
         self.theme_manager.engine.globals.update(self.site_vars)
         self.theme_manager.add_loader(0, FileSystemLoader(template_path))
         self._site_map = SiteMap()
+        self.raise_on_error: bool = raise_on_error
+        self.print_errors: bool = print_errors
 
     @property
     def output_path(self) -> Path | str:
@@ -395,7 +401,7 @@ class Site:
             # If the path_name is still a property it will raise an AttributeError
             entry._path_name = "index.html"
 
-    def _report_render_errors(self, render_errors: list[tuple[str | Path, BaseObject, Exception]]) -> None:
+    def _report_render_errors(self, render_errors: list[Exception]) -> str:
         """Report the routes that failed to render, without aborting the build.
 
         Instead of raising an ExceptionGroup, write a summary of each failing
@@ -405,33 +411,19 @@ class Site:
         it. Only the file PATH goes to stderr: the full tracebacks can be huge
         when many pages fail at once.
         """
+        error_file: Path = Path(self.output_path) / f"error_{int(dt.datetime.now().timestamp())}.log"
 
-        def _slug_of(entry: BaseObject) -> str:
-            # Page/DataObject don't always expose `.slug` (only Collection has the
-            # property); `_slug` exists on every BaseObject, so it's a safe fallback.
-            return getattr(entry, "slug", None) or entry._slug
+        report_exceptions: list[str] = []
+        for exception in render_errors:
+            if not self.print_errors and hasattr(exception, "__notes__"):
+                print("\n".join(exception.__notes__), file=sys.stderr)
+            report_exceptions.append("".join(traceback.format_exception(exception)))
 
-        print(f"render-engine: {len(render_errors)} route(s) failed to render:", file=sys.stderr)
-        for route, entry, error in render_errors:
-            print(
-                f"  - route {route!r} (slug {_slug_of(entry)!r}): {type(error).__name__}: {error}",
-                file=sys.stderr,
-            )
-
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            prefix="render-engine-errors-",
-            suffix=".log",
-            delete=False,
-            encoding="utf-8",
-        ) as report:
-            for route, entry, error in render_errors:
-                report.write(f"route {route!r} (slug {_slug_of(entry)!r})\n")
-                report.write("".join(traceback.format_exception(error)))
-                report.write("\n")
-            report_path = report.name
-
-        print(f"render-engine: full tracebacks written to {report_path}", file=sys.stderr)
+        if self.print_errors:
+            print("\n\n".join(report_exceptions), file=sys.stderr)
+        error_file.write_text("\n\n".join(report_exceptions))
+        print(f"Exceptions found while rendering. Full tracebacks written to {error_file}", file=sys.stderr)
+        return error_file.name
 
     def render(self, site_url: str | None = None) -> None:
         """
@@ -505,8 +497,9 @@ class Site:
             self.theme_manager.engine.globals["site"] = self  # type: ignore
             self.theme_manager.engine.globals["routes"] = self.route_list  # type: ignore
 
-            render_errors: list[tuple[str | Path, BaseObject, Exception]] = []
+            render_errors: list[Exception] = []
             for slug, entry in self.route_list.items():
+                raised: bool = False
                 entry.site = self
                 progress.update(task_add_route, description=f"[blue]Adding[gold]Route: [blue]{slug}")
                 args = []
@@ -543,9 +536,12 @@ class Site:
                 # reported at the end instead of being raised.
                 try:
                     entry.render(*args)
-                except Exception as error:  # noqa: BLE001
-                    render_errors.append((slug, entry, error))
+                except* Exception as eg:
+                    render_errors.extend(e for e in eg.exceptions)
                     progress.update(task_add_route, advance=1)
+                    raised = True
+
+                if raised:
                     continue
 
                 if isinstance(entry, Collection):
@@ -559,8 +555,6 @@ class Site:
                     )
                     progress.update(post_build_collection_task, advance=1)
                 progress.update(task_add_route, advance=1)
-            if render_errors:
-                self._report_render_errors(render_errors)
 
             post_build_task = progress.add_task("Loading Post-Build Plugins", total=1)
             self.plugin_manager.hook.post_build_site(
@@ -568,3 +562,8 @@ class Site:
                 settings=self.plugin_manager.plugin_settings,
             )
             progress.update(post_build_task, advance=1)
+
+            if render_errors:
+                error_log_path: str = self._report_render_errors(render_errors)
+                if self.raise_on_error:
+                    raise RuntimeError(f"Errors reported during rendering. See output at {error_log_path}")

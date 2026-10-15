@@ -156,19 +156,23 @@ class BasePage(BaseObject):
 
         site: Site = cast(Site, self.site)
 
-        for route in self.routes:
-            path = Path(site.output_path) / Path(route) / Path(self.path_name)
-            path.parent.mkdir(parents=True, exist_ok=True)
-            settings = dict()
-            if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
-                settings = {**site.plugin_manager.plugin_settings, "route": route}
-                pm.hook.render_content(page=self, settings=settings, site=self.site)
-            self.rendered_content = self._render_content(theme_manager.engine)
-            # pass the route to the plugin settings
-            if pm is not None:
-                pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
+        try:
+            for route in self.routes:
+                path = Path(site.output_path) / Path(route) / Path(self.path_name)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                settings = dict()
+                if (pm := getattr(self, "plugin_manager", None)) and pm is not None:
+                    settings = {**site.plugin_manager.plugin_settings, "route": route}
+                    pm.hook.render_content(page=self, settings=settings, site=self.site)
+                self.rendered_content = self._render_content(theme_manager.engine)
+                # pass the route to the plugin settings
+                if pm is not None:
+                    pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
 
-            rc += path.write_text(self.rendered_content)
+                rc += path.write_text(self.rendered_content)
+        except Exception as e:
+            e.add_note(f"{type(e).__name__} while rendering {self._slug!r}")
+            raise
         return rc
 
 

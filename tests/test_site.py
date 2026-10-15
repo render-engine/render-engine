@@ -6,7 +6,7 @@ from pathlib import Path
 import pluggy
 import pytest
 import toml
-from jinja2 import DictLoader, FileSystemLoader
+from jinja2 import DictLoader, Environment, FileSystemLoader
 
 from render_engine import DataObject
 from render_engine.collection import Collection
@@ -534,17 +534,22 @@ def test_nested_static_files_appear_in_site_map(tmp_path: Path):
     assert entry is not None
 
 
-def test_render_reports_route_errors_without_aborting(site, tmp_path: Path, capsys):
-    """A failing route is reported, not raised, and doesn't abort the build.
-
-    Regression test for the diagnostics behaviour requested in
-    render-engine/render-engine#1288 and refined in #1289: each failing route is
-    summarised on stderr and its full traceback is written to a file whose path is
-    printed to stderr, while healthy routes still render.
-    """
+@pytest.mark.parametrize(
+    "raise_on_error, print_errors",
+    (
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ),
+)
+def test_render_reports_route_errors_without_aborting(site, tmp_path: Path, capsys, raise_on_error, print_errors):
+    """Tests that errors during rendering are properly handled"""
     template = tmp_path / "t.html"
     template.write_text("ok")
     site.theme_manager.engine.loader.loaders.insert(0, FileSystemLoader(tmp_path))
+    site.raise_on_error = raise_on_error
+    site.print_errors = print_errors
 
     @site.page
     class GoodPage(Page):
@@ -554,23 +559,25 @@ def test_render_reports_route_errors_without_aborting(site, tmp_path: Path, caps
     class BadPage(Page):
         template = "t.html"
 
-        def render(self, theme_manager):
+        def _render_content(self, engine: Environment | None = None, **kwargs):
             raise ValueError("boom")
 
-    # The build completes instead of raising, even though one route fails.
-    site.render()
-
+    if raise_on_error:
+        with pytest.raises(RuntimeError):
+            site.render()
+    else:
+        site.render()
     err = capsys.readouterr().err
-    # The failing route is summarised on stderr, by slug and exception type...
-    assert "badpage" in err.lower()
-    assert "ValueError" in err
-    # ...with a path to a file holding the full tracebacks.
+    if not print_errors:
+        assert "badpage" in err.lower()
+        assert "ValueError" in err
     match = re.search(r"written to (?P<path>.+\.log)", err)
     assert match, err
     report = Path(match.group("path").strip())
     assert report.exists()
     contents = report.read_text()
+    if print_errors:
+        assert contents in err
     assert "boom" in contents
     assert "Traceback" in contents
-    # The healthy route was still rendered despite the failure.
     assert (site.output_path / "goodpage.html").exists()
