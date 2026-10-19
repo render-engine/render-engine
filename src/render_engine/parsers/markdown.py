@@ -1,9 +1,18 @@
-import warnings
+from markdown2 import markdown
 
-from render_engine_markdown import MarkdownPageParser  # noqa: F401
+from .base_parsers import BasePageParser
 
-warnings.warn(
-    "`render_engine.hookspecs` will be deprecated in version 2024.3.1,  \
-        Please use `from render_engine_markdown import MarkdownPageParser` instead.",
-    DeprecationWarning,
-)
+
+class MarkdownPageParser(BasePageParser):
+    """
+    Uses the BasePageParser to frontmatter parser the attrs
+    Markdown2 then parses the content
+    """
+
+    @staticmethod
+    def parse(content: str, extras: dict[str, any] | None = None) -> str:
+        """Parses the content with the parser"""
+        return markdown(
+            content,
+            extras=extras.get("markdown_extras", []) if extras else [],
+        )
