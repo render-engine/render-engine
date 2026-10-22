@@ -199,6 +199,10 @@ class Collection(BaseObject):
                 self._title,
             )
             yield from ()
+        template_vars: dict[str, Any] = {
+            **{k: v for k, v in vars(self).items() if k != "template_vars"},
+            **vars(self.__class__),
+        }
 
         sorted_pages = list(self.sorted_pages)
         items_per_page = getattr(self, "items_per_page", len(sorted_pages))
@@ -207,15 +211,15 @@ class Collection(BaseObject):
         if items_per_page != len(sorted_pages):
             paginated_archives = list(batched(sorted_pages, items_per_page))
             archives.extend(paginated_archives)
-            self.template_vars["num_of_pages"] = len(paginated_archives)
+            template_vars["num_of_pages"] = len(paginated_archives)
         else:
-            self.template_vars["num_of_pages"] = 1
+            template_vars["num_of_pages"] = 1
 
         for index, pages in enumerate(archives):
             yield Archive(
                 pages=pages,
                 template=getattr(self, "archive_template", None),
-                template_vars=self.template_vars,
+                template_vars=template_vars,
                 title=self._title,
                 routes=self.routes,
                 archive_index=index,
