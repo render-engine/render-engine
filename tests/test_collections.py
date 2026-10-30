@@ -120,6 +120,29 @@ def test_collection_archives_has_title_of_collection(tmp_path: pathlib.Path):
         assert archive._title == collection._title
 
 
+def test_collection_archives_has_template_vars(tmp_path: pathlib.Path):
+    """
+    Tests that all attributes of a Collection are available in the template_vars of
+    an Archive
+
+    issue #1316
+    """
+    tmp_dir = tmp_path / "content"
+    tmp_dir.mkdir()
+    file = tmp_dir / "test.md"
+    file.write_text("test")
+
+    class BasicCollection(Collection):
+        content_path = tmp_dir.absolute()
+        archive_template = None
+        test_attribute = "test"
+
+    collection = BasicCollection()
+
+    for archive in collection.archives:
+        assert archive.template_vars["test_attribute"] == "test"
+
+
 def test_collection_paginated_archives_start_at_1(tmp_path: pathlib.Path):
     """Tests that the first archive page is page 1 and not page 0"""
 
