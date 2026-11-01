@@ -3,12 +3,13 @@ description: Install uv with a pinned Python version
 inputs:
   python-version:
     description: Python version for uv to install and use
-    required: true
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: ${{ inputs.python-version }}
         enable-cache: true
