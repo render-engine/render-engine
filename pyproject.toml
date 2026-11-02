@@ -35,19 +35,19 @@ dev = [
   "deptry==0.25.1",
   "httpx==0.28.1",
   "ty==0.0.84",
-  "pre-commit==4.6.2",
-  "pytest==9.1.1",
+  "pre-commit==4.7.0",
+  "pytest==9.2.0",
   "pytest-cov==7.1.0",
-  "pytest-mock==3.16.0",
+  "pytest-mock==3.17.0",
   "toml==0.10.2",
   "pytest-xdist==3.8.0",
 ]
 docs = [
   "mkdocs==1.6.1",
-  "mkdocs-material==9.7.7",
+  "mkdocs-material==9.8.0",
   "mkdocs-multirepo-plugin==0.8.3",
-  "mkdocstrings[python]==1.0.6",
-  "pymdown-extensions==12.1",
+  "mkdocstrings[python]==1.0.8",
+  "pymdown-extensions==12.3",
 ]
 
 [tool.setuptools_scm]
