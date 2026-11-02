@@ -31,7 +31,7 @@ def site(tmp_path_factory):
 
     coll_pages = defaultdict(list)
     for collection in ["coll1", "coll2"]:
-        for n in range(4):
+        for n in range(3, -1, -1):
             coll_pages[collection].append(
                 Page(
                     content=PAGE_TEMPLATE.format(
@@ -141,6 +141,11 @@ def test_find_in_template(site):
     site.render()
     assert (site.output_path / "page1.html").read_text() == "Page 1\n/coll1-route/page0.html"
 
+
+def test_site_map_entry_collection_sorted(site):
+    sm = SiteMap("", site.route_list)
+
+    # assert collection pages are sorted by title
 
 def test_site_map_to_xml(site):
     site.render_xml_site_map = True
