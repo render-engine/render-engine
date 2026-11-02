@@ -29,7 +29,8 @@ class SiteMapEntry:
             case Collection():
                 self._route = f"/{str(entry.routes[0]).lstrip('/')}"
                 self.entries = [
-                    SiteMapEntry(collection_entry, self._route, from_collection=True) for collection_entry in entry
+                    SiteMapEntry(collection_entry, self._route, from_collection=True)
+                    for collection_entry in entry.sorted_pages
                 ]
             case _:
                 pass
