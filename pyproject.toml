@@ -34,7 +34,7 @@ dev = [
   "ephemeral-port-reserve==1.1.4",
   "deptry==0.25.1",
   "httpx==0.28.1",
-  "ty==0.0.94",
+  "ty==0.0.84",
   "pre-commit==4.7.0",
   "pytest==9.2.0",
   "pytest-cov==7.1.0",
