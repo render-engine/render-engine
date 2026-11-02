@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 
 [[package]]
@@ -421,15 +421,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz", hash = "sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49", size = 82454, upload-time = "2026-05-07T12:08:28.36Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl", hash = "sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a", size = 91687, upload-time = "2026-05-07T12:08:27.182Z" },
-]
-
-[[package]]
-name = "markdown2"
-version = "2.5.5"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e4/ae/07d4a5fcaa5509221287d289323d75ac8eda5a5a4ac9de2accf7bbcc2b88/markdown2-2.5.5.tar.gz", hash = "sha256:001547e68f6e7fcf0f1cb83f7e82f48aa7d48b2c6a321f0cd20a853a8a2d1664", size = 157249, upload-time = "2026-03-02T20:46:53.411Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/43/af/4b3891eb0a49d6cfd5cbf3e9bf514c943afc2b0f13e2c57cc57cd88ecc21/markdown2-2.5.5-py3-none-any.whl", hash = "sha256:be798587e09d1f52d2e4d96a649c4b82a778c75f9929aad52a2c95747fa26941", size = 56250, upload-time = "2026-03-02T20:46:52.032Z" },
 ]
 
 [[package]]
@@ -935,7 +926,6 @@ dependencies = [
     { name = "python-dateutil" },
     { name = "python-frontmatter" },
     { name = "python-slugify" },
-    { name = "render-engine-markdown" },
     { name = "rich" },
 ]
 
@@ -967,7 +957,6 @@ requires-dist = [
     { name = "python-dateutil", specifier = "==2.9.0.post0" },
     { name = "python-frontmatter", specifier = "==1.3.0" },
     { name = "python-slugify", specifier = "==9.1.2" },
-    { name = "render-engine-markdown", specifier = "==2023.12.1" },
     { name = "rich", specifier = "==15.0.0" },
 ]
 provides-extras = ["extras"]
@@ -990,31 +979,6 @@ docs = [
     { name = "mkdocs-multirepo-plugin", specifier = "==0.8.3" },
     { name = "mkdocstrings", extras = ["python"], specifier = "==1.0.6" },
     { name = "pymdown-extensions", specifier = "==12.1" },
-]
-
-[[package]]
-name = "render-engine-markdown"
-version = "2023.12.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "markdown2" },
-    { name = "render-engine-parser" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3b/2a/0f310e9686cb0ec99ce5e7ac68125776220e28e190d08c952f49c845fe96/render_engine_markdown-2023.12.1.tar.gz", hash = "sha256:467a7b0ba46d1390f46b008b07976f85f6740f01ec08b786f734dc86500c4f36", size = 8064, upload-time = "2023-12-11T00:16:25.131Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bf/ec/9ed30e9d7bc7a7dfb6f2776cf26c62ab38570810409873cdb7ddde71a10e/render_engine_markdown-2023.12.1-py3-none-any.whl", hash = "sha256:386e24ae4d0ea68e4f84251473883998456f3a3337984fd83ff4871d6aac2555", size = 3146, upload-time = "2023-12-11T00:16:23.525Z" },
-]
-
-[[package]]
-name = "render-engine-parser"
-version = "2024.9.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "python-frontmatter" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d5/e4/eba67036301a0ff227d641e980501644b593909b1ed3cf5073fd7f14ed7b/render_engine_parser-2024.9.0.tar.gz", hash = "sha256:d3073a34fb448219add6199d318042919e7b0d030d15fd884afafa56acf791c3", size = 9165, upload-time = "2024-09-07T15:45:45.635Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/fc/4f17fa2b45258dc28534d3050fcaacaffd652c24fb3f70b98d76ca7b6391/render_engine_parser-2024.9.0-py3-none-any.whl", hash = "sha256:efe5ecb72118761fb72753b25e7e3df8157cd6474bdcc24b07b93e51bfdac063", size = 3957, upload-time = "2024-09-07T15:45:44.454Z" },
 ]
 
 [[package]]
