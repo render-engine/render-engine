@@ -34,13 +34,13 @@ dev = [
   "ephemeral-port-reserve==1.1.4",
   "deptry==0.25.1",
   "httpx==0.28.1",
-  "ty==0.0.84",
-  "pre-commit==4.7.0",
+  "ty==0.0.94",
   "pytest==9.2.0",
   "pytest-cov==7.1.0",
   "pytest-mock==3.17.0",
   "toml==0.10.2",
   "pytest-xdist==3.8.0",
+  "prek==0.5.9",
 ]
 docs = [
   "mkdocs==1.6.1",
@@ -82,6 +82,9 @@ select = ["E", "F", "I", "UP"]
 
 [tool.ty.rules]
 unresolved-import = "warn"
+
+[tool.ty.src]
+exclude = ["tests", "noxfile.py", ".github"]
 
 [tool.deptry]
 optional_dependencies_dev_groups = ["extras"]

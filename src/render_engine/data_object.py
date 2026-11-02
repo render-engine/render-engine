@@ -14,7 +14,6 @@ class DataObject(BaseObject):
     serializer_args: dict = {}
 
     routes: list[str | Path] = ["./"]
-    path_name: str | Path = Path("data_object.json")
 
     def __init__(self, serializer: Callable = json.dumps):
         """Ensure that the serializer method is static"""
@@ -22,9 +21,7 @@ class DataObject(BaseObject):
 
     @property
     def filename(self) -> str:
-        if not isinstance(self.path_name, Path):
-            self.path_name = Path(self.path_name)
-        return self.path_name.name
+        return Path(self.path_name).name
 
     def render(self, *args, **kwargs):
         """
