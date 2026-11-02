@@ -3,6 +3,7 @@
 
 DEFAULT_PYTHON_VERSION := "3.14"
 WORKFLOW_DIRECTORY := ".github/workflows/"
+ACTIONS_DIRECTORY := ".github/actions/**/"
 
 # Default recipe to display available commands
 [private]
@@ -84,7 +85,9 @@ ci: sync nox ruff ty badge
 # Update and pin actions with pinact
 pinact WORKFLOW='*.yml' *FLAGS='':
     pinact run -u {{ FLAGS }} {{ WORKFLOW_DIRECTORY }}{{ WORKFLOW }}
+    pinact run -u {{ FLAGS }} {{ ACTIONS_DIRECTORY }}{{ WORKFLOW }}
 
 # Audit with zizmor
 zizmor WORKFLOW='*.yml' *FLAGS='':
     uvx zizmor {{ WORKFLOW_DIRECTORY }}{{ WORKFLOW }} {{ FLAGS }}
+    uvx zizmor {{ ACTIONS_DIRECTORY }}{{ WORKFLOW }} {{FLAGS }}
