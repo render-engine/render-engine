@@ -14,12 +14,14 @@ Specifically, please note the following:
 This document will help you get started in contributing to the Render Engine codebase is open source and
 contributions are welcome.
 
+<!-- For some reason the linter thinks the "You may submit..." line is a code block so disable the test. !-->
+<!-- markdownlint-disable MD046 -->
 !!! WARNING
     Failure to follow the guidance in this document, specifically only working on issues that are assigned to
     you and using the PR template, will result in your PR being closed without review.
 
-    You may resubmit the PR
-    after the issue is assigned to you and using the template.
+    You may resubmit the PR after the issue is assigned to you and using the template.
+<!-- markdownlint-enable MD046 -->
 
 !!! NOTE
     This is specifically for contributing to the Render-Engine package. For help with creating a plugin, custom
@@ -78,13 +80,12 @@ an issue and when opening a PR against it.
   to make that first contribution, this is a good ticket to start with.
 - "No-AI" indicates that PRs made with AI or AI assistance will be closed. While there are a variety of reasons why the
   maintainers might add this tag, it is generally because:
-    - This is a "Good First Issue" and we want humans to work on those.
-    - There is some level of nuance to the issue that we are concerned that an AI will not be able to properly process.
-    - The complexity of the ticket is so low that we do not feel that using an AI gives benefit.
+  - This is a "Good First Issue" and we want humans to work on those.
+  - There is some level of nuance to the issue that we are concerned that an AI will not be able to properly process.
+  - The complexity of the ticket is so low that we do not feel that using an AI gives benefit.
 
   PRs opened against issues with the "No-AI" label that were created with the assistance of AI will be closed and the
   submitter might be blocked from further contributing to the Render Engine project.
-
 
 ## Setup your Environment
 
