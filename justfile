@@ -34,12 +34,24 @@ docs port="8000":
     uv run --group docs mkdocs serve -f docs/mkdocs.yml -a 0.0.0.0:{{port}}
 
 # Run markdown linter (requires bun or npm)
-lint-md *DIRECTORY="*.md docs/**/*.md":  # Note that we don't want the ** glob from root because that will include site packages
+lint-md *DIRECTORY="'*.md' 'docs/**/*.md'":  # Note that we don't want the ** glob from root because that will include site packages
     #!/usr/bin/env sh
     if command -v bun > /dev/null 2>&1; then
         bunx markdownlint-cli2 {{ DIRECTORY }}
     elif command -v npm > /dev/null 2>&1; then
         npx markdownlint-cli2 {{ DIRECTORY }}
+    else
+        echo "Error: neither bun nor npm found. Install one of them to run markdown linting." >&2
+        exit 1
+    fi
+
+# Run markdown linter (requires bun or npm)
+lint-md-fix *DIRECTORY="'*.md' 'docs/**/*.md'":  # Note that we don't want the ** glob from root because that will include site packages
+    #!/usr/bin/env sh
+    if command -v bun > /dev/null 2>&1; then
+        bunx markdownlint-cli2 --fix {{ DIRECTORY }}
+    elif command -v npm > /dev/null 2>&1; then
+        npx markdownlint-cli2 --fix {{ DIRECTORY }}
     else
         echo "Error: neither bun nor npm found. Install one of them to run markdown linting." >&2
         exit 1
@@ -59,7 +71,7 @@ format *DIRECTORY='src tests':
 
 # Run ruff formatter and fix issues
 format-fix *DIRECTORY='src tests':
-    uvx ruff format --check {{ DIRECTORY }}
+    uvx ruff format {{ DIRECTORY }}
 
 ruff: lint format
 
