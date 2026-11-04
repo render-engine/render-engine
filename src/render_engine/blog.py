@@ -1,4 +1,4 @@
-from render_engine_markdown import MarkdownPageParser
+from render_engine.parsers import MarkdownPageParser
 
 from .collection import Collection
 

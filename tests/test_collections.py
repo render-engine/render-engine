@@ -3,10 +3,10 @@ import textwrap
 
 import pluggy
 import pytest
-from render_engine_parser import BasePageParser
 
 from render_engine.collection import Collection
 from render_engine.page import Page
+from render_engine.parsers import BasePageParser
 from render_engine.site import Site
 from render_engine.themes import ThemeManager
 
