@@ -31,7 +31,7 @@ def site(tmp_path_factory):
 
     coll_pages = defaultdict(list)
     for collection in ["coll1", "coll2"]:
-        for n in range(4):
+        for n in range(3, -1, -1):
             coll_pages[collection].append(
                 Page(
                     content=PAGE_TEMPLATE.format(

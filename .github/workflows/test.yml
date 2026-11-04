@@ -13,6 +13,7 @@ on:
       - "tests/**"
       - "pyproject.toml"
       - "requirements.txt"
+      - "uv.lock"
 
 permissions:
   contents: read
@@ -25,6 +26,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: $/.github/actions/setup-uv
         with:
@@ -37,7 +40,7 @@ jobs:
         run: |
           uvx --with "genbadge[coverage]" genbadge coverage -i coverage.xml
       - name: Commit Badge
-        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
+        uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7.2.1
         with:
           commit_message: Update coverage badge [skip ci]
           file_pattern: coverage.svg
@@ -52,6 +55,8 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: $/.github/actions/setup-uv
         with:
@@ -72,6 +77,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: $/.github/actions/setup-uv
         with:

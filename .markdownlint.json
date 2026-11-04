@@ -5,6 +5,9 @@
     "code_blocks": false
   },
   "MD041": false,
+  "MD046": {
+    "style": "fenced"
+  },
   "MD054": {
     "inline": false,
     "url_inline": false,

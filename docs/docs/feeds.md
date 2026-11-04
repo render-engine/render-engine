@@ -21,6 +21,8 @@ Creates an RSS feed [Page] Object.
 
 This is built using the built-in `rss2.0.xml` jinja template.
 
+<!-- We need to disable the lint because the code block is part of the note but the linter can't figure that out. -->
+<!-- markdownlint-disable MD046 -->
 > !!! Note
     Some browsers may not support the `rss` extension. If you are having issues with
     your feed, try changing the extension to `xml`.
@@ -35,6 +37,7 @@ This is built using the built-in `rss2.0.xml` jinja template.
     class MyCollection(Collection):
         Feed = MyFeed
     ```
+<!-- markdownlint-enable MD046 -->
 
 [rss-spec]: http://www.rssboard.org/rss-specification
 
