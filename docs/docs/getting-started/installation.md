@@ -1,6 +1,6 @@
 ---
 title: "Installing Render Engine and Creating Your First Site"
-description: "Install Render Engine, create a new site with the `render-engine init` CLI command, and run it locally."
+description: "Instructions for installing Render Engine and, creating and testing your first site."
 date: November 9, 2026
 tags: ["installation", "render-engine", "initialization", "cli"]
 ---
@@ -16,7 +16,8 @@ installed. You can download Python from [python.org].
 Render Engine is available on PyPI:
 
 ```bash
-pip install render-engine   # or: uv add render-engine
+pip install render-engine   # pip
+uv add render-engine        # uv
 ```
 
 This is all you need if you write your `app.py` yourself and build the site with `python app.py`.
@@ -28,7 +29,7 @@ as described in [Create your site](#create-your-site).
 The easiest way to start is the `render-engine init` command from [render-engine-cli].
 It creates a new folder with a ready-to-use site. Choose **one** of the options below.
 
-### With pip
+### With `pip`
 
 1. Create a virtual environment and activate it. This keeps your site's packages separate from
    other Python projects:
@@ -45,7 +46,7 @@ It creates a new folder with a ready-to-use site. Choose **one** of the options 
     ```
 
 3. Create your site and move into the new folder. The folder is named after the site title you
-   choose, for example `my-awesome-website`:
+   choose, for example "My Awesome Website":
 
     ```bash
     render-engine init
@@ -69,7 +70,7 @@ Add the CLI to the project:
 uv add --dev render-engine-cli
 ```
 
-A dev dependency is enough, because your server only needs the generated HTML files, not Render Engine.
+A dev dependency is enough, because your server only needs the generated HTML files, not the `render-engine` command line tool.
 
 Finally, fix `pyproject.toml` as described in [Tell the CLI where your site is](#tell-the-cli-where-your-site-is).
 
@@ -87,13 +88,13 @@ Finally, fix `pyproject.toml` as described in [Tell the CLI where your site is](
 | `skip_collection` | `n` | Answer `y` to create the site **without** an example collection of pages. |
 | `skip_blog` | `n` | Answer `y` to create the site **without** a blog. |
 
-!!! NOTE
+> !!! NOTE
     `skip_collection` and `skip_blog` ask whether to **skip** a feature, so answer `n` (no)
     to keep it and `y` (yes) to leave it out.
 
 ### Tell the CLI where your site is
 
-The generated `pyproject.toml` tells the CLI which file and object is your site. Rename the
+The generated `pyproject.toml` tells the CLI which file and object are your site. This can be very helpful as it removes the requirement of passing the `--module-site` parameter to many of the CLI commands. Rename the
 `[render-engine.cli]` table to `[tool.render-engine.cli]` so the CLI can find it:
 
 ```toml
@@ -104,8 +105,6 @@ collection = "blog"
 ```
 
 If you chose a different app file name, set module to that name without .py.
-
-Alternatively, pass `--module-site app:app` to each command.
 
 ### Run your site
 
