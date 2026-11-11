@@ -7,7 +7,6 @@ nav:
   - Getting Started:
     - getting-started/getting-started.md
     - getting-started/installation.md
-    - getting-started/creating-your-app.md
     - getting-started/layout.md
     - getting-started/creating-a-page.md
     - getting-started/creating-a-collection.md

@@ -10,9 +10,7 @@ site and how to add pages and collections to your site.
 
 ## Sections
 
-### [Installation]
-
-### [Creating your app]
+### [Installation and Creating an App]
 
 ### [Simple Site Layout]
 
@@ -29,6 +27,5 @@ site and how to add pages and collections to your site.
 [building your site]: building-your-site.md
 [creating a collection]: creating-a-collection.md
 [creating a page]: creating-a-page.md
-[creating your app]: creating-your-app.md
-[installation]: installation.md
+[installation and creating an app]: installation.md
 [simple site layout]: layout.md
