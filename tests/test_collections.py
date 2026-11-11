@@ -1,4 +1,6 @@
+import datetime as dt
 import pathlib
+import random
 import textwrap
 
 import pluggy
@@ -386,6 +388,33 @@ def test_collection_custom_sort_by_list_with_date():
 
     # Verify the sorted order by checking custom_sort_content values
     assert [page.custom_sort_content for page in sorted_pages] == [page.custom_sort_content for page in expected_pages]
+
+
+def test_collection_sort_by_date():
+    """
+    Tests that sorting by date works.
+    """
+    dt_entry = dt.datetime(year=2026, month=11, day=9, hour=16, minute=3)
+    date_entry = (dt_entry - dt.timedelta(days=1)).date()
+    test_dates = [(dt_entry - dt.timedelta(days=3)).date(), dt_entry - dt.timedelta(days=2), date_entry, dt_entry]
+
+    expected: list[Page] = []
+    shuffled: list[Page] = []
+    for idx, date in enumerate(test_dates):
+        page = Page(content=f"Page {idx} {date=}")
+        page.date = date
+        expected.append(page)
+        shuffled.append(page)
+
+    # Ensure that we don't get the same order when shuffling.
+    while shuffled == expected:
+        random.shuffle(shuffled)
+
+    class CustomCollection(Collection):
+        sort_by: str = "date"
+        pages: list[Page] = shuffled
+
+    assert [page.date for page in CustomCollection().sorted_pages] == test_dates
 
 
 @pytest.mark.parametrize(
