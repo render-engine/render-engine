@@ -150,7 +150,11 @@ class Collection(BaseObject):
         """
         date = getattr(page, "date")
         _date = dateparse.parse(date) if isinstance(date, str) else copy.copy(date)
-        return _date.replace(tzinfo=None) if isinstance(_date, datetime.datetime) else _date
+        # In order to prevent issues if there is a mix of `date` and `datetime` convert `date` to `datetime` with a time
+        # of midnight prior to removing the timezones.
+        if isinstance(_date, datetime.date):
+            _date = datetime.datetime(year=_date.year, month=_date.month, day=_date.day, hour=0, minute=0)
+        return _date.replace(tzinfo=None)
 
     def _sort_key(self, key: str | list[str]) -> Callable:
         """
