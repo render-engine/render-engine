@@ -278,6 +278,17 @@ def tests_site_multiple_static_paths(tmp_path: Path, site: Site):
     assert (output_tmp_dir / "static2" / "test2.txt").exists()
 
 
+def test_site_nonexistent_static_path(tmp_path: Path, site: Site):
+    """Rendering should succeed when a static path does not exist."""
+    missing_static_dir = tmp_path / "nonexistent_static"
+
+    assert not missing_static_dir.exists()
+
+    site.static_paths.add(missing_static_dir)
+
+    site.render()
+
+
 def test_site_theme_update_settings(site, tmp_path: Path):
     """Tests that the theme manager updates the settings"""
     site = Site()
