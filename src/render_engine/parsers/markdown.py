@@ -1,5 +1,6 @@
-from markdown2 import markdown
 from typing import Any
+
+from markdown2 import markdown
 
 from .base_parsers import BasePageParser
 
@@ -15,5 +16,5 @@ class MarkdownPageParser(BasePageParser):
         """Parses the content with the parser"""
         return markdown(
             content,
-            extras=extrasMPP.get("markdown_extras", []) if extras else [],
+            extras=extras.get("markdown_extras", []) if extras else [],
         )
