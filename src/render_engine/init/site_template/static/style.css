@@ -1,0 +1,14 @@
+body {
+    font-family: "Arial", "sans-serif";
+}
+.container {
+    margin: auto;
+    width: 85%;
+}
+footer {
+    margin-top: 2em;
+    text-align: center;
+}
+nav > span {
+    margin: 0 0.5em;
+}

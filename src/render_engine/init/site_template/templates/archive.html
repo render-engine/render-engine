@@ -1,0 +1,9 @@
+{% extends '_base.html' %}
+{% block content %}
+<div class="container">
+    <h1>{{collection_title}}</h1>
+    {% for entry in pages %}
+    <div><a href="{{entry.url_for()}}">{{entry.title}}</a></div>
+    {% endfor %}
+</div>
+{% endblock %}

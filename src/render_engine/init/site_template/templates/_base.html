@@ -1,0 +1,19 @@
+{% extends "base_templates/_base.html" %}
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="/static/style.css">
+{% endblock %}
+{% block header %}
+<nav class="container">
+    {% for link in NAVIGATION %}
+    <span><a href="{{link.url}}">{{link.name}}</a></span>
+    {% endfor %}
+</nav>
+{% endblock %}
+{% block footer %}
+<footer class="container">
+    <hr />
+    <p><a href="{{SITE_URL}}">{{SITE_URL}}</a></p>
+    <p>Built with <a href="https://github.com/render-engine/render-engine/">Render Engine</a></p>
+</footer>
+{% endblock %}

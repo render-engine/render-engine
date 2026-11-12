@@ -1,0 +1,66 @@
+"""
+This is a simple app setup script created with `render-engine init`
+"""
+
+from render_engine import Page, Site
+{% if include_collection %}
+from render_engine import Collection
+{% endif %}
+{% if include_blog %}
+from render_engine import Blog as BaseBlog
+from render_engine_markdown import MarkdownPageParser
+{% endif %}
+
+
+app = Site()
+app.output_path = {{ output_path | tojson }}
+
+app.site_vars.update(
+    {
+        "SITE_TITLE":{{ site_title | tojson }},
+        "SITE_URL":{{ site_url | tojson }},
+        "NAVIGATION":[
+            {
+                "name": "Home",
+                "url": "/",
+            },
+            {% if include_collection %}
+            {
+                "name": "Collection Page",
+                "url": "/example-page.html",
+            },
+            {% endif %}
+            {% if include_blog %}
+            {
+                "name": "Blog",
+                "url": "/blog/blog.html",
+            },
+            {% endif %}
+        ]
+    }
+)
+
+
+@app.page
+class Index(Page):
+    template = "index.html"
+
+{% if include_collection %}
+@app.collection
+class Pages(Collection):
+    content_path = "content/pages"
+    routes = ["./"] # route to Collection page
+    template = "page.html"
+{% endif %}
+
+{% if include_blog %}
+@app.collection
+class Blog(BaseBlog):
+    content_path = "content/blog"
+    routes = ["blog"] # route to Blog page
+    Parser = MarkdownPageParser
+    template = "page.html"
+{% endif %}
+
+if __name__ == "__main__":
+    app.render()
