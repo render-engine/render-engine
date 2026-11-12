@@ -10,7 +10,7 @@
 ## Learn More
 
 - [Check out the Documentation][docs]
-- [Contributors and Builders, Check out the Wiki][wiki]
+- [Contributors and Builders, Check out the Contributing Guide][contributing]
 - [Join the community!][discord-link]
 - [Explore Render Engine's features and learn how to get started][website]
 
@@ -108,7 +108,6 @@ Please review the [contributing][contributing] section of our docs for more info
 [discord-link]: https://discord.gg/2xMQ4j4d8m
 [website]: https://render-engine.org/
 [docs]: https://render-engine.readthedocs.io/en/latest/
-[wiki]: https://github.com/render-engine/render-engine/wiki
 [python.org]: https://python.org
 [ms-store]: https://apps.microsoft.com/detail/9NQ7512CXL7T
 [getting-started]: https://render-engine.readthedocs.io/en/latest/page/
