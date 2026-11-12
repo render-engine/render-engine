@@ -1,0 +1,24 @@
+[project]
+name = {{ project_slug | tojson }}
+version = "0.1.0"
+description = {{ ("A Render Engine site: " ~ site_title) | tojson }}
+requires-python = ">=3.11"
+dependencies = [
+    "render-engine",
+{% if include_blog %}
+    "render-engine-markdown",
+{% endif %}
+{% if include_cli %}
+    "render-engine-cli",
+{% endif %}
+]
+
+# Configuration for render-engine-cli (https://github.com/render-engine/render-engine-cli)
+[tool.render-engine.cli]
+site = "app"
+module = {{ app_filename.removesuffix(".py")| tojson }}
+{% if include_blog %}
+collection = "blog"
+{% elif include_collection %}
+collection = "pages"
+{% endif %}
