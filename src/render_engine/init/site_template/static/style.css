@@ -1,5 +1,5 @@
 body {
-    font-family: "Arial", "sans-serif";
+    font-family: "Arial", sans-serif;
 }
 .container {
     margin: auto;
@@ -11,4 +11,11 @@ footer {
 }
 nav > span {
     margin: 0 0.5em;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+.logo {
+    width: 300px;
 }
