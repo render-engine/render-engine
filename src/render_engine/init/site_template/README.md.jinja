@@ -1,0 +1,102 @@
+# Congratulations on setting up {{ site_title }}
+
+This is your site to make into whatever you want. This file gives you a little bit of
+direction for your next steps.
+
+## Install the dependencies
+
+With [uv](https://docs.astral.sh/uv/), which reads the dependencies from `pyproject.toml`:
+
+```shell
+uv sync
+```
+
+With pip, create a virtual environment and install the packages:
+
+```shell
+python -m venv .venv
+source .venv/bin/activate
+pip install render-engine render-engine-cli
+```
+
+On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
+
+The commands below use `uv run`. If you're using pip, run them without the `uv run` prefix,
+with your virtual environment activated.
+
+## Build and preview your site
+
+There are two ways to work with your site. Both produce the same result in `{{ output_path }}/`.
+
+### With the Render Engine CLI (recommended)
+
+The [Render Engine CLI](https://github.com/render-engine/render-engine-cli) gives you a few
+handy commands. If it isn't installed yet, add it with `uv add --dev render-engine-cli`
+or `pip install render-engine-cli`.
+
+Build your site and serve it at `http://localhost:8000` (the console shows the link):
+
+```shell
+uv run render-engine serve --reload
+```
+
+With `--reload`, the site is rebuilt every time you change something in `content/` or
+`templates/`. Add `--clean` to remove the previous output before building.
+
+To create a new page or blog post, run:
+
+```shell
+uv run render-engine new-entry --filename my-new-post.md --title "My new post" --include-date
+```
+
+This creates the content file in your default collection and opens it in your editor.
+`--include-date` adds today's date, which blog posts need for sorting.
+Use `--collection` to pick a different collection.
+
+To only build the site, without serving it:
+
+```shell
+uv run render-engine build
+```
+
+### Without the CLI
+
+**Build** the site by running your app file. It calls `app.render()`, which writes
+the finished site into `{{ output_path }}/`:
+
+```shell
+uv run python {{ app_filename }}
+```
+
+**Preview** it by serving the output folder, then open `http://localhost:8000` in your browser:
+
+```shell
+uv run python -m http.server --bind 127.0.0.1 -d {{ output_path }}
+```
+
+There's no automatic rebuilding here: run the build command again after each change.
+New pages and blog posts are created by hand as files in `content/`.
+
+## Check the configuration
+
+We've set up a `pyproject.toml` for you with:
+
+- your project's dependencies
+- the configuration the CLI uses to find your site, under `[tool.render-engine.cli]`:
+  - `module`: the file that defines your site (`{{ app_filename }}`)
+  - `site`: the name of the `Site` object in that file (`app`)
+  - `collection`: the default collection for `new-entry`, if you included a blog or a collection
+
+If you rename `{{ app_filename }}` or the objects inside it, update `pyproject.toml` to match.
+
+## Project layout
+
+- `{{ app_filename }}`: your site's settings, pages and collections
+- `content/`: the content of your pages and blog posts
+- `templates/`: how your pages look
+- `static/`: CSS, images and other files copied as they are
+
+## Need more help?
+
+Check out the [documentation](https://render-engine.readthedocs.io/en/latest/) for more details on
+what Render Engine can do and how to use it.
