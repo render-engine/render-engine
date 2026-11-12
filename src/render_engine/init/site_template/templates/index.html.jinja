@@ -1,0 +1,31 @@
+{% raw %}
+{% extends "_base.html" %}
+{% block content %}
+{% endraw %}
+<div class="container">
+    <h1>{% raw %}{{ SITE_TITLE }}{% endraw %}</h1>
+    <h2>Congratulations! Your new site is live (well, locally).</h2>
+    <img src="/static/render-engine-logo.png" alt="Render Engine logo">
+
+    <p>Everything you see here comes from a few files in your project:</p>
+    <ul>
+        <li><code>{{ app_filename }}</code>: your site's settings, pages and collections</li>
+        <li><code>templates/</code>: how your pages look</li>
+        <li><code>content/</code>: what your pages say</li>
+    </ul>
+    <p>Replace this page by editing <code>templates/index.html</code>.</p>
+{% if include_collection %}
+
+    <h2>Your example page</h2>
+    <p>See the <a href="/example-page.html">example page</a> from <code>content/pages/</code>.</p>
+{% endif %}
+{% if include_blog %}
+
+    <h2>Your blog</h2>
+    <p>Read the <a href="/blog/example-blog-post.html">example blog post</a>
+        or browse the <a href="/blog/blog.html">blog archive</a>.</p>
+{% endif %}
+
+    <p>Need help? Check out the <a href="https://render-engine.readthedocs.io/">Render Engine documentation</a>.</p>
+</div>
+{% raw %}{% endblock %}{% endraw %}
