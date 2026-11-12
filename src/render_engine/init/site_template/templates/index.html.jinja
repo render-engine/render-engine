@@ -1,30 +1,41 @@
-{% raw %}
-{% extends "_base.html" %}
+{% raw %}{% extends "_base.html" %}
 {% block content %}
 {% endraw %}
 <div class="container">
-    <h1>{% raw %}{{ SITE_TITLE }}{% endraw %}</h1>
-    <h2>Congratulations! Your new site is live.</h2>
-    <img class="logo" src="/static/render-engine-logo.png" alt="Render Engine logo">
+    <h2 class="congrats">Congratulations! 🎉</h2>
+    <p class="lead">Your Render Engine site is up and running. Here's what to do next:</p>
+    <ol class="steps">
+        <li><strong>Configure your site</strong> in <code>{{ app_filename }}</code>: title, URL, pages and collections.</li>
+        <li><strong>Write content</strong> in <code>content/</code>, as Markdown or HTML files.</li>
+        <li><strong>Make it yours</strong> with <code>templates/</code> and <code>static/style.css</code>.
+            Start by replacing this page: <code>templates/index.html</code>.</li>
+    </ol>
+{% if include_collection or include_blog %}
 
-    <p>Everything you see here comes from a few files in your project:</p>
-    <ul>
-        <li><code>{{ app_filename }}</code>: your site's settings, pages and collections</li>
-        <li><code>templates/</code>: how your pages look</li>
-        <li><code>content/</code>: what your pages say</li>
-    </ul>
-    <p>Replace this page by editing <code>templates/index.html</code>.</p>
+    <hr>
+
+    <h3>Your example content:</h3>
+    <div class="cards">
 {% if include_collection %}
-
-    <h2>Your example page</h2>
-    <p>See the <a href="/example-page.html">example page</a> from <code>content/pages/</code>.</p>
+        <a class="card" href="/example-page.html">
+            <span class="title">Example page</span>
+            <span class="detail">from content/pages/</span>
+        </a>
 {% endif %}
 {% if include_blog %}
-
-    <h2>Your blog</h2>
-    <p>Read the <a href="/blog/example-blog-post.html">example blog post</a>
-        or browse the <a href="/blog/blog.html">blog archive</a>.</p>
+        <a class="card" href="/blog/example-blog-post.html">
+            <span class="title">Example blog post</span>
+            <span class="detail">written in Markdown</span>
+        </a>
+        <a class="card" href="/blog/blog.html">
+            <span class="title">Blog archive</span>
+            <span class="detail">all your posts</span>
+        </a>
 {% endif %}
+    </div>
+{% endif %}
+
+    <hr>
 
     <p>Need help? Check out the <a href="https://render-engine.readthedocs.io/">Render Engine documentation</a>.</p>
 </div>

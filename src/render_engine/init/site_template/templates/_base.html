@@ -3,17 +3,28 @@
 {{super()}}
 <link rel="stylesheet" href="/static/style.css">
 {% endblock %}
+
 {% block header %}
-<nav class="container">
-    {% for link in NAVIGATION %}
-    <span><a href="{{link.url}}">{{link.name}}</a></span>
-    {% endfor %}
-</nav>
+<header class="head_foot_container">
+    <div class="container">
+        <div>
+            <h1>{{ SITE_TITLE }}</h1>
+            <nav>
+                {% for link in NAVIGATION %}
+                <a href="{{link.url}}">{{link.name}}</a>
+                {% endfor %}
+            </nav>
+        </div>
+        <img class="logo" src="/static/render-engine-logo.png" alt="Render Engine logo">
+    </div>
+</header>
 {% endblock %}
+
 {% block footer %}
-<footer class="container">
-    <hr />
-    <p><a href="{{SITE_URL}}">{{SITE_URL}}</a></p>
-    <p>Built with <a href="https://github.com/render-engine/render-engine/">Render Engine</a></p>
+<footer class="head_foot_container">
+    <div class="container">
+        <p><a href="{{ SITE_URL }}">{{ SITE_URL }}</a></p>
+        <p>Built with <a href="https://github.com/render-engine/render-engine/">Render Engine</a></p>
+    </div>
 </footer>
 {% endblock %}

@@ -1,21 +1,105 @@
 body {
-    font-family: "Arial", sans-serif;
+    font-family: Arial, sans-serif;
+    font-size: 14pt;
+    line-height: 1.5;
+    margin: 0;
+    color: black;
+    background-color: white;
 }
 .container {
     margin: auto;
     width: 85%;
-}
-footer {
-    margin-top: 2em;
-    text-align: center;
-}
-nav > span {
-    margin: 0 0.5em;
+    max-width: 60rem;
 }
 img {
     max-width: 100%;
     height: auto;
 }
+code {
+    background: rgb(233 238 235);
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* Black header and footer bars, like render-engine.org */
+.head_foot_container {
+    color: white;
+    background-color: black;
+}
+.head_foot_container a {
+    color: lightgrey;
+}
+.head_foot_container a:hover,
+.head_foot_container a:focus {
+    text-decoration: none;
+}
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    padding: 0.75em 0;
+}
+header h1 {
+    margin: 0;
+}
+header nav a {
+    margin-right: 1em;
+}
 .logo {
-    width: 300px;
+    width: clamp(80px, 20%, 140px);
+    background: white;
+    padding: 0.25em;
+}
+footer {
+    margin-top: 2em;
+    padding: 1em 0;
+    text-align: center;
+}
+footer p {
+    margin: 0.5em 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid black;
+    margin: 1.5em 0;
+}
+
+/* Home page */
+.congrats {
+    margin-bottom: 0.25em;
+}
+.lead {
+    margin-top: 0;
+    font-size: 1.1em;
+}
+.steps li {
+    margin-bottom: 0.5em;
+}
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+    gap: 15px;
+}
+.card {
+    display: block;
+    padding: 0.5em 0.75em;
+    border: 1px solid black;
+    border-radius: 7px 0 15px 0;
+    background-color: rgb(233 238 235 / 60%);
+    text-decoration: none;
+}
+.card:hover,
+.card:focus {
+    background-color: lightgrey;
+}
+.card .title {
+    display: block;
+    font-weight: bold;
+}
+.card .detail {
+    color: #333;
+    font-size: 0.85em;
 }
