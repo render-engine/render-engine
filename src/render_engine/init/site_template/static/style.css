@@ -5,9 +5,12 @@ body {
     margin: 0;
     color: black;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 .container {
-    margin: auto;
+    margin: 0 auto;
     width: 85%;
     max-width: 60rem;
 }
@@ -53,9 +56,9 @@ header nav a {
     padding: 0.25em;
 }
 footer {
-    margin-top: 2em;
     padding: 1em 0;
     text-align: center;
+    margin-top: auto;
 }
 footer p {
     margin: 0.5em 0;
