@@ -25,8 +25,10 @@ def main():
         "-o",
         "--output-dir",
         type=Path,
-        default=Path("./"),
-        help="Directory to create the new site configuration in.",
+        metavar="PATH",
+        dest="destination",
+        default=Path("."),
+        help="Path to the folder in which to create the new project folder (default: the current folder).",
     )
     # parser.add_argument(
     #     "-c",

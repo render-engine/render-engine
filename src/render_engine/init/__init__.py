@@ -1,9 +1,12 @@
+import shutil
 from dataclasses import dataclass
 from importlib.util import find_spec
 from pathlib import Path
 from urllib.parse import urlparse
 
 from slugify import slugify
+
+SITE_TEMPLATE = Path(__file__).parent / "site_template"
 
 
 @dataclass
@@ -12,19 +15,19 @@ class InitOptions:
 
     site_title: str = "Untitled Site"
     site_url: str = "https://example.com"
-    project_slug: str | None = None
+    project_slug: str = ""
     app_filename: str = "app.py"
     output_path: str = "output"
     include_collection: bool = True
     include_blog: bool = True
     include_cli: bool = True
 
-    def _validate_site_title(self):
+    def _validate_site_title(self) -> None:
         self.site_title = self.site_title.strip()
         if not self.site_title:
             raise ValueError("The site title can't be empty. Please enter a title, e.g. 'My Blog'.")
 
-    def _validate_site_url(self):
+    def _validate_site_url(self) -> None:
         parsed_url = urlparse(self.site_url)
 
         if not parsed_url.hostname or parsed_url.scheme not in ["http", "https"]:
@@ -32,7 +35,7 @@ class InitOptions:
                 f"The site URL {self.site_url!r} must start with http:// or https://, e.g. 'https://example.com'."
             )
 
-    def _validate_project_slug(self):
+    def _validate_project_slug(self) -> None:
         given_slug = self.project_slug
         self.project_slug = slugify(self.project_slug or self.site_title)
 
@@ -43,7 +46,7 @@ class InitOptions:
                 "Please use a different title, or set a project slug like 'my-site'."
             )
 
-    def _validate_app_filename(self):
+    def _validate_app_filename(self) -> None:
         path = Path(self.app_filename)
 
         if path.suffix != ".py":
@@ -63,7 +66,7 @@ class InitOptions:
                 "a Python module, and your file would hide it. Try e.g. 'app.py'."
             )
 
-    def _validate_output_path(self):
+    def _validate_output_path(self) -> None:
         path = Path(self.output_path)
 
         if path.is_absolute() or not path.parts or ".." in path.parts:
@@ -76,9 +79,37 @@ class InitOptions:
                 "site's own files, and cleaning the output would delete them. Try e.g. 'output'."
             )
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self._validate_site_title()
         self._validate_site_url()
         self._validate_project_slug()
         self._validate_app_filename()
         self._validate_output_path()
+
+
+def create_site(options: InitOptions, destination: Path | str, template_dir: Path = SITE_TEMPLATE) -> Path:
+    """Create the folder for a new site and return its path.
+
+    The folder is named after `options.project_slug` and created inside `destination`.
+    """
+    site_path = Path(destination) / options.project_slug
+
+    if site_path.exists():
+        raise FileExistsError(
+            f"The folder {str(site_path)!r} already exists. Use a different project slug or destination folder."
+        )
+
+    site_path.mkdir(parents=True)
+
+    for item in template_dir.rglob("*"):
+        relative_path = item.relative_to(template_dir)
+        if not item.is_file() or item.suffix == ".jinja":
+            continue
+        if any(part.startswith(".") for part in relative_path.parts):
+            continue
+
+        target = site_path / relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(item, target)
+
+    return site_path
