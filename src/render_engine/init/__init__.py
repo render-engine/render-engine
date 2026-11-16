@@ -1,0 +1,84 @@
+from dataclasses import dataclass
+from importlib.util import find_spec
+from pathlib import Path
+from urllib.parse import urlparse
+
+from slugify import slugify
+
+
+@dataclass
+class InitOptions:
+    """Answers used to create a new site with `render-engine init`."""
+
+    site_title: str = "Untitled Site"
+    site_url: str = "https://example.com"
+    project_slug: str | None = None
+    app_filename: str = "app.py"
+    output_path: str = "output"
+    include_collection: bool = True
+    include_blog: bool = True
+    include_cli: bool = True
+
+    def _validate_site_title(self):
+        self.site_title = self.site_title.strip()
+        if not self.site_title:
+            raise ValueError("The site title can't be empty. Please enter a title, e.g. 'My Blog'.")
+
+    def _validate_site_url(self):
+        parsed_url = urlparse(self.site_url)
+
+        if not parsed_url.hostname or parsed_url.scheme not in ["http", "https"]:
+            raise ValueError(
+                f"The site URL {self.site_url!r} must start with http:// or https://, e.g. 'https://example.com'."
+            )
+
+    def _validate_project_slug(self):
+        given_slug = self.project_slug
+        self.project_slug = slugify(self.project_slug or self.site_title)
+
+        if not self.project_slug:
+            source = given_slug or self.site_title
+            raise ValueError(
+                f"Can't make a project name from {source!r}: it needs at least one letter or number. "
+                "Please use a different title, or set a project slug like 'my-site'."
+            )
+
+    def _validate_app_filename(self):
+        path = Path(self.app_filename)
+
+        if path.suffix != ".py":
+            raise ValueError(f"The app filename {self.app_filename!r} must end with '.py', e.g. 'app.py'.")
+        elif path.name != self.app_filename:
+            raise ValueError(
+                f"The app filename {self.app_filename!r} must be a file name without a folder, e.g. 'app.py'."
+            )
+        elif path.stem.startswith("__") or not path.stem.isidentifier():
+            raise ValueError(
+                f"The app filename {self.app_filename!r} can only use letters, numbers and underscores, "
+                "and can't start with a number or '__', e.g. 'my_app.py'."
+            )
+        elif find_spec(path.stem):
+            raise ValueError(
+                f"The app filename {self.app_filename!r} can't be used: {path.stem!r} is already the name of "
+                "a Python module, and your file would hide it. Try e.g. 'app.py'."
+            )
+
+    def _validate_output_path(self):
+        path = Path(self.output_path)
+
+        if path.is_absolute() or not path.parts or ".." in path.parts:
+            raise ValueError(
+                f"The output path {self.output_path!r} must be a folder inside your project, e.g. 'output'."
+            )
+        elif path.parts[0] in {"content", "templates", "static"}:
+            raise ValueError(
+                f"The output path {self.output_path!r} can't be used: the {path.parts[0]!r} folder holds your "
+                "site's own files, and cleaning the output would delete them. Try e.g. 'output'."
+            )
+
+    def __post_init__(self):
+        self._validate_site_title()
+        self._validate_site_url()
+        self._validate_project_slug()
+        self._validate_app_filename()
+        self._validate_output_path()
