@@ -1,9 +1,10 @@
 import shutil
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from importlib.util import find_spec
 from pathlib import Path
 from urllib.parse import urlparse
 
+from jinja2 import Environment, StrictUndefined
 from slugify import slugify
 
 SITE_TEMPLATE = Path(__file__).parent / "site_template"
@@ -101,15 +102,31 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
 
     site_path.mkdir(parents=True)
 
+    env = Environment(
+        trim_blocks=True,
+        lstrip_blocks=True,
+        keep_trailing_newline=True,
+        undefined=StrictUndefined,
+    )
+    context = asdict(options)
+
     for item in template_dir.rglob("*"):
         relative_path = item.relative_to(template_dir)
-        if not item.is_file() or item.suffix == ".jinja":
+        if not item.is_file():
             continue
         if any(part.startswith(".") for part in relative_path.parts):
             continue
 
         target = site_path / relative_path
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(item, target)
+
+        if item.suffix == ".jinja":
+            output = target.with_suffix("")
+            if relative_path == Path("app.py.jinja"):
+                output = site_path / options.app_filename
+            template = env.from_string(item.read_text(encoding="utf-8"))
+            output.write_text(template.render(context), encoding="utf-8")
+        else:
+            shutil.copy2(item, target)
 
     return site_path
