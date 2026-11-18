@@ -102,39 +102,43 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
 
     site_path.mkdir(parents=True)
 
-    env = Environment(
-        trim_blocks=True,
-        lstrip_blocks=True,
-        keep_trailing_newline=True,
-        undefined=StrictUndefined,
-    )
-    context = asdict(options)
-    skipped_folders = set()
+    try:
+        env = Environment(
+            trim_blocks=True,
+            lstrip_blocks=True,
+            keep_trailing_newline=True,
+            undefined=StrictUndefined,
+        )
+        context = asdict(options)
+        skipped_folders = set()
 
-    if not options.include_blog:
-        skipped_folders.add(Path("content/blog"))
-    if not options.include_collection:
-        skipped_folders.add(Path("content/pages"))
+        if not options.include_blog:
+            skipped_folders.add(Path("content/blog"))
+        if not options.include_collection:
+            skipped_folders.add(Path("content/pages"))
 
-    for item in template_dir.rglob("*"):
-        relative_path = item.relative_to(template_dir)
-        if not item.is_file():
-            continue
-        if any(part.startswith(".") for part in relative_path.parts):
-            continue
-        if any(relative_path.is_relative_to(folder) for folder in skipped_folders):
-            continue
+        for item in template_dir.rglob("*"):
+            relative_path = item.relative_to(template_dir)
+            if not item.is_file():
+                continue
+            if any(part.startswith(".") for part in relative_path.parts):
+                continue
+            if any(relative_path.is_relative_to(folder) for folder in skipped_folders):
+                continue
 
-        target = site_path / relative_path
-        target.parent.mkdir(parents=True, exist_ok=True)
+            target = site_path / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
 
-        if item.suffix == ".jinja":
-            output = target.with_suffix("")
-            if relative_path == Path("app.py.jinja"):
-                output = site_path / options.app_filename
-            template = env.from_string(item.read_text(encoding="utf-8"))
-            output.write_text(template.render(context), encoding="utf-8")
-        else:
-            shutil.copy2(item, target)
+            if item.suffix == ".jinja":
+                output = target.with_suffix("")
+                if relative_path == Path("app.py.jinja"):
+                    output = site_path / options.app_filename
+                template = env.from_string(item.read_text(encoding="utf-8"))
+                output.write_text(template.render(context), encoding="utf-8")
+            else:
+                shutil.copy2(item, target)
+    except Exception:
+        shutil.rmtree(site_path)
+        raise
 
     return site_path

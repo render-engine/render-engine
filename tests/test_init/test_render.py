@@ -204,3 +204,12 @@ def test_unknown_template_variable_is_rejected(options, tmp_path, template_dir):
 
     with pytest.raises(UndefinedError, match="site_tilte"):
         create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+
+def test_failed_site_is_removed(options, tmp_path, template_dir):
+    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+
+    with pytest.raises(UndefinedError):
+        create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+    assert not (tmp_path / "sites" / "my-blog").exists()
