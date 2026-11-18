@@ -179,6 +179,17 @@ def test_any_site_title_is_rendered_safely(tmp_path, site_title):
     assert site_title in (site_path / "README.md").read_text(encoding="utf-8")
 
 
+@pytest.mark.parametrize("include_blog", [True, False])
+@pytest.mark.parametrize("include_collection", [True, False])
+def test_example_content_follows_the_answers(tmp_path, include_blog, include_collection):
+    options = InitOptions(site_title="My Blog", include_blog=include_blog, include_collection=include_collection)
+
+    site_path = create_site(options, tmp_path)
+
+    assert (site_path / "content" / "blog").exists() is include_blog
+    assert (site_path / "content" / "pages").exists() is include_collection
+
+
 # Rendering a custom template
 
 

@@ -109,12 +109,20 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
         undefined=StrictUndefined,
     )
     context = asdict(options)
+    skipped_folders = set()
+
+    if not options.include_blog:
+        skipped_folders.add(Path("content/blog"))
+    if not options.include_collection:
+        skipped_folders.add(Path("content/pages"))
 
     for item in template_dir.rglob("*"):
         relative_path = item.relative_to(template_dir)
         if not item.is_file():
             continue
         if any(part.startswith(".") for part in relative_path.parts):
+            continue
+        if any(relative_path.is_relative_to(folder) for folder in skipped_folders):
             continue
 
         target = site_path / relative_path
