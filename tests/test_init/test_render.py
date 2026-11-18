@@ -2,7 +2,7 @@ import ast
 import tomllib
 
 import pytest
-from jinja2 import UndefinedError
+from jinja2 import TemplateSyntaxError, UndefinedError
 
 from render_engine.init import SITE_TEMPLATE, InitOptions, create_site
 
@@ -206,10 +206,58 @@ def test_unknown_template_variable_is_rejected(options, tmp_path, template_dir):
         create_site(options, tmp_path / "sites", template_dir=template_dir)
 
 
-def test_failed_site_is_removed(options, tmp_path, template_dir):
-    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+@pytest.mark.parametrize(
+    "filename, content, error",
+    [
+        ("typo.txt.jinja", b"{{ site_tilte }}", UndefinedError),
+        ("syntax.txt.jinja", b"{% if %}", TemplateSyntaxError),
+        ("image.png.jinja", b"\x89PNG\xff\xfe", UnicodeDecodeError),
+    ],
+)
+def test_failed_site_is_removed(options, tmp_path, template_dir, filename, content, error):
+    (template_dir / filename).write_bytes(content)
 
-    with pytest.raises(UndefinedError):
+    with pytest.raises(error):
+        create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+    assert not (tmp_path / "sites" / "my-blog").exists()
+
+
+def test_missing_template_dir_is_rejected(options, tmp_path):
+    with pytest.raises(FileNotFoundError, match="doesn't exist"):
+        create_site(options, tmp_path / "sites", template_dir=tmp_path / "no-such-template")
+
+    assert not (tmp_path / "sites").exists()
+
+
+def test_template_dir_as_string_is_accepted(options, tmp_path, template_dir):
+    site_path = create_site(options, tmp_path / "sites", template_dir=str(template_dir))
+
+    assert (site_path / "top.txt").read_text() == "top"
+
+
+def test_destination_that_is_a_file_is_rejected(options, tmp_path):
+    destination = tmp_path / "notes.txt"
+    destination.write_text("not a folder")
+
+    with pytest.raises(NotADirectoryError):
+        create_site(options, destination)
+
+
+def test_destination_inside_template_dir(options, template_dir):
+    site_path = create_site(options, template_dir, template_dir=template_dir)
+
+    assert (site_path / "top.txt").read_text() == "top"
+    assert not (site_path / options.project_slug).exists()
+
+
+def test_interrupted_site_is_removed(options, tmp_path, template_dir, monkeypatch):
+    def interrupt(*args, **kwargs):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr("render_engine.init.shutil.copy2", interrupt)
+
+    with pytest.raises(KeyboardInterrupt):
         create_site(options, tmp_path / "sites", template_dir=template_dir)
 
     assert not (tmp_path / "sites" / "my-blog").exists()

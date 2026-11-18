@@ -148,7 +148,65 @@ def test_output_path_outside_project_is_rejected(output_path):
         InitOptions(output_path=output_path)
 
 
-@pytest.mark.parametrize("output_path", ["content", "templates", "static", "content/output"])
+@pytest.mark.parametrize(
+    "output_path", ["content", "templates", "static", "content/output", "Content", "STATIC", "Templates/out"]
+)
 def test_output_path_in_site_folders_is_rejected(output_path):
     with pytest.raises(ValueError, match="holds your site's own files"):
         InitOptions(output_path=output_path)
+
+
+# Answer types
+
+
+@pytest.mark.parametrize("field", ["site_title", "site_url", "project_slug", "app_filename", "output_path"])
+@pytest.mark.parametrize("value", [None, 42, True])
+def test_non_text_answer_is_rejected(field, value):
+    with pytest.raises(TypeError, match="must be text"):
+        InitOptions(**{field: value})
+
+
+@pytest.mark.parametrize("field", ["include_collection", "include_blog", "include_cli"])
+@pytest.mark.parametrize("value", ["no", "yes", "", 0, 1, None])
+def test_non_bool_answer_is_rejected(field, value):
+    with pytest.raises(TypeError, match="must be True or False"):
+        InitOptions(**{field: value})
+
+
+def test_site_url_is_stripped():
+    assert InitOptions(site_url="  https://example.com  ").site_url == "https://example.com"
+
+
+@pytest.mark.parametrize(
+    "site_url", ["https://my site.com", "https://example.com/my page", "https://example.com/\tblog"]
+)
+def test_site_url_with_spaces_is_rejected(site_url):
+    with pytest.raises(ValueError, match="can't contain spaces"):
+        InitOptions(site_url=site_url)
+
+
+@pytest.mark.parametrize("site_url", ["https://example.com:abc", "http://localhost:99999", "http://localhost:-1"])
+def test_site_url_with_invalid_port_is_rejected(site_url):
+    with pytest.raises(ValueError, match="invalid port"):
+        InitOptions(site_url=site_url)
+
+
+@pytest.mark.parametrize("site_title", ["My\nBlog", "My\tBlog", "My\rBlog", "My\x00Blog"])
+def test_site_title_with_control_characters_is_rejected(site_title):
+    with pytest.raises(ValueError, match="must be on one line"):
+        InitOptions(site_title=site_title)
+
+
+@pytest.mark.parametrize("site_title", ["👨‍👩‍👧 Family Blog", "Café ☕", "Blog — 2026"])
+def test_site_title_with_special_unicode_is_kept(site_title):
+    assert InitOptions(site_title=site_title).site_title == site_title
+
+
+@pytest.mark.parametrize("output_path", [".git", ".venv", ".github", ".output", ".git/site"])
+def test_hidden_output_path_is_rejected(output_path):
+    with pytest.raises(ValueError, match="folders starting with '.'"):
+        InitOptions(output_path=output_path)
+
+
+def test_output_path_with_hidden_subfolder_is_kept():
+    assert InitOptions(output_path="output/.well-known").output_path == "output/.well-known"

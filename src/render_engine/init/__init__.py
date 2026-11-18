@@ -1,4 +1,5 @@
 import shutil
+import unicodedata
 from dataclasses import asdict, dataclass
 from importlib.util import find_spec
 from pathlib import Path
@@ -27,14 +28,25 @@ class InitOptions:
         self.site_title = self.site_title.strip()
         if not self.site_title:
             raise ValueError("The site title can't be empty. Please enter a title, e.g. 'My Blog'.")
+        if any(unicodedata.category(char) == "Cc" for char in self.site_title):
+            raise ValueError(f"The site title {self.site_title!r} must be on one line, without tabs or line breaks.")
 
     def _validate_site_url(self) -> None:
+        self.site_url = self.site_url.strip()
         parsed_url = urlparse(self.site_url)
 
         if not parsed_url.hostname or parsed_url.scheme not in ["http", "https"]:
             raise ValueError(
                 f"The site URL {self.site_url!r} must start with http:// or https://, e.g. 'https://example.com'."
             )
+        if any(char.isspace() for char in self.site_url):
+            raise ValueError(f"The site URL {self.site_url!r} can't contain spaces. Use '-' or '%20' instead.")
+        try:
+            _ = parsed_url.port
+        except ValueError:
+            raise ValueError(
+                f"The site URL {self.site_url!r} has an invalid port: it must be a number, e.g. 'http://localhost:8000'."
+            ) from None
 
     def _validate_project_slug(self) -> None:
         given_slug = self.project_slug
@@ -74,13 +86,29 @@ class InitOptions:
             raise ValueError(
                 f"The output path {self.output_path!r} must be a folder inside your project, e.g. 'output'."
             )
-        elif path.parts[0] in {"content", "templates", "static"}:
+        elif path.parts[0].lower() in {"content", "templates", "static"}:
             raise ValueError(
                 f"The output path {self.output_path!r} can't be used: the {path.parts[0]!r} folder holds your "
                 "site's own files, and cleaning the output would delete them. Try e.g. 'output'."
             )
+        elif path.parts[0].startswith("."):
+            raise ValueError(
+                f"The output path {self.output_path!r} can't be used: folders starting with '.' hold tools and "
+                "settings like Git, and cleaning the output would delete them. Try e.g. 'output'."
+            )
+
+    def _validate_types(self) -> None:
+        for name in ("site_title", "site_url", "project_slug", "app_filename", "output_path"):
+            value = getattr(self, name)
+            if not isinstance(value, str):
+                raise TypeError(f"The {name.replace('_', ' ')} must be text, not {value!r}.")
+        for name in ("include_collection", "include_blog", "include_cli"):
+            value = getattr(self, name)
+            if not isinstance(value, bool):
+                raise TypeError(f"The {name.replace('_', ' ')} answer must be True or False, not {value!r}.")
 
     def __post_init__(self) -> None:
+        self._validate_types()
         self._validate_site_title()
         self._validate_site_url()
         self._validate_project_slug()
@@ -88,11 +116,15 @@ class InitOptions:
         self._validate_output_path()
 
 
-def create_site(options: InitOptions, destination: Path | str, template_dir: Path = SITE_TEMPLATE) -> Path:
+def create_site(options: InitOptions, destination: Path | str, template_dir: Path | str = SITE_TEMPLATE) -> Path:
     """Create the folder for a new site and return its path.
 
     The folder is named after `options.project_slug` and created inside `destination`.
     """
+    template_dir = Path(template_dir)
+    if not template_dir.is_dir():
+        raise FileNotFoundError(f"The template folder {str(template_dir)!r} doesn't exist or isn't a folder.")
+
     site_path = Path(destination) / options.project_slug
 
     if site_path.exists():
@@ -100,6 +132,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
             f"The folder {str(site_path)!r} already exists. Use a different project slug or destination folder."
         )
 
+    template_items = sorted(template_dir.rglob("*"))
     site_path.mkdir(parents=True)
 
     try:
@@ -117,7 +150,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
         if not options.include_collection:
             skipped_folders.add(Path("content/pages"))
 
-        for item in template_dir.rglob("*"):
+        for item in template_items:
             relative_path = item.relative_to(template_dir)
             if not item.is_file():
                 continue
@@ -137,7 +170,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
                 output.write_text(template.render(context), encoding="utf-8")
             else:
                 shutil.copy2(item, target)
-    except Exception:
+    except BaseException:
         shutil.rmtree(site_path)
         raise
 
