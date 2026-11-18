@@ -1,3 +1,13 @@
+"""End-to-end tests: generated sites must build.
+
+These tests create a site from the built-in template and build it by running its app file
+in a separate process, the way a user would. They catch problems the other tests can't,
+like a wrong import in the generated app file or a template that doesn't exist.
+
+They are slower than the other tests, so they cover the main combinations of answers
+rather than every case.
+"""
+
 import subprocess
 import sys
 

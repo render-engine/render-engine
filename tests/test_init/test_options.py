@@ -1,3 +1,13 @@
+"""Tests for `InitOptions`: the answers used to create a new site.
+
+These tests call `InitOptions` directly and check the rules for each answer: which values
+are accepted, how they are cleaned up (e.g. stripped, slugified) and which are rejected
+with which error.
+
+How the command asks the questions and handles invalid answers is tested in
+`test_command.py`.
+"""
+
 import re
 from dataclasses import fields
 

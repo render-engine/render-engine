@@ -5,13 +5,17 @@ from importlib.util import find_spec
 from pathlib import Path
 from urllib.parse import urlparse
 
-from jinja2 import Environment, StrictUndefined
+from jinja2 import Environment, StrictUndefined, TemplateError, TemplateSyntaxError
 from slugify import slugify
 
 SITE_TEMPLATE = Path(__file__).parent / "site_template"
 # Files and folders in a template that never belong in a new project:
 # version control, OS junk, caches, virtual environments and secrets.
 IGNORED_NAMES = {".git", ".hg", ".svn", ".DS_Store", "Thumbs.db", "__pycache__", ".venv", ".env"}
+
+
+class TemplateFileError(ValueError):
+    """A file in a site template couldn't be rendered."""
 
 
 @dataclass
@@ -183,8 +187,14 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
             output.parent.mkdir(parents=True, exist_ok=True)
 
             if item.suffix == ".jinja":
-                template = env.from_string(item.read_text(encoding="utf-8"))
-                output.write_text(template.render(context), encoding="utf-8")
+                try:
+                    rendered = env.from_string(item.read_text(encoding="utf-8")).render(context)
+                except (TemplateError, UnicodeDecodeError) as error:
+                    line = f" (line {error.lineno})" if isinstance(error, TemplateSyntaxError) else ""
+                    raise TemplateFileError(
+                        f"The template file {str(relative_path)!r} can't be rendered{line}: {error}"
+                    ) from error
+                output.write_text(rendered, encoding="utf-8")
             else:
                 shutil.copy2(item, output)
     except BaseException:

@@ -1,10 +1,26 @@
+"""Tests for `create_site`: creating a project folder from a site template.
+
+These tests check how a template becomes a project: `.jinja` files are rendered with the
+answers, other files are copied, ignored files (like `.git`) and unwanted example content
+are skipped, and broken templates or invalid destinations raise an error without leaving
+a half-built folder behind.
+
+They use the built-in template and a small custom template from the `template_dir`
+fixture. Whether a generated site actually builds is tested in `test_build.py`.
+"""
+
 import ast
 import tomllib
 
 import pytest
 from jinja2 import TemplateSyntaxError, UndefinedError
 
-from render_engine.init import IGNORED_NAMES, SITE_TEMPLATE, InitOptions, create_site
+from render_engine.init import IGNORED_NAMES, SITE_TEMPLATE, InitOptions, TemplateFileError, create_site
+
+# A template with a misspelled variable: `site_tilte` instead of `site_title`.
+# The typo is on purpose: it imitates a mistake in a custom template, to test that
+# unknown variables are reported instead of being left empty.
+MISSPELLED_TEMPLATE = "{{ site_tilte }}"
 
 
 def is_ignored(relative_path):
@@ -215,16 +231,17 @@ def test_custom_jinja_file_is_rendered(options, tmp_path, template_dir):
 
 
 def test_unknown_template_variable_is_rejected(options, tmp_path, template_dir):
-    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+    (template_dir / "typo.txt.jinja").write_text(MISSPELLED_TEMPLATE)
 
-    with pytest.raises(UndefinedError, match="site_tilte"):
+    # typo on purpose, see MISSPELLED_TEMPLATE
+    with pytest.raises(TemplateFileError, match="'typo.txt.jinja' can't be rendered: 'site_tilte' is undefined"):
         create_site(options, tmp_path / "sites", template_dir=template_dir)
 
 
 @pytest.mark.parametrize(
     "filename, content, error",
     [
-        ("typo.txt.jinja", b"{{ site_tilte }}", UndefinedError),
+        ("typo.txt.jinja", MISSPELLED_TEMPLATE.encode(), UndefinedError),
         ("syntax.txt.jinja", b"{% if %}", TemplateSyntaxError),
         ("image.png.jinja", b"\x89PNG\xff\xfe", UnicodeDecodeError),
     ],
@@ -232,8 +249,10 @@ def test_unknown_template_variable_is_rejected(options, tmp_path, template_dir):
 def test_failed_site_is_removed(options, tmp_path, template_dir, filename, content, error):
     (template_dir / filename).write_bytes(content)
 
-    with pytest.raises(error):
+    with pytest.raises(TemplateFileError, match=filename) as error_info:
         create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+    assert isinstance(error_info.value.__cause__, error)
 
     assert not (tmp_path / "sites" / "my-blog").exists()
 
@@ -298,21 +317,21 @@ def test_app_template_and_file_with_app_filename_are_rejected(tmp_path, template
 
 
 def test_failed_site_removes_created_parent_folders(options, tmp_path, template_dir):
-    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+    (template_dir / "typo.txt.jinja").write_text(MISSPELLED_TEMPLATE)
 
-    with pytest.raises(UndefinedError):
+    with pytest.raises(TemplateFileError):
         create_site(options, tmp_path / "sites" / "personal", template_dir=template_dir)
 
     assert not (tmp_path / "sites").exists()
 
 
 def test_failed_site_keeps_existing_destination(options, tmp_path, template_dir):
-    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+    (template_dir / "typo.txt.jinja").write_text(MISSPELLED_TEMPLATE)
     destination = tmp_path / "sites"
     destination.mkdir()
     (destination / "other.txt").write_text("keep me")
 
-    with pytest.raises(UndefinedError):
+    with pytest.raises(TemplateFileError):
         create_site(options, destination, template_dir=template_dir)
 
     assert (destination / "other.txt").read_text() == "keep me"

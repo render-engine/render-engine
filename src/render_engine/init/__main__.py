@@ -1,21 +1,122 @@
-from argparse import ArgumentParser
+import json
+import sys
+from argparse import ArgumentParser, ArgumentTypeError
+from dataclasses import fields
 from pathlib import Path
+from typing import Any
+
+from rich.console import Console
+from rich.prompt import Confirm, Prompt
+
+from render_engine.init import SITE_TEMPLATE, InitOptions, create_site
+
+console = Console(soft_wrap=True)
+error_console = Console(stderr=True, soft_wrap=True)
 
 
-def main():
-    parser = ArgumentParser(description="Create a new site configuration.")
-    # parser.add_argument(
-    #     "-e",
-    #     "--extra-context",
-    #     default=None,
-    #     help="Extra context to pass to the cookiecutter template. This must be a JSON string.",
-    # )
-    # parser.add_argument(
-    #     "-t",
-    #     "--template",
-    #     default="https://github.com/render-engine/cookiecutter-render-engine-site",
-    #     help="Template to use for creating a new site.",
-    # )
+def ask(answers: dict[str, Any], name: str, question: str) -> None:
+    """Ask one question until the answer is valid, and store the answer in `answers`."""
+    default = getattr(InitOptions(**answers), name)
+    while True:
+        if isinstance(default, bool):
+            answers[name] = Confirm.ask(question, default=default, console=console)
+        else:
+            answers[name] = Prompt.ask(question, default=default, console=console)
+        try:
+            InitOptions(**answers)
+            return
+        except ValueError as error:
+            console.print(str(error), style="red", markup=False)
+
+
+def ask_options(defaults: dict[str, Any], destination: Path) -> InitOptions:
+    """Ask the questions for a new site and return the answers."""
+    answers = dict(defaults)
+    ask(answers, "site_title", "Site title")
+    ask(answers, "site_url", "Site URL")
+    while True:
+        ask(answers, "project_slug", "Project folder name")
+        site_path = destination / InitOptions(**answers).project_slug
+        if not site_path.exists():
+            break
+        console.print(
+            f"The folder {str(site_path)!r} already exists. Please choose a different name.", style="red", markup=False
+        )
+    ask(answers, "app_filename", "App file name")
+    ask(answers, "output_path", "Folder for the built site")
+    ask(answers, "include_collection", "Include an example collection?")
+    ask(answers, "include_blog", "Include an example blog?")
+    ask(answers, "include_cli", "Use the Render Engine CLI?")
+    return InitOptions(**answers)
+
+
+def extra_context(text: str) -> dict[str, Any]:
+    """Read the answers given with `--extra-context`, a JSON object like '{"site_title": "My Blog"}'."""
+    try:
+        answers = json.loads(text)
+    except json.JSONDecodeError as error:
+        raise ArgumentTypeError(f"not valid JSON ({error})") from None
+    if not isinstance(answers, dict):
+        raise ArgumentTypeError("""must be a JSON object, e.g. '{"site_title": "My Blog"}'""")
+
+    known = [field.name for field in fields(InitOptions)]
+    unknown = sorted(answers.keys() - set(known))
+    if unknown:
+        raise ArgumentTypeError(f"unknown answers {', '.join(unknown)}. The answers are: {', '.join(known)}")
+
+    try:
+        InitOptions(**answers)
+    except (TypeError, ValueError) as error:
+        raise ArgumentTypeError(str(error)) from None
+    return answers
+
+
+def template_folder(text: str) -> Path:
+    """Read `--template`: the path to a folder with a site template."""
+    if not text.strip():
+        raise ArgumentTypeError("the template folder can't be empty")
+    if "://" in text or text.startswith(("git@", "gh:")):
+        raise ArgumentTypeError(
+            f"{text!r} is a URL, and only local folders are supported. "
+            "Download the template first, e.g. with `git clone`, and pass its folder."
+        )
+    path = Path(text)
+    if not path.is_dir():
+        raise ArgumentTypeError(f"the template folder {text!r} doesn't exist or isn't a folder")
+    return path
+
+
+def destination_folder(text: str) -> Path:
+    """Read `--output-dir`: the folder to create the project in. It's created if it doesn't exist."""
+    path = Path(text)
+    if path.exists() and not path.is_dir():
+        raise ArgumentTypeError(f"{text!r} is a file, not a folder")
+    return path
+
+
+def main() -> None:
+    """Create a new Render Engine site from the command line.
+
+    Asks the questions for the new site, or uses the default answers with `--no-input`,
+    and creates the project folder inside the destination folder.
+    """
+    parser = ArgumentParser(prog="render-engine-init", description="Create a new Render Engine site.")
+    parser.add_argument(
+        "-e",
+        "--extra-context",
+        type=extra_context,
+        default={},
+        metavar="JSON",
+        help="""Answers to use as defaults, as a JSON object, e.g. '{"site_title": "My Blog"}'.""",
+    )
+    parser.add_argument(
+        "-t",
+        "--template",
+        type=template_folder,
+        default=SITE_TEMPLATE,
+        metavar="PATH",
+        help="Path to a folder with your own site template (default: the built-in template).",
+    )
     parser.add_argument(
         "--no-input",
         action="store_true",
@@ -24,37 +125,31 @@ def main():
     parser.add_argument(
         "-o",
         "--output-dir",
-        type=Path,
+        type=destination_folder,
         metavar="PATH",
         dest="destination",
         default=Path("."),
         help="Path to the folder in which to create the new project folder (default: the current folder).",
     )
-    # parser.add_argument(
-    #     "-c",
-    #     "--config-file",
-    #     type=Path,
-    #     default=None,
-    #     help="Path to the cookiecutter config file to use.",
-    # )
     args = parser.parse_args()
-    init(
-        template=args.template,
-        extra_context=args.extra_context,
-        no_input=args.no_input,
-        output_dir=args.output_dir,
-        config_file=args.config_file,
-    )
+    try:
+        if args.no_input:
+            options = InitOptions(**args.extra_context)
+        else:
+            options = ask_options(args.extra_context, args.destination)
+        site_path = create_site(options, args.destination, template_dir=args.template)
+    except KeyboardInterrupt:
+        error_console.print("\nCancelled. No site was created.", style="yellow")
+        sys.exit(130)
+    except EOFError:
+        error_console.print("\nThe input ended before all questions were answered. No site was created.", style="red")
+        sys.exit(1)
+    except (OSError, ValueError) as error:
+        error_console.print(f"Couldn't create the site: {error}", style="red", markup=False)
+        sys.exit(1)
 
-
-def init(template: str, extra_context: str | None, no_input: bool, output_dir: Path, config_file: Path | None):
-    """
-    Create a new site configuration. You can provide extra_context to the template.
-
-    The template can be a local path or a git repository.
-    """
-
-    raise NotImplementedError("Site generation is not implemented yet.")
+    console.print(f"Created your new site in {site_path}", style="green", markup=False)
+    console.print("Open its README.md to see how to build and preview it.")
 
 
 if __name__ == "__main__":
