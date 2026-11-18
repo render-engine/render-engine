@@ -13,6 +13,7 @@ def build(site_path, options):
         cwd=site_path,
         capture_output=True,
         text=True,
+        timeout=60,
     )
 
 

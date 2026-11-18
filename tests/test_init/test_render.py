@@ -4,20 +4,20 @@ import tomllib
 import pytest
 from jinja2 import TemplateSyntaxError, UndefinedError
 
-from render_engine.init import SITE_TEMPLATE, InitOptions, create_site
+from render_engine.init import IGNORED_NAMES, SITE_TEMPLATE, InitOptions, create_site
 
 
-def is_hidden(relative_path):
-    """True if any part of the path (a file or one of its folders) starts with a dot."""
-    return any(part.startswith(".") for part in relative_path.parts)
+def is_ignored(relative_path):
+    """True if the path (a file or one of its folders) is something a template never copies, like `.git`."""
+    return any(part in IGNORED_NAMES for part in relative_path.parts)
 
 
 def static_files(folder):
-    """All copy-only files in `folder` as {relative path: contents}: no `.jinja` files, nothing hidden."""
+    """All copy-only files in `folder` as {relative path: contents}: no `.jinja` files, nothing ignored."""
     return {
         path.relative_to(folder): path.read_bytes()
         for path in folder.rglob("*")
-        if path.is_file() and path.suffix != ".jinja" and not is_hidden(path.relative_to(folder))
+        if path.is_file() and path.suffix != ".jinja" and not is_ignored(path.relative_to(folder))
     }
 
 
@@ -34,12 +34,19 @@ def template_dir(tmp_path):
     (template / "top.txt").write_text("top")
     (template / "nested" / "deeper" / "file.txt").write_text("deep")
     (template / "page.html.jinja").write_text("{{ site_title }}")
-    # hidden files and folders, at the top and nested
-    (template / ".DS_Store").write_text("hidden")
+    # dot-files that belong to the new project
+    (template / ".gitignore").write_text("output/")
+    (template / ".github" / "workflows").mkdir(parents=True)
+    (template / ".github" / "workflows" / "build.yml").write_text("on: push")
+    (template / "nested" / ".settings.toml.jinja").write_text("{{ site_title }}")
+    # files and folders that must be ignored, at the top and nested
+    (template / ".DS_Store").write_text("junk")
     (template / ".env").write_text("SECRET=1")
-    (template / "nested" / ".hidden").write_text("hidden")
+    (template / "nested" / ".DS_Store").write_text("junk")
     (template / ".git").mkdir()
     (template / ".git" / "config").write_text("[core]")
+    (template / "__pycache__").mkdir()
+    (template / "__pycache__" / "app.cpython-314.pyc").write_bytes(b"\x00")
     return template
 
 
@@ -119,11 +126,19 @@ def test_custom_template_dir_is_used(options, tmp_path, template_dir):
     assert (site_path / "nested" / "deeper" / "file.txt").read_text() == "deep"
 
 
-def test_hidden_files_and_folders_are_not_copied(options, tmp_path, template_dir):
+def test_ignored_files_and_folders_are_not_copied(options, tmp_path, template_dir):
     site_path = create_site(options, tmp_path / "sites", template_dir=template_dir)
 
-    hidden = [path.relative_to(site_path) for path in site_path.rglob("*") if is_hidden(path.relative_to(site_path))]
-    assert hidden == []
+    ignored = [path.relative_to(site_path) for path in site_path.rglob("*") if is_ignored(path.relative_to(site_path))]
+    assert ignored == []
+
+
+def test_project_dot_files_are_copied(options, tmp_path, template_dir):
+    site_path = create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+    assert (site_path / ".gitignore").read_text() == "output/"
+    assert (site_path / ".github" / "workflows" / "build.yml").read_text() == "on: push"
+    assert (site_path / "nested" / ".settings.toml").read_text(encoding="utf-8") == "My Blog"
 
 
 # Rendering the built-in template
@@ -261,3 +276,44 @@ def test_interrupted_site_is_removed(options, tmp_path, template_dir, monkeypatc
         create_site(options, tmp_path / "sites", template_dir=template_dir)
 
     assert not (tmp_path / "sites" / "my-blog").exists()
+
+
+@pytest.mark.parametrize("extra_file, output", [("top.txt.jinja", "top.txt"), ("page.html", "page.html")])
+def test_two_files_for_the_same_output_are_rejected(options, tmp_path, template_dir, extra_file, output):
+    (template_dir / extra_file).write_text("duplicate")
+
+    with pytest.raises(ValueError, match=f"more than one file that creates {output!r}"):
+        create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+    assert not (tmp_path / "sites" / "my-blog").exists()
+
+
+def test_app_template_and_file_with_app_filename_are_rejected(tmp_path, template_dir):
+    (template_dir / "app.py.jinja").write_text("app = None")
+    (template_dir / "main.py").write_text("print('hello')")
+    options = InitOptions(site_title="My Blog", app_filename="main.py")
+
+    with pytest.raises(ValueError, match="more than one file that creates 'main.py'"):
+        create_site(options, tmp_path / "sites", template_dir=template_dir)
+
+
+def test_failed_site_removes_created_parent_folders(options, tmp_path, template_dir):
+    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+
+    with pytest.raises(UndefinedError):
+        create_site(options, tmp_path / "sites" / "personal", template_dir=template_dir)
+
+    assert not (tmp_path / "sites").exists()
+
+
+def test_failed_site_keeps_existing_destination(options, tmp_path, template_dir):
+    (template_dir / "typo.txt.jinja").write_text("{{ site_tilte }}")
+    destination = tmp_path / "sites"
+    destination.mkdir()
+    (destination / "other.txt").write_text("keep me")
+
+    with pytest.raises(UndefinedError):
+        create_site(options, destination, template_dir=template_dir)
+
+    assert (destination / "other.txt").read_text() == "keep me"
+    assert not (destination / "my-blog").exists()

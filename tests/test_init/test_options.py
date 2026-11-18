@@ -1,4 +1,5 @@
 import re
+from dataclasses import fields
 
 import pytest
 
@@ -191,7 +192,9 @@ def test_site_url_with_invalid_port_is_rejected(site_url):
         InitOptions(site_url=site_url)
 
 
-@pytest.mark.parametrize("site_title", ["My\nBlog", "My\tBlog", "My\rBlog", "My\x00Blog"])
+@pytest.mark.parametrize(
+    "site_title", ["My\nBlog", "My\tBlog", "My\rBlog", "My\x00Blog", "My\u2028Blog", "My\u2029Blog"]
+)
 def test_site_title_with_control_characters_is_rejected(site_title):
     with pytest.raises(ValueError, match="must be on one line"):
         InitOptions(site_title=site_title)
@@ -210,3 +213,9 @@ def test_hidden_output_path_is_rejected(output_path):
 
 def test_output_path_with_hidden_subfolder_is_kept():
     assert InitOptions(output_path="output/.well-known").output_path == "output/.well-known"
+
+
+def test_every_answer_has_a_type_check():
+    """Every answer needs a text or True/False default, so `_validate_types` knows which type to check."""
+    for field in fields(InitOptions):
+        assert isinstance(field.default, (str, bool)), f"{field.name} has no text or True/False default"
