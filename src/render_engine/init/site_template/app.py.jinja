@@ -44,16 +44,18 @@ app.site_vars.update(
 @app.page
 class Index(Page):
     template = "index.html"
-
 {% if include_collection %}
+
+
 @app.collection
 class Pages(Collection):
     content_path = "content/pages"
     routes = ["./"] # route to Collection page
     template = "page.html"
 {% endif %}
-
 {% if include_blog %}
+
+
 @app.collection
 class Blog(BaseBlog):
     content_path = "content/blog"
@@ -61,6 +63,7 @@ class Blog(BaseBlog):
     Parser = MarkdownPageParser
     template = "page.html"
 {% endif %}
+
 
 if __name__ == "__main__":
     app.render()

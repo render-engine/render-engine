@@ -18,8 +18,8 @@ from jinja2 import TemplateSyntaxError, UndefinedError
 from render_engine.init import IGNORED_NAMES, SITE_TEMPLATE, InitOptions, TemplateFileError, create_site
 
 # A template with a misspelled variable: `site_tilte` instead of `site_title`.
-# The typo is on purpose: it imitates a mistake in a custom template, to test that
-# unknown variables are reported instead of being left empty.
+# The typo is on purpose: it tests that unknown variables are reported instead of
+# being left empty.
 MISSPELLED_TEMPLATE = "{{ site_tilte }}"
 
 
@@ -132,7 +132,7 @@ def test_jinja_files_are_not_copied(options, tmp_path):
     assert list(site_path.rglob("*.jinja")) == []
 
 
-# Copying a custom template
+# Copying with a test template
 
 
 def test_custom_template_dir_is_used(options, tmp_path, template_dir):
@@ -220,8 +220,15 @@ def test_example_content_follows_the_answers(tmp_path, include_blog, include_col
     assert (site_path / "content" / "blog").exists() is include_blog
     assert (site_path / "content" / "pages").exists() is include_collection
 
+    app_py = (site_path / "app.py").read_text()
 
-# Rendering a custom template
+    assert "\n\n\n\n" not in app_py  # never more than 2 blank lines in a row
+    assert '"page.html"\n@app' not in app_py  # a blank line between the classes
+
+
+# Rendering with a test template
+# These use a small template (the `template_dir` fixture) instead of the built-in one,
+# so failures are easy to trigger and the checks don't depend on the real site.
 
 
 def test_custom_jinja_file_is_rendered(options, tmp_path, template_dir):

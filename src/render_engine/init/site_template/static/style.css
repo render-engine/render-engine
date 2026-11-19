@@ -1,3 +1,6 @@
+html {
+    scrollbar-gutter: stable;
+}
 body {
     font-family: Arial, sans-serif;
     font-size: 14pt;
