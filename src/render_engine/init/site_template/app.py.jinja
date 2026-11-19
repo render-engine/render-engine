@@ -8,7 +8,7 @@ from render_engine import Collection
 {% endif %}
 {% if include_blog %}
 from render_engine import Blog as BaseBlog
-from render_engine_markdown import MarkdownPageParser
+from render_engine.parsers import MarkdownPageParser
 {% endif %}
 
 

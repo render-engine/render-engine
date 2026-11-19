@@ -5,9 +5,6 @@ description = {{ ("A Render Engine site: " ~ site_title) | tojson }}
 requires-python = ">=3.11"
 dependencies = [
     "render-engine",
-{% if include_blog %}
-    "render-engine-markdown",
-{% endif %}
 {% if include_cli %}
     "render-engine-cli",
 {% endif %}
