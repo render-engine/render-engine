@@ -2,7 +2,7 @@
 
 These tests run the command with flags and typed answers (`sys.argv` and `sys.stdin` are
 replaced for each test) and check what the user sees: the questions, asking again after
-an invalid answer, `--no-input`, `--extra-context`, `--template`, error messages without
+an invalid answer, `--no-input`, `--extra-context`, error messages without
 tracebacks, exit codes and cancelling.
 
 Which answers are valid is tested in `test_options.py`; these tests only check that the
@@ -41,16 +41,6 @@ def test_extra_context_is_used_with_no_input(monkeypatch, tmp_path):
 
     assert (tmp_path / "my-blog" / "content" / "pages").is_dir()
     assert not (tmp_path / "my-blog" / "content" / "blog").exists()
-
-
-def test_custom_template_is_used(monkeypatch, tmp_path):
-    template = tmp_path / "template"
-    template.mkdir()
-    (template / "hello.txt.jinja").write_text("Hello from {{ site_title }}")
-
-    run_init(monkeypatch, "--no-input", "-o", str(tmp_path / "sites"), "-t", str(template))
-
-    assert (tmp_path / "sites" / "untitled-site" / "hello.txt").read_text() == "Hello from Untitled Site"
 
 
 # With questions
@@ -112,15 +102,7 @@ def test_error_is_shown_as_one_line(monkeypatch, tmp_path, capsys):
 
 @pytest.mark.parametrize(
     "args, message",
-    [
-        (["-t", "no-such-template"], "template folder 'no-such-template' doesn't exist"),
-        (["-o", "notes.txt"], "'notes.txt' is a file"),
-        (["-t", "https://github.com/someone/blog-starter"], "only local folders are supported"),
-        (["-t", "git@github.com:someone/blog-starter.git"], "only local folders are supported"),
-        (["-t", "gh:someone/blog-starter"], "only local folders are supported"),
-        (["-t", ""], "the template folder can't be empty"),
-        (["-t", "  "], "the template folder can't be empty"),
-    ],
+    [(["-o", "notes.txt"], "'notes.txt' is a file")],
 )
 def test_invalid_folder_is_rejected_before_the_questions(monkeypatch, tmp_path, capsys, args, message):
     (tmp_path / "notes.txt").write_text("not a folder")
@@ -198,3 +180,31 @@ def test_long_error_message_is_not_broken_into_lines(monkeypatch, tmp_path, caps
         run_init(monkeypatch, "--no-input", "-o", str(destination))
 
     assert str(destination / "untitled-site") in capsys.readouterr().err
+
+
+def test_arguments_can_be_passed_directly(tmp_path):
+    main(["--no-input", "-o", str(tmp_path)])
+
+    assert (tmp_path / "untitled-site").is_dir()
+
+
+def test_program_name_can_be_changed(capsys):
+    with pytest.raises(SystemExit):
+        main(["--help"], prog="render-engine init")
+
+    assert capsys.readouterr().out.startswith("usage: render-engine init ")
+
+
+def test_template_option_is_rejected(capsys):
+    with pytest.raises(SystemExit) as exit_info:
+        main(["-t", "my-template"])
+
+    assert exit_info.value.code == 2
+    assert "unrecognized arguments: -t" in capsys.readouterr().err
+
+
+def test_help_says_custom_templates_are_not_supported(capsys):
+    with pytest.raises(SystemExit):
+        main(["--help"])
+
+    assert "Custom templates (--template) are no longer supported." in capsys.readouterr().out

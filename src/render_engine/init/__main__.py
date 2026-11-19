@@ -8,7 +8,7 @@ from typing import Any
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 
-from render_engine.init import SITE_TEMPLATE, InitOptions, create_site
+from render_engine.init import InitOptions, create_site
 
 console = Console(soft_wrap=True)
 error_console = Console(stderr=True, soft_wrap=True)
@@ -71,21 +71,6 @@ def extra_context(text: str) -> dict[str, Any]:
     return answers
 
 
-def template_folder(text: str) -> Path:
-    """Read `--template`: the path to a folder with a site template."""
-    if not text.strip():
-        raise ArgumentTypeError("the template folder can't be empty")
-    if "://" in text or text.startswith(("git@", "gh:")):
-        raise ArgumentTypeError(
-            f"{text!r} is a URL, and only local folders are supported. "
-            "Download the template first, e.g. with `git clone`, and pass its folder."
-        )
-    path = Path(text)
-    if not path.is_dir():
-        raise ArgumentTypeError(f"the template folder {text!r} doesn't exist or isn't a folder")
-    return path
-
-
 def destination_folder(text: str) -> Path:
     """Read `--output-dir`: the folder to create the project in. It's created if it doesn't exist."""
     path = Path(text)
@@ -94,13 +79,17 @@ def destination_folder(text: str) -> Path:
     return path
 
 
-def main() -> None:
+def main(argv: list[str] | None = None, prog: str = "render-engine-init") -> None:
     """Create a new Render Engine site from the command line.
 
     Asks the questions for the new site, or uses the default answers with `--no-input`,
     and creates the project folder inside the destination folder.
     """
-    parser = ArgumentParser(prog="render-engine-init", description="Create a new Render Engine site.")
+    parser = ArgumentParser(
+        prog=prog,
+        description="Create a new Render Engine site.",
+        epilog="Custom templates (--template) are no longer supported.",
+    )
     parser.add_argument(
         "-e",
         "--extra-context",
@@ -108,14 +97,6 @@ def main() -> None:
         default={},
         metavar="JSON",
         help="""Answers to use as defaults, as a JSON object, e.g. '{"site_title": "My Blog"}'.""",
-    )
-    parser.add_argument(
-        "-t",
-        "--template",
-        type=template_folder,
-        default=SITE_TEMPLATE,
-        metavar="PATH",
-        help="Path to a folder with your own site template (default: the built-in template).",
     )
     parser.add_argument(
         "--no-input",
@@ -131,13 +112,14 @@ def main() -> None:
         default=Path("."),
         help="Path to the folder in which to create the new project folder (default: the current folder).",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
     try:
         if args.no_input:
             options = InitOptions(**args.extra_context)
         else:
             options = ask_options(args.extra_context, args.destination)
-        site_path = create_site(options, args.destination, template_dir=args.template)
+        site_path = create_site(options, args.destination)
     except KeyboardInterrupt:
         error_console.print("\nCancelled. No site was created.", style="yellow")
         sys.exit(130)
