@@ -204,6 +204,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tystar86",
+      "name": "tystar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24453683?v=4",
+      "profile": "https://stepanka.studio/",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
