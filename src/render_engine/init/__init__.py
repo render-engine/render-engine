@@ -1,7 +1,7 @@
 import shutil
+import sys
 import unicodedata
 from dataclasses import asdict, dataclass, fields
-from importlib.util import find_spec
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -12,6 +12,8 @@ SITE_TEMPLATE = Path(__file__).parent / "site_template"
 # Files and folders in a template that never belong in a new project:
 # version control, OS junk, caches, virtual environments and secrets.
 IGNORED_NAMES = {".git", ".hg", ".svn", ".DS_Store", "Thumbs.db", "__pycache__", ".venv", ".env"}
+# Modules a new site imports. An app file with one of these names would hide them.
+TAKEN_MODULE_NAMES = sys.stdlib_module_names | {"render_engine", "render_engine_cli"}
 
 
 class TemplateFileError(ValueError):
@@ -80,7 +82,7 @@ class InitOptions:
                 f"The app filename {self.app_filename!r} can only use letters, numbers and underscores, "
                 "and can't start with a number or '__', e.g. 'my_app.py'."
             )
-        elif find_spec(path.stem):
+        elif path.stem in TAKEN_MODULE_NAMES:
             raise ValueError(
                 f"The app filename {self.app_filename!r} can't be used: {path.stem!r} is already the name of "
                 "a Python module, and your file would hide it. Try e.g. 'app.py'."
@@ -103,6 +105,13 @@ class InitOptions:
                 f"The output path {self.output_path!r} can't be used: folders starting with '.' hold tools and "
                 "settings like Git, and cleaning the output would delete them. Try e.g. 'output'."
             )
+        elif path.parts[0].lower() in {self.app_filename.lower(), "pyproject.toml", "readme.md"}:
+            raise ValueError(
+                f"The output path {self.output_path!r} can't be used: {path.parts[0]!r} is a file of your "
+                "project, and cleaning the output would delete it. Try e.g. 'output'."
+            )
+        elif any(char.isspace() for char in self.output_path):
+            raise ValueError(f"The output path {self.output_path!r} can't contain spaces. Use '-' or '_' instead.")
 
     def _validate_types(self) -> None:
         for field in fields(self):
@@ -155,13 +164,14 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
             undefined=StrictUndefined,
         )
         context = asdict(options)
-        skipped_folders = set()
+        skipped_paths = set()
         created_files = set()
 
         if not options.include_blog:
-            skipped_folders.add(Path("content/blog"))
+            skipped_paths.add(Path("content/blog"))
+            skipped_paths.add(Path("templates/archive.html"))
         if not options.include_collection:
-            skipped_folders.add(Path("content/pages"))
+            skipped_paths.add(Path("content/pages"))
 
         for item in template_items:
             relative_path = item.relative_to(template_dir)
@@ -169,7 +179,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
                 continue
             if any(part in IGNORED_NAMES for part in relative_path.parts):
                 continue
-            if any(relative_path.is_relative_to(folder) for folder in skipped_folders):
+            if any(relative_path.is_relative_to(skipped) for skipped in skipped_paths):
                 continue
 
             output = site_path / relative_path
@@ -198,7 +208,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
             else:
                 shutil.copy2(item, output)
     except BaseException:
-        shutil.rmtree(created_root)
+        shutil.rmtree(created_root, ignore_errors=True)
         raise
 
     return site_path

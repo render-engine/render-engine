@@ -51,3 +51,15 @@ def test_generated_site_builds_with_custom_names(tmp_path):
 
     assert result.returncode == 0, result.stderr
     assert "Cool website" in (site_path / "public" / "index.html").read_text(encoding="utf-8")
+
+
+def test_site_title_is_escaped_in_html(tmp_path):
+    options = InitOptions(site_title="Tom & Jerry <Fan Club>")
+    site_path = create_site(options, tmp_path)
+
+    result = build(site_path, options)
+
+    assert result.returncode == 0, result.stderr
+    html = (site_path / "output" / "index.html").read_text(encoding="utf-8")
+    assert "<h1>Tom &amp; Jerry &lt;Fan Club&gt;</h1>" in html
+    assert '<a href="https://example.com">' in html

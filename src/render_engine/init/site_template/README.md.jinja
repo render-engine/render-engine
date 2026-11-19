@@ -1,7 +1,8 @@
 # Congratulations on setting up {{ site_title }}
 
 This is your site to make into whatever you want. This file gives you a little bit of
-direction for your next steps.
+direction for your next steps. For everything else, see the
+[Render Engine documentation](https://render-engine.readthedocs.io/en/latest/).
 
 ## Install the dependencies
 
@@ -16,7 +17,7 @@ With pip, create a virtual environment and install the packages:
 ```shell
 python -m venv .venv
 source .venv/bin/activate
-pip install render-engine render-engine-cli
+pip install {{ "render-engine-cli" if include_cli else "render-engine" }}
 ```
 
 On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
@@ -31,7 +32,7 @@ There are two ways to work with your site. Both produce the same result in `{{ o
 ### With the Render Engine CLI (recommended)
 
 The [Render Engine CLI](https://github.com/render-engine/render-engine-cli) gives you a few
-handy commands. If it isn't installed yet, add it with `uv add --dev render-engine-cli`
+handy commands. If it isn't installed yet, add it with `uv add render-engine-cli`
 or `pip install render-engine-cli`.
 
 Build your site and serve it at `http://localhost:8000` (the console shows the link):

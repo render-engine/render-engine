@@ -145,6 +145,14 @@ def test_invalid_app_filename_is_rejected(app_filename, message):
         InitOptions(app_filename=app_filename)
 
 
+def test_app_filename_check_ignores_local_files(tmp_path, monkeypatch):
+    """A local file like app.py doesn't make 'app.py' a taken name."""
+    (tmp_path / "app.py").write_text("")
+    monkeypatch.syspath_prepend(tmp_path)
+
+    assert InitOptions(app_filename="app.py").app_filename == "app.py"
+
+
 # Output path
 
 
@@ -164,6 +172,23 @@ def test_output_path_outside_project_is_rejected(output_path):
 )
 def test_output_path_in_site_folders_is_rejected(output_path):
     with pytest.raises(ValueError, match="holds your site's own files"):
+        InitOptions(output_path=output_path)
+
+
+@pytest.mark.parametrize("output_path", ["app.py", "pyproject.toml", "README.md", "readme.md", "app.py/site"])
+def test_output_path_on_project_file_is_rejected(output_path):
+    with pytest.raises(ValueError, match="is a file of your project"):
+        InitOptions(output_path=output_path)
+
+
+def test_output_path_on_custom_app_filename_is_rejected():
+    with pytest.raises(ValueError, match="is a file of your project"):
+        InitOptions(app_filename="main.py", output_path="main.py")
+
+
+@pytest.mark.parametrize("output_path", ["my site", "build/my site", "output "])
+def test_output_path_with_spaces_is_rejected(output_path):
+    with pytest.raises(ValueError, match="can't contain spaces"):
         InitOptions(output_path=output_path)
 
 

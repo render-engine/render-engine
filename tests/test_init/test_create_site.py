@@ -200,6 +200,10 @@ def test_cli_dependency_follows_the_answer(tmp_path, include_cli):
     dependencies = read_pyproject(site_path)["project"]["dependencies"]
     assert ("render-engine-cli" in dependencies) is include_cli
 
+    readme = (site_path / "README.md").read_text(encoding="utf-8").splitlines()
+    expected = "pip install render-engine-cli" if include_cli else "pip install render-engine"
+    assert expected in readme  # the whole line, so the closing ``` isn't glued on
+
 
 @pytest.mark.parametrize("site_title", ["Мой блог", "我的博客", 'My "quoted" Blog', "Back\\slash"])
 def test_any_site_title_is_rendered_safely(tmp_path, site_title):
@@ -219,6 +223,7 @@ def test_example_content_follows_the_answers(tmp_path, include_blog, include_col
 
     assert (site_path / "content" / "blog").exists() is include_blog
     assert (site_path / "content" / "pages").exists() is include_collection
+    assert (site_path / "templates" / "archive.html").exists() is include_blog
 
     app_py = (site_path / "app.py").read_text()
 
