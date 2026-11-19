@@ -117,12 +117,23 @@ def test_invalid_folder_is_rejected_before_the_questions(monkeypatch, tmp_path, 
     assert "Site title" not in output.out
 
 
-def test_invalid_extra_context_is_rejected(monkeypatch, tmp_path, capsys):
+@pytest.mark.parametrize(
+    "extra_context, message",
+    [
+        ('{"title": "My Blog"}', "unknown answers title"),
+        ("not json", "not valid JSON"),
+        ('["My Blog"]', "must be a JSON object"),
+        ('{"site_url": "example.com"}', "must start with http:// or https://"),
+        ('{"include_blog": "no"}', "must be True or False"),
+    ],
+)
+def test_invalid_extra_context_is_rejected(tmp_path, capsys, extra_context, message):
     with pytest.raises(SystemExit) as exit_info:
-        run_init(monkeypatch, "--no-input", "-o", str(tmp_path), "-e", '{"title": "My Blog"}')
+        main(["--no-input", "-o", str(tmp_path), "-e", extra_context])
 
     assert exit_info.value.code == 2
-    assert "unknown answers title" in capsys.readouterr().err
+    assert message in capsys.readouterr().err
+    assert list(tmp_path.iterdir()) == []
 
 
 def test_input_ending_early_creates_nothing(monkeypatch, tmp_path, capsys):
