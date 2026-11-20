@@ -16,7 +16,7 @@ import sys
 import pytest
 from rich.prompt import Prompt
 
-from render_engine.init.__main__ import main
+from render_engine.init.__main__ import ask, main
 
 
 def run_init(monkeypatch, *args, answers=""):
@@ -84,6 +84,15 @@ def test_existing_folder_is_asked_again(monkeypatch, tmp_path, capsys):
 
     assert "already exists" in capsys.readouterr().out
     assert (tmp_path / "second-try").is_dir()
+
+
+def test_ask_returns_the_answer_without_changing_answers(monkeypatch):
+    """`ask` returns the answer, and leaves the answers it was given as they are."""
+    answers = {"site_title": "Old Title"}
+    monkeypatch.setattr(sys, "stdin", io.StringIO("New Title\n"))
+
+    assert ask(answers, "site_title", "Site title") == "New Title"
+    assert answers == {"site_title": "Old Title"}
 
 
 # Errors
