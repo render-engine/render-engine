@@ -38,6 +38,10 @@ class InitOptions:
     include_cli: bool = True
 
     def _validate_site_title(self) -> None:
+        """Strip the site title, and check that it isn't empty and is on one line.
+
+        :raises ValueError: If the title is empty or has tabs or line breaks.
+        """
         self.site_title = self.site_title.strip()
         if not self.site_title:
             raise ValueError("The site title can't be empty. Please enter a title, e.g. 'My Blog'.")
@@ -45,6 +49,10 @@ class InitOptions:
             raise ValueError(f"The site title {self.site_title!r} must be on one line, without tabs or line breaks.")
 
     def _validate_site_url(self) -> None:
+        """Strip the site URL, and check that it's an http or https URL with a valid port.
+
+        :raises ValueError: If the URL is invalid.
+        """
         self.site_url = self.site_url.strip()
         parsed_url = urlparse(self.site_url)
 
@@ -62,6 +70,10 @@ class InitOptions:
             ) from None
 
     def _validate_project_slug(self) -> None:
+        """Make the project slug from the given slug, or from the site title.
+
+        :raises ValueError: If the slug would have no letter or number.
+        """
         source = self.project_slug or self.site_title
         self.project_slug = slugify(source)
 
@@ -73,6 +85,10 @@ class InitOptions:
             )
 
     def _validate_app_filename(self) -> None:
+        """Add `.py` if it's missing, and check that the CLI can import the app file.
+
+        :raises ValueError: If the filename has a folder, a `.` before `.py`, or would hide a module.
+        """
         if not self.app_filename.endswith(".py"):
             self.app_filename += ".py"
         path = Path(self.app_filename)
@@ -93,6 +109,10 @@ class InitOptions:
             )
 
     def _validate_output_path(self) -> None:
+        """Check that cleaning the output folder can't delete the project or its files.
+
+        :raises ValueError: If the output path would delete the project or one of its files when cleaned.
+        """
         path = Path(self.output_path)
 
         if not any(char.isalnum() for char in self.output_path):
@@ -120,6 +140,10 @@ class InitOptions:
             raise ValueError(f"The output path {self.output_path!r} can't contain spaces. Use '-' or '_' instead.")
 
     def _validate_site_variable(self) -> None:
+        """Check that the site variable can be used as a name in the app file.
+
+        :raises ValueError: If it isn't a Python name, or the app file already uses it.
+        """
         if not self.site_variable.isidentifier() or keyword.iskeyword(self.site_variable):
             raise ValueError(
                 f"The site variable {self.site_variable!r} must be a Python name: letters, numbers and "
@@ -132,6 +156,10 @@ class InitOptions:
             )
 
     def _validate_types(self) -> None:
+        """Check that text answers are text and yes/no answers are True or False.
+
+        :raises TypeError: If an answer has the wrong type.
+        """
         for field in fields(self):
             value = getattr(self, field.name)
             label = field.name.replace("_", " ")
@@ -141,6 +169,11 @@ class InitOptions:
                 raise TypeError(f"The {label} must be text, not {value!r}.")
 
     def __post_init__(self) -> None:
+        """Check and clean up all answers.
+
+        :raises TypeError: If an answer has the wrong type.
+        :raises ValueError: If an answer is invalid.
+        """
         self._validate_types()
         self._validate_site_title()
         self._validate_site_url()
@@ -154,6 +187,16 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
     """Create the folder for a new site and return its path.
 
     The folder is named after `options.project_slug` and created inside `destination`.
+    If anything fails, everything this function created is removed again.
+
+    :param options: The answers for the new site.
+    :param destination: The folder to create the project folder in. It's created if it doesn't exist.
+    :param template_dir: The site template to use. Defaults to the built-in template.
+    :return: The path of the new project folder.
+    :raises FileNotFoundError: If the template folder doesn't exist.
+    :raises FileExistsError: If the project folder already exists.
+    :raises TemplateFileError: If a template file can't be rendered.
+    :raises ValueError: If two template files would create the same file.
     """
     template_dir = Path(template_dir)
     if not template_dir.is_dir():

@@ -17,7 +17,12 @@ from render_engine.init import InitOptions, create_site
 
 
 def build(site_path, options):
-    """Build a generated site the way a user would: by running its app file."""
+    """Build a generated site the way a user would: by running its app file.
+
+    :param site_path: The folder of the generated site.
+    :param options: The answers the site was created with.
+    :return: The finished process, with its exit code and output.
+    """
     return subprocess.run(
         [sys.executable, options.app_filename],
         cwd=site_path,
@@ -30,6 +35,7 @@ def build(site_path, options):
 @pytest.mark.parametrize("include_collection", [True, False])
 @pytest.mark.parametrize("include_blog", [True, False])
 def test_generated_site_builds(tmp_path, include_blog, include_collection):
+    """Sites with and without the example collection and blog build, with working links."""
     options = InitOptions(site_title="My Blog", include_blog=include_blog, include_collection=include_collection)
     site_path = create_site(options, tmp_path)
 
@@ -48,6 +54,7 @@ def test_generated_site_builds(tmp_path, include_blog, include_collection):
 
 
 def test_generated_site_builds_with_custom_names(tmp_path):
+    """A site with a custom app filename, site variable and output folder builds."""
     options = InitOptions(
         site_title="Cool website", app_filename="my-site.py", site_variable="site", output_path="public"
     )
@@ -60,6 +67,7 @@ def test_generated_site_builds_with_custom_names(tmp_path):
 
 
 def test_site_title_is_escaped_in_html(tmp_path):
+    """Special HTML characters in the site title are escaped in the built pages."""
     options = InitOptions(site_title="Tom & Jerry <Fan Club>")
     site_path = create_site(options, tmp_path)
 

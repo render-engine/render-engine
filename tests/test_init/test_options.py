@@ -34,6 +34,7 @@ SAFE_SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
     ],
 )
 def test_site_title_and_slug_in_any_script(site_title):
+    """Titles in any script are kept, and still give a safe project slug."""
     options = InitOptions(site_title=site_title)
 
     assert options.site_title == site_title
@@ -59,19 +60,23 @@ def test_defaults():
 
 
 def test_site_title_is_stripped():
+    """Spaces around the site title are removed."""
     assert InitOptions(site_title="  My Blog  ").site_title == "My Blog"
 
 
 def test_site_title_using_emojis():
+    """Emojis in the site title are kept."""
     assert InitOptions(site_title="🎉 My Blog 🎉").site_title == "🎉 My Blog 🎉"
 
 
 def test_site_title_using_special_characters():
+    """Punctuation and symbols in the site title are kept."""
     assert InitOptions(site_title="My Blog!@#$%^&*()").site_title == "My Blog!@#$%^&*()"
 
 
 @pytest.mark.parametrize("site_title", ["", "   "])
 def test_empty_site_title_is_rejected(site_title):
+    """An empty or blank site title is rejected."""
     with pytest.raises(ValueError, match="The site title can't be empty. Please enter a title, e.g. 'My Blog'."):
         InitOptions(site_title=site_title)
 
@@ -84,11 +89,13 @@ def test_empty_site_title_is_rejected(site_title):
     ["https://example.com", "http://example.com", "http://localhost:8000", "https://my-site.dev/blog/", "https://eee"],
 )
 def test_valid_site_url(site_url):
+    """http and https URLs, with or without a port or path, are accepted."""
     assert InitOptions(site_url=site_url).site_url == site_url
 
 
 @pytest.mark.parametrize("site_url", ["", "ffff", "example.com", "ftp://example.com", "https://"])
 def test_invalid_site_url_is_rejected(site_url):
+    """URLs without http:// or https:// and a host are rejected."""
     with pytest.raises(ValueError, match="must start with http:// or https://"):
         InitOptions(site_url=site_url)
 
@@ -98,23 +105,28 @@ def test_invalid_site_url_is_rejected(site_url):
 
 @pytest.mark.parametrize("site_title, expected_slug", [("My Blog", "my-blog"), ("🎉 My Blog 🎉", "my-blog")])
 def test_project_slug_is_derived_from_site_title(site_title, expected_slug):
+    """Without a project slug, it's made from the site title."""
     assert InitOptions(site_title=site_title).project_slug == expected_slug
 
 
 def test_given_project_slug_is_kept():
+    """A given project slug is used instead of the title."""
     assert InitOptions(site_title="My Blog", project_slug="custom").project_slug == "custom"
 
 
 def test_given_project_slug_is_slugified():
+    """A given project slug is cleaned up into a safe folder name."""
     assert InitOptions(project_slug="My Site!").project_slug == "my-site"
 
 
 def test_empty_project_slug_falls_back_to_site_title():
+    """An empty project slug falls back to the site title."""
     assert InitOptions(site_title="My Blog", project_slug="").project_slug == "my-blog"
 
 
 @pytest.mark.parametrize("kwargs", [{"site_title": "!!!"}, {"site_title": "🎉🎉"}, {"project_slug": "!!!"}])
 def test_unusable_project_slug_is_rejected(kwargs):
+    """A slug without any letter or number is rejected."""
     with pytest.raises(ValueError, match="Can't make a project folder name"):
         InitOptions(**kwargs)
 
@@ -124,6 +136,7 @@ def test_unusable_project_slug_is_rejected(kwargs):
 
 @pytest.mark.parametrize("app_filename", ["app.py", "main.py", "my_site.py", "my-app.py", "1app.py", "My App.py"])
 def test_valid_app_filename(app_filename):
+    """Usual app filenames are accepted as they are."""
     assert InitOptions(app_filename=app_filename).app_filename == app_filename
 
 
@@ -138,6 +151,7 @@ def test_valid_app_filename(app_filename):
     ],
 )
 def test_invalid_app_filename_is_rejected(app_filename, message):
+    """App filenames that can't be imported, or would hide a module the site needs, are rejected."""
     with pytest.raises(ValueError, match=message):
         InitOptions(app_filename=app_filename)
 
@@ -184,11 +198,13 @@ def test_site_variable_used_by_app_file_is_rejected(site_variable):
 
 @pytest.mark.parametrize("output_path", ["output", "public", "build/site", "../docs", "/tmp/my-site"])
 def test_valid_output_path(output_path):
+    """The output folder can be anywhere, inside or outside the project."""
     assert InitOptions(output_path=output_path).output_path == output_path
 
 
 @pytest.mark.parametrize("output_path", ["", ".", "./", "..", "../..", "/"])
 def test_output_path_around_project_is_rejected(output_path):
+    """An output path without a folder name (the project or a folder above it) is rejected."""
     with pytest.raises(ValueError, match="needs at least one letter or number"):
         InitOptions(output_path=output_path)
 
@@ -197,23 +213,27 @@ def test_output_path_around_project_is_rejected(output_path):
     "output_path", ["content", "templates", "static", "content/output", "Content", "STATIC", "Templates/out"]
 )
 def test_output_path_in_site_folders_is_rejected(output_path):
+    """The site's own folders can't be the output folder."""
     with pytest.raises(ValueError, match="holds your site's own files"):
         InitOptions(output_path=output_path)
 
 
 @pytest.mark.parametrize("output_path", ["app.py", "pyproject.toml", "README.md", "readme.md", "app.py/site"])
 def test_output_path_on_project_file_is_rejected(output_path):
+    """The project's files can't be the output folder."""
     with pytest.raises(ValueError, match="is a file of your project"):
         InitOptions(output_path=output_path)
 
 
 def test_output_path_on_custom_app_filename_is_rejected():
+    """A custom app filename is protected like the default one."""
     with pytest.raises(ValueError, match="is a file of your project"):
         InitOptions(app_filename="main.py", output_path="main.py")
 
 
 @pytest.mark.parametrize("output_path", ["my site", "build/my site", "output "])
 def test_output_path_with_spaces_is_rejected(output_path):
+    """Output paths with spaces are rejected."""
     with pytest.raises(ValueError, match="can't contain spaces"):
         InitOptions(output_path=output_path)
 
@@ -226,6 +246,7 @@ def test_output_path_with_spaces_is_rejected(output_path):
 )
 @pytest.mark.parametrize("value", [None, 42, True])
 def test_non_text_answer_is_rejected(field, value):
+    """Text answers given as another type are rejected."""
     with pytest.raises(TypeError, match="must be text"):
         InitOptions(**{field: value})
 
@@ -233,11 +254,13 @@ def test_non_text_answer_is_rejected(field, value):
 @pytest.mark.parametrize("field", ["include_collection", "include_blog", "include_cli"])
 @pytest.mark.parametrize("value", ["no", "yes", "", 0, 1, None])
 def test_non_bool_answer_is_rejected(field, value):
+    """Yes/no answers given as anything but True or False are rejected."""
     with pytest.raises(TypeError, match="must be True or False"):
         InitOptions(**{field: value})
 
 
 def test_site_url_is_stripped():
+    """Spaces around the site URL are removed."""
     assert InitOptions(site_url="  https://example.com  ").site_url == "https://example.com"
 
 
@@ -245,12 +268,14 @@ def test_site_url_is_stripped():
     "site_url", ["https://my site.com", "https://example.com/my page", "https://example.com/\tblog"]
 )
 def test_site_url_with_spaces_is_rejected(site_url):
+    """Site URLs with spaces inside are rejected."""
     with pytest.raises(ValueError, match="can't contain spaces"):
         InitOptions(site_url=site_url)
 
 
 @pytest.mark.parametrize("site_url", ["https://example.com:abc", "http://localhost:99999", "http://localhost:-1"])
 def test_site_url_with_invalid_port_is_rejected(site_url):
+    """Site URLs with a port that isn't a valid number are rejected."""
     with pytest.raises(ValueError, match="invalid port"):
         InitOptions(site_url=site_url)
 
@@ -259,22 +284,26 @@ def test_site_url_with_invalid_port_is_rejected(site_url):
     "site_title", ["My\nBlog", "My\tBlog", "My\rBlog", "My\x00Blog", "My\u2028Blog", "My\u2029Blog"]
 )
 def test_site_title_with_control_characters_is_rejected(site_title):
+    """Site titles with tabs or line breaks are rejected."""
     with pytest.raises(ValueError, match="must be on one line"):
         InitOptions(site_title=site_title)
 
 
 @pytest.mark.parametrize("site_title", ["👨‍👩‍👧 Family Blog", "Café ☕", "Blog — 2026"])
 def test_site_title_with_special_unicode_is_kept(site_title):
+    """Joined emojis, accents and dashes in the site title are kept."""
     assert InitOptions(site_title=site_title).site_title == site_title
 
 
 @pytest.mark.parametrize("output_path", [".git", ".venv", ".github", ".output", ".git/site"])
 def test_hidden_output_path_is_rejected(output_path):
+    """Hidden folders like .git can't be the output folder."""
     with pytest.raises(ValueError, match="folders starting with '.'"):
         InitOptions(output_path=output_path)
 
 
 def test_output_path_with_hidden_subfolder_is_kept():
+    """A hidden folder inside the output folder is fine."""
     assert InitOptions(output_path="output/.well-known").output_path == "output/.well-known"
 
 

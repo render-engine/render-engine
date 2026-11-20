@@ -15,7 +15,13 @@ error_console = Console(stderr=True, soft_wrap=True)
 
 
 def ask(answers: dict[str, Any], name: str, question: str) -> Any:
-    """Ask one question until the answer is valid, and return the answer."""
+    """Ask one question until the answer is valid, and return the answer.
+
+    :param answers: The answers so far, used for the default and to check the new answer.
+    :param name: The name of the answer, e.g. `site_title`.
+    :param question: The question shown to the user.
+    :return: The valid answer: text, or True/False for yes/no questions.
+    """
     default = getattr(InitOptions(**answers), name)
     while True:
         if isinstance(default, bool):
@@ -31,7 +37,12 @@ def ask(answers: dict[str, Any], name: str, question: str) -> Any:
 
 
 def ask_project_folder(answers: dict[str, Any], destination: Path) -> tuple[str, Path]:
-    """Ask for the project folder name, and return it with the path of the new site."""
+    """Ask for the project folder name, and return it with the path of the new site.
+
+    :param answers: The answers so far.
+    :param destination: The folder the project folder will be created in.
+    :return: The typed folder name, and the path of the new site.
+    """
     project_slug = ask(answers, "project_slug", "Project folder name")
     new_answers: dict[str, Any] = {**answers, "project_slug": project_slug}
     site_path = destination / InitOptions(**new_answers).project_slug
@@ -40,7 +51,12 @@ def ask_project_folder(answers: dict[str, Any], destination: Path) -> tuple[str,
 
 
 def ask_options(defaults: dict[str, Any], destination: Path) -> InitOptions:
-    """Ask the questions for a new site and return the answers."""
+    """Ask the questions for a new site and return the answers.
+
+    :param defaults: Answers to use as defaults, from `--extra-context`.
+    :param destination: The folder the project folder will be created in.
+    :return: The answers.
+    """
     answers = dict(defaults)
     answers["site_title"] = ask(answers, "site_title", "Site title")
     answers["site_url"] = ask(answers, "site_url", "Site URL")
@@ -60,7 +76,12 @@ def ask_options(defaults: dict[str, Any], destination: Path) -> InitOptions:
 
 
 def extra_context(text: str) -> dict[str, Any]:
-    """Read the answers given with `--extra-context`, a JSON object like '{"site_title": "My Blog"}'."""
+    """Read the answers given with `--extra-context`, a JSON object like '{"site_title": "My Blog"}'.
+
+    :param text: The text given with `--extra-context`.
+    :return: The answers.
+    :raises ArgumentTypeError: If the text isn't a JSON object, or has unknown or invalid answers.
+    """
     try:
         answers = json.loads(text)
     except json.JSONDecodeError as error:
@@ -81,7 +102,12 @@ def extra_context(text: str) -> dict[str, Any]:
 
 
 def destination_folder(text: str) -> Path:
-    """Read `--output-dir`: the folder to create the project in. It's created if it doesn't exist."""
+    """Read `--output-dir`: the folder to create the project in. It's created if it doesn't exist.
+
+    :param text: The text given with `--output-dir`.
+    :return: The folder.
+    :raises ArgumentTypeError: If the path is a file.
+    """
     path = Path(text)
     if path.exists() and not path.is_dir():
         raise ArgumentTypeError(f"{text!r} is a file, not a folder")
@@ -92,7 +118,12 @@ def main(argv: list[str] | None = None, prog: str = "render-engine-init") -> Non
     """Create a new Render Engine site from the command line.
 
     Asks the questions for the new site, or uses the default answers with `--no-input`,
-    and creates the project folder inside the destination folder.
+    and creates the project folder inside the destination folder. Errors are shown
+    without a traceback, and exit with code 1 (or 130 when cancelled with Ctrl+C).
+
+    :param argv: The command-line arguments. Defaults to `sys.argv[1:]`.
+    :param prog: The program name shown in the help, e.g. `render-engine init` when
+        called from render-engine-cli.
     """
     parser = ArgumentParser(
         prog=prog,
