@@ -17,7 +17,7 @@ With pip, create a virtual environment and install the packages:
 ```shell
 python -m venv .venv
 source .venv/bin/activate
-pip install {{ "render-engine-cli" if include_cli else "render-engine" }}
+pip install render-engine{{ " render-engine-cli" if include_cli else "" }}
 ```
 
 > [!NOTE]
@@ -34,7 +34,7 @@ There are two ways to work with your site. Both produce the same result in `{{ o
 ### With the Render Engine CLI (recommended)
 
 The [Render Engine CLI][cli] gives you a few
-handy commands. If it isn't installed yet, add it with `uv add render-engine-cli`
+handy commands. If it isn't installed yet, add it with `uv add --dev render-engine-cli`
 or `pip install render-engine-cli`.
 
 Build your site and serve it at `http://localhost:8000` (the console shows the link):

@@ -5,10 +5,14 @@ description = {{ ("A Render Engine site: " ~ site_title) | tojson }}
 requires-python = ">=3.11"
 dependencies = [
     "render-engine",
-{% if include_cli %}
-    "render-engine-cli",
-{% endif %}
 ]
+{% if include_cli %}
+
+[dependency-groups]
+dev = [
+    "render-engine-cli",
+]
+{% endif %}
 
 # Configuration for render-engine-cli (https://github.com/render-engine/render-engine-cli)
 [tool.render-engine.cli]

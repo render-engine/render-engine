@@ -209,11 +209,13 @@ def test_site_variable_is_used(tmp_path):
 def test_cli_dependency_follows_the_answer(tmp_path, include_cli):
     site_path = create_site(InitOptions(site_title="My Blog", include_cli=include_cli), tmp_path)
 
-    dependencies = read_pyproject(site_path)["project"]["dependencies"]
-    assert ("render-engine-cli" in dependencies) is include_cli
+    pyproject = read_pyproject(site_path)
+    assert "render-engine-cli" not in pyproject["project"]["dependencies"]
+    dev_dependencies = pyproject.get("dependency-groups", {}).get("dev", [])
+    assert ("render-engine-cli" in dev_dependencies) is include_cli
 
     readme = (site_path / "README.md").read_text(encoding="utf-8").splitlines()
-    expected = "pip install render-engine-cli" if include_cli else "pip install render-engine"
+    expected = "pip install render-engine render-engine-cli" if include_cli else "pip install render-engine"
     assert expected in readme  # the whole line, so the closing ``` isn't glued on
 
 
@@ -235,7 +237,7 @@ def test_example_content_follows_the_answers(tmp_path, include_blog, include_col
 
     assert (site_path / "content" / "blog").exists() is include_blog
     assert (site_path / "content" / "pages").exists() is include_collection
-    assert (site_path / "templates" / "archive.html").exists() is include_blog
+    assert (site_path / "templates" / "archive.html").exists() is (include_blog or include_collection)
 
     app_py = (site_path / "app.py").read_text()
 

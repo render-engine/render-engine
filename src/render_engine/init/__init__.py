@@ -188,9 +188,10 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
 
         if not options.include_blog:
             skipped_paths.add(Path("content/blog"))
-            skipped_paths.add(Path("templates/archive.html"))
         if not options.include_collection:
             skipped_paths.add(Path("content/pages"))
+        if not options.include_blog and not options.include_collection:
+            skipped_paths.add(Path("templates/archive.html"))
 
         for item in template_items:
             relative_path = item.relative_to(template_dir)

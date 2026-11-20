@@ -32,7 +32,7 @@ from render_engine.parsers import MarkdownPageParser
             {% if include_collection %}
             {
                 "name": "Collection Page",
-                "url": "/example-page.html",
+                "url": "/pages/pages.html",
             },
             {% endif %}
             {% if include_blog %}
@@ -55,8 +55,9 @@ class Index(Page):
 @{{ site_variable }}.collection
 class Pages(Collection):
     content_path = "content/pages"
-    routes = ["./"] # route to Collection page
+    routes = ["pages"] # route to Collection page
     template = "page.html"
+    has_archive = True
 {% endif %}
 {% if include_blog %}
 

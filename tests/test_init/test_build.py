@@ -40,7 +40,11 @@ def test_generated_site_builds(tmp_path, include_blog, include_collection):
     assert "My Blog" in (output / "index.html").read_text(encoding="utf-8")
     assert (output / "static" / "style.css").is_file()
     assert (output / "blog" / "example-blog-post.html").exists() is include_blog
-    assert (output / "example-page.html").exists() is include_collection
+    assert (output / "pages" / "example-page.html").exists() is include_collection
+    assert (output / "pages" / "pages.html").exists() is include_collection
+    home = (output / "index.html").read_text(encoding="utf-8")
+    assert ('href="/pages/example-page.html"' in home) is include_collection
+    assert ('href="/blog/example-blog-post.html"' in home) is include_blog
 
 
 def test_generated_site_builds_with_custom_names(tmp_path):
