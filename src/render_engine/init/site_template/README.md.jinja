@@ -69,7 +69,7 @@ uv run render-engine build
 the finished site into `{{ output_path }}/`:
 
 ```shell
-uv run python {{ app_filename }}
+uv run python "{{ app_filename }}"
 ```
 
 **Preview** it by serving the output folder, then open `http://localhost:8000` in your browser:

@@ -58,29 +58,29 @@ class InitOptions:
             ) from None
 
     def _validate_project_slug(self) -> None:
-        given_slug = self.project_slug
-        self.project_slug = slugify(self.project_slug or self.site_title)
+        source = self.project_slug or self.site_title
+        self.project_slug = slugify(source)
 
         if not self.project_slug:
-            source = given_slug or self.site_title
             raise ValueError(
-                f"Can't make a project name from {source!r}: it needs at least one letter or number. "
-                "Please use a different title, or set a project slug like 'my-site'."
+                f"Can't make a project folder name from {source!r}: it needs at least one letter or number. "
+                "Use a different title, or set the folder name with "
+                """-e '{"project_slug": "my-site"}'."""
             )
 
     def _validate_app_filename(self) -> None:
+        if not self.app_filename.endswith(".py"):
+            self.app_filename += ".py"
         path = Path(self.app_filename)
 
-        if path.suffix != ".py":
-            raise ValueError(f"The app filename {self.app_filename!r} must end with '.py', e.g. 'app.py'.")
-        elif path.name != self.app_filename:
+        if path.name != self.app_filename:
             raise ValueError(
                 f"The app filename {self.app_filename!r} must be a file name without a folder, e.g. 'app.py'."
             )
-        elif path.stem.startswith("__") or not path.stem.isidentifier():
+        elif "." in path.stem:
             raise ValueError(
-                f"The app filename {self.app_filename!r} can only use letters, numbers and underscores, "
-                "and can't start with a number or '__', e.g. 'my_app.py'."
+                f"The app filename {self.app_filename!r} can't contain a '.' before '.py': the CLI would read "
+                "it as a package path. Try e.g. 'my_app.py'."
             )
         elif path.stem in TAKEN_MODULE_NAMES:
             raise ValueError(
@@ -91,16 +91,18 @@ class InitOptions:
     def _validate_output_path(self) -> None:
         path = Path(self.output_path)
 
-        if path.is_absolute() or not path.parts or ".." in path.parts:
+        if not any(char.isalnum() for char in self.output_path):
             raise ValueError(
-                f"The output path {self.output_path!r} must be a folder inside your project, e.g. 'output'."
+                f"The output path {self.output_path!r} needs at least one letter or number, e.g. 'output'. "
+                "Without a folder name, it points to your project or a folder above it, "
+                "and cleaning the output would delete it."
             )
         elif path.parts[0].lower() in {"content", "templates", "static"}:
             raise ValueError(
                 f"The output path {self.output_path!r} can't be used: the {path.parts[0]!r} folder holds your "
                 "site's own files, and cleaning the output would delete them. Try e.g. 'output'."
             )
-        elif path.parts[0].startswith("."):
+        elif path.parts[0].startswith(".") and path.parts[0] != "..":
             raise ValueError(
                 f"The output path {self.output_path!r} can't be used: folders starting with '.' hold tools and "
                 "settings like Git, and cleaning the output would delete them. Try e.g. 'output'."

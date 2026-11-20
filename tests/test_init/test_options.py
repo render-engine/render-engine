@@ -114,14 +114,14 @@ def test_empty_project_slug_falls_back_to_site_title():
 
 @pytest.mark.parametrize("kwargs", [{"site_title": "!!!"}, {"site_title": "🎉🎉"}, {"project_slug": "!!!"}])
 def test_unusable_project_slug_is_rejected(kwargs):
-    with pytest.raises(ValueError, match="Can't make a project name"):
+    with pytest.raises(ValueError, match="Can't make a project folder name"):
         InitOptions(**kwargs)
 
 
 # App filename
 
 
-@pytest.mark.parametrize("app_filename", ["app.py", "main.py", "my_site.py"])
+@pytest.mark.parametrize("app_filename", ["app.py", "main.py", "my_site.py", "my-app.py", "1app.py", "My App.py"])
 def test_valid_app_filename(app_filename):
     assert InitOptions(app_filename=app_filename).app_filename == app_filename
 
@@ -129,20 +129,22 @@ def test_valid_app_filename(app_filename):
 @pytest.mark.parametrize(
     "app_filename, message",
     [
-        ("app", "must end with '.py'"),
-        ("app.txt", "must end with '.py'"),
+        ("app.txt", "can't contain a '.' before '.py'"),
+        ("my.app.py", "can't contain a '.' before '.py'"),
         ("src/app.py", "without a folder"),
-        ("my-app.py", "can only use letters, numbers and underscores"),
-        ("1app.py", "can only use letters, numbers and underscores"),
         ("json.py", "already the name of a Python module"),
         ("render_engine.py", "already the name of a Python module"),
-        ("__init__.py", "can only use letters, numbers and underscores"),
-        ("!!!.py", "can only use letters, numbers and underscores"),
     ],
 )
 def test_invalid_app_filename_is_rejected(app_filename, message):
     with pytest.raises(ValueError, match=message):
         InitOptions(app_filename=app_filename)
+
+
+@pytest.mark.parametrize("app_filename, expected", [("app", "app.py"), ("main", "main.py"), ("app.py", "app.py")])
+def test_py_is_added_to_app_filename(app_filename, expected):
+    """A missing '.py' is added to the app filename."""
+    assert InitOptions(app_filename=app_filename).app_filename == expected
 
 
 def test_app_filename_check_ignores_local_files(tmp_path, monkeypatch):
@@ -156,14 +158,14 @@ def test_app_filename_check_ignores_local_files(tmp_path, monkeypatch):
 # Output path
 
 
-@pytest.mark.parametrize("output_path", ["output", "public", "build/site"])
+@pytest.mark.parametrize("output_path", ["output", "public", "build/site", "../docs", "/tmp/my-site"])
 def test_valid_output_path(output_path):
     assert InitOptions(output_path=output_path).output_path == output_path
 
 
-@pytest.mark.parametrize("output_path", ["", ".", "./", "..", "../out", "a/../..", "/tmp/out"])
-def test_output_path_outside_project_is_rejected(output_path):
-    with pytest.raises(ValueError, match="must be a folder inside your project"):
+@pytest.mark.parametrize("output_path", ["", ".", "./", "..", "../..", "/"])
+def test_output_path_around_project_is_rejected(output_path):
+    with pytest.raises(ValueError, match="needs at least one letter or number"):
         InitOptions(output_path=output_path)
 
 
