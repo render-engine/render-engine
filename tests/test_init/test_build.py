@@ -1,0 +1,79 @@
+"""End-to-end tests: generated sites must build.
+
+These tests create a site from the built-in template and build it by running its app file
+in a separate process, the way a user would. They catch problems the other tests can't,
+like a wrong import in the generated app file or a template that doesn't exist.
+
+They are slower than the other tests, so they cover the main combinations of answers
+rather than every case.
+"""
+
+import subprocess
+import sys
+
+import pytest
+
+from render_engine.init import InitOptions, create_site
+
+
+def build(site_path, options):
+    """Build a generated site the way a user would: by running its app file.
+
+    :param site_path: The folder of the generated site.
+    :param options: The answers the site was created with.
+    :return: The finished process, with its exit code and output.
+    """
+    return subprocess.run(
+        [sys.executable, options.app_filename],
+        cwd=site_path,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+
+
+@pytest.mark.parametrize("include_collection", [True, False])
+@pytest.mark.parametrize("include_blog", [True, False])
+def test_generated_site_builds(tmp_path, include_blog, include_collection):
+    """Sites with and without the example collection and blog build, with working links."""
+    options = InitOptions(site_title="My Blog", include_blog=include_blog, include_collection=include_collection)
+    site_path = create_site(options, tmp_path)
+
+    result = build(site_path, options)
+
+    assert result.returncode == 0, result.stderr
+    output = site_path / "output"
+    assert "My Blog" in (output / "index.html").read_text(encoding="utf-8")
+    assert (output / "static" / "style.css").is_file()
+    assert (output / "blog" / "example-blog-post.html").exists() is include_blog
+    assert (output / "pages" / "example-page.html").exists() is include_collection
+    assert (output / "pages" / "pages.html").exists() is include_collection
+    home = (output / "index.html").read_text(encoding="utf-8")
+    assert ('href="/pages/example-page.html"' in home) is include_collection
+    assert ('href="/blog/example-blog-post.html"' in home) is include_blog
+
+
+def test_generated_site_builds_with_custom_names(tmp_path):
+    """A site with a custom app filename, site variable and output folder builds."""
+    options = InitOptions(
+        site_title="Cool website", app_filename="my-site.py", site_variable="site", output_path="public"
+    )
+    site_path = create_site(options, tmp_path)
+
+    result = build(site_path, options)
+
+    assert result.returncode == 0, result.stderr
+    assert "Cool website" in (site_path / "public" / "index.html").read_text(encoding="utf-8")
+
+
+def test_site_title_is_escaped_in_html(tmp_path):
+    """Special HTML characters in the site title are escaped in the built pages."""
+    options = InitOptions(site_title="Tom & Jerry <Fan Club>")
+    site_path = create_site(options, tmp_path)
+
+    result = build(site_path, options)
+
+    assert result.returncode == 0, result.stderr
+    html = (site_path / "output" / "index.html").read_text(encoding="utf-8")
+    assert "<h1>Tom &amp; Jerry &lt;Fan Club&gt;</h1>" in html
+    assert '<a href="https://example.com">' in html

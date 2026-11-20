@@ -1,0 +1,75 @@
+"""
+This is a simple app setup script created with `render-engine init`
+"""
+
+from render_engine import (
+    Page,
+    Site,
+{% if include_collection %}
+    Collection,
+{% endif %}
+{% if include_blog %}
+    Blog as BaseBlog,
+{% endif %}
+)
+{% if include_blog %}
+from render_engine.parsers import MarkdownPageParser
+{% endif %}
+
+
+{{ site_variable }} = Site()
+{{ site_variable }}.output_path = {{ output_path | tojson }}
+
+{{ site_variable }}.site_vars.update(
+    {
+        "SITE_TITLE":{{ site_title | tojson }},
+        "SITE_URL":{{ site_url | tojson }},
+        "NAVIGATION":[
+            {
+                "name": "Home",
+                "url": "/",
+            },
+            {% if include_collection %}
+            {
+                "name": "Collection Page",
+                "url": "/pages/pages.html",
+            },
+            {% endif %}
+            {% if include_blog %}
+            {
+                "name": "Blog",
+                "url": "/blog/blog.html",
+            },
+            {% endif %}
+        ]
+    }
+)
+
+
+@{{ site_variable }}.page
+class Index(Page):
+    template = "index.html"
+{% if include_collection %}
+
+
+@{{ site_variable }}.collection
+class Pages(Collection):
+    content_path = "content/pages"
+    routes = ["pages"] # route to Collection page
+    template = "page.html"
+    has_archive = True
+{% endif %}
+{% if include_blog %}
+
+
+@{{ site_variable }}.collection
+class Blog(BaseBlog):
+    content_path = "content/blog"
+    routes = ["blog"] # route to Blog page
+    Parser = MarkdownPageParser
+    template = "page.html"
+{% endif %}
+
+
+if __name__ == "__main__":
+    {{ site_variable }}.render()
