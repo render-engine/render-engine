@@ -37,7 +37,7 @@ class InitOptions:
         self.site_title = self.site_title.strip()
         if not self.site_title:
             raise ValueError("The site title can't be empty. Please enter a title, e.g. 'My Blog'.")
-        if any(unicodedata.category(char) in {"Cc", "Zl", "Zp"} for char in self.site_title):
+        if {"Cc", "Zl", "Zp"}.intersection(map(unicodedata.category, self.site_title)):
             raise ValueError(f"The site title {self.site_title!r} must be on one line, without tabs or line breaks.")
 
     def _validate_site_url(self) -> None:

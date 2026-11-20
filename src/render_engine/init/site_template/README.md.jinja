@@ -2,11 +2,11 @@
 
 This is your site to make into whatever you want. This file gives you a little bit of
 direction for your next steps. For everything else, see the
-[Render Engine documentation](https://render-engine.readthedocs.io/en/latest/).
+[Render Engine documentation][docs].
 
 ## Install the dependencies
 
-With [uv](https://docs.astral.sh/uv/), which reads the dependencies from `pyproject.toml`:
+With [uv][uv], which reads the dependencies from `pyproject.toml`:
 
 ```shell
 uv sync
@@ -20,10 +20,12 @@ source .venv/bin/activate
 pip install {{ "render-engine-cli" if include_cli else "render-engine" }}
 ```
 
-On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
+> [!NOTE]
+> On Windows, activate the virtual environment with `.venv\Scripts\activate` instead.
 
-The commands below use `uv run`. If you're using pip, run them without the `uv run` prefix,
-with your virtual environment activated.
+> [!NOTE]
+> The commands below use `uv run`. If you're using pip, run them without the `uv run` prefix,
+> with your virtual environment activated.
 
 ## Build and preview your site
 
@@ -31,18 +33,19 @@ There are two ways to work with your site. Both produce the same result in `{{ o
 
 ### With the Render Engine CLI (recommended)
 
-The [Render Engine CLI](https://github.com/render-engine/render-engine-cli) gives you a few
+The [Render Engine CLI][cli] gives you a few
 handy commands. If it isn't installed yet, add it with `uv add render-engine-cli`
 or `pip install render-engine-cli`.
 
 Build your site and serve it at `http://localhost:8000` (the console shows the link):
 
 ```shell
-uv run render-engine serve --reload
+uv run render-engine serve
 ```
 
-With `--reload`, the site is rebuilt every time you change something in `content/` or
-`templates/`. Add `--clean` to remove the previous output before building.
+> [!NOTE]
+> Add `--reload` to rebuild the site every time you change something in `content/` or
+> `templates/`, and `--clean` to remove the previous output before building.
 
 To create a new page or blog post, run:
 
@@ -99,5 +102,9 @@ If you rename `{{ app_filename }}` or the objects inside it, update `pyproject.t
 
 ## Need more help?
 
-Check out the [documentation](https://render-engine.readthedocs.io/en/latest/) for more details on
+Check out the [documentation][docs] for more details on
 what Render Engine can do and how to use it.
+
+[cli]: https://github.com/render-engine/render-engine-cli
+[docs]: https://render-engine.readthedocs.io/en/latest/
+[uv]: https://docs.astral.sh/uv/

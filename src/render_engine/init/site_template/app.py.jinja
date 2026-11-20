@@ -2,12 +2,17 @@
 This is a simple app setup script created with `render-engine init`
 """
 
-from render_engine import Page, Site
+from render_engine import (
+    Page,
+    Site,
 {% if include_collection %}
-from render_engine import Collection
+    Collection,
 {% endif %}
 {% if include_blog %}
-from render_engine import Blog as BaseBlog
+    Blog as BaseBlog,
+{% endif %}
+)
+{% if include_blog %}
 from render_engine.parsers import MarkdownPageParser
 {% endif %}
 
