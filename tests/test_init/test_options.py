@@ -48,6 +48,7 @@ def test_defaults():
     assert options.site_url == "https://example.com"
     assert options.project_slug == "untitled-site"
     assert options.app_filename == "app.py"
+    assert options.site_variable == "app"
     assert options.output_path == "output"
     assert options.include_collection is True
     assert options.include_blog is True
@@ -155,6 +156,29 @@ def test_app_filename_check_ignores_local_files(tmp_path, monkeypatch):
     assert InitOptions(app_filename="app.py").app_filename == "app.py"
 
 
+# Site variable
+
+
+@pytest.mark.parametrize("site_variable", ["app", "site", "my_site", "_site", "stránka"])
+def test_valid_site_variable(site_variable):
+    """Any Python name can be the site variable."""
+    assert InitOptions(site_variable=site_variable).site_variable == site_variable
+
+
+@pytest.mark.parametrize("site_variable", ["", "my-site", "1site", "my site", "class", "None"])
+def test_site_variable_that_isnt_a_python_name_is_rejected(site_variable):
+    """The site variable must be usable as a Python name in the app file."""
+    with pytest.raises(ValueError, match="must be a Python name"):
+        InitOptions(site_variable=site_variable)
+
+
+@pytest.mark.parametrize("site_variable", ["Page", "Site", "Collection", "Blog", "Pages", "Index"])
+def test_site_variable_used_by_app_file_is_rejected(site_variable):
+    """A name the app file already uses would be replaced by the site, so it's rejected."""
+    with pytest.raises(ValueError, match="the app file already uses that name"):
+        InitOptions(site_variable=site_variable)
+
+
 # Output path
 
 
@@ -197,7 +221,9 @@ def test_output_path_with_spaces_is_rejected(output_path):
 # Answer types
 
 
-@pytest.mark.parametrize("field", ["site_title", "site_url", "project_slug", "app_filename", "output_path"])
+@pytest.mark.parametrize(
+    "field", ["site_title", "site_url", "project_slug", "app_filename", "site_variable", "output_path"]
+)
 @pytest.mark.parametrize("value", [None, 42, True])
 def test_non_text_answer_is_rejected(field, value):
     with pytest.raises(TypeError, match="must be text"):

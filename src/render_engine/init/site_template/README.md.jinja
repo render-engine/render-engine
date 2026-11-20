@@ -65,7 +65,7 @@ uv run render-engine build
 
 ### Without the CLI
 
-**Build** the site by running your app file. It calls `app.render()`, which writes
+**Build** the site by running your app file. It calls `{{ site_variable }}.render()`, which writes
 the finished site into `{{ output_path }}/`:
 
 ```shell
@@ -88,7 +88,7 @@ We've set up a `pyproject.toml` for you with:
 - your project's dependencies
 - the configuration the CLI uses to find your site, under `[tool.render-engine.cli]`:
   - `module`: the file that defines your site (`{{ app_filename }}`)
-  - `site`: the name of the `Site` object in that file (`app`)
+  - `site`: the name of the `Site` object in that file (`{{ site_variable }}`)
   - `collection`: the default collection for `new-entry`, if you included a blog or a collection
 
 If you rename `{{ app_filename }}` or the objects inside it, update `pyproject.toml` to match.

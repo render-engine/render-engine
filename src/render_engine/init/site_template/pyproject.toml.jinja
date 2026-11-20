@@ -12,7 +12,7 @@ dependencies = [
 
 # Configuration for render-engine-cli (https://github.com/render-engine/render-engine-cli)
 [tool.render-engine.cli]
-site = "app"
+site = {{ site_variable | tojson }}
 module = {{ app_filename.removesuffix(".py")| tojson }}
 {% if include_blog %}
 collection = "blog"

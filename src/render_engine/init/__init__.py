@@ -1,3 +1,4 @@
+import keyword
 import shutil
 import sys
 import unicodedata
@@ -14,6 +15,8 @@ SITE_TEMPLATE = Path(__file__).parent / "site_template"
 IGNORED_NAMES = {".git", ".hg", ".svn", ".DS_Store", "Thumbs.db", "__pycache__", ".venv", ".env"}
 # Modules a new site imports. An app file with one of these names would hide them.
 TAKEN_MODULE_NAMES = sys.stdlib_module_names | {"render_engine", "render_engine_cli"}
+# Names the generated app file already uses. A site variable with one of these names would replace them.
+APP_FILE_NAMES = {"Page", "Site", "Collection", "BaseBlog", "MarkdownPageParser", "Index", "Pages", "Blog"}
 
 
 class TemplateFileError(ValueError):
@@ -28,6 +31,7 @@ class InitOptions:
     site_url: str = "https://example.com"
     project_slug: str = ""
     app_filename: str = "app.py"
+    site_variable: str = "app"
     output_path: str = "output"
     include_collection: bool = True
     include_blog: bool = True
@@ -115,6 +119,18 @@ class InitOptions:
         elif any(char.isspace() for char in self.output_path):
             raise ValueError(f"The output path {self.output_path!r} can't contain spaces. Use '-' or '_' instead.")
 
+    def _validate_site_variable(self) -> None:
+        if not self.site_variable.isidentifier() or keyword.iskeyword(self.site_variable):
+            raise ValueError(
+                f"The site variable {self.site_variable!r} must be a Python name: letters, numbers and "
+                "underscores, not starting with a number, e.g. 'app' or 'site'."
+            )
+        elif self.site_variable in APP_FILE_NAMES:
+            raise ValueError(
+                f"The site variable {self.site_variable!r} can't be used: the app file already uses that name. "
+                "Try e.g. 'app'."
+            )
+
     def _validate_types(self) -> None:
         for field in fields(self):
             value = getattr(self, field.name)
@@ -130,6 +146,7 @@ class InitOptions:
         self._validate_site_url()
         self._validate_project_slug()
         self._validate_app_filename()
+        self._validate_site_variable()
         self._validate_output_path()
 
 

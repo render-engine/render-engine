@@ -47,26 +47,27 @@ def test_extra_context_is_used_with_no_input(monkeypatch, tmp_path):
 
 
 def test_answers_are_used(monkeypatch, tmp_path):
-    # title, URL, folder name, app file, output folder, collection, blog, CLI
-    answers = "My Blog\n\n\nmain.py\n\nn\n\n\n"
+    # title, URL, folder name, app file, site variable, output folder, collection, blog, CLI
+    answers = "My Blog\n\n\nmain.py\nsite\n\nn\n\n\n"
 
     run_init(monkeypatch, "-o", str(tmp_path), answers=answers)
 
     site_path = tmp_path / "my-blog"
     assert (site_path / "main.py").is_file()
+    assert "site = Site()" in (site_path / "main.py").read_text()
     assert not (site_path / "content" / "pages").exists()
     assert (site_path / "content" / "blog").is_dir()
 
 
 def test_extra_context_sets_the_defaults(monkeypatch, tmp_path):
-    run_init(monkeypatch, "-o", str(tmp_path), "-e", '{"site_title": "From Extra"}', answers="\n" * 8)
+    run_init(monkeypatch, "-o", str(tmp_path), "-e", '{"site_title": "From Extra"}', answers="\n" * 9)
 
     assert (tmp_path / "from-extra").is_dir()
 
 
 def test_invalid_answer_is_asked_again(monkeypatch, tmp_path, capsys):
     # the first URL is invalid, the second one is fine
-    answers = "My Blog\nexample.com\nhttps://my-blog.dev\n" + "\n" * 6
+    answers = "My Blog\nexample.com\nhttps://my-blog.dev\n" + "\n" * 7
 
     run_init(monkeypatch, "-o", str(tmp_path), answers=answers)
 
@@ -77,7 +78,7 @@ def test_invalid_answer_is_asked_again(monkeypatch, tmp_path, capsys):
 def test_existing_folder_is_asked_again(monkeypatch, tmp_path, capsys):
     (tmp_path / "untitled-site").mkdir()
     # keep the title and URL, then the default folder exists, so pick another one
-    answers = "\n\n\nsecond-try\n" + "\n" * 5
+    answers = "\n\n\nsecond-try\n" + "\n" * 6
 
     run_init(monkeypatch, "-o", str(tmp_path), answers=answers)
 

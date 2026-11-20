@@ -43,6 +43,7 @@ def ask_options(defaults: dict[str, Any], destination: Path) -> InitOptions:
             f"The folder {str(site_path)!r} already exists. Please choose a different name.", style="red", markup=False
         )
     ask(answers, "app_filename", "App file name")
+    ask(answers, "site_variable", "Name of the Site variable in the app file")
     ask(answers, "output_path", "Folder for the built site")
     ask(answers, "include_collection", "Include an example collection?")
     ask(answers, "include_blog", "Include an example blog?")

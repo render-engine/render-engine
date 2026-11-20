@@ -193,6 +193,18 @@ def test_custom_app_filename_is_used(tmp_path):
     assert read_pyproject(site_path)["tool"]["render-engine"]["cli"]["module"] == "main"
 
 
+def test_site_variable_is_used(tmp_path):
+    """The site variable is used everywhere in the app file and in the CLI configuration."""
+    site_path = create_site(InitOptions(site_title="My Blog", site_variable="site"), tmp_path)
+
+    app_py = (site_path / "app.py").read_text(encoding="utf-8")
+    assert "site = Site()" in app_py
+    assert "@site.page" in app_py
+    assert "site.render()" in app_py
+    assert "app." not in app_py  # no leftover `app.` from the default name
+    assert read_pyproject(site_path)["tool"]["render-engine"]["cli"]["site"] == "site"
+
+
 @pytest.mark.parametrize("include_cli", [True, False])
 def test_cli_dependency_follows_the_answer(tmp_path, include_cli):
     site_path = create_site(InitOptions(site_title="My Blog", include_cli=include_cli), tmp_path)

@@ -44,7 +44,9 @@ def test_generated_site_builds(tmp_path, include_blog, include_collection):
 
 
 def test_generated_site_builds_with_custom_names(tmp_path):
-    options = InitOptions(site_title="Cool website", app_filename="my-site.py", output_path="public")
+    options = InitOptions(
+        site_title="Cool website", app_filename="my-site.py", site_variable="site", output_path="public"
+    )
     site_path = create_site(options, tmp_path)
 
     result = build(site_path, options)

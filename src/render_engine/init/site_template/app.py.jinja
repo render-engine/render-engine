@@ -17,10 +17,10 @@ from render_engine.parsers import MarkdownPageParser
 {% endif %}
 
 
-app = Site()
-app.output_path = {{ output_path | tojson }}
+{{ site_variable }} = Site()
+{{ site_variable }}.output_path = {{ output_path | tojson }}
 
-app.site_vars.update(
+{{ site_variable }}.site_vars.update(
     {
         "SITE_TITLE":{{ site_title | tojson }},
         "SITE_URL":{{ site_url | tojson }},
@@ -46,13 +46,13 @@ app.site_vars.update(
 )
 
 
-@app.page
+@{{ site_variable }}.page
 class Index(Page):
     template = "index.html"
 {% if include_collection %}
 
 
-@app.collection
+@{{ site_variable }}.collection
 class Pages(Collection):
     content_path = "content/pages"
     routes = ["./"] # route to Collection page
@@ -61,7 +61,7 @@ class Pages(Collection):
 {% if include_blog %}
 
 
-@app.collection
+@{{ site_variable }}.collection
 class Blog(BaseBlog):
     content_path = "content/blog"
     routes = ["blog"] # route to Blog page
@@ -71,4 +71,4 @@ class Blog(BaseBlog):
 
 
 if __name__ == "__main__":
-    app.render()
+    {{ site_variable }}.render()
