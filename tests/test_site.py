@@ -281,11 +281,8 @@ def tests_site_multiple_static_paths(tmp_path: Path, site: Site):
 def test_site_nonexistent_static_path(tmp_path: Path, site: Site):
     """Rendering should succeed when a static path does not exist."""
     missing_static_dir = tmp_path / "nonexistent_static"
-
-    assert not missing_static_dir.exists()
-
     site.static_paths.add(missing_static_dir)
-
+    assert missing_static_dir.exists() is False
     site.render()
 
 
