@@ -93,3 +93,7 @@ optional_dependencies_dev_groups = ["extras"]
 python-dateutil = "dateutil"
 python-slugify = "slugify"
 python-frontmatter = "frontmatter"
+
+
+[project.scripts]
+render-engine-init = "render_engine.init.__main__:main"
