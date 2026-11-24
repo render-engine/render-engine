@@ -60,7 +60,7 @@ class FileContentManager(ContentManager):
             raise RuntimeError(f"File at {filepath} exists and update is disabled.")
 
         parsed_content = self.collection.Parser.create_entry(content=content, **(metadata or {}))
-        filepath.write_text(parsed_content)
+        filepath.write_text(parsed_content, encoding="utf-8")
         if editor:
             subprocess.run([editor, filepath])
         return f"New entry created at {filepath} ."

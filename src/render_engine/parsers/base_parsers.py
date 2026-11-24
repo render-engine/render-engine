@@ -29,7 +29,7 @@ class BasePageParser:
                 The path to the file that will be used to generate the Page's `content`.
                 Should be a valid path to a file or a url.
         """
-        return parse_content(pathlib.Path(content_path).read_text())
+        return parse_content(pathlib.Path(content_path).read_text(encoding="utf-8"))
 
     @staticmethod
     def parse_content(content: str) -> tuple[dict, str]:

@@ -49,4 +49,4 @@ class DataObject(BaseObject):
             if pm is not None:
                 pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
 
-            path.write_text(serialized)
+            path.write_text(serialized, encoding="utf-8")

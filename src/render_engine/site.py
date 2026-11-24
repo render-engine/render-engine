@@ -421,7 +421,7 @@ class Site:
 
         if self.print_errors:
             print("\n\n".join(report_exceptions), file=sys.stderr)
-        error_file.write_text("\n\n".join(report_exceptions))
+        error_file.write_text("\n\n".join(report_exceptions), encoding="utf-8")
         print(f"Exceptions found while rendering. Full tracebacks written to {error_file}", file=sys.stderr)
         return error_file.name
 

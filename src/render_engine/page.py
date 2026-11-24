@@ -169,7 +169,7 @@ class BasePage(BaseObject):
                 if pm is not None:
                     pm.hook.post_render_content(page=self.__class__, settings=settings, site=self.site)
 
-                rc += path.write_text(self.rendered_content)
+                rc += path.write_text(self.rendered_content, encoding="utf-8")
         except Exception as e:
             e.add_note(f"{type(e).__name__} while rendering {self._slug!r}")
             raise

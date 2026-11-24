@@ -197,3 +197,31 @@ class TestRedirectPage:
                 pass
 
             TestPage()
+
+
+def test_page_render_with_emoji(tmp_path: pathlib.Path):
+    """Tests that a page with emoji and unicode renders and writes to file with utf-8 encoding"""
+    from render_engine import Site
+
+    site = Site()
+    site.output_path = tmp_path
+
+    class EmojiPage(Page):
+        content = "Hello 🚀 World! 😊 日本語"
+
+    site.page(EmojiPage)
+    site.render()
+
+    output_file = tmp_path / "emojipage.html"
+    assert output_file.exists()
+    assert "Hello 🚀 World! 😊 日本語" in output_file.read_text(encoding="utf-8")
+
+
+def test_page_from_file_with_emoji(tmp_path: pathlib.Path):
+    """Tests that a page with emoji in its content_path file is parsed correctly with utf-8 encoding"""
+    content_file = tmp_path / "emoji_page.md"
+    content_file.write_text("# Welcome 🎉\n\nEnjoy your stay! 🌟", encoding="utf-8")
+
+    page = Page(content_path=content_file)
+    assert "Welcome 🎉" in page.content
+    assert "Enjoy your stay! 🌟" in page.content
