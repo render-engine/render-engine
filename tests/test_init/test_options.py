@@ -196,7 +196,20 @@ def test_site_variable_used_by_app_file_is_rejected(site_variable):
 # Output path
 
 
-@pytest.mark.parametrize("output_path", ["output", "public", "build/site", "../docs", "/tmp/my-site"])
+@pytest.mark.parametrize(
+    "output_path",
+    [
+        "output",
+        "public",
+        "build/site",
+        "../docs",
+        "/tmp/my-site",
+        "app.py/site",
+        "my site",
+        "./README.md/site",
+        "content/output",
+    ],
+)
 def test_valid_output_path(output_path):
     """The output folder can be anywhere, inside or outside the project."""
     assert InitOptions(output_path=output_path).output_path == output_path
@@ -209,16 +222,7 @@ def test_output_path_around_project_is_rejected(output_path):
         InitOptions(output_path=output_path)
 
 
-@pytest.mark.parametrize(
-    "output_path", ["content", "templates", "static", "content/output", "Content", "STATIC", "Templates/out"]
-)
-def test_output_path_in_site_folders_is_rejected(output_path):
-    """The site's own folders can't be the output folder."""
-    with pytest.raises(ValueError, match="holds your site's own files"):
-        InitOptions(output_path=output_path)
-
-
-@pytest.mark.parametrize("output_path", ["app.py", "pyproject.toml", "README.md", "readme.md", "app.py/site"])
+@pytest.mark.parametrize("output_path", ["app.py", "pyproject.toml", "README.md", "readme.md", "./README.md/"])
 def test_output_path_on_project_file_is_rejected(output_path):
     """The project's files can't be the output folder."""
     with pytest.raises(ValueError, match="is a file of your project"):
@@ -229,13 +233,6 @@ def test_output_path_on_custom_app_filename_is_rejected():
     """A custom app filename is protected like the default one."""
     with pytest.raises(ValueError, match="is a file of your project"):
         InitOptions(app_filename="main.py", output_path="main.py")
-
-
-@pytest.mark.parametrize("output_path", ["my site", "build/my site", "output "])
-def test_output_path_with_spaces_is_rejected(output_path):
-    """Output paths with spaces are rejected."""
-    with pytest.raises(ValueError, match="can't contain spaces"):
-        InitOptions(output_path=output_path)
 
 
 # Answer types

@@ -14,6 +14,15 @@ console = Console(soft_wrap=True)
 error_console = Console(stderr=True, soft_wrap=True)
 
 
+def _has_spaces(text: str) -> bool:
+    """Check if the text has spaces, which make a path harder to use in commands.
+
+    :param text: The text to check.
+    :return: True if it has any whitespace.
+    """
+    return any(char.isspace() for char in text)
+
+
 def ask(answers: dict[str, Any], name: str, question: str) -> Any:
     """Ask one question until the answer is valid, and return the answer.
 
@@ -69,6 +78,13 @@ def ask_options(defaults: dict[str, Any], destination: Path) -> InitOptions:
     answers["app_filename"] = ask(answers, "app_filename", "App file name")
     answers["site_variable"] = ask(answers, "site_variable", "Name of the Site variable in the app file")
     answers["output_path"] = ask(answers, "output_path", "Folder for the built site")
+    while _has_spaces(answers["output_path"]) and not Confirm.ask(
+        f"The output path {answers['output_path']!r} contains spaces, which makes it harder to use "
+        "in commands. Are you sure?",
+        default=False,
+        console=console,
+    ):
+        answers["output_path"] = ask(answers, "output_path", "Folder for the built site")
     answers["include_collection"] = ask(answers, "include_collection", "Include an example collection?")
     answers["include_blog"] = ask(answers, "include_blog", "Include an example blog?")
     answers["include_cli"] = ask(answers, "include_cli", "Use the Render Engine CLI?")
@@ -157,6 +173,13 @@ def main(argv: list[str] | None = None, prog: str = "render-engine-init") -> Non
     try:
         if args.no_input:
             options = InitOptions(**args.extra_context)
+            if _has_spaces(options.output_path):
+                error_console.print(
+                    f"Warning: the output path {options.output_path!r} contains spaces, "
+                    "which makes it harder to use in commands.",
+                    style="yellow",
+                    markup=False,
+                )
         else:
             options = ask_options(args.extra_context, args.destination)
         site_path = create_site(options, args.destination)

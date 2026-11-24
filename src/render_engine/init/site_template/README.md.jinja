@@ -12,6 +12,10 @@ With [uv][uv], which reads the dependencies from `pyproject.toml`:
 uv sync
 ```
 
+> [!NOTE]
+> `uv sync` creates a virtual environment in `.venv` and installs everything into it, but doesn't
+> activate it. You don't need to: `uv run` always uses the project's `.venv`.
+
 With pip, create a virtual environment and install the packages:
 
 ```shell
@@ -75,7 +79,7 @@ uv run python "{{ app_filename }}"
 **Preview** it by serving the output folder, then open `http://localhost:8000` in your browser:
 
 ```shell
-uv run python -m http.server --bind 127.0.0.1 -d {{ output_path }}
+uv run python -m http.server --bind 127.0.0.1 -d "{{ output_path }}"
 ```
 
 There's no automatic rebuilding here: run the build command again after each change.

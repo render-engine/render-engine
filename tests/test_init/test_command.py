@@ -97,6 +97,35 @@ def test_existing_folder_is_asked_again(monkeypatch, tmp_path, capsys):
     assert (tmp_path / "second-try").is_dir()
 
 
+def test_output_path_with_spaces_can_be_confirmed(monkeypatch, tmp_path, capsys):
+    """An output path with spaces asks "Are you sure?", and "yes" keeps it."""
+    # title, URL, folder name, app file, site variable, output folder, "yes", collection, blog, CLI
+    answers = "\n\n\n\n\nmy site\ny\n\n\n\n"
+
+    run_init(monkeypatch, "-o", str(tmp_path), answers=answers)
+
+    assert "contains spaces" in capsys.readouterr().out
+    assert '"my site"' in (tmp_path / "untitled-site" / "app.py").read_text()
+
+
+def test_output_path_with_spaces_is_asked_again(monkeypatch, tmp_path):
+    """Answering "no" to "Are you sure?" asks for the output path again."""
+    # title, URL, folder name, app file, site variable, output folder, "no", new output folder, ...
+    answers = "\n\n\n\n\nmy site\nn\nmy-site\n\n\n\n"
+
+    run_init(monkeypatch, "-o", str(tmp_path), answers=answers)
+
+    assert '"my-site"' in (tmp_path / "untitled-site" / "app.py").read_text()
+
+
+def test_output_path_with_spaces_warns_with_no_input(monkeypatch, tmp_path, capsys):
+    """With --no-input, an output path with spaces is used, with a warning."""
+    run_init(monkeypatch, "--no-input", "-o", str(tmp_path), "-e", '{"output_path": "my site"}')
+
+    assert "Warning: the output path 'my site' contains spaces" in capsys.readouterr().err
+    assert '"my site"' in (tmp_path / "untitled-site" / "app.py").read_text()
+
+
 def test_ask_returns_the_answer_without_changing_answers(monkeypatch):
     """`ask` returns the answer, and leaves the answers it was given as they are."""
     answers = {"site_title": "Old Title"}

@@ -413,3 +413,11 @@ def test_failed_site_keeps_existing_destination(options, tmp_path, template_dir)
 
     assert (destination / "other.txt").read_text() == "keep me"
     assert not (destination / "my-blog").exists()
+
+
+def test_readme_quotes_the_output_path(tmp_path):
+    """The README quotes the output path, so the preview command works with spaces."""
+    site_path = create_site(InitOptions(output_path="my site"), tmp_path)
+
+    readme = (site_path / "README.md").read_text(encoding="utf-8").splitlines()
+    assert 'uv run python -m http.server --bind 127.0.0.1 -d "my site"' in readme

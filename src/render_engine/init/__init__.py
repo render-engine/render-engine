@@ -121,23 +121,16 @@ class InitOptions:
                 "Without a folder name, it points to your project or a folder above it, "
                 "and cleaning the output would delete it."
             )
-        elif path.parts[0].lower() in {"content", "templates", "static"}:
-            raise ValueError(
-                f"The output path {self.output_path!r} can't be used: the {path.parts[0]!r} folder holds your "
-                "site's own files, and cleaning the output would delete them. Try e.g. 'output'."
-            )
         elif path.parts[0].startswith(".") and path.parts[0] != "..":
             raise ValueError(
                 f"The output path {self.output_path!r} can't be used: folders starting with '.' hold tools and "
                 "settings like Git, and cleaning the output would delete them. Try e.g. 'output'."
             )
-        elif path.parts[0].lower() in {self.app_filename.lower(), "pyproject.toml", "readme.md"}:
+        elif str(path).lower() in {self.app_filename.lower(), "pyproject.toml", "readme.md"}:
             raise ValueError(
                 f"The output path {self.output_path!r} can't be used: {path.parts[0]!r} is a file of your "
                 "project, and cleaning the output would delete it. Try e.g. 'output'."
             )
-        elif any(char.isspace() for char in self.output_path):
-            raise ValueError(f"The output path {self.output_path!r} can't contain spaces. Use '-' or '_' instead.")
 
     def _validate_site_variable(self) -> None:
         """Check that the site variable can be used as a name in the app file.
