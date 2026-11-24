@@ -249,7 +249,7 @@ def test_long_error_message_is_not_broken_into_lines(monkeypatch, tmp_path, caps
     with pytest.raises(SystemExit):
         run_init(monkeypatch, "--no-input", "-o", str(destination))
 
-    assert str(destination / "untitled-site") in capsys.readouterr().err
+    assert repr(str(destination / "untitled-site")) in capsys.readouterr().err
 
 
 def test_arguments_can_be_passed_directly(tmp_path):

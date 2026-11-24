@@ -208,6 +208,8 @@ def test_site_variable_used_by_app_file_is_rejected(site_variable):
         "my site",
         "./README.md/site",
         "content/output",
+        ".output",
+        "output/.well-known",
     ],
 )
 def test_valid_output_path(output_path):
@@ -290,13 +292,6 @@ def test_site_title_with_control_characters_is_rejected(site_title):
 def test_site_title_with_special_unicode_is_kept(site_title):
     """Joined emojis, accents and dashes in the site title are kept."""
     assert InitOptions(site_title=site_title).site_title == site_title
-
-
-@pytest.mark.parametrize("output_path", [".git", ".venv", ".github", ".output", ".git/site"])
-def test_hidden_output_path_is_rejected(output_path):
-    """Hidden folders like .git can't be the output folder."""
-    with pytest.raises(ValueError, match="folders starting with '.'"):
-        InitOptions(output_path=output_path)
 
 
 def test_output_path_with_hidden_subfolder_is_kept():
