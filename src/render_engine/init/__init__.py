@@ -182,6 +182,7 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
     :param template_dir: The site template to use. Defaults to the built-in template.
     :return: The path of the new project folder.
     :raises FileNotFoundError: If the template folder doesn't exist.
+    :raises NotADirectoryError: If the destination is a file.
     :raises FileExistsError: If the project folder already exists.
     :raises TemplateFileError: If a template file can't be rendered.
     :raises ValueError: If two template files would create the same file.
@@ -191,6 +192,9 @@ def create_site(options: InitOptions, destination: Path | str, template_dir: Pat
         raise FileNotFoundError(f"The template folder {str(template_dir)!r} doesn't exist or isn't a folder.")
 
     site_path = Path(destination) / options.project_slug
+
+    if Path(destination).exists() and not Path(destination).is_dir():
+        raise NotADirectoryError(f"The destination {str(destination)!r} is a file, not a folder.")
 
     if site_path.exists():
         raise FileExistsError(
