@@ -114,7 +114,7 @@ Please review the [contributing][contributing] section of our docs for more info
 [discord-link]: https://discord.gg/2xMQ4j4d8m
 [website]: https://render-engine.org/
 [docs]: https://render-engine.readthedocs.io/en/latest/
-[contribution-guide]: https://render-engine.readthedocs.io/en/latest/contributing/CODE_OF_CONDUCT/
+[contribution-guide]: https://render-engine.readthedocs.io/en/latest/contributing/CONTRIBUTING/
 [python.org]: https://python.org
 [ms-store]: https://apps.microsoft.com/detail/9NQ7512CXL7T
 [getting-started]: https://render-engine.readthedocs.io/en/latest/page/
