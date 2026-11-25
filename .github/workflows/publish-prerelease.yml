@@ -27,7 +27,7 @@ jobs:
        contains(github.event.pull_request.labels.*.name, 'release'))
     runs-on: ubuntu-latest
     steps:
-      - uses: $/.github./actions/setup-uv
+      - uses: $/.github/actions/setup-uv
       - uses: $/.github/actions/checkout
       - name: Compute and publish prerelease
         id: publish
